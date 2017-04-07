@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "87cab4c10818dfd7eeacdce875cac49b",
+    "content-hash": "4fe83ea67aff726aac58c90d86212a0b",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -682,16 +682,16 @@
         },
         {
             "name": "php-http/client-common",
-            "version": "v1.4.2",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/client-common.git",
-                "reference": "85b2501ad96a8746918527f34c0d7977424b2bb3"
+                "reference": "154d36542eb96ee95daa504591eab78af2484baa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/client-common/zipball/85b2501ad96a8746918527f34c0d7977424b2bb3",
-                "reference": "85b2501ad96a8746918527f34c0d7977424b2bb3",
+                "url": "https://api.github.com/repos/php-http/client-common/zipball/154d36542eb96ee95daa504591eab78af2484baa",
+                "reference": "154d36542eb96ee95daa504591eab78af2484baa",
                 "shasum": ""
             },
             "require": {
@@ -739,7 +739,7 @@
                 "http",
                 "httplug"
             ],
-            "time": "2017-03-18T11:14:35+00:00"
+            "time": "2017-03-30T12:50:04+00:00"
         },
         {
             "name": "php-http/discovery",
@@ -1592,16 +1592,16 @@
         },
         {
             "name": "symfony/options-resolver",
-            "version": "v3.2.6",
+            "version": "v3.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/options-resolver.git",
-                "reference": "56e3d0a41313f8a54326851f10690d591e62a24c"
+                "reference": "6a19be85237fe8bbd4975f86942b4763bb0da6ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/options-resolver/zipball/56e3d0a41313f8a54326851f10690d591e62a24c",
-                "reference": "56e3d0a41313f8a54326851f10690d591e62a24c",
+                "url": "https://api.github.com/repos/symfony/options-resolver/zipball/6a19be85237fe8bbd4975f86942b4763bb0da6ca",
+                "reference": "6a19be85237fe8bbd4975f86942b4763bb0da6ca",
                 "shasum": ""
             },
             "require": {
@@ -1642,7 +1642,7 @@
                 "configuration",
                 "options"
             ],
-            "time": "2017-02-21T09:12:04+00:00"
+            "time": "2017-03-21T21:44:32+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",

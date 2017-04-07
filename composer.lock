@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "87cab4c10818dfd7eeacdce875cac49b",
+    "content-hash": "faa2a728b13dbb6f95e99adfaa54f428",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -1494,16 +1494,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v3.2.6",
+            "version": "v3.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "bc0f17bed914df2cceb989972c3b996043c4da4a"
+                "reference": "64421e6479c4a8e60d790fb666bd520992861b66"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/bc0f17bed914df2cceb989972c3b996043c4da4a",
-                "reference": "bc0f17bed914df2cceb989972c3b996043c4da4a",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/64421e6479c4a8e60d790fb666bd520992861b66",
+                "reference": "64421e6479c4a8e60d790fb666bd520992861b66",
                 "shasum": ""
             },
             "require": {
@@ -1539,7 +1539,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2017-03-06T19:30:27+00:00"
+            "time": "2017-03-26T15:47:15+00:00"
         },
         {
             "name": "symfony/finder",

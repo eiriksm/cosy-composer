@@ -2,7 +2,7 @@
     "name": "eiriksm/cosy-composer",
     "description": "I will probably use this for something",
     "require-dev": {
-        "phpunit/phpunit": "^5.0",
+        "phpunit/phpunit": "~5.7.19",
         "satooshi/php-coveralls": "^1.0"
     },
     "require": {

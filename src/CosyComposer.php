@@ -910,6 +910,18 @@ class CosyComposer
             } catch (NotUpdatedException $e) {
                 // Not updated because of the composer command, not the
                 // restriction itself.
+                $command = sprintf('composer why-not %s:%s', $item->name, $item->latest);
+                $this->execCommand(sprintf('COMPOSER_ALLOW_SUPERUSER=1 %s', $command), false);
+                $this->log($this->getLastStdErr(), Message::COMMAND, [
+                    'command' => $command,
+                    'package' => $item->name,
+                    'type' => 'stderr',
+                ]);
+                $this->log($this->getLastStdOut(), Message::COMMAND, [
+                    'command' => $command,
+                    'package' => $item->name,
+                    'type' => 'stdout',
+                ]);
                 $this->log("$package_name was not updated running composer update", Message::NOT_UPDATED, [
                     'package' => $package_name,
                 ]);

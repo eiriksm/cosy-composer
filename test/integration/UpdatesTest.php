@@ -408,7 +408,7 @@ class UpdatesTest extends Base
         file_put_contents("$dir/composer.lock", $composer_lock_contents);
         $c->run();
         $output = $c->getOutput();
-        $this->assertEquals('psr/log was not updated running composer update', $output[14]->getMessage());
+        $this->assertEquals('psr/log was not updated running composer update', $output[16]->getMessage());
         $this->assertEquals(true, $called);
     }
 

@@ -19,15 +19,9 @@ class UpdatesTest extends Base
         return sprintf('{"installed": [{"name": "%s", "version": "%s", "latest": "%s", "latest-status": "semver-safe-update"}]}', $package, $version, $new_version);
     }
 
-    private function createExpectedCommandForPackageUpdate($package, $update_with_dependencies = true)
+    private function createExpectedCommandForPackage($package)
     {
-        $with_deps = $update_with_dependencies ? '--with-dependencies' : '';
-        return "COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_DISCARD_CHANGES=true composer --no-ansi --ignore-platform-reqs update -n --no-scripts $package $with_deps";
-    }
-
-    private function createExpectedCommandForPackageRequire($package, $constraint)
-    {
-        return "COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_DISCARD_CHANGES=true composer --no-ansi --ignore-platform-reqs require $package:$constraint --update-with-dependencies";
+        return "COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_DISCARD_CHANGES=true composer --no-ansi update -n --no-scripts $package --with-dependencies";
     }
 
     public function testUpdatesFoundButProviderDoesNotAuthenticate()
@@ -309,7 +303,7 @@ class UpdatesTest extends Base
             ->will($this->returnCallback(
                 function ($cmd) use (&$called, &$composer_update_called) {
                     $return = 0;
-                    if ($cmd == $this->createExpectedCommandForPackageUpdate('psr/log')) {
+                    if ($cmd == 'COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_DISCARD_CHANGES=true composer --no-ansi update -n --no-scripts psr/log --with-dependencies') {
                         $composer_update_called = true;
                         $return = 1;
                     }
@@ -449,7 +443,7 @@ class UpdatesTest extends Base
             ->will($this->returnCallback(
                 function ($cmd) use (&$called, $dir) {
                     $return = 0;
-                    if ($cmd == $this->createExpectedCommandForPackageUpdate('psr/log')) {
+                    if ($cmd == 'COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_DISCARD_CHANGES=true composer --no-ansi update -n --no-scripts psr/log --with-dependencies') {
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                     }
                     if ($cmd == 'GIT_AUTHOR_NAME="" GIT_AUTHOR_EMAIL="" GIT_COMMITTER_NAME="" GIT_COMMITTER_EMAIL="" git commit composer.* -m "Update psr/log"') {
@@ -522,7 +516,7 @@ class UpdatesTest extends Base
             ->will($this->returnCallback(
                 function ($cmd) use (&$called, $dir) {
                     $return = 0;
-                    if ($cmd == $this->createExpectedCommandForPackageUpdate('psr/log')) {
+                    if ($cmd == 'COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_DISCARD_CHANGES=true composer --no-ansi update -n --no-scripts psr/log --with-dependencies') {
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                     }
                     if ($cmd == 'git push origin psrlog100102 --force') {
@@ -595,7 +589,7 @@ class UpdatesTest extends Base
             ->will($this->returnCallback(
                 function ($cmd) use (&$called, $dir) {
                     $return = 0;
-                    if ($cmd == $this->createExpectedCommandForPackageUpdate('psr/log')) {
+                    if ($cmd == 'COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_DISCARD_CHANGES=true composer --no-ansi update -n --no-scripts psr/log --with-dependencies') {
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                     }
                     if (strpos($cmd, 'rm -rf /tmp/') === 0) {
@@ -670,7 +664,7 @@ class UpdatesTest extends Base
             ->will($this->returnCallback(
                 function ($cmd) use (&$called, $dir) {
                     $return = 0;
-                    if ($cmd == $this->createExpectedCommandForPackageUpdate('psr/log')) {
+                    if ($cmd == 'COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_DISCARD_CHANGES=true composer --no-ansi update -n --no-scripts psr/log --with-dependencies') {
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                     }
                     if (strpos($cmd, 'rm -rf /tmp/') === 0) {
@@ -748,8 +742,7 @@ class UpdatesTest extends Base
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
                 function ($cmd) use (&$called, &$install_called, $dir) {
-                    $expected_command = $this->createExpectedCommandForPackageRequire('psr/log', '^2.0.1');
-                    if ($cmd == $expected_command) {
+                    if ($cmd == 'COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_DISCARD_CHANGES=true composer --no-ansi require psr/log:^2.0.1 --update-with-dependencies') {
                         $install_called = true;
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                     }
@@ -818,8 +811,7 @@ class UpdatesTest extends Base
         $mock_executer = $this->getMockExecuterWithReturnCallback(
             function ($cmd) use (&$called, $dir) {
                 $return = 0;
-                $expected_command = $this->createExpectedCommandForPackageUpdate('psr/log', false);
-                if (strpos($cmd, $expected_command) === 0) {
+                if ($cmd == 'COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_DISCARD_CHANGES=true composer --no-ansi update -n --no-scripts psr/log ') {
                     file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                 }
                 if (strpos($cmd, 'rm -rf /tmp/') === 0) {
@@ -892,7 +884,7 @@ class UpdatesTest extends Base
         $mock_executer = $this->getMockExecuterWithReturnCallback(
             function ($cmd) use (&$called, $dir) {
                 $return = 0;
-                $expected_command = $this->createExpectedCommandForPackageUpdate('drupal/core');
+                $expected_command = $this->createExpectedCommandForPackage('drupal/core');
                 if ($cmd == $expected_command) {
                     file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-drupal-847-updated.lock'));
                 }

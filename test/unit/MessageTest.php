@@ -3,8 +3,9 @@
 namespace eiriksm\CosyComposerTest\unit;
 
 use eiriksm\CosyComposer\Message;
+use PHPUnit\Framework\TestCase;
 
-class MessageTest extends \PHPUnit_Framework_TestCase
+class MessageTest extends TestCase
 {
     public function testMethods()
     {

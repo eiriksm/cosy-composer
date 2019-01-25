@@ -4,9 +4,10 @@ namespace eiriksm\CosyComposerTest\unit;
 
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\Providers\Github;
+use PHPUnit\Framework\TestCase;
 use Violinist\Slug\Slug;
 
-class ProviderFactoryTest extends \PHPUnit_Framework_TestCase
+class ProviderFactoryTest extends TestCase
 {
     public function testCreateFromHost()
     {

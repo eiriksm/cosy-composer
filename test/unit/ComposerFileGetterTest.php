@@ -4,8 +4,9 @@ namespace eiriksm\CosyComposerTest\unit;
 
 use eiriksm\CosyComposer\ComposerFileGetter;
 use League\Flysystem\AdapterInterface;
+use PHPUnit\Framework\TestCase;
 
-class ComposerFileGetterTest extends \PHPUnit_Framework_TestCase
+class ComposerFileGetterTest extends TestCase
 {
     public function testHasComposerFile()
     {

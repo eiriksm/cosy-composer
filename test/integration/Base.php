@@ -8,8 +8,9 @@ use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
+use PHPUnit\Framework\TestCase;
 
-class Base extends \PHPUnit_Framework_TestCase
+class Base extends TestCase
 {
     use GetCosyTrait;
     use GetExecuterTrait;

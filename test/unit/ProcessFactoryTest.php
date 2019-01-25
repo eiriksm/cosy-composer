@@ -3,8 +3,9 @@
 namespace eiriksm\CosyComposerTest\unit;
 
 use eiriksm\CosyComposer\ProcessFactory;
+use PHPUnit\Framework\TestCase;
 
-class ProcessFactoryTest extends \PHPUnit_Framework_TestCase
+class ProcessFactoryTest extends TestCase
 {
     public function testGetProcess()
     {

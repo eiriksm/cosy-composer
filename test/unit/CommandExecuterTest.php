@@ -5,11 +5,12 @@ namespace eiriksm\CosyComposerTest\unit;
 use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\Message;
 use eiriksm\CosyComposer\ProcessFactory;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 
-class CommandExecuterTest extends PHPUnit_Framework_TestCase
+class CommandExecuterTest extends TestCase
 {
     public function testExecuteCommand()
     {

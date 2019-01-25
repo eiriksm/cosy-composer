@@ -3,8 +3,10 @@
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
 use eiriksm\CosyComposer\ProviderInterface;
+use PHPUnit\Framework\MockObject\Builder\InvocationMocker;
+use PHPUnit\Framework\TestCase;
 
-abstract class ProvidersTestBase extends \PHPUnit_Framework_TestCase
+abstract class ProvidersTestBase extends TestCase
 {
 
     protected $authenticateArguments = [];
@@ -29,7 +31,7 @@ abstract class ProvidersTestBase extends \PHPUnit_Framework_TestCase
         $this->runAuthenticate($provider, 'authenticatePrivate');
     }
 
-    protected function configureArguments($key, \PHPUnit_Framework_MockObject_Builder_InvocationMocker $object)
+    protected function configureArguments($key, InvocationMocker $object)
     {
         $arguments = $this->{$key};
         switch (count($arguments)) {

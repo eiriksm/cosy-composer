@@ -8,9 +8,10 @@ use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
 use GuzzleHttp\Psr7\Response;
 use Http\Adapter\Guzzle6\Client;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class CosyComposerUnitTest extends \PHPUnit_Framework_TestCase
+class CosyComposerUnitTest extends TestCase
 {
     use GetCosyTrait;
     use GetExecuterTrait;

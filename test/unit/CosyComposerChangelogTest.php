@@ -4,8 +4,9 @@ namespace eiriksm\CosyComposerTest\unit;
 
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
+use PHPUnit\Framework\TestCase;
 
-class CosyComposerChangelogTest extends \PHPUnit_Framework_TestCase
+class CosyComposerChangelogTest extends TestCase
 {
     use GetExecuterTrait;
     use GetCosyTrait;

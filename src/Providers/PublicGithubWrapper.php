@@ -14,7 +14,7 @@ use Http\Discovery\MessageFactoryDiscovery;
 use Http\Message\Cookie;
 use Http\Message\CookieJar;
 use Http\Message\MessageFactory;
-use violinist\ProjectData\ProjectData;
+use Violinist\ProjectData\ProjectData;
 
 class PublicGithubWrapper extends Github
 {

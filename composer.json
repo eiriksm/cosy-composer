@@ -12,7 +12,7 @@
         "knplabs/github-api": "^2.0",
         "php-http/guzzle6-adapter": "^1.1",
         "violinist-dev/git-log-format": "dev-master",
-        "violinist-dev/violinist-messages": "dev-master",
+        "violinist-dev/violinist-messages": "^1",
         "violinist-dev/slug-from-url": "dev-master",
         "wa72/simplelogger": "^1.0",
         "league/flysystem": "^1.0",

@@ -27,7 +27,7 @@ use SensioLabs\Security\SecurityChecker;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use violinist\ProjectData\ProjectData;
+use Violinist\ProjectData\ProjectData;
 use Violinist\Slug\Slug;
 use Wa72\SimpleLogger\ArrayLogger;
 use function peterpostmann\uri\parse_uri;

@@ -533,6 +533,10 @@ class CosyComposer
             $this->log('Checking for security issues in project.');
             $checker = $this->checkerFactory->getChecker();
             $result = $checker->checkDirectory($this->tmpDir);
+            // Make sure this is an array now.
+            if (!$result) {
+                $result = [];
+            }
             $this->log('Found ' . count($result) . ' security advisories for packges installed.');
             if (count($result)) {
                 $alerts = $result;

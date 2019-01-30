@@ -12,7 +12,7 @@ use eiriksm\CosyComposer\Exceptions\GitPushException;
 use eiriksm\CosyComposer\Exceptions\NotUpdatedException;
 use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
-use eiriksm\GitLogFormat\ChangeLogData;
+use Violinist\GitLogFormat\ChangeLogData;
 use eiriksm\ViolinistMessages\ViolinistMessages;
 use eiriksm\ViolinistMessages\ViolinistUpdate;
 use Github\Client;
@@ -1048,7 +1048,7 @@ class CosyComposer
         $update->setNewVersion($post_update_data->version);
         $update->setSecurityUpdate($security_update);
         if ($changelog) {
-          /** @var \eiriksm\GitLogFormat\ChangeLogData $changelog */
+          /** @var \Violinist\GitLogFormat\ChangeLogData $changelog */
             $update->setChangelog($changelog->getAsMarkdown());
         }
         return $this->messageFactory->getPullRequestBody($update);

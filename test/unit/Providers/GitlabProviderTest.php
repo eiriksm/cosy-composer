@@ -3,6 +3,9 @@
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
 use eiriksm\CosyComposer\Providers\Gitlab;
+use Gitlab\Api\MergeRequests;
+use Gitlab\Api\Projects;
+use Gitlab\Api\Repositories;
 use Gitlab\Client;
 
 class GitlabProviderTest extends ProvidersTestBase
@@ -32,5 +35,28 @@ class GitlabProviderTest extends ProvidersTestBase
     protected function getMockClient()
     {
         return $this->createMock(Client::class);
+    }
+
+    protected function getBranchMethod()
+    {
+        return 'projects';
+    }
+
+    protected function getRepoClassName($context)
+    {
+        if ($context == 'branches') {
+            return Repositories::class;
+        }
+        return Projects::class;
+    }
+
+    protected function getPrClassName()
+    {
+        return MergeRequests::class;
+    }
+
+    protected function getPrApiMethod()
+    {
+        return 'mr';
     }
 }

@@ -162,7 +162,7 @@ abstract class ProvidersTestBase extends TestCase
                 $client_expects = $mock_client->expects($this->exactly(3));
                 $mock_repo = $this->createMock(Repositories::class);
                 $client_expects->method('api')
-                    ->willReturnCallback(function($method) use ($mock_pr, $mock_repo) {
+                    ->willReturnCallback(function ($method) use ($mock_pr, $mock_repo) {
                         if ($method == 'mr') {
                             return $mock_pr;
                         }

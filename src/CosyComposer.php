@@ -1070,6 +1070,9 @@ class CosyComposer
             /** @var \Violinist\GitLogFormat\ChangeLogData $changelog */
             $update->setChangelog($changelog->getAsMarkdown());
         }
+        if ($this->project && $this->project->getCustomPrMessage()) {
+            $update->setCustomMessage($this->project->getCustomPrMessage());
+        }
         return $this->messageFactory->getPullRequestBody($update);
     }
 

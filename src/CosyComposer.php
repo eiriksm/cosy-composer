@@ -327,10 +327,12 @@ class CosyComposer
      */
     public function __construct($slug, Application $app, OutputInterface $output, CommandExecuter $executer)
     {
-        // @todo: Move to create from URL.
-        $this->slug = new Slug();
-        $this->slug->setProvider('github.com');
-        $this->slug->setSlug($slug);
+        if ($slug) {
+            // @todo: Move to create from URL.
+            $this->slug = new Slug();
+            $this->slug->setProvider('github.com');
+            $this->slug->setSlug($slug);
+        }
         $tmpdir = uniqid();
         $this->tmpDir = sprintf('/tmp/%s', $tmpdir);
         $this->messageFactory = new ViolinistMessages();

@@ -616,7 +616,7 @@ class UpdatesTest extends Base
         $mock_executer = $this->createMock(CommandExecuter::class);
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
-                function ($cmd) use (&$called, $dir) {
+                function ($cmd) use ($dir) {
                     if ($cmd == $this->createExpectedCommandForPackage('psr/log')) {
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                     }

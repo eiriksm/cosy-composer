@@ -659,7 +659,6 @@ a custom message
             ->willReturn($mock_provider);
 
         $c->setProviderFactory($mock_provider_factory);
-        $this->assertEquals(false, $called);
         $composer_lock_contents = file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock');
         file_put_contents("$dir/composer.lock", $composer_lock_contents);
         $project = new ProjectData();

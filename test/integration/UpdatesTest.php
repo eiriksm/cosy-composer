@@ -11,6 +11,7 @@ use eiriksm\CosyComposer\Providers\Github;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use Github\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputDefinition;
+use Violinist\ProjectData\ProjectData;
 
 class UpdatesTest extends Base
 {
@@ -598,6 +599,74 @@ class UpdatesTest extends Base
         $this->assertOutputContainsMessage($fake_pr_url, $c);
         $this->assertEquals(Message::PR_URL, $this->findMessage($fake_pr_url, $c)->getType());
         $this->assertEquals(true, $called);
+    }
+
+    public function testEndToEndCustomDescription()
+    {
+        $c = $this->getMockCosy();
+        $dir = '/tmp/' . uniqid();
+        $this->setupDirectory($c, $dir);
+        // Create a mock app, that can respond to things.
+        $definition = $this->getMockDefinition();
+        $mock_app = $this->getMockApp($definition);
+        $c->setApp($mock_app);
+        $mock_output = $this->getMockOutputWithUpdate('psr/log', '1.0.0', '1.0.2');
+        $c->setOutput($mock_output);
+        $this->placeComposerContentsFromFixture('composer-psr-log.json', $dir);
+        $mock_executer = $this->createMock(CommandExecuter::class);
+        $mock_executer->method('executeCommand')
+            ->will($this->returnCallback(
+                function ($cmd) use ($dir) {
+                    if ($cmd == $this->createExpectedCommandForPackage('psr/log')) {
+                        file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
+                    }
+                    return 0;
+                }
+            ));
+        $c->setExecuter($mock_executer);
+        $mock_provider_factory = $this->createMock(ProviderFactory::class);
+        $mock_provider = $this->createMock(Github::class);
+        $fake_pr_url = 'http://example.com/pr';
+        $mock_provider->expects($this->once())
+            ->method('createPullRequest')
+            ->with('a', 'b', [
+                'base' => 'master',
+                'head' => 'psrlog100102',
+                'title' => 'Update psr/log from 1.0.0 to 1.0.2',
+                'body' => 'If you have a decent test suite, and your tests pass, it should be both safe and smart to merge this update.
+
+
+***
+a custom message
+',
+                'assignees' => [],
+            ])
+            ->willReturn([
+                'html_url' => $fake_pr_url,
+            ]);
+        $mock_provider->method('repoIsPrivate')
+            ->willReturn(true);
+        $mock_provider->method('getDefaultBranch')
+            ->willReturn('master');
+        $mock_provider->method('getBranchesFlattened')
+            ->willReturn([]);
+        $default_sha = 123;
+        $mock_provider->method('getDefaultBase')
+            ->willReturn($default_sha);
+        $mock_provider->method('getPrsNamed')
+            ->willReturn([]);
+        $mock_provider_factory->method('createFromHost')
+            ->willReturn($mock_provider);
+
+        $c->setProviderFactory($mock_provider_factory);
+        $composer_lock_contents = file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock');
+        file_put_contents("$dir/composer.lock", $composer_lock_contents);
+        $project = new ProjectData();
+        $project->setCustomPrMessage('a custom message');
+        $c->setProject($project);
+        $c->run();
+        $this->assertOutputContainsMessage($fake_pr_url, $c);
+        $this->assertEquals(Message::PR_URL, $this->findMessage($fake_pr_url, $c)->getType());
     }
 
     public function testEndToEndNotPrivate()

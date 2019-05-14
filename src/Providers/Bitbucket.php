@@ -74,11 +74,19 @@ class Bitbucket implements ProviderInterface
     {
         $repo_users = $this->client->repositories()->users($user);
         $repo_users->setPerPage(1000);
-        $prs = $repo_users->pullRequests($repo);
+        $prs = $repo_users->pullRequests($repo)->list();
         $prs_named = [];
-        foreach ($prs as $pr) {
-            continue;
-            $prs_named[$pr['head']['ref']] = $pr;
+        foreach ($prs["values"] as $pr) {
+            if ($pr["state"] != 'OPEN') {
+                continue;
+            }
+            $prs_named[$pr["source"]["branch"]["name"]] = [
+                'base' => [
+                    'sha' => $pr["destination"]["commit"]["hash"],
+                ],
+                'number' => $pr["id"],
+                'title' => $pr["title"],
+            ];
         }
         return $prs_named;
     }
@@ -92,7 +100,8 @@ class Bitbucket implements ProviderInterface
                 $default_base = $branch["target"]["hash"];
             }
         }
-        return $default_base;
+        // Since the braches only gives us 12 characters, we need to trim the default base to the same.
+        return substr($default_base, 0, 12);
     }
 
     public function createFork($user, $repo, $fork_user)

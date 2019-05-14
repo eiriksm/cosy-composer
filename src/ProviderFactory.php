@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposer;
 
+use eiriksm\CosyComposer\Providers\Bitbucket;
 use eiriksm\CosyComposer\Providers\Github;
 use eiriksm\CosyComposer\Providers\Gitlab;
 use eiriksm\CosyComposer\Providers\SelfHostedGitlab;
@@ -23,6 +24,11 @@ class ProviderFactory
             case 'gitlab.com':
                 $client = new \Gitlab\Client();
                 $provider = new Gitlab($client);
+                break;
+
+            case 'bitbucket.org':
+                $client = new \Bitbucket\Client();
+                $provider = new Bitbucket($client);
                 break;
 
             default:

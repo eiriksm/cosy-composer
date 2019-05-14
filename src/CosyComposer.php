@@ -482,6 +482,10 @@ class CosyComposer
                 $url = sprintf('https://oauth2:%s@gitlab.com/%s', $this->userToken, $this->slug->getSlug());
                 break;
 
+            case 'bitbucket.org':
+                $url = sprintf('https://x-token-auth:%s@bitbucket.org/%s.git', $this->userToken, $this->slug->getSlug());
+                break;
+
             default:
                 $url = sprintf('%s://oauth2:%s@%s:%d/%s', $this->urlArray['scheme'], $this->userToken, $hostname, $this->urlArray['port'], $this->slug->getSlug());
                 break;
@@ -870,8 +874,10 @@ class CosyComposer
                 $this->log('Successfully ran command composer update for package ' . $package_name);
                 // Clean up the composer.lock file if it was not part of the repo.
                 $this->execCommand('git clean -f composer.*');
-                // This might have cleaned out the auth file, so we re-export it.
-                $this->execCommand(sprintf('COMPOSER_ALLOW_SUPERUSER=1 composer config --auth github-oauth.github.com %s', $this->userToken));
+                if ($hostname == 'github.com') {
+                    // This might have cleaned out the auth file, so we re-export it.
+                    $this->execCommand(sprintf('COMPOSER_ALLOW_SUPERUSER=1 composer config --auth github-oauth.github.com %s', $this->userToken));
+                }
                 $command = sprintf(
                     'GIT_AUTHOR_NAME="%s" GIT_AUTHOR_EMAIL="%s" GIT_COMMITTER_NAME="%s" GIT_COMMITTER_EMAIL="%s" git commit %s -m "Update %s"',
                     $this->githubUserName,

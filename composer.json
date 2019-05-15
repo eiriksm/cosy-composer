@@ -10,6 +10,7 @@
     "require": {
         "ext-json": "*",
         "composer/composer": "^1.4",
+        "bitbucket/client": "^1.1",
         "violinist-dev/symfony-cloud-security-checker": "^1",
         "knplabs/github-api": "^2.0",
         "php-http/guzzle6-adapter": "^1.1",

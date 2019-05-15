@@ -1,0 +1,4 @@
+parameters:
+	excludes_analyse:
+		- %rootDir%/../../../src/ProviderFactory.php
+		- %rootDir%/../../../src/Providers/Bitbucket.php

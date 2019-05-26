@@ -566,7 +566,9 @@ class CosyComposer
             if (!$result) {
                 $result = [];
             }
-            $this->log('Found ' . count($result) . ' security advisories for packages installed');
+            $this->log('Found ' . count($result) . ' security advisories for packages installed', 'message', [
+                'result' => $result,
+            ]);
             if (count($result)) {
                 $alerts = $result;
             }

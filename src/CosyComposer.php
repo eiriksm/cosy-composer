@@ -425,6 +425,32 @@ class CosyComposer
         }
     }
 
+    public function handleDrupalContribSa($cdata)
+    {
+        if (!getenv('DRUPAL_CONTRIB_SA_PATH')) {
+            return;
+        }
+        $symfony_dir = sprintf('%s/.symfony/cache/security-advisories/drupal', getenv('HOME'));
+        if (!file_exists($symfony_dir)) {
+            $mkdir = $this->execCommand('mkdir -p %s', $symfony_dir);
+            if ($mkdir) {
+                return;
+            }
+        }
+        $contrib_sa_dir = getenv('DRUPAL_CONTRIB_SA_PATH');
+        foreach ($cdata->repositories as $repository) {
+            if (empty($repository->url)) {
+                continue;
+            }
+            if ($repository->url == 'https://packages.drupal.org/8') {
+                $this->execCommand(sprintf('rsync -aq %s/sa_yaml/8/drupal/* %s/', $contrib_sa_dir, $symfony_dir));
+            }
+            if ($repository->url == 'https://packages.drupal.org/7') {
+                $this->execCommand(sprintf('rsync -aq %s/sa_yaml/7/drupal/* %s/', $contrib_sa_dir, $symfony_dir));
+            }
+        }
+    }
+
     /**
      * @throws \eiriksm\CosyComposer\Exceptions\ChdirException
      * @throws \eiriksm\CosyComposer\Exceptions\GitCloneException
@@ -513,6 +539,7 @@ class CosyComposer
         if (false == $cdata) {
             throw new \InvalidArgumentException('Invalid composer.json file');
         }
+        $this->handleDrupalContribSa($cdata);
         $config = Config::createFromComposerData($cdata);
         $this->handleTimeIntervalSetting($cdata);
         $lock_file = $this->tmpDir . '/composer.lock';

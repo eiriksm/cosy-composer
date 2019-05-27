@@ -633,7 +633,7 @@ class UpdatesTest extends Base
                 'base' => 'master',
                 'head' => 'psrlog100102',
                 'title' => 'Update psr/log from 1.0.0 to 1.0.2',
-                'body' => 'If you have a decent test suite, and your tests pass, it should be both safe and smart to merge this update.
+                'body' => 'If you have a high test coverage index, and your tests for this pull request are passing, it should be both safe and recommended to merge this update.
 
 
 ***
@@ -932,7 +932,7 @@ a custom message
                 'base' => 'master',
                 'head' => 'drupalcore847848',
                 'title' => 'Update drupal/core from 8.4.7 to 8.4.8',
-                'body' => 'If you have a decent test suite, and your tests pass, it should be both safe and smart to merge this update.
+                'body' => 'If you have a high test coverage index, and your tests for this pull request are passing, it should be both safe and recommended to merge this update.
 
 
 ***

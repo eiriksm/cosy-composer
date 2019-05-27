@@ -438,6 +438,9 @@ class CosyComposer
             }
         }
         $contrib_sa_dir = getenv('DRUPAL_CONTRIB_SA_PATH');
+        if (empty($cdata->repositories)) {
+            return;
+        }
         foreach ($cdata->repositories as $repository) {
             if (empty($repository->url)) {
                 continue;

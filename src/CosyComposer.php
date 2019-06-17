@@ -191,25 +191,6 @@ class CosyComposer
     }
 
     /**
-     * @return \Http\Adapter\Guzzle6\Client
-     */
-    public function getHttpClient()
-    {
-        if (!$this->httpClient) {
-            $this->httpClient = new \Http\Adapter\Guzzle6\Client();
-        }
-        return $this->httpClient;
-    }
-
-    /**
-     * @param \Http\Adapter\Guzzle6\Client $httpClient
-     */
-    public function setHttpClient($httpClient)
-    {
-        $this->httpClient = $httpClient;
-    }
-
-    /**
      * @param ProjectData|null $project
      */
     public function setProject($project)
@@ -1052,7 +1033,11 @@ class CosyComposer
             /** @var Message $msg */
             $msg = $message['message'];
             $msg->setContext($message['context']);
-            $msgs[] = $message['message'];
+            if (isset($message['context']['command'])) {
+                $msg = new Message($msg->getMessage(), Message::COMMAND);
+                $msg->setContext($message['context']);
+            }
+            $msgs[] = $msg;
         }
         return $msgs;
     }

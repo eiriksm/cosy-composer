@@ -10,6 +10,7 @@ use GuzzleHttp\Psr7\Response;
 use Http\Adapter\Guzzle6\Client;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Violinist\Slug\Slug;
 
 class CosyComposerUnitTest extends TestCase
 {
@@ -43,6 +44,55 @@ class CosyComposerUnitTest extends TestCase
             ]);
         $c->setExecuter($mock_exec);
         $this->assertEquals('output', $c->getLastStdOut());
+    }
+
+    /**
+     * @dataProvider setUrlValues
+     */
+    public function testSetUrl($url, $user, $repo, $host, $port)
+    {
+        // Use reflection to invoke the protected method we want to test.
+        $class = new \ReflectionClass(CosyComposer::class);
+        $property = $class->getProperty('slug');
+        $url_property = $class->getProperty('urlArray');
+        $property->setAccessible(true);
+        $url_property->setAccessible(true);
+        $mock_cosy = $this->getMockCosy();
+        $mock_cosy->setUrl($url);
+        /** @var Slug $value */
+        $value = $property->getValue($mock_cosy);
+        $this->assertEquals($user, $value->getUserName());
+        $this->assertEquals($repo, $value->getUserRepo());
+        $url_value = $url_property->getValue($mock_cosy);
+        $this->assertEquals($url_value['host'], $host);
+        $this->assertEquals($url_value['port'], $port);
+    }
+
+    public function setUrlValues()
+    {
+        return [
+            [
+                'url' => 'https://github.com/user/repo',
+                'user' => 'user',
+                'repo' => 'repo',
+                'host' => 'github.com',
+                'port' => 443,
+            ],
+            [
+                'url' => 'http://example.com/user/repo',
+                'user' => 'user',
+                'repo' => 'repo',
+                'host' => 'example.com',
+                'port' => 80,
+            ],
+            [
+                'url' => 'https://internal.gitlab.instance:2278/user/repo',
+                'user' => 'user',
+                'repo' => 'repo',
+                'host' => 'internal.gitlab.instance',
+                'port' => 2278,
+            ],
+        ];
     }
 
     /**

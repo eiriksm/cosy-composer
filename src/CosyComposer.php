@@ -1050,7 +1050,11 @@ class CosyComposer
             /** @var Message $msg */
             $msg = $message['message'];
             $msg->setContext($message['context']);
-            $msgs[] = $message['message'];
+            if (isset($message['context']['command'])) {
+                $msg = new Message($msg->getMessage(), Message::COMMAND);
+                $msg->setContext($message['context']);
+            }
+            $msgs[] = $msg;
         }
         return $msgs;
     }

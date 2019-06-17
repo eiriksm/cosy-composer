@@ -464,7 +464,9 @@ class CosyComposer
     {
         // Always start by making sure the .ssh directory exists.
         $directory = sprintf('%s/.ssh', getenv('HOME'));
-        @mkdir($directory, 0700);
+        if (!file_exists($directory)) {
+            @mkdir($directory, 0700);
+        }
         if (!empty($_SERVER['violinist_hostname'])) {
             $this->log(sprintf('Running update check on %s', $_SERVER['violinist_hostname']));
         }

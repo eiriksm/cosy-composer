@@ -93,7 +93,6 @@ class PublicGithubWrapper extends Github
 
     public function createPullRequest($user_name, $user_repo, $params)
     {
-        $http_client = $this->getHttpClient();
         $request = $this->createPullRequestRequest($user_name, $user_repo, $params);
         $jar = new CookieJar();
         $jar->addCookie(new Cookie('XDEBUG_SESSION', 'XDEBUG_ECLIPSE', null, 'violinist.localhost'));
@@ -114,7 +113,6 @@ class PublicGithubWrapper extends Github
 
     public function updatePullRequest($user_name, $user_repo, $id, $params)
     {
-        $http_client = $this->getHttpClient();
         $jar = new CookieJar();
         $jar->addCookie(new Cookie('XDEBUG_SESSION', 'XDEBUG_ECLIPSE', null, 'violinist.localhost'));
         $plugin = new CookiePlugin($jar);

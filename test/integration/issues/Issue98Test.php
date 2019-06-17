@@ -16,8 +16,6 @@ class Issue98Test extends Base
     public function testIssue98()
     {
         $c = $this->getMockCosy();
-        $user_token = 'user-token';
-        $c->setUserToken($user_token);
         $dir = '/tmp/' . uniqid();
         $this->setupDirectory($c, $dir);
         $definition = $this->getMockDefinition();

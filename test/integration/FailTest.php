@@ -28,7 +28,7 @@ class FailTest extends Base
             ->will($this->returnCallback(
                 function ($cmd, $log = true, $timeout = 120) {
 
-                    if (strpos($cmd, 'git clone --depth=1 https://:@github.com/a/b') === 0) {
+                    if (strpos($cmd, 'git clone --depth=1 https://user-token:@github.com/a/b') === 0) {
                         return 42;
                     }
                     return 0;

@@ -27,6 +27,7 @@ trait GetCosyTrait
         }
         $mock_checker = $this->createMock(SecurityChecker::class);
         $c->getCheckerFactory()->setChecker($mock_checker);
+        $c->setUserToken('user-token');
         return $c;
     }
 }

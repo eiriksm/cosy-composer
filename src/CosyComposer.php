@@ -191,25 +191,6 @@ class CosyComposer
     }
 
     /**
-     * @return \Http\Adapter\Guzzle6\Client
-     */
-    public function getHttpClient()
-    {
-        if (!$this->httpClient) {
-            $this->httpClient = new \Http\Adapter\Guzzle6\Client();
-        }
-        return $this->httpClient;
-    }
-
-    /**
-     * @param \Http\Adapter\Guzzle6\Client $httpClient
-     */
-    public function setHttpClient($httpClient)
-    {
-        $this->httpClient = $httpClient;
-    }
-
-    /**
      * @param ProjectData|null $project
      */
     public function setProject($project)

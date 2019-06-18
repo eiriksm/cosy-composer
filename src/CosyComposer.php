@@ -4,6 +4,7 @@ namespace eiriksm\CosyComposer;
 
 use Composer\Console\Application;
 use Composer\Semver\Semver;
+use eiriksm\ArrayOutput\ArrayOutput;
 use eiriksm\CosyComposer\Exceptions\CanNotUpdateException;
 use eiriksm\CosyComposer\Exceptions\ChdirException;
 use eiriksm\CosyComposer\Exceptions\ComposerInstallException;
@@ -105,7 +106,7 @@ class CosyComposer
     /**
      * The output we use for updates?
      *
-     * @var OutputInterface
+     * @var ArrayOutput
      */
     protected $output;
 
@@ -303,8 +304,6 @@ class CosyComposer
 
     /**
      * CosyComposer constructor.
-     * @param string $token
-     * @param string $slug
      */
     public function __construct($slug, Application $app, OutputInterface $output, CommandExecuter $executer)
     {
@@ -916,8 +915,10 @@ class CosyComposer
                     }
                 } else {
                     $this->preparePrClient();
-                    $this->client->forceUpdateBranch($branch_name, $default_base);
-                    $this->client->commitNewFiles($this->tmpDir, $default_base, $branch_name, sprintf("Update %s", $package_name), $lock_file_contents);
+                    /** @var PublicGithubWrapper $this_client */
+                    $this_client = $this->client;
+                    $this_client->forceUpdateBranch($branch_name, $default_base);
+                    $this_client->commitNewFiles($this->tmpDir, $default_base, $branch_name, sprintf("Update %s", $package_name), $lock_file_contents);
                 }
                 $this->log('Trying to retrieve changelog for ' . $package_name);
                 $changelog = null;
@@ -1029,7 +1030,12 @@ class CosyComposer
     public function getOutput()
     {
         $msgs = [];
-        foreach ($this->logger->get() as $message) {
+        if (!$this->logger instanceof ArrayLogger) {
+            return $msgs;
+        }
+        /** @var ArrayLogger $my_logger */
+        $my_logger = $this->logger;
+        foreach ($my_logger->get() as $message) {
             /** @var Message $msg */
             $msg = $message['message'];
             $msg->setContext($message['context']);
@@ -1065,7 +1071,7 @@ class CosyComposer
     /**
      * Creates a title for a PR.
      *
-     * @param object $item
+     * @param \stdClass $item
      *   The item in question.
      *
      * @return string
@@ -1082,9 +1088,7 @@ class CosyComposer
     }
 
   /**
-   * @param $item
-   *
-   * @return string
+   * Helper to create body.
    */
     public function createBody($item, $post_update_data, $changelog = null, $security_update = false)
     {
@@ -1104,9 +1108,7 @@ class CosyComposer
     }
 
     /**
-     * @param $item
-     *
-     * @return mixed
+     * Helper to create branch name.
      */
     protected function createBranchName($item, $one_per_package = false)
     {
@@ -1193,7 +1195,7 @@ class CosyComposer
     }
 
     /**
-     * @param $tmpDir
+     * @param string $tmpDir
      */
     public function setTmpDir($tmpDir)
     {
@@ -1201,12 +1203,7 @@ class CosyComposer
     }
 
     /**
-     * @param $package_name
-     * @param $lockdata
-     * @param $version_from
-     * @param $version_to
-     * @return ChangeLogData
-     * @throws \Exception
+     * Helper to retrieve changelog.
      */
     public function retrieveChangeLog($package_name, $lockdata, $version_from, $version_to)
     {

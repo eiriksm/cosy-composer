@@ -37,7 +37,7 @@
         }
     },
     "scripts": {
-        "test": "@composer lint && phpunit && phpstan analyse src test --level=1 -c phpstan.neon",
+        "test": "@composer lint && phpunit && phpstan analyse src test --level=2 -c phpstan.neon",
         "lint": "phpcs -p -n"
     }
 }

@@ -21,9 +21,11 @@ interface ProviderInterface
     public function createFork($user, $repo, $fork_user);
 
     /**
-     * @param $user_name
-     * @param $user_repo
-     * @param $params
+     * @param string $user_name
+     *   User name.
+     * @param string $user_repo
+     *   User repo.
+     * @param array $params
      *   An array that consists of the following:
      *   - base (a base branch).
      *   - head (I think the branch name to pull in?)

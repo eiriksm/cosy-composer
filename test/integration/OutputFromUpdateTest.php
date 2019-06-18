@@ -13,14 +13,9 @@ class OutputFromUpdateTest extends Base
      */
     public function testUpdateOutput()
     {
-        $c = $this->getMockCosy();
-        $dir = '/tmp/' . uniqid();
-        $this->setupDirectory($c, $dir);
-        $definition = $this->getMockDefinition();
-        $mock_app = $this->getMockApp($definition);
-        $c->setApp($mock_app);
-        $mock_output = $this->getMockOutputWithUpdate('eirik/private-pack', '1.0.0', '1.0.2');
-        $c->setOutput($mock_output);
+        $c = $this->cosy;
+        $dir = $this->dir;
+        $this->getMockOutputWithUpdate('eirik/private-pack', '1.0.0', '1.0.2');
         $this->placeComposerContentsFromFixture('composer-json-private.json', $dir);
         $mock_executer = $this->createMock(CommandExecuter::class);
         $mock_executer->method('executeCommand')

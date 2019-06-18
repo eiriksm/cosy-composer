@@ -15,6 +15,28 @@ use Symfony\Component\Console\Input\InputDefinition;
 
 abstract class Base extends TestCase
 {
+    /**
+     * @var CosyComposer
+     */
+    protected $cosy;
+
+    /**
+     * @var string
+     */
+    protected $dir;
+
+    public function setUp()
+    {
+        $c = $this->getMockCosy();
+        $dir = '/tmp/' . uniqid();
+        $this->setupDirectory($c, $dir);
+        $definition = $this->getMockDefinition();
+        $mock_app = $this->getMockApp($definition);
+        $c->setApp($mock_app);
+        $this->dir = $dir;
+        $this->cosy = $c;
+    }
+
     use GetCosyTrait;
     use GetExecuterTrait;
 
@@ -125,6 +147,9 @@ abstract class Base extends TestCase
                     $this->createUpdateJsonFromData($package, $version_from, $version_to),
                 ]
             ]);
+        if ($this->cosy) {
+            $this->cosy->setOutput($mock_output);
+        }
         return $mock_output;
     }
 }

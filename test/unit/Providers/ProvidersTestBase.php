@@ -44,6 +44,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         $expects = $mock_repo_api->expects($this->once())
             ->method('show');
         switch (static::class) {
+            case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:
                 $expects = $expects->with("$user/$repo");
                 break;
@@ -73,6 +74,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         $expects = $mock_repo_api->expects($this->once())
             ->method('branches');
         switch (static::class) {
+            case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:
                 $expects = $expects->with("$user/$repo");
                 break;
@@ -96,6 +98,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
             ->willReturn($mock_repo_api);
         $mock_response = $this->createMock(ResponseInterface::class);
         switch (static::class) {
+            case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:
                 $mock_history = $this->createMock(History::class);
                 $mock_history->expects($this->once())
@@ -124,6 +127,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         $expects = $mock_pr->expects($this->once())
             ->method('all');
         switch (static::class) {
+            case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:
                 $expects = $expects->with("$user/$repo");
                 break;
@@ -158,6 +162,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         /** @var MockObject $mock_client */
         $mock_client = $this->getMockClient();
         switch (static::class) {
+            case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:
                 $client_expects = $mock_client->expects($this->exactly(3));
                 $mock_repo = $this->createMock(Repositories::class);
@@ -179,6 +184,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         }
         $mock_response = $this->createMock(ResponseInterface::class);
         switch (static::class) {
+            case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:
                 $mock_history = $this->createMock(History::class);
                 $mock_history->expects($this->once())

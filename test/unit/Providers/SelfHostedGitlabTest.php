@@ -16,5 +16,4 @@ class SelfHostedGitlabTest extends GitlabProviderTest
         $mock_url = parse_url('http://example.com:80/user/repo');
         return new SelfHostedGitlab($client, $mock_url);
     }
-
 }

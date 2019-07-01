@@ -670,6 +670,12 @@ class CosyComposer
         $this->isPrivate = $this->privateClient->repoIsPrivate($user_name, $user_repo);
         // Get the default branch of the repo.
         $default_branch = $this->privateClient->getDefaultBranch($user_name, $user_repo);
+        // We also allow the project to override this for violinist.
+        if ($config->getDefaultBranch()) {
+            // @todo: Would be better to make sure this can actually be set, based on the branches availble. Either way,
+            // if a person configures this wrong, several parts will fail spectacularily anyway.
+            $default_branch = $config->getDefaultBranch();
+        }
         // Try to see if we have already dealt with this (i.e already have a branch for all the updates.
         $branch_user = $this->forkUser;
         if ($this->isPrivate) {

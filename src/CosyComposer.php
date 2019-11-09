@@ -918,6 +918,19 @@ class CosyComposer
                     $version_to = $post_update_data->source->reference;
                 }
                 // Now, see if it the update was actually to the version we are expecting.
+                // If we are updating to another dev version, composer show will tell us something like:
+                // dev-master 15eb463
+                // while the post update data version will still say:
+                // dev-master.
+                // So to compare these, we compare the hashes, if the version latest we are updating to
+                // matches the dev regex.
+                if (preg_match('/dev-\S* /', $item->latest)) {
+                    $sha = preg_replace('/dev-\S* /', '', $item->latest);
+                    // Now if the version_to matches this, we have updated to the expected version.
+                    if (strpos($version_to, $sha) === 0) {
+                        $post_update_data->version = $item->latest;
+                    }
+                }
                 if ($post_update_data->version != $item->latest) {
                     $new_branch_name = $this->createBranchNameFromVersions(
                         $item->name,

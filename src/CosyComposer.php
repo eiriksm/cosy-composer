@@ -779,7 +779,7 @@ class CosyComposer
         $update_type = self::UPDATE_INDIVIDUAL;
         switch ($update_type) {
             case self::UPDATE_INDIVIDUAL:
-                $this->handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $user_name, $user_repo);
+                $this->handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $user_name, $user_repo);
                 break;
 
             case self::UPDATE_ALL:
@@ -818,7 +818,7 @@ class CosyComposer
         }
     }
 
-    protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $user_name, $user_repo)
+    protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $user_name, $user_repo)
     {
         foreach ($data as $item) {
             $security_update = false;

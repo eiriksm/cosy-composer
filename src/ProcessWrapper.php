@@ -42,12 +42,12 @@ class ProcessWrapper extends Process
     public function getErrorOutput()
     {
         $output = $this->executor->getLastOutput();
-        return $output['stderr'];
+        return !empty($output['stderr']) ? $output['stderr'] : '';
     }
 
     public function getOutput()
     {
         $output = $this->executor->getLastOutput();
-        return $output['stdout'];
+        return !empty($output['stdout']) ? $output['stdout'] : '';
     }
 }

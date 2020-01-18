@@ -36,6 +36,13 @@
             "eiriksm\\CosyComposerTest\\": "test"
         }
     },
+    "extra": {
+        "patches": {
+            "phpunit/phpunit-mock-objects": {
+                "Fix things on php 7.4": "./patches/mock-obj.patch"
+            }
+        }
+    },
     "scripts": {
         "test": "@composer lint && phpunit && phpstan analyse src test --level=2 -c phpstan.neon",
         "lint": "phpcs -p -n"

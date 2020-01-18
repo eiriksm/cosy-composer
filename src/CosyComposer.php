@@ -283,7 +283,7 @@ class CosyComposer
     public function getLastStdErr()
     {
         $output = $this->executer->getLastOutput();
-        return $output['stderr'];
+        return !empty($output['stderr']) ? $output['stderr'] : '';
     }
 
     /**
@@ -292,7 +292,7 @@ class CosyComposer
     public function getLastStdOut()
     {
         $output = $this->executer->getLastOutput();
-        return $output['stdout'];
+        return !empty($output['stdout']) ? $output['stdout'] : '';
     }
 
     /**
@@ -683,8 +683,8 @@ class CosyComposer
         $default_branch = $this->privateClient->getDefaultBranch($user_name, $user_repo);
         // We also allow the project to override this for violinist.
         if ($config->getDefaultBranch()) {
-            // @todo: Would be better to make sure this can actually be set, based on the branches availble. Either way,
-            // if a person configures this wrong, several parts will fail spectacularily anyway.
+            // @todo: Would be better to make sure this can actually be set, based on the branches available. Either
+            // way, if a person configures this wrong, several parts will fail spectacularily anyway.
             $default_branch = $config->getDefaultBranch();
         }
         // Try to see if we have already dealt with this (i.e already have a branch for all the updates.
@@ -1232,7 +1232,9 @@ class CosyComposer
         }
 
         $command_output = $this->executer->getLastOutput();
-        $this->log($command_output['stderr'], Message::COMMAND);
+        if (!empty($command_output['stderr'])) {
+            $this->log($command_output['stderr'], Message::COMMAND);
+        }
         $this->log('composer install completed successfully');
     }
 

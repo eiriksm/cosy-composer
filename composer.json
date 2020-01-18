@@ -40,7 +40,7 @@
     "extra": {
         "patches": {
             "phpunit/phpunit-mock-objects": {
-                "Fix things on php 7.4": "../phpunit-mock-objects/test.patch"
+                "Fix things on php 7.4": "./patches/mock-obj.patch"
             }
         }
     },

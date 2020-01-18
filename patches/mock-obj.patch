@@ -1,0 +1,22 @@
+diff --git a/src/Generator.php b/src/Generator.php
+index 28a05b1..5f8399f 100644
+--- a/src/Generator.php
++++ b/src/Generator.php
+@@ -916,7 +916,7 @@ private function generateMockedMethodDefinitionFromExisting(ReflectionMethod $me
+         }
+ 
+         if ($method->hasReturnType()) {
+-            $returnType = (string) $method->getReturnType();
++            $returnType = $method->getReturnType()->getName();
+         } else {
+             $returnType = '';
+         }
+@@ -1087,7 +1087,7 @@ private function getMethodParameters(ReflectionMethod $method, $forCall = false)
+                 }
+ 
+                 if ($parameter->hasType() && (string) $parameter->getType() !== 'self') {
+-                    $typeDeclaration = (string) $parameter->getType() . ' ';
++                    $typeDeclaration = $parameter->getType()->getName() . ' ';
+                 } elseif ($parameter->isArray()) {
+                     $typeDeclaration = 'array ';
+                 } elseif ($parameter->isCallable()) {

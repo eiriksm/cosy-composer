@@ -8,6 +8,7 @@ php:
 install:
   - composer install --no-interaction
 script:
+  - if [ $(phpenv version-name) != "7.0" ]; composer require --dev cweagans/composer-patches; fi
   - composer test
 after_success:
   - travis_retry php vendor/bin/php-coveralls -v

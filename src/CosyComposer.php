@@ -128,6 +128,11 @@ class CosyComposer
     /**
      * @var string
      */
+    protected $compserJsonDir;
+
+    /**
+     * @var string
+     */
     private $cacheDir = '/tmp';
 
     /**
@@ -522,10 +527,15 @@ class CosyComposer
             throw new GitCloneException('Problem with the execCommand git clone. Exit code was ' . $clone_result);
         }
         $this->log('Repository cloned');
-        if (!$this->chdir($this->tmpDir)) {
+        $composer_json_dir = $this->tmpDir;
+        if ($this->project && $this->project->getComposerJsonDir()) {
+            $composer_json_dir = sprintf('%s/%s', $this->tmpDir, $this->project->getComposerJsonDir());
+        }
+        $this->compserJsonDir = $composer_json_dir;
+        if (!$this->chdir($this->compserJsonDir)) {
             throw new ChdirException('Problem with changing dir to the clone dir.');
         }
-        $local_adapter = new Local($this->tmpDir);
+        $local_adapter = new Local($this->compserJsonDir);
         $this->composerGetter = new ComposerFileGetter($local_adapter);
         if (!$this->composerGetter->hasComposerFile()) {
             throw new \InvalidArgumentException('No composer.json file found.');
@@ -537,7 +547,7 @@ class CosyComposer
         $this->handleDrupalContribSa($cdata);
         $config = Config::createFromComposerData($cdata);
         $this->handleTimeIntervalSetting($cdata);
-        $lock_file = $this->tmpDir . '/composer.lock';
+        $lock_file = $this->compserJsonDir . '/composer.lock';
         $lock_file_contents = false;
         $alerts = [];
         if (@file_exists($lock_file)) {
@@ -557,7 +567,7 @@ class CosyComposer
         try {
             $this->log('Checking for security issues in project.');
             $checker = $this->checkerFactory->getChecker();
-            $result = $checker->checkDirectory($this->tmpDir);
+            $result = $checker->checkDirectory($this->compserJsonDir);
             // Make sure this is an array now.
             if (!$result) {
                 $result = [];
@@ -637,7 +647,7 @@ class CosyComposer
         // Remove dev dependencies, if indicated.
         if (!$config->shouldUpdateDevDependencies()) {
             foreach ($data as $delta => $item) {
-                $cname = self::getComposerJsonName($cdata, $item->name, $this->tmpDir);
+                $cname = self::getComposerJsonName($cdata, $item->name, $this->compserJsonDir);
                 if (isset($cdata->{'require-dev'}->{$cname})) {
                     unset($data[$delta]);
                 }
@@ -737,7 +747,7 @@ class CosyComposer
                             'version' => $item->latest,
                         ];
                         $security_update = false;
-                        $package_name_in_composer_json = self::getComposerJsonName($cdata, $item->name, $this->tmpDir);
+                        $package_name_in_composer_json = self::getComposerJsonName($cdata, $item->name, $this->compserJsonDir);
                         if (isset($alerts[$package_name_in_composer_json])) {
                             $security_update = true;
                         }
@@ -775,7 +785,7 @@ class CosyComposer
             $this->client->createFork($user_name, $user_repo, $this->forkUser);
         }
         // Now read the lockfile.
-        $lockdata = json_decode(file_get_contents($this->tmpDir . '/composer.lock'));
+        $lockdata = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
         $update_type = self::UPDATE_INDIVIDUAL;
         switch ($update_type) {
             case self::UPDATE_INDIVIDUAL:
@@ -828,7 +838,7 @@ class CosyComposer
                 $version_from = $item->version;
                 $version_to = $item->latest;
                 // See where this package is.
-                $package_name_in_composer_json = self::getComposerJsonName($cdata, $package_name, $this->tmpDir);
+                $package_name_in_composer_json = self::getComposerJsonName($cdata, $package_name, $this->compserJsonDir);
                 if (isset($alerts[$package_name_in_composer_json])) {
                     $security_update = true;
                 }

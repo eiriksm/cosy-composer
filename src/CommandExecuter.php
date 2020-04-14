@@ -41,7 +41,7 @@ class CommandExecuter
             $this->logger->log('info', new Message('Creating command ' . $command, Message::COMMAND));
         }
         $env = $this->getEnv() + $env + [
-            'PATH' => getenv('PATH') . ':' . __DIR__ . '/../../../../vendor/bin'
+            'PATH' => __DIR__ . '/../../../../vendor/bin' . ':' . getenv('PATH'),
         ];
         $process = $this->processFactory->getProcess($command, $this->getCwd(), $env);
         $process->setTimeout($timeout);

@@ -21,19 +21,31 @@ class CommandExecuter
 
     protected $output = [];
 
+    /**
+     * @var array
+     */
+    protected $env = [
+        'COMPOSER_DISCARD_CHANGES' => 'true',
+        'COMPOSER_ALLOW_SUPERUSER' => 'true',
+    ];
+
     public function __construct(LoggerInterface $logger, ProcessFactory $factory)
     {
         $this->logger = $logger;
         $this->processFactory = $factory;
     }
 
-    public function executeCommand($command, $log = true, $timeout = 120)
+    public function executeCommand($command, $log = true, $timeout = 120, array $env = [])
     {
         if ($log) {
             $this->logger->log('info', new Message('Creating command ' . $command, Message::COMMAND));
         }
-        $process = $this->processFactory->getProcess($command, $this->getCwd(), $this->getEnv());
+        $env = $this->getEnv() + $env + [
+            'PATH' => getenv('PATH') . ':' . __DIR__ . '/../../../../vendor/bin'
+        ];
+        $process = $this->processFactory->getProcess($command, $this->getCwd(), $env);
         $process->setTimeout($timeout);
+        $process->inheritEnvironmentVariables(true);
         $process->run();
         $this->output[] = [
             'stdout' => $process->getOutput(),
@@ -48,12 +60,12 @@ class CommandExecuter
         return $this->output[$last_index];
     }
 
+    /**
+     * @return array
+     */
     protected function getEnv()
     {
-        return [
-            'COMPOSER_DISCARD_CHANGES' => 'true',
-            'COMPOSER_ALLOW_SUPERUSER' => 'true',
-        ];
+        return $this->env;
     }
 
     /**

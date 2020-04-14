@@ -495,7 +495,7 @@ class CosyComposer
         switch ($hostname) {
             case 'github.com':
                 $this->execCommand(
-                    sprintf('COMPOSER_ALLOW_SUPERUSER=1 composer config --auth github-oauth.github.com %s', $this->userToken),
+                    sprintf('composer config --auth github-oauth.github.com %s', $this->userToken),
                     false
                 );
                 $url = sprintf('https://%s:%s@github.com/%s', $this->userToken, $this->githubPass, $this->slug->getSlug());
@@ -504,7 +504,7 @@ class CosyComposer
             case 'gitlab.com':
                 // @todo: Not sure what this is on gitlab yet.
                 $this->execCommand(
-                    sprintf('COMPOSER_ALLOW_SUPERUSER=1 composer config --auth github-oauth.github.com %s', $this->userToken),
+                    sprintf('composer config --auth github-oauth.github.com %s', $this->userToken),
                     false
                 );
                 $url = sprintf('https://oauth2:%s@gitlab.com/%s', $this->userToken, $this->slug->getSlug());
@@ -977,7 +977,7 @@ class CosyComposer
                 $this->commitFiles($package_name);
                 if ($hostname == 'github.com') {
                     // This might have cleaned out the auth file, so we re-export it.
-                    $this->execCommand(sprintf('COMPOSER_ALLOW_SUPERUSER=1 composer config --auth github-oauth.github.com %s', $this->userToken));
+                    $this->execCommand(sprintf('composer config --auth github-oauth.github.com %s', $this->userToken));
                 }
                 $origin = 'fork';
                 if ($this->isPrivate) {
@@ -1049,7 +1049,7 @@ class CosyComposer
                 // Not updated because of the composer command, not the
                 // restriction itself.
                 $command = sprintf('composer why-not %s:%s', $item->name, $item->latest);
-                $this->execCommand(sprintf('COMPOSER_ALLOW_SUPERUSER=1 %s', $command), false);
+                $this->execCommand(sprintf('%s', $command), false);
                 $this->log($this->getLastStdErr(), Message::COMMAND, [
                     'command' => $command,
                     'package' => $item->name,
@@ -1146,7 +1146,7 @@ class CosyComposer
     private function cleanUp()
     {
         // Run composer install again, so we can get rid of newly installed updates for next run.
-        $this->execCommand('COMPOSER_DISCARD_CHANGES=true COMPOSER_ALLOW_SUPERUSER=1 composer install --no-ansi -n', false, 1200);
+        $this->execCommand('composer install --no-ansi -n', false, 1200);
         $this->chdir('/tmp');
         $this->log('Cleaning up after update check.');
         $this->execCommand('rm -rf ' . $this->tmpDir, false, 300);
@@ -1240,7 +1240,7 @@ class CosyComposer
     {
         // @todo: Should probably use composer install command programatically.
         $this->log('Running composer install');
-        if ($code = $this->execCommand('COMPOSER_DISCARD_CHANGES=true COMPOSER_ALLOW_SUPERUSER=1 composer install --no-ansi -n', false, 1200)) {
+        if ($code = $this->execCommand('composer install --no-ansi -n', false, 1200)) {
             // Other status code than 0.
             $this->log($this->getLastStdOut(), Message::COMMAND);
             $this->log($this->getLastStdErr());
@@ -1254,9 +1254,14 @@ class CosyComposer
         $this->log('composer install completed successfully');
     }
 
-  /**
-   * Changes to a different directory.
-   */
+    private function getComposerPath()
+    {
+        return __DIR__ . '/../../../bin/composer';
+    }
+
+   /**
+    * Changes to a different directory.
+    */
     private function chdir($dir)
     {
         if (!file_exists($dir)) {

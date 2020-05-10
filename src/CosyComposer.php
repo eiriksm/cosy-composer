@@ -473,7 +473,9 @@ class CosyComposer
         // Always start by making sure the .ssh directory exists.
         $directory = sprintf('%s/.ssh', getenv('HOME'));
         if (!file_exists($directory)) {
-            @mkdir($directory, 0700);
+            if (!@mkdir($directory, 0700) && !is_dir($directory)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $directory));
+            }
         }
         if (!empty($_SERVER['violinist_hostname'])) {
             $this->log(sprintf('Running update check on %s', $_SERVER['violinist_hostname']));
@@ -541,6 +543,15 @@ class CosyComposer
         }
         $this->runAuthExport($hostname);
         $local_adapter = new Local($this->compserJsonDir);
+        if (!empty($_SERVER['config_branch'])) {
+            $config_branch = $_SERVER['config_branch'];
+            $this->log('Changing to config branch: ' . $config_branch);
+            $tmpdir = sprintf('/tmp/%s', uniqid('', true));
+            $clone_result = $this->execCommand('git clone --depth=1 ' . $url . ' ' . $tmpdir . ' -b ' . $config_branch, false, 120);
+            if (!$clone_result) {
+                $local_adapter = new Local($tmpdir);
+            }
+        }
         $this->composerGetter = new ComposerFileGetter($local_adapter);
         if (!$this->composerGetter->hasComposerFile()) {
             throw new \InvalidArgumentException('No composer.json file found.');
@@ -699,7 +710,7 @@ class CosyComposer
         // We also allow the project to override this for violinist.
         if ($config->getDefaultBranch()) {
             // @todo: Would be better to make sure this can actually be set, based on the branches available. Either
-            // way, if a person configures this wrong, several parts will fail spectacularily anyway.
+            // way, if a person configures this wrong, several parts will fail spectacularly anyway.
             $default_branch = $config->getDefaultBranch();
         }
         // Try to see if we have already dealt with this (i.e already have a branch for all the updates.
@@ -904,7 +915,7 @@ class CosyComposer
                 $should_update_beyond = false;
                 // See if the new version seems to satisfy the constraint. Unless the constraint is dev related somehow.
                 try {
-                    if (strpos((string)$req_item, 'dev') === false && !Semver::satisfies($version_to, (string)$req_item)) {
+                    if (strpos((string) $req_item, 'dev') === false && !Semver::satisfies($version_to, (string)$req_item)) {
                         // Well, unless we have actually disallowed this through config.
                         // @todo: Move to somewhere more central (and certainly outside a loop), and probably together
                         // with other config.

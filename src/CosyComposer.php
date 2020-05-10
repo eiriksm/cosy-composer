@@ -890,6 +890,7 @@ class CosyComposer
 
     protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $user_name, $user_repo)
     {
+        $config = Config::createFromComposerData($cdata);
         foreach ($data as $item) {
             $security_update = false;
             $package_name = $item->name;
@@ -973,7 +974,6 @@ class CosyComposer
                 $cosy_factory_wrapper->setExecutor($this->executer);
                 $cosy_logger->setLogger($this->getLogger());
                 // See if this package has any bundled updates.
-                $config = Config::createFromComposerData($cdata);
                 $bundled_packages = $config->getBundledPackagesForPackage($package_name);
                 if (!empty($bundled_packages)) {
                     $updater->setBundledPackages($bundled_packages);
@@ -1156,7 +1156,7 @@ class CosyComposer
                 $this->execCommand('rm composer.lock');
             }
             try {
-                $this->doComposerInstall();
+                $this->doComposerInstall($config);
             } catch (\Throwable $e) {
                 $this->log('Rolling back state on the default branch was not successful. Subsequent updates may be affected');
             }

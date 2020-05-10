@@ -191,6 +191,19 @@ class CosyComposer
     private $privateClient;
 
     /**
+     * @var array
+     */
+    private $tokens = [];
+
+    /**
+     * @param array $tokens
+     */
+    public function setTokens(array $tokens)
+    {
+        $this->tokens = $tokens;
+    }
+
+    /**
      * @return SecurityCheckerFactory
      */
     public function getCheckerFactory()
@@ -497,19 +510,10 @@ class CosyComposer
         }
         switch ($hostname) {
             case 'github.com':
-                $this->execCommand(
-                    sprintf('composer config --auth github-oauth.github.com %s', $this->userToken),
-                    false
-                );
                 $url = sprintf('https://%s:%s@github.com/%s', $this->userToken, $this->githubPass, $this->slug->getSlug());
                 break;
 
             case 'gitlab.com':
-                // @todo: Not sure what this is on gitlab yet.
-                $this->execCommand(
-                    sprintf('composer config --auth github-oauth.github.com %s', $this->userToken),
-                    false
-                );
                 $url = sprintf('https://oauth2:%s@gitlab.com/%s', $this->userToken, $this->slug->getSlug());
                 break;
 
@@ -538,6 +542,7 @@ class CosyComposer
         if (!$this->chdir($this->compserJsonDir)) {
             throw new ChdirException('Problem with changing dir to the clone dir.');
         }
+        $this->runAuthExport($hostname);
         $local_adapter = new Local($this->compserJsonDir);
         $this->composerGetter = new ComposerFileGetter($local_adapter);
         if (!$this->composerGetter->hasComposerFile()) {
@@ -831,6 +836,50 @@ class CosyComposer
         }
     }
 
+    protected function runAuthExportToken($hostname, $token)
+    {
+        switch ($hostname) {
+            case 'github.com':
+                $this->execCommand(
+                    sprintf('composer config --auth github-oauth.github.com %s', $token),
+                    false
+                );
+                break;
+
+            case 'gitlab.com':
+                $this->execCommand(
+                    sprintf('composer config --auth gitlab-oauth.gitlab.com %s', $token),
+                    false
+                );
+                break;
+
+            case 'bitbucket.org':
+                $this->execCommand(
+                    sprintf('composer config --auth http-basic.bitbucket.org x-token-auth %s', $token),
+                    false
+                );
+                break;
+
+            default:
+                $this->execCommand(
+                    sprintf('composer config --auth gitlab-oauth.%s %s', $token, $hostname),
+                    false
+                );
+                break;
+        }
+    }
+
+    protected function runAuthExport($hostname)
+    {
+        // If we have multiple auth tokens, export them all.
+        if (!empty($this->tokens)) {
+            foreach ($this->tokens as $token_hostname => $token) {
+                $this->runAuthExportToken($token_hostname, $token);
+            }
+        }
+        $this->runAuthExportToken($hostname, $this->userToken);
+    }
+
     protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $user_name, $user_repo)
     {
         foreach ($data as $item) {
@@ -978,10 +1027,7 @@ class CosyComposer
                 }
                 $this->log('Successfully ran command composer update for package ' . $package_name);
                 $this->commitFiles($package_name);
-                if ($hostname == 'github.com') {
-                    // This might have cleaned out the auth file, so we re-export it.
-                    $this->execCommand(sprintf('composer config --auth github-oauth.github.com %s', $this->userToken));
-                }
+                $this->runAuthExport($hostname);
                 $origin = 'fork';
                 if ($this->isPrivate) {
                     $origin = 'origin';
@@ -1241,7 +1287,7 @@ class CosyComposer
    */
     protected function doComposerInstall()
     {
-        // @todo: Should probably use composer install command programatically.
+        // @todo: Should probably use composer install command programmatically.
         $this->log('Running composer install');
         if ($code = $this->execCommand('composer install --no-ansi -n', false, 1200)) {
             // Other status code than 0.

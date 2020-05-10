@@ -578,7 +578,7 @@ class CosyComposer
         $d->setOptions($opts);
         $app->setDefinition($d);
         $app->setAutoExit(false);
-        $this->doComposerInstall();
+        $this->doComposerInstall($config);
         // And do a quick security check in there as well.
         try {
             $this->log('Checking for security issues in project.');
@@ -982,6 +982,7 @@ class CosyComposer
                 $updater->setProcessFactory($cosy_factory_wrapper);
                 $updater->setWithUpdate($update_with_deps);
                 $updater->setConstraint($constraint);
+                $updater->setRunScripts($config->shouldRunScripts());
                 if (!$lock_file_contents || ($should_update_beyond && $can_update_beyond)) {
                     $updater->executeRequire($version_to);
                 } else {
@@ -1293,11 +1294,15 @@ class CosyComposer
    *
    * @throws \eiriksm\CosyComposer\Exceptions\ComposerInstallException
    */
-    protected function doComposerInstall()
+    protected function doComposerInstall(Config $config)
     {
         // @todo: Should probably use composer install command programmatically.
         $this->log('Running composer install');
-        if ($code = $this->execCommand('COMPOSER_DISCARD_CHANGES=true COMPOSER_ALLOW_SUPERUSER=1 composer install --no-ansi -n', false, 1200)) {
+        $run_scipts_suffix = '';
+        if (!$config->shouldRunScripts()) {
+            $run_scipts_suffix = ' --no-scripts';
+        }
+        if ($code = $this->execCommand('COMPOSER_DISCARD_CHANGES=true COMPOSER_ALLOW_SUPERUSER=1 composer install --no-ansi -n' . $run_scipts_suffix, false, 1200)) {
             // Other status code than 0.
             $this->log($this->getLastStdOut(), Message::COMMAND);
             $this->log($this->getLastStdErr());

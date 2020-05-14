@@ -119,24 +119,21 @@ class Bitbucket implements ProviderInterface
                 ]
             ],
             'destination' => [
-                'bnanch' => [
+                'branch' => [
                     'name' => $params["base"],
                 ],
             ],
             'description' => $params['body'],
-            // @todo: Assignees.
         ];
 
-        $data = $this->client->repositories()->users($user_name)->pullRequests($user_repo)->create($bitbucket_params);
         if (!empty($params['assignees'])) {
-            // Now try to update it with assignees.
-            try {
-                // @todo
-            } catch (\Exception $e) {
-                // Too bad.
-                //  @todo: Should be possible to inject a logger and log this.
+            foreach ($params['assignees'] as $assignee) {
+                $bitbucket_params['reviewers'][] = [
+                    'username' => $assignee,
+                ];
             }
         }
+        $data = $this->client->repositories()->users($user_name)->pullRequests($user_repo)->create($bitbucket_params);
         if (!empty($data["links"]["html"]["href"])) {
             $data['html_url'] = $data["links"]["html"]["href"];
         }

@@ -2,29 +2,28 @@
 
 namespace eiriksm\CosyComposer;
 
+use Violinist\Slug\Slug;
+
 interface ProviderInterface
 {
     public function authenticate($user, $token);
 
     public function authenticatePrivate($user, $token);
 
-    public function repoIsPrivate($user, $repo);
+    public function repoIsPrivate(Slug $slug);
 
-    public function getDefaultBranch($user, $repo);
+    public function getDefaultBranch(Slug $slug);
 
-    public function getBranchesFlattened($user, $repo);
+    public function getBranchesFlattened(Slug $slug);
 
-    public function getPrsNamed($user, $repo);
+    public function getPrsNamed(Slug $slug);
 
-    public function getDefaultBase($user, $repo, $default_branch);
+    public function getDefaultBase(Slug $slug, $default_branch);
 
     public function createFork($user, $repo, $fork_user);
 
     /**
-     * @param string $user_name
-     *   User name.
-     * @param string $user_repo
-     *   User repo.
+     * @param Slug $slug
      * @param array $params
      *   An array that consists of the following:
      *   - base (a base branch).
@@ -36,7 +35,7 @@ interface ProviderInterface
      *
      * @return mixed
      */
-    public function createPullRequest($user_name, $user_repo, $params);
+    public function createPullRequest(Slug $slug, $params);
 
-    public function updatePullRequest($user_name, $user_repo, $id, $params);
+    public function updatePullRequest(Slug $slug, $id, $params);
 }

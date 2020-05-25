@@ -4,6 +4,7 @@ namespace eiriksm\CosyComposer\Providers;
 
 use Bitbucket\Client;
 use eiriksm\CosyComposer\ProviderInterface;
+use Violinist\Slug\Slug;
 
 class Bitbucket implements ProviderInterface
 {
@@ -30,16 +31,20 @@ class Bitbucket implements ProviderInterface
         $this->client->authenticate(Client::AUTH_OAUTH_TOKEN, $user);
     }
 
-    public function repoIsPrivate($user, $repo)
+    public function repoIsPrivate(Slug $slug)
     {
+        $user = $slug->getUserName();
+        $repo = $slug->getUserRepo();
         if (!isset($this->cache['repo'])) {
             $this->cache['repo'] = $this->client->repositories()->users($user)->show($repo);
         }
         return (bool) $this->cache["repo"]["is_private"];
     }
 
-    public function getDefaultBranch($user, $repo)
+    public function getDefaultBranch(Slug $slug)
     {
+        $user = $slug->getUserName();
+        $repo = $slug->getUserRepo();
         if (!isset($this->cache['repo'])) {
             $this->cache['repo'] = $this->client->repositories()->users($user)->show($repo);
         }
@@ -59,8 +64,10 @@ class Bitbucket implements ProviderInterface
         return $this->cache["branches"]["values"];
     }
 
-    public function getBranchesFlattened($user, $repo)
+    public function getBranchesFlattened(Slug $slug)
     {
+        $user = $slug->getUserName();
+        $repo = $slug->getUserRepo();
         $branches = $this->getBranches($user, $repo);
 
         $branches_flattened = [];
@@ -70,8 +77,10 @@ class Bitbucket implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed($user, $repo)
+    public function getPrsNamed(Slug $slug)
     {
+        $user = $slug->getUserName();
+        $repo = $slug->getUserRepo();
         $repo_users = $this->client->repositories()->users($user);
         $repo_users->setPerPage(1000);
         $prs = $repo_users->pullRequests($repo)->list();
@@ -91,8 +100,10 @@ class Bitbucket implements ProviderInterface
         return $prs_named;
     }
 
-    public function getDefaultBase($user, $repo, $default_branch)
+    public function getDefaultBase(Slug $slug, $default_branch)
     {
+        $user = $slug->getUserName();
+        $repo = $slug->getUserRepo();
         $branches = $this->getBranches($user, $repo);
         $default_base = null;
         foreach ($branches as $branch) {
@@ -100,7 +111,7 @@ class Bitbucket implements ProviderInterface
                 $default_base = $branch["target"]["hash"];
             }
         }
-        // Since the braches only gives us 12 characters, we need to trim the default base to the same.
+        // Since the branches only gives us 12 characters, we need to trim the default base to the same.
         return substr($default_base, 0, 12);
     }
 
@@ -109,8 +120,10 @@ class Bitbucket implements ProviderInterface
         throw new \Exception('Gitlab integration only support creating PRs as the authenticated user.');
     }
 
-    public function createPullRequest($user_name, $user_repo, $params)
+    public function createPullRequest(Slug $slug, $params)
     {
+        $user_name = $slug->getUserName();
+        $user_repo = $slug->getUserRepo();
         $bitbucket_params = [
             'title' => $params['title'],
             'source' => [
@@ -140,8 +153,10 @@ class Bitbucket implements ProviderInterface
         return $data;
     }
 
-    public function updatePullRequest($user_name, $user_repo, $id, $params)
+    public function updatePullRequest(Slug $slug, $id, $params)
     {
+        $user_name = $slug->getUserName();
+        $user_repo = $slug->getUserRepo();
         return $this->client->repositories()->users($user_name)->pullRequests($user_repo)->update($id, $params);
     }
 }

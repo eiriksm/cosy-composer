@@ -704,9 +704,9 @@ class CosyComposer
         $this->client = $this->getClient($this->slug);
         $this->privateClient = $this->getClient($this->slug);
         $this->privateClient->authenticate($this->userToken, null);
-        $this->isPrivate = $this->privateClient->repoIsPrivate($user_name, $user_repo);
+        $this->isPrivate = $this->privateClient->repoIsPrivate($this->slug);
         // Get the default branch of the repo.
-        $default_branch = $this->privateClient->getDefaultBranch($user_name, $user_repo);
+        $default_branch = $this->privateClient->getDefaultBranch($this->slug);
         // We also allow the project to override this for violinist.
         if ($config->getDefaultBranch()) {
             // @todo: Would be better to make sure this can actually be set, based on the branches available. Either
@@ -732,17 +732,17 @@ class CosyComposer
         $prs_named = [];
         $default_base = null;
         try {
-            if ($default_base_upstream = $this->privateClient->getDefaultBase($user_name, $user_repo, $default_branch)) {
+            if ($default_base_upstream = $this->privateClient->getDefaultBase($this->slug, $default_branch)) {
                 $default_base = $default_base_upstream;
             }
-            $prs_named = $this->privateClient->getPrsNamed($user_name, $user_repo);
+            $prs_named = $this->privateClient->getPrsNamed($this->slug);
             // These can fail if we have not yet created a fork, and the repo is public. That is why we have them at the
             // end of this try/catch, so we can still know the default base for the original repo, and its pull
             // requests.
             if (!$default_base) {
-                $default_base = $this->getPrClient()->getDefaultBase($branch_user, $user_repo, $default_branch);
+                $default_base = $this->getPrClient()->getDefaultBase($this->slug, $default_branch);
             }
-            $branches_flattened = $this->getPrClient()->getBranchesFlattened($branch_user, $user_repo);
+            $branches_flattened = $this->getPrClient()->getBranchesFlattened($this->slug);
         } catch (RuntimeException $e) {
             // Safe to ignore.
             $this->log('Had a runtime exception with the fetching of branches and Prs: ' . $e->getMessage());
@@ -1103,7 +1103,7 @@ class CosyComposer
                     'body'  => $body,
                     'assignees' => $assignees,
                 ];
-                $pullRequest = $this->getPrClient()->createPullRequest($user_name, $user_repo, $pr_params);
+                $pullRequest = $this->getPrClient()->createPullRequest($this->slug, $pr_params);
                 if (!empty($pullRequest['html_url'])) {
                     $this->log($pullRequest['html_url'], Message::PR_URL, [
                         'package' => $package_name,
@@ -1136,13 +1136,13 @@ class CosyComposer
                 $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
                 if (isset($branch_name) && isset($pr_params) && !empty($prs_named[$branch_name]['title']) && $prs_named[$branch_name]['title'] != $pr_params['title']) {
                     $this->log('Will try to update the PR.');
-                    $this->getPrClient()->updatePullRequest($user_name, $user_repo, $prs_named[$branch_name]['number'], $pr_params);
+                    $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
                 }
             } catch (\Gitlab\Exception\RuntimeException $e) {
                 $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
                 if (isset($branch_name) && isset($pr_params) && !empty($prs_named[$branch_name]['title']) && $prs_named[$branch_name]['title'] != $pr_params['title']) {
                     $this->log('Will try to update the PR based on settings.');
-                    $this->getPrClient()->updatePullRequest($user_name, $user_repo, $prs_named[$branch_name]['number'], $pr_params);
+                    $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
                 }
             } catch (ComposerUpdateProcessFailedException $e) {
                 $this->log('Caught an exception: ' . $e->getMessage(), 'error');

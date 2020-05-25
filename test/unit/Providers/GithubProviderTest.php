@@ -93,7 +93,7 @@ class GithubProviderTest extends ProvidersTestBase
             ->method('getLastResponse')
             ->willReturn($mock_response);
         $g = new Github($mock_client);
-        $this->assertEquals('abcd', $g->getDefaultBase($user, $repo, 'master'));
+        $this->assertEquals('abcd', $g->getDefaultBase($this->slug, 'master'));
     }
 
     public function testCreateFork()
@@ -135,7 +135,7 @@ class GithubProviderTest extends ProvidersTestBase
             ->with('pull_request')
             ->willReturn($mock_pr_api);
         $g = new Github($mock_client);
-        $this->assertEquals($testresponse, $g->createPullRequest($user, $repo, $params));
+        $this->assertEquals($testresponse, $g->createPullRequest($this->slug, $params));
     }
 
     public function testUpdatePR()
@@ -154,7 +154,7 @@ class GithubProviderTest extends ProvidersTestBase
             ->with('pull_request')
             ->willReturn($mock_pr_api);
         $g = new Github($mock_client);
-        $this->assertEquals($testresponse, $g->updatePullRequest($user, $repo, $id, $params));
+        $this->assertEquals($testresponse, $g->updatePullRequest(, $id, $params));
     }
 
     public function getProvider($client)

@@ -12,6 +12,7 @@ use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use Github\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputDefinition;
 use Violinist\ProjectData\ProjectData;
+use Violinist\Slug\Slug;
 
 class UpdatesTest extends Base
 {
@@ -621,9 +622,12 @@ class UpdatesTest extends Base
         $mock_provider_factory = $this->createMock(ProviderFactory::class);
         $mock_provider = $this->createMock(Github::class);
         $fake_pr_url = 'http://example.com/pr';
+        $slug = new Slug();
+        $slug->setProvider('github.com');
+        $slug->setSlug('a/b');
         $mock_provider->expects($this->once())
             ->method('createPullRequest')
-            ->with('a', 'b', [
+            ->with($slug, [
                 'base' => 'master',
                 'head' => 'psrlog100102',
                 'title' => 'Update psr/log from 1.0.0 to 1.0.2',
@@ -871,9 +875,12 @@ a custom message
         $mock_provider_factory = $this->createMock(ProviderFactory::class);
         $mock_provider = $this->createMock(Github::class);
         $fake_pr_url = 'http://example.com/pr';
+        $slug = new Slug();
+        $slug->setProvider('github.com');
+        $slug->setSlug('a/b');
         $mock_provider->expects($this->once())
             ->method('createPullRequest')
-            ->with('a', 'b', [
+            ->with($slug, [
                 'base' => 'master',
                 'head' => 'drupalcore847848',
                 'title' => 'Update drupal/core from 8.4.7 to 8.4.8',

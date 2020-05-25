@@ -1,0 +1,10 @@
+{
+    "require": {
+        "psr/log": "^1.0"
+    },
+    "extra": {
+        "violinist": {
+            "default_branch": "develop"
+        }
+    }
+}

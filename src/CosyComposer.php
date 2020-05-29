@@ -728,6 +728,10 @@ class CosyComposer
         if ($this->isPrivate) {
             $branch_user = $user_name;
         }
+        $branch_slug = new Slug();
+        $branch_slug->setProvider('github.com');
+        $branch_slug->setUserName($branch_user);
+        $branch_slug->setUserRepo($user_repo);
         $branches_flattened = [];
         $prs_named = [];
         $default_base = null;
@@ -740,9 +744,9 @@ class CosyComposer
             // end of this try/catch, so we can still know the default base for the original repo, and its pull
             // requests.
             if (!$default_base) {
-                $default_base = $this->getPrClient()->getDefaultBase($this->slug, $default_branch);
+                $default_base = $this->getPrClient()->getDefaultBase($branch_slug, $default_branch);
             }
-            $branches_flattened = $this->getPrClient()->getBranchesFlattened($this->slug);
+            $branches_flattened = $this->getPrClient()->getBranchesFlattened($branch_slug);
         } catch (RuntimeException $e) {
             // Safe to ignore.
             $this->log('Had a runtime exception with the fetching of branches and Prs: ' . $e->getMessage());

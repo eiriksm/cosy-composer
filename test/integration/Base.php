@@ -42,7 +42,7 @@ abstract class Base extends TestCase
 
     protected function createExpectedCommandForPackage($package)
     {
-        return "composer update -n --no-ansi $package --with-dependencies";
+        return "composer update -n --no-ansi $package --with-dependencies ";
     }
 
     protected function createUpdateJsonFromData($package, $version, $new_version)
@@ -86,7 +86,7 @@ abstract class Base extends TestCase
     {
         foreach ($c->getOutput() as $output_message) {
             try {
-                $this->assertEquals($message, $output_message->getMessage());
+                $this->assertContains($message, $output_message->getMessage());
                 return $output_message;
             } catch (\Exception $e) {
                 continue;

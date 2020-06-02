@@ -473,7 +473,9 @@ class CosyComposer
         // Always start by making sure the .ssh directory exists.
         $directory = sprintf('%s/.ssh', getenv('HOME'));
         if (!file_exists($directory)) {
-            @mkdir($directory, 0700);
+            if (!@mkdir($directory, 0700) && !is_dir($directory)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $directory));
+            }
         }
         if (!empty($_SERVER['violinist_hostname'])) {
             $this->log(sprintf('Running update check on %s', $_SERVER['violinist_hostname']));
@@ -544,6 +546,15 @@ class CosyComposer
         }
         $this->runAuthExport($hostname);
         $local_adapter = new Local($this->compserJsonDir);
+        if (!empty($_SERVER['config_branch'])) {
+            $config_branch = $_SERVER['config_branch'];
+            $this->log('Changing to config branch: ' . $config_branch);
+            $tmpdir = sprintf('/tmp/%s', uniqid('', true));
+            $clone_result = $this->execCommand('git clone --depth=1 ' . $url . ' ' . $tmpdir . ' -b ' . $config_branch, false, 120);
+            if (!$clone_result) {
+                $local_adapter = new Local($tmpdir);
+            }
+        }
         $this->composerGetter = new ComposerFileGetter($local_adapter);
         if (!$this->composerGetter->hasComposerFile()) {
             throw new \InvalidArgumentException('No composer.json file found.');
@@ -570,7 +581,7 @@ class CosyComposer
         $d->setOptions($opts);
         $app->setDefinition($d);
         $app->setAutoExit(false);
-        $this->doComposerInstall();
+        $this->doComposerInstall($config);
         // And do a quick security check in there as well.
         try {
             $this->log('Checking for security issues in project.');
@@ -696,35 +707,49 @@ class CosyComposer
         $this->client = $this->getClient($this->slug);
         $this->privateClient = $this->getClient($this->slug);
         $this->privateClient->authenticate($this->userToken, null);
-        $this->isPrivate = $this->privateClient->repoIsPrivate($user_name, $user_repo);
+        $this->isPrivate = $this->privateClient->repoIsPrivate($this->slug);
         // Get the default branch of the repo.
-        $default_branch = $this->privateClient->getDefaultBranch($user_name, $user_repo);
+        $default_branch = $this->privateClient->getDefaultBranch($this->slug);
         // We also allow the project to override this for violinist.
         if ($config->getDefaultBranch()) {
             // @todo: Would be better to make sure this can actually be set, based on the branches available. Either
-            // way, if a person configures this wrong, several parts will fail spectacularily anyway.
+            // way, if a person configures this wrong, several parts will fail spectacularly anyway.
             $default_branch = $config->getDefaultBranch();
+        }
+        // Now make sure we are actually on that branch.
+        if ($this->execCommand('git remote set-branches origin "*"')) {
+            throw new \Exception('There was an error trying to configure default branch');
+        }
+        if ($this->execCommand('git fetch origin ' . $default_branch)) {
+            throw new \Exception('There was an error trying to fetch default branch');
+        }
+        if ($this->execCommand('git checkout ' . $default_branch)) {
+            throw new \Exception('There was an error trying to switch to default branch');
         }
         // Try to see if we have already dealt with this (i.e already have a branch for all the updates.
         $branch_user = $this->forkUser;
         if ($this->isPrivate) {
             $branch_user = $user_name;
         }
+        $branch_slug = new Slug();
+        $branch_slug->setProvider('github.com');
+        $branch_slug->setUserName($branch_user);
+        $branch_slug->setUserRepo($user_repo);
         $branches_flattened = [];
         $prs_named = [];
         $default_base = null;
         try {
-            if ($default_base_upstream = $this->privateClient->getDefaultBase($user_name, $user_repo, $default_branch)) {
+            if ($default_base_upstream = $this->privateClient->getDefaultBase($this->slug, $default_branch)) {
                 $default_base = $default_base_upstream;
             }
-            $prs_named = $this->privateClient->getPrsNamed($user_name, $user_repo);
+            $prs_named = $this->privateClient->getPrsNamed($this->slug);
             // These can fail if we have not yet created a fork, and the repo is public. That is why we have them at the
             // end of this try/catch, so we can still know the default base for the original repo, and its pull
             // requests.
             if (!$default_base) {
-                $default_base = $this->getPrClient()->getDefaultBase($branch_user, $user_repo, $default_branch);
+                $default_base = $this->getPrClient()->getDefaultBase($branch_slug, $default_branch);
             }
-            $branches_flattened = $this->getPrClient()->getBranchesFlattened($branch_user, $user_repo);
+            $branches_flattened = $this->getPrClient()->getBranchesFlattened($branch_slug);
         } catch (RuntimeException $e) {
             // Safe to ignore.
             $this->log('Had a runtime exception with the fetching of branches and Prs: ' . $e->getMessage());
@@ -882,6 +907,7 @@ class CosyComposer
 
     protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $user_name, $user_repo)
     {
+        $config = Config::createFromComposerData($cdata);
         foreach ($data as $item) {
             $security_update = false;
             $package_name = $item->name;
@@ -907,7 +933,7 @@ class CosyComposer
                 $should_update_beyond = false;
                 // See if the new version seems to satisfy the constraint. Unless the constraint is dev related somehow.
                 try {
-                    if (strpos((string)$req_item, 'dev') === false && !Semver::satisfies($version_to, (string)$req_item)) {
+                    if (strpos((string) $req_item, 'dev') === false && !Semver::satisfies($version_to, (string)$req_item)) {
                         // Well, unless we have actually disallowed this through config.
                         // @todo: Move to somewhere more central (and certainly outside a loop), and probably together
                         // with other config.
@@ -965,7 +991,6 @@ class CosyComposer
                 $cosy_factory_wrapper->setExecutor($this->executer);
                 $cosy_logger->setLogger($this->getLogger());
                 // See if this package has any bundled updates.
-                $config = Config::createFromComposerData($cdata);
                 $bundled_packages = $config->getBundledPackagesForPackage($package_name);
                 if (!empty($bundled_packages)) {
                     $updater->setBundledPackages($bundled_packages);
@@ -974,6 +999,7 @@ class CosyComposer
                 $updater->setProcessFactory($cosy_factory_wrapper);
                 $updater->setWithUpdate($update_with_deps);
                 $updater->setConstraint($constraint);
+                $updater->setRunScripts($config->shouldRunScripts());
                 if (!$lock_file_contents || ($should_update_beyond && $can_update_beyond)) {
                     $updater->executeRequire($version_to);
                 } else {
@@ -1084,7 +1110,7 @@ class CosyComposer
                     'body'  => $body,
                     'assignees' => $assignees,
                 ];
-                $pullRequest = $this->getPrClient()->createPullRequest($user_name, $user_repo, $pr_params);
+                $pullRequest = $this->getPrClient()->createPullRequest($this->slug, $pr_params);
                 if (!empty($pullRequest['html_url'])) {
                     $this->log($pullRequest['html_url'], Message::PR_URL, [
                         'package' => $package_name,
@@ -1117,13 +1143,13 @@ class CosyComposer
                 $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
                 if (isset($branch_name) && isset($pr_params) && !empty($prs_named[$branch_name]['title']) && $prs_named[$branch_name]['title'] != $pr_params['title']) {
                     $this->log('Will try to update the PR.');
-                    $this->getPrClient()->updatePullRequest($user_name, $user_repo, $prs_named[$branch_name]['number'], $pr_params);
+                    $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
                 }
             } catch (\Gitlab\Exception\RuntimeException $e) {
                 $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
                 if (isset($branch_name) && isset($pr_params) && !empty($prs_named[$branch_name]['title']) && $prs_named[$branch_name]['title'] != $pr_params['title']) {
                     $this->log('Will try to update the PR based on settings.');
-                    $this->getPrClient()->updatePullRequest($user_name, $user_repo, $prs_named[$branch_name]['number'], $pr_params);
+                    $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
                 }
             } catch (ComposerUpdateProcessFailedException $e) {
                 $this->log('Caught an exception: ' . $e->getMessage(), 'error');
@@ -1138,7 +1164,9 @@ class CosyComposer
                 ]);
             }
             $this->log('Checking out default branch - ' . $default_branch);
-            $this->execCommand('git checkout ' . $default_branch, false);
+            if ($this->execCommand('git checkout ' . $default_branch, false)) {
+                throw new \Exception('There was an error trying to check out the default branch');
+            }
             // Also do a git checkout of the files, since we want them in the state they were on the default branch
             $this->execCommand('git checkout .', false);
             // Re-do composer install to make output better, and to make the lock file actually be there for
@@ -1147,7 +1175,7 @@ class CosyComposer
                 $this->execCommand('rm composer.lock');
             }
             try {
-                $this->doComposerInstall();
+                $this->doComposerInstall($config);
             } catch (\Throwable $e) {
                 $this->log('Rolling back state on the default branch was not successful. Subsequent updates may be affected');
             }
@@ -1285,11 +1313,15 @@ class CosyComposer
    *
    * @throws \eiriksm\CosyComposer\Exceptions\ComposerInstallException
    */
-    protected function doComposerInstall()
+    protected function doComposerInstall(Config $config)
     {
         // @todo: Should probably use composer install command programmatically.
         $this->log('Running composer install');
-        if ($code = $this->execCommand('composer install --no-ansi -n', false, 1200)) {
+        $run_scipts_suffix = '';
+        if (!$config->shouldRunScripts()) {
+            $run_scipts_suffix = ' --no-scripts';
+        }
+        if ($code = $this->execCommand('composer install --no-ansi -n' . $run_scripts_suffix, false, 1200)) {
             // Other status code than 0.
             $this->log($this->getLastStdOut(), Message::COMMAND);
             $this->log($this->getLastStdErr());

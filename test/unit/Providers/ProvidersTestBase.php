@@ -11,6 +11,7 @@ use PHPUnit\Framework\MockObject\Builder\InvocationMocker;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Violinist\Slug\Slug;
 
 abstract class ProvidersTestBase extends TestCase implements TestProviderInterface
 {
@@ -38,8 +39,9 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
 
     public function testDefaultBranch()
     {
-        $user = 'testUser';
-        $repo = 'testRepo';
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
+        $user = $slug->getUserName();
+        $repo = $slug->getUserRepo();
         $mock_repo_api = $this->createMock($this->getRepoClassName('show'));
         $expects = $mock_repo_api->expects($this->once())
             ->method('show');
@@ -63,13 +65,14 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
             ->with($this->getBranchMethod())
             ->willReturn($mock_repo_api);
         $provider = $this->getProvider($mock_client);
-        $this->assertEquals('master', $provider->getDefaultBranch($user, $repo));
+        $this->assertEquals('master', $provider->getDefaultBranch($slug));
     }
 
     public function testBranches()
     {
-        $user = 'testUser';
-        $repo = 'testRepo';
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
+        $user = $slug->getUserName();
+        $repo = $slug->getUserRepo();
         $mock_repo_api = $this->createMock($this->getRepoClassName('branches'));
         $expects = $mock_repo_api->expects($this->once())
             ->method('branches');
@@ -116,11 +119,12 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                 break;
         }
         $provider = $this->getProvider($mock_client);
-        $this->assertEquals(['master', 'develop'], $provider->getBranchesFlattened($user, $repo));
+        $this->assertEquals(['master', 'develop'], $provider->getBranchesFlattened($slug));
     }
 
     public function testPrsNamed()
     {
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
         $user = 'testUser';
         $repo = 'testRepo';
         $mock_pr = $this->createMock($this->getPrClassName());
@@ -202,7 +206,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                 break;
         }
         $provider = $this->getProvider($mock_client);
-        $this->assertEquals(['patch-1', 'patch-2'], array_keys($provider->getPrsNamed($user, $repo)));
+        $this->assertEquals(['patch-1', 'patch-2'], array_keys($provider->getPrsNamed($slug)));
     }
 
     protected function configureArguments($key, InvocationMocker $object)

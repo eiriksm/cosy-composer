@@ -8,6 +8,7 @@ use Github\Api\Repo;
 use Github\Api\Repository\Forks;
 use Github\Client;
 use Psr\Http\Message\ResponseInterface;
+use Violinist\Slug\Slug;
 
 class GithubProviderTest extends ProvidersTestBase
 {
@@ -23,12 +24,11 @@ class GithubProviderTest extends ProvidersTestBase
 
     public function testRepoIsPrivate()
     {
-        $user = 'testUser';
-        $repo = 'testRepo';
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
         $mock_repo_api = $this->createMock(Repo::class);
         $mock_repo_api->expects($this->once())
             ->method('show')
-            ->with($user, $repo)
+            ->with($slug->getUserName(), $slug->getUserRepo())
             ->willReturn([
                 'private' => true,
             ]);
@@ -38,17 +38,16 @@ class GithubProviderTest extends ProvidersTestBase
             ->with('repo')
             ->willReturn($mock_repo_api);
         $g = new Github($mock_client);
-        $this->assertEquals(true, $g->repoIsPrivate($user, $repo));
+        $this->assertEquals(true, $g->repoIsPrivate($slug));
     }
 
     public function testRepoIsPublic()
     {
-        $user = 'testUser';
-        $repo = 'testRepo';
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
         $mock_repo_api = $this->createMock(Repo::class);
         $mock_repo_api->expects($this->once())
             ->method('show')
-            ->with($user, $repo)
+            ->with($slug->getUserName(), $slug->getUserRepo())
             ->willReturn([
                 'private' => false,
             ]);
@@ -58,17 +57,16 @@ class GithubProviderTest extends ProvidersTestBase
             ->with('repo')
             ->willReturn($mock_repo_api);
         $g = new Github($mock_client);
-        $this->assertEquals(false, $g->repoIsPrivate($user, $repo));
+        $this->assertEquals(false, $g->repoIsPrivate($slug));
     }
 
     public function testDefaultBase()
     {
-        $user = 'testUser';
-        $repo = 'testRepo';
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
         $mock_repo_api = $this->createMock(Repo::class);
         $mock_repo_api->expects($this->once())
             ->method('branches')
-            ->with($user, $repo)
+            ->with($slug->getUserName(), $slug->getUserRepo())
             ->willReturn([
                 [
                     'name' => 'master',
@@ -93,7 +91,7 @@ class GithubProviderTest extends ProvidersTestBase
             ->method('getLastResponse')
             ->willReturn($mock_response);
         $g = new Github($mock_client);
-        $this->assertEquals('abcd', $g->getDefaultBase($user, $repo, 'master'));
+        $this->assertEquals('abcd', $g->getDefaultBase($slug, 'master'));
     }
 
     public function testCreateFork()
@@ -123,6 +121,7 @@ class GithubProviderTest extends ProvidersTestBase
     public function testCreatePR()
     {
         list($user, $repo, $params) = $this->getPrData();
+        $slug = Slug::createFromUrl('http://github.com/' . $user . '/' . $repo);
         $testresponse = 'testresponse';
         $mock_pr_api = $this->createMock(PullRequest::class);
         $mock_pr_api->expects($this->once())
@@ -135,13 +134,14 @@ class GithubProviderTest extends ProvidersTestBase
             ->with('pull_request')
             ->willReturn($mock_pr_api);
         $g = new Github($mock_client);
-        $this->assertEquals($testresponse, $g->createPullRequest($user, $repo, $params));
+        $this->assertEquals($testresponse, $g->createPullRequest($slug, $params));
     }
 
     public function testUpdatePR()
     {
         list($user, $repo, $params) = $this->getPrData();
         $id = 42;
+        $slug = Slug::createFromUrl('http://github.com/' . $user . '/' . $repo);
         $testresponse = 'testresponse';
         $mock_pr_api = $this->createMock(PullRequest::class);
         $mock_pr_api->expects($this->once())
@@ -154,7 +154,7 @@ class GithubProviderTest extends ProvidersTestBase
             ->with('pull_request')
             ->willReturn($mock_pr_api);
         $g = new Github($mock_client);
-        $this->assertEquals($testresponse, $g->updatePullRequest($user, $repo, $id, $params));
+        $this->assertEquals($testresponse, $g->updatePullRequest($slug, $id, $params));
     }
 
     public function getProvider($client)

@@ -6,6 +6,7 @@ use eiriksm\CosyComposer\ProviderInterface;
 use Gitlab\Api\MergeRequests;
 use Gitlab\Client;
 use Gitlab\ResultPager;
+use Violinist\Slug\Slug;
 
 class Gitlab implements ProviderInterface
 {
@@ -29,34 +30,35 @@ class Gitlab implements ProviderInterface
         $this->client->authenticate($user, Client::AUTH_OAUTH_TOKEN);
     }
 
-    public function repoIsPrivate($user, $repo)
+    public function repoIsPrivate(Slug $slug)
     {
         // Consider all gitlab things private, since we have the API key to do so anyway.
         return true;
     }
 
-    public function getDefaultBranch($user, $repo)
+    public function getDefaultBranch(Slug $slug)
     {
+        $url = $slug->getUrl();
         if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->client->api('projects')->show($this->getProjectId($user, $repo));
+            $this->cache['repo'] = $this->client->api('projects')->show($this->getProjectId($url));
         }
         return $this->cache['repo']['default_branch'];
     }
 
-    protected function getBranches($user, $repo)
+    protected function getBranches(Slug $slug)
     {
         if (!isset($this->cache['branches'])) {
             $pager = new ResultPager($this->client);
             $api = $this->client->api('repo');
             $method = 'branches';
-            $this->cache['branches'] = $pager->fetchAll($api, $method, [$this->getProjectId($user, $repo)]);
+            $this->cache['branches'] = $pager->fetchAll($api, $method, [$this->getProjectId($slug->getUrl())]);
         }
         return $this->cache['branches'];
     }
 
-    public function getBranchesFlattened($user, $repo)
+    public function getBranchesFlattened(Slug $slug)
     {
-        $branches = $this->getBranches($user, $repo);
+        $branches = $this->getBranches($slug);
 
         $branches_flattened = [];
         foreach ($branches as $branch) {
@@ -65,19 +67,19 @@ class Gitlab implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed($user, $repo)
+    public function getPrsNamed(Slug $slug)
     {
         $pager = new ResultPager($this->client);
         $api = $this->client->api('mr');
         $method = 'all';
-        $prs = $pager->fetchAll($api, $method, [$this->getProjectId($user, $repo)]);
+        $prs = $pager->fetchAll($api, $method, [$this->getProjectId($slug->getUrl())]);
         $prs_named = [];
         foreach ($prs as $pr) {
             if ($pr['state'] != 'opened') {
                 continue;
             }
             // Now get the last commits for this branch.
-            $commits = $this->client->api('repo')->commits($this->getProjectId($user, $repo), [
+            $commits = $this->client->api('repo')->commits($this->getProjectId($slug->getUrl()), [
                 'ref_name' => $pr['source_branch'],
             ]);
             $prs_named[$pr['source_branch']] = [
@@ -91,9 +93,9 @@ class Gitlab implements ProviderInterface
         return $prs_named;
     }
 
-    public function getDefaultBase($user, $repo, $default_branch)
+    public function getDefaultBase(Slug $slug, $default_branch)
     {
-        $branches = $this->getBranches($user, $repo);
+        $branches = $this->getBranches($slug);
         $default_base = null;
         foreach ($branches as $branch) {
             if ($branch['name'] == $default_branch) {
@@ -108,12 +110,12 @@ class Gitlab implements ProviderInterface
         throw new \Exception('Gitlab integration only support creating PRs as the authenticated user.');
     }
 
-    public function createPullRequest($user_name, $user_repo, $params)
+    public function createPullRequest(Slug $slug, $params)
     {
         /** @var MergeRequests $mr */
         $mr = $this->client->api('mr');
         $assignee = null;
-        $data = $mr->create($this->getProjectId($user_name, $user_repo), $params['head'], $params['base'], $params['title'], $assignee, null, $params['body']);
+        $data = $mr->create($this->getProjectId($slug->getUrl()), $params['head'], $params['base'], $params['title'], $assignee, null, $params['body']);
         if (!empty($data['web_url'])) {
             $data['html_url'] = $data['web_url'];
         }
@@ -122,12 +124,12 @@ class Gitlab implements ProviderInterface
             $new_data = [
                 'assignee_ids' => $params['assignees'],
             ];
-            $mr->update($this->getProjectId($user_name, $user_repo), $data["iid"], $new_data);
+            $mr->update($this->getProjectId($slug->getUrl()), $data["iid"], $new_data);
         }
         return $data;
     }
 
-    public function updatePullRequest($user_name, $user_repo, $id, $params)
+    public function updatePullRequest(Slug $slug, $id, $params)
     {
 
         $gitlab_params = [
@@ -138,11 +140,12 @@ class Gitlab implements ProviderInterface
             'target_project_id' => null,
             'description' => $params['body'],
         ];
-        return $this->client->api('mr')->update($this->getProjectId($user_name, $user_repo), $id, $gitlab_params);
+        return $this->client->api('mr')->update($this->getProjectId($slug->getUrl()), $id, $gitlab_params);
     }
 
-    protected function getProjectId($user, $repo)
+    protected function getProjectId($url)
     {
-        return sprintf('%s/%s', $user, $repo);
+        $url = parse_url($url);
+        return ltrim($url['path'], '/');
     }
 }

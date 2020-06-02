@@ -36,6 +36,7 @@ class ProcessWrapper extends Process
             $env = [];
         }
         $this->ourExitCode = $this->executor->executeCommand($this->getCommandLine(), false, $this->getTimeout(), $env);
+        return $this->ourExitCode;
     }
 
     public function getExitCode()

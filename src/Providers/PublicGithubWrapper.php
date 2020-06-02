@@ -5,6 +5,7 @@ namespace eiriksm\CosyComposer\Providers;
 use Github\Exception\ValidationFailedException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\ServerRequest;
+use Violinist\Slug\Slug;
 use function GuzzleHttp\Psr7\stream_for;
 use Http\Adapter\Guzzle6\Client;
 use Http\Client\Common\Plugin\CookiePlugin;
@@ -91,8 +92,10 @@ class PublicGithubWrapper extends Github
         }
     }
 
-    public function createPullRequest($user_name, $user_repo, $params)
+    public function createPullRequest(Slug $slug, $params)
     {
+        $user_name = $slug->getUserName();
+        $user_repo = $slug->getUserRepo();
         $request = $this->createPullRequestRequest($user_name, $user_repo, $params);
         $jar = new CookieJar();
         $jar->addCookie(new Cookie('XDEBUG_SESSION', 'XDEBUG_ECLIPSE', null, 'violinist.localhost'));
@@ -111,8 +114,10 @@ class PublicGithubWrapper extends Github
         return (array) $json;
     }
 
-    public function updatePullRequest($user_name, $user_repo, $id, $params)
+    public function updatePullRequest(Slug $slug, $id, $params)
     {
+        $user_name = $slug->getUserName();
+        $user_repo = $slug->getUserRepo();
         $jar = new CookieJar();
         $jar->addCookie(new Cookie('XDEBUG_SESSION', 'XDEBUG_ECLIPSE', null, 'violinist.localhost'));
         $plugin = new CookiePlugin($jar);

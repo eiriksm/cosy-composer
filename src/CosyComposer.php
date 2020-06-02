@@ -1317,9 +1317,9 @@ class CosyComposer
     {
         // @todo: Should probably use composer install command programmatically.
         $this->log('Running composer install');
-        $run_scipts_suffix = '';
+        $run_scripts_suffix = '';
         if (!$config->shouldRunScripts()) {
-            $run_scipts_suffix = ' --no-scripts';
+            $run_scripts_suffix = ' --no-scripts';
         }
         if ($code = $this->execCommand('composer install --no-ansi -n' . $run_scripts_suffix, false, 1200)) {
             // Other status code than 0.

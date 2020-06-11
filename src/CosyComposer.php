@@ -921,8 +921,10 @@ class CosyComposer
                     $security_update = true;
                 }
                 $req_item = '';
+                $is_require_dev = FALSE;
                 if (!empty($cdata->{'require-dev'}->{$package_name_in_composer_json})) {
                     $req_item = $cdata->{'require-dev'}->{$package_name_in_composer_json};
+                    $is_require_dev = TRUE;
                 } else {
                     // @todo: Support getting req item from a merge plugin as well.
                     if (isset($cdata->{'require'}->{$package_name_in_composer_json})) {
@@ -999,6 +1001,7 @@ class CosyComposer
                 $updater->setProcessFactory($cosy_factory_wrapper);
                 $updater->setWithUpdate($update_with_deps);
                 $updater->setConstraint($constraint);
+                $updater->setDevPackage($is_require_dev);
                 $updater->setRunScripts($config->shouldRunScripts());
                 if (!$lock_file_contents || ($should_update_beyond && $can_update_beyond)) {
                     $updater->executeRequire($version_to);

@@ -921,10 +921,10 @@ class CosyComposer
                     $security_update = true;
                 }
                 $req_item = '';
-                $is_require_dev = FALSE;
+                $is_require_dev = false;
                 if (!empty($cdata->{'require-dev'}->{$package_name_in_composer_json})) {
                     $req_item = $cdata->{'require-dev'}->{$package_name_in_composer_json};
-                    $is_require_dev = TRUE;
+                    $is_require_dev = true;
                 } else {
                     // @todo: Support getting req item from a merge plugin as well.
                     if (isset($cdata->{'require'}->{$package_name_in_composer_json})) {

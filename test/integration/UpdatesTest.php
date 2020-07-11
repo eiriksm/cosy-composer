@@ -837,6 +837,74 @@ a custom message
         $this->assertEquals(true, $called);
     }
 
+    public function testUpdatesAvailableConcurrentLimit()
+    {
+        $c = $this->getMockCosy();
+        $dir = '/tmp/' . uniqid();
+        $this->setupDirectory($c, $dir);
+        $mock_definition = $this->getMockDefinition();
+        $mock_app = $this->getMockApp($mock_definition);
+        $c->setApp($mock_app);
+        $mock_output = $this->createMock(ArrayOutput::class);
+        $mock_output->method('fetch')
+            ->willReturn([
+                [
+                    sprintf('{"installed": [
+                        {"name": "%s", "version": "%s", "latest": "%s", "latest-status": "semver-safe-update"},
+                        {"name": "%s", "version": "%s", "latest": "%s", "latest-status": "semver-safe-update"}
+                    ]}', 'psr/log', '1.0.0', '1.0.3', 'violinist-dev/violinist-config', '1.0.0', '1.0.2'),
+                ]
+            ]);
+        $c->setOutput($mock_output);
+        $mock_executer = $this->getMockExecuterWithReturnCallback(
+            function ($cmd) use ($dir) {
+                $return = 0;
+                $expected_command = $this->createExpectedCommandForPackage('psr/log');
+                if ($cmd == $expected_command) {
+                    file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-concurrent.lock-updated'));
+                }
+                $expected_command = $this->createExpectedCommandForPackage('violinist-dev/violinist-config');
+                if ($cmd == $expected_command) {
+                    file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-concurrent.lock-updated'));
+                }
+                return $return;
+            }
+        );
+        $c->setExecuter($mock_executer);
+        $this->createComposerFileFromFixtures($dir, 'composer-concurrent.json');
+        // Then we are going to mock the provider factory.
+        $mock_provider_factory = $this->createMock(ProviderFactory::class);
+        $mock_provider = $this->createMock(Github::class);
+        $fake_pr_url = 'http://example.com/pr';
+        $slug = new Slug();
+        $slug->setProvider('github.com');
+        $slug->setSlug('a/b');
+        $mock_provider->expects($this->once())
+            ->method('createPullRequest')
+            ->willReturn([
+                'html_url' => $fake_pr_url,
+            ]);
+        $mock_provider->method('repoIsPrivate')
+            ->willReturn(true);
+        $mock_provider->method('getDefaultBranch')
+            ->willReturn('master');
+        $mock_provider->method('getBranchesFlattened')
+            ->willReturn([]);
+        $default_sha = 123;
+        $mock_provider->method('getDefaultBase')
+            ->willReturn($default_sha);
+        $mock_provider->method('getPrsNamed')
+            ->willReturn([]);
+        $mock_provider_factory->method('createFromHost')
+            ->willReturn($mock_provider);
+        $composer_lock_contents = file_get_contents(__DIR__ . '/../fixtures/composer-concurrent.lock');
+        file_put_contents("$dir/composer.lock", $composer_lock_contents);
+        $c->setProviderFactory($mock_provider_factory);
+        $c->run();
+        $message = $this->findMessage('Skipping violinist-dev/violinist-config because the number of max concurrent PRs (1) seems to have been reached', $c);
+        $this->assertNotFalse($message);
+    }
+
     public function testUpdateAvailableButUpdatedToOther()
     {
         $c = $this->getMockCosy();

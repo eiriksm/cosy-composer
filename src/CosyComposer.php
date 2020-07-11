@@ -453,10 +453,10 @@ class CosyComposer
             if (empty($repository->url)) {
                 continue;
             }
-            if ($repository->url == 'https://packages.drupal.org/8') {
+            if ($repository->url === 'https://packages.drupal.org/8') {
                 $this->execCommand(sprintf('rsync -aq %s/sa_yaml/8/drupal/* %s/', $contrib_sa_dir, $symfony_dir));
             }
-            if ($repository->url == 'https://packages.drupal.org/7') {
+            if ($repository->url === 'https://packages.drupal.org/7') {
                 $this->execCommand(sprintf('rsync -aq %s/sa_yaml/7/drupal/* %s/', $contrib_sa_dir, $symfony_dir));
             }
         }
@@ -786,7 +786,9 @@ class CosyComposer
                         }
                         // If the title does not match, it means either has there arrived a security issue for the
                         // update (new title), or we are doing "one-per-dependency", and the title should be something
-                        // else with this new update. Either way, we want to continue this.
+                        // else with this new update. Either way, we want to continue this. Continue in this context
+                        // would mean, we want to keep this for update checking still, and not unset it from the update
+                        // array. This will mean it will probably get an updated title later.
                         if ($prs_named[$branch_name]['title'] != $this->createTitle($item, $fake_post_update, $security_update)) {
                             $this->log(sprintf('Updating the PR of %s since the computed title does not match the title.', $item->name), Message::MESSAGE);
                             continue;
@@ -963,7 +965,7 @@ class CosyComposer
                 $this->execCommand('git checkout .', false);
                 // Try to use the same version constraint.
                 $version = (string) $req_item;
-                // @todo: This is not nearly something that covers the world of constraints. Pobably possible to use
+                // @todo: This is not nearly something that covers the world of constraints. Probably possible to use
                 // something from composer itself here.
                 $constraint = '';
                 if (!empty($version[0])) {

@@ -738,6 +738,7 @@ class CosyComposer
         $branches_flattened = [];
         $prs_named = [];
         $default_base = null;
+        $total_prs = 0;
         try {
             if ($default_base_upstream = $this->privateClient->getDefaultBase($this->slug, $default_branch)) {
                 $default_base = $default_base_upstream;
@@ -772,6 +773,7 @@ class CosyComposer
                             'package' => $item->name,
                         ]);
                         unset($data[$delta]);
+                        $total_prs++;
                     }
                     // Is the pr up to date?
                     if ($prs_named[$branch_name]['base']['sha'] == $default_base) {
@@ -799,6 +801,7 @@ class CosyComposer
                         }
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, $context);
                         unset($data[$delta]);
+                        $total_prs++;
                     }
                 }
             }
@@ -822,7 +825,7 @@ class CosyComposer
         $update_type = self::UPDATE_INDIVIDUAL;
         switch ($update_type) {
             case self::UPDATE_INDIVIDUAL:
-                $this->handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $user_name, $user_repo);
+                $this->handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $total_prs);
                 break;
 
             case self::UPDATE_ALL:
@@ -905,10 +908,17 @@ class CosyComposer
         $this->runAuthExportToken($hostname, $this->userToken);
     }
 
-    protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $user_name, $user_repo)
+    protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $total_prs)
     {
         $config = Config::createFromComposerData($cdata);
+        $max_number_of_prs = $config->getNumberOfAllowedPrs();
         foreach ($data as $item) {
+            if ($max_number_of_prs && $total_prs >= $max_number_of_prs) {
+                $this->log(sprintf('Skipping %s because the number of max concurrent PRs (%d) seems to have been reached', $item->name, $max_number_of_prs), Message::PR_EXISTS, [
+                    'package' => $item->name,
+                ]);
+                continue;
+            }
             $security_update = false;
             $package_name = $item->name;
             try {
@@ -1043,6 +1053,7 @@ class CosyComposer
                             $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
                                 'package' => $item->name,
                             ]);
+                            $total_prs++;
                             continue;
                         }
                         // Is the pr up to date?
@@ -1050,6 +1061,7 @@ class CosyComposer
                             $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
                                 'package' => $item->name,
                             ]);
+                            $total_prs++;
                             continue;
                         }
                     }
@@ -1119,6 +1131,7 @@ class CosyComposer
                         'package' => $package_name,
                     ]);
                 }
+                $total_prs++;
             } catch (CanNotUpdateException $e) {
                 $this->log($e->getMessage(), Message::UNUPDATEABLE, [
                     'package' => $package_name,

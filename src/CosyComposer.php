@@ -638,6 +638,18 @@ class CosyComposer
             $this->cleanUp();
             return;
         }
+        // Remove non-security packages, if indicated.
+        if ($config->shouldOnlyUpdateSecurityUpdates()) {
+            $this->log('Project indicated that it should only receive security updates. Removing non-security related updates from queue');
+            foreach ($data as $delta => $item) {
+                $package_name_in_composer_json = self::getComposerJsonName($cdata, $item->name, $this->compserJsonDir);
+                if (isset($alerts[$package_name_in_composer_json])) {
+                    continue;
+                }
+                unset($data[$delta]);
+                $this->log(sprintf('Skipping update of %s because it is not indicated as a security update', $item->name));
+            }
+        }
         // Remove blacklisted packages.
         $blacklist = $config->getBlackList();
         if (!is_array($blacklist)) {

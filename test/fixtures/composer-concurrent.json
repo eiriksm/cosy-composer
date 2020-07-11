@@ -1,0 +1,11 @@
+{
+    "require": {
+        "psr/log": "^1.0.0",
+        "violinist-dev/violinist-config": "dev-master"
+    },
+    "extra": {
+        "violinist": {
+            "number_of_concurrent_updates": 1
+        }
+    }
+}

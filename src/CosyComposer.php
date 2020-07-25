@@ -607,6 +607,7 @@ class CosyComposer
             '--direct' => true,
             '--minor-only' => true,
             '--format' => 'json',
+            '--no-interaction' => true,
         ]);
         $app->run($i, $this->output);
         $raw_data = $this->output->fetch();

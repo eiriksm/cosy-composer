@@ -19,7 +19,7 @@
         "league/flysystem": "^1.0",
         "eiriksm/symfony-console-array-output": "^1.0",
         "violinist-dev/project-data": "^1.1.1",
-        "m4tthumphrey/php-gitlab-api": "^9.10",
+        "m4tthumphrey/php-gitlab-api": "~9.17.0",
         "peterpostmann/parse_uri": "^1.0",
         "violinist-dev/composer-updater": "dev-master",
         "violinist-dev/process-factory": "^1.0",

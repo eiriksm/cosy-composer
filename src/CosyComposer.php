@@ -874,12 +874,17 @@ class CosyComposer
             $package_name
         );
         if ($this->execCommand($command, false)) {
+            $this->log($this->getLastStdOut(), Message::COMMAND);
+            $this->log($this->getLastStdErr(), Message::COMMAND);
             throw new \Exception('Error committing the composer files. They are probably not changed.');
         }
     }
 
     protected function runAuthExportToken($hostname, $token)
     {
+        if (empty($token)) {
+            return;
+        }
         switch ($hostname) {
             case 'github.com':
                 $this->execCommand(

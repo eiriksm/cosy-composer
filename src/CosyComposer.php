@@ -1116,7 +1116,10 @@ class CosyComposer
                 if ($this->isPrivate) {
                     $head = $branch_name;
                 }
-                $body = $this->createBody($item, $post_update_data, $changelog, $security_update);
+                $new_lock_data = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
+                $comparer = new LockDataComparer($lock_file_contents, $new_lock_data);
+                $update_list = $comparer->getUpdateList();
+                $body = $this->createBody($item, $post_update_data, $changelog, $security_update, $update_list);
                 $assignees = [];
                 if (!empty($cdata->extra->violinist->assignees)) {
                     if (is_array($cdata->extra->violinist->assignees)) {
@@ -1287,7 +1290,7 @@ class CosyComposer
   /**
    * Helper to create body.
    */
-    public function createBody($item, $post_update_data, $changelog = null, $security_update = false)
+    public function createBody($item, $post_update_data, $changelog = null, $security_update = false, array $update_list = [])
     {
         $update = new ViolinistUpdate();
         $update->setName($item->name);
@@ -1301,6 +1304,7 @@ class CosyComposer
         if ($this->project && $this->project->getCustomPrMessage()) {
             $update->setCustomMessage($this->project->getCustomPrMessage());
         }
+        $update->setUpdatedList($update_list);
         return $this->messageFactory->getPullRequestBody($update);
     }
 

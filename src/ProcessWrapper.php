@@ -14,14 +14,6 @@ class ProcessWrapper extends Process
     protected $executor;
 
     /**
-     * @return CommandExecuter
-     */
-    public function getExecutor()
-    {
-        return $this->executor;
-    }
-
-    /**
      * @param CommandExecuter $executor
      */
     public function setExecutor(CommandExecuter $executor)

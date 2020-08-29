@@ -1007,4 +1007,101 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
         $this->assertOutputContainsMessage($fake_pr_url, $c);
         $this->assertEquals(true, $called);
     }
+
+    public function testUpdatedAndNewInstalled()
+    {
+        $c = $this->getMockCosy();
+        $dir = '/tmp/' . uniqid();
+        $this->setupDirectory($c, $dir);
+        $mock_definition = $this->getMockDefinition();
+        $mock_app = $this->getMockApp($mock_definition);
+        $c->setApp($mock_app);
+        $mock_output = $this->createMock(ArrayOutput::class);
+        $mock_output->method('fetch')
+            ->willReturn([
+                [
+                    $this->createUpdateJsonFromData('drupal/core', '8.8.0', '8.9.3'),
+                ]
+            ]);
+        $c->setOutput($mock_output);
+        $this->createComposerFileFromFixtures($dir, 'composer-drupal88.json');
+        $called = false;
+        $mock_executer = $this->getMockExecuterWithReturnCallback(
+            function ($cmd) use (&$called, $dir) {
+                $return = 0;
+                $expected_command = $this->createExpectedCommandForPackage('drupal/core');
+                if ($cmd == $expected_command) {
+                    file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-drupal88.lock.updated'));
+                }
+                if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                    $called = true;
+                }
+                return $return;
+            }
+        );
+        $c->setExecuter($mock_executer);
+        $this->assertEquals(false, $called);
+
+        // Then we are going to mock the provider factory.
+        $mock_provider_factory = $this->createMock(ProviderFactory::class);
+        $mock_provider = $this->createMock(Github::class);
+        $fake_pr_url = 'http://example.com/pr';
+        $slug = new Slug();
+        $slug->setProvider('github.com');
+        $slug->setSlug('a/b');
+        $mock_provider->expects($this->once())
+            ->method('createPullRequest')
+            ->with($slug, [
+                'base' => 'master',
+                'head' => 'drupalcore880893',
+                'title' => 'Update drupal/core from 8.8.0 to 8.9.3',
+                'body' => 'If you have a high test coverage index, and your tests for this pull request are passing, it should be both safe and recommended to merge this update.
+
+  ### Updated packages
+
+  Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
+
+  <details>
+    <summary>List of updated packages</summary>
+
+- drupal/core: 8.9.3 (updated from 8.8.0)
+- laminas/laminas-diactoros: 1.8.7p2 (new package, previously not installed)
+- laminas/laminas-escaper: 2.6.1 (new package, previously not installed)
+- laminas/laminas-feed: 2.12.3 (new package, previously not installed)
+- laminas/laminas-stdlib: 3.3.0 (new package, previously not installed)
+- laminas/laminas-zendframework-bridge: 1.1.0 (new package, previously not installed)
+
+  </details>
+
+
+***
+This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).
+',
+                'assignees' => [],
+            ])
+            ->willReturn([
+                'html_url' => $fake_pr_url,
+            ]);
+        $mock_provider->method('repoIsPrivate')
+            ->willReturn(true);
+        $mock_provider->method('getDefaultBranch')
+            ->willReturn('master');
+        $mock_provider->method('getBranchesFlattened')
+            ->willReturn([]);
+        $default_sha = 123;
+        $mock_provider->method('getDefaultBase')
+            ->willReturn($default_sha);
+        $mock_provider->method('getPrsNamed')
+            ->willReturn([]);
+        $mock_provider_factory->method('createFromHost')
+            ->willReturn($mock_provider);
+
+        $c->setProviderFactory($mock_provider_factory);
+        $this->assertEquals(false, $called);
+        $composer_lock_contents = file_get_contents(__DIR__ . '/../fixtures/composer-drupal88.lock');
+        file_put_contents("$dir/composer.lock", $composer_lock_contents);
+        $c->run();
+        $this->assertOutputContainsMessage($fake_pr_url, $c);
+        $this->assertEquals(true, $called);
+    }
 }

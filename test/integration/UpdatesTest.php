@@ -633,6 +633,17 @@ class UpdatesTest extends Base
                 'title' => 'Update psr/log from 1.0.0 to 1.0.2',
                 'body' => 'If you have a high test coverage index, and your tests for this pull request are passing, it should be both safe and recommended to merge this update.
 
+  ### Updated packages
+
+  Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
+
+  <details>
+    <summary>List of updated packages</summary>
+
+- psr/log: 1.0.2 (updated from 1.1.0)
+
+  </details>
+
 
 ***
 a custom message
@@ -953,6 +964,17 @@ a custom message
                 'head' => 'drupalcore847848',
                 'title' => 'Update drupal/core from 8.4.7 to 8.4.8',
                 'body' => 'If you have a high test coverage index, and your tests for this pull request are passing, it should be both safe and recommended to merge this update.
+
+  ### Updated packages
+
+  Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
+
+  <details>
+    <summary>List of updated packages</summary>
+
+- drupal/core: 8.4.8 (updated from 8.4.7)
+
+  </details>
 
 
 ***

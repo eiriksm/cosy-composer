@@ -46,7 +46,7 @@ class GitlabProviderTest extends ProvidersTestBase
 
     protected function getRepoClassName($context)
     {
-        if ($context == 'branches') {
+        if ($context === 'branches') {
             return Repositories::class;
         }
         return Projects::class;

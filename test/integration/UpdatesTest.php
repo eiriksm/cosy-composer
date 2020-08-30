@@ -633,16 +633,16 @@ class UpdatesTest extends Base
                 'title' => 'Update psr/log from 1.0.0 to 1.0.2',
                 'body' => 'If you have a high test coverage index, and your tests for this pull request are passing, it should be both safe and recommended to merge this update.
 
-  ### Updated packages
+### Updated packages
 
-  Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
+Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
 
-  <details>
-    <summary>List of updated packages</summary>
+<details>
+<summary>List of updated packages</summary>
 
 - psr/log: 1.0.2 (updated from 1.1.0)
 
-  </details>
+</details>
 
 
 ***
@@ -965,16 +965,16 @@ a custom message
                 'title' => 'Update drupal/core from 8.4.7 to 8.4.8',
                 'body' => 'If you have a high test coverage index, and your tests for this pull request are passing, it should be both safe and recommended to merge this update.
 
-  ### Updated packages
+### Updated packages
 
-  Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
+Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
 
-  <details>
-    <summary>List of updated packages</summary>
+<details>
+<summary>List of updated packages</summary>
 
 - drupal/core: 8.4.8 (updated from 8.4.7)
 
-  </details>
+</details>
 
 
 ***
@@ -1057,12 +1057,12 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
                 'title' => 'Update drupal/core from 8.8.0 to 8.9.3',
                 'body' => 'If you have a high test coverage index, and your tests for this pull request are passing, it should be both safe and recommended to merge this update.
 
-  ### Updated packages
+### Updated packages
 
-  Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
+Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
 
-  <details>
-    <summary>List of updated packages</summary>
+<details>
+<summary>List of updated packages</summary>
 
 - drupal/core: 8.9.3 (updated from 8.8.0)
 - laminas/laminas-diactoros: 1.8.7p2 (new package, previously not installed)
@@ -1071,7 +1071,7 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
 - laminas/laminas-stdlib: 3.3.0 (new package, previously not installed)
 - laminas/laminas-zendframework-bridge: 1.1.0 (new package, previously not installed)
 
-  </details>
+</details>
 
 
 ***

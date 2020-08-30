@@ -1120,6 +1120,17 @@ class CosyComposer
                 $comparer = new LockDataComparer($lock_file_contents, $new_lock_data);
                 $update_list = $comparer->getUpdateList();
                 $body = $this->createBody($item, $post_update_data, $changelog, $security_update, $update_list);
+                if ($this->slug->getProvider() === 'bitbucket.org') {
+                    // Currently does not support having the collapsible section thing.
+                    // @todo: Revisit from time to time?
+                    // @todo: Make sure we replace the correct one. What if the changelog has this in it?
+                    $body = str_replace([
+                        '<details>',
+                        '<summary>',
+                        '</summary>',
+                        '</details>',
+                    ], '', $body);
+                }
                 $assignees = [];
                 if (!empty($cdata->extra->violinist->assignees)) {
                     if (is_array($cdata->extra->violinist->assignees)) {

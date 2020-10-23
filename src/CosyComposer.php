@@ -486,6 +486,8 @@ class CosyComposer
         if (!empty($_SERVER['queue_runner_revision'])) {
             $this->log(sprintf('Queue runner revision %s', $_SERVER['queue_runner_revision']));
         }
+        // Try to get the php version as well.
+        $this->execCommand('php --version');
         // Try to get the composer version as well.
         $this->execCommand('composer --version');
         $this->log($this->getLastStdOut());

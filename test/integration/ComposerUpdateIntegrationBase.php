@@ -35,9 +35,8 @@ abstract class ComposerUpdateIntegrationBase extends Base
         // Then we are going to mock the provider factory.
         $mock_provider_factory = $this->createMock(ProviderFactory::class);
         $mock_provider = $this->createMock(Github::class);
-        $dir = $this->dir;
         $mock_executer = $this->getMockExecuterWithReturnCallback(
-            function ($cmd) use ($dir) {
+            function ($cmd) {
                 $return = 0;
                 $expected_command = $this->createExpectedCommandForPackage($this->packageForUpdateOutput);
                 if ($cmd == $expected_command) {

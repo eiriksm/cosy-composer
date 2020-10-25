@@ -1047,7 +1047,7 @@ class CosyComposer
                     $version_from = $pre_update_data->source->reference;
                     $version_to = $post_update_data->source->reference;
                 }
-                // Now, see if it the update was actually to the version we are expecting.
+                // Now, see if the update was actually to the version we are expecting.
                 // If we are updating to another dev version, composer show will tell us something like:
                 // dev-master 15eb463
                 // while the post update data version will still say:

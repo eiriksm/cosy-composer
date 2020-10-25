@@ -41,7 +41,7 @@ abstract class ComposerUpdateIntegrationBase extends Base
                 $return = 0;
                 $expected_command = $this->createExpectedCommandForPackage($this->packageForUpdateOutput);
                 if ($cmd == $expected_command) {
-                    file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . sprintf('/../fixtures/%s.lock.updated', $this->composerAssetFiles)));
+                    $this->placeUpdatedComposerLock();
                 }
                 $this->handleExecutorReturnCallback($cmd, $return);
                 return $return;
@@ -66,9 +66,18 @@ abstract class ComposerUpdateIntegrationBase extends Base
             ->willReturn($mock_provider);
 
         $this->cosy->setProviderFactory($mock_provider_factory);
-        $composer_lock_contents = file_get_contents(__DIR__ . sprintf('/../fixtures/%s.lock', $this->composerAssetFiles));
-        file_put_contents("$this->dir/composer.lock", $composer_lock_contents);
+        $this->placeInitialComposerLock();
         $this->mockProvider = $mock_provider;
+    }
+
+    protected function placeInitialComposerLock()
+    {
+        $this->placeComposerLockContentsFromFixture(sprintf('%s.lock', $this->composerAssetFiles), $this->dir);
+    }
+
+    protected function placeUpdatedComposerLock()
+    {
+        $this->placeComposerLockContentsFromFixture(sprintf('%s.lock.updated', $this->composerAssetFiles), $this->dir);
     }
 
     protected function handleExecutorReturnCallback($cmd, &$return)

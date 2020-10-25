@@ -41,7 +41,15 @@ class LockDataComparer
                     $list[] = new UpdateListItem($package->name, $package->version);
                 } else {
                     if ($old_package->version === $package->version) {
-                        continue;
+                        // Well, unless they are actually on for example dev-master. Then we compare the dist hashes.
+                        if (empty($old_package->dist->reference) || empty($package->dist->reference)) {
+                            continue;
+                        }
+                        if ($old_package->dist->reference === $package->dist->reference) {
+                            continue;
+                        }
+                        $old_package->version = sprintf('%s#%s', $old_package->version, $old_package->dist->reference);
+                        $package->version = sprintf('%s#%s', $package->version, $package->dist->reference);
                     }
                     $list[] = new UpdateListItem($package->name, $package->version, $old_package->version);
                 }

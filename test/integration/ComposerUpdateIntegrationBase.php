@@ -60,7 +60,7 @@ abstract class ComposerUpdateIntegrationBase extends Base
         $mock_provider->method('getDefaultBase')
             ->willReturn($default_sha);
         $mock_provider->method('getPrsNamed')
-            ->willReturn([]);
+            ->willReturn($this->getPrsNamed());
         $mock_provider_factory->method('createFromHost')
             ->willReturn($mock_provider);
 
@@ -68,6 +68,11 @@ abstract class ComposerUpdateIntegrationBase extends Base
         $composer_lock_contents = file_get_contents(__DIR__ . sprintf('/../fixtures/%s.lock', $this->composerAssetFiles));
         file_put_contents("$this->dir/composer.lock", $composer_lock_contents);
         $this->mockProvider = $mock_provider;
+    }
+
+    protected function getPrsNamed()
+    {
+        return [];
     }
 
     public function runtestExpectedOutput()

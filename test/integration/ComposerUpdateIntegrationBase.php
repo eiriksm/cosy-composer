@@ -43,6 +43,7 @@ abstract class ComposerUpdateIntegrationBase extends Base
                 if ($cmd == $expected_command) {
                     file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . sprintf('/../fixtures/%s.lock.updated', $this->composerAssetFiles)));
                 }
+                $this->handleExecutorReturnCallback($cmd, $return);
                 return $return;
             }
         );
@@ -68,6 +69,10 @@ abstract class ComposerUpdateIntegrationBase extends Base
         $composer_lock_contents = file_get_contents(__DIR__ . sprintf('/../fixtures/%s.lock', $this->composerAssetFiles));
         file_put_contents("$this->dir/composer.lock", $composer_lock_contents);
         $this->mockProvider = $mock_provider;
+    }
+
+    protected function handleExecutorReturnCallback($cmd, &$return)
+    {
     }
 
     public function runtestExpectedOutput()

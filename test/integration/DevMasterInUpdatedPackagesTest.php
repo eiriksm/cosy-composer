@@ -25,6 +25,7 @@ class DevMasterInUpdatedPackagesTest extends ComposerUpdateIntegrationBase
             });
         $this->runtestExpectedOutput();
         $this->assertOutputContainsMessage($fake_pr_url, $this->cosy);
+        $this->assertNotEquals('psrlogdevmaster2b71ffbdevmaster', $pr_params["head"]);
         $this->assertEquals('If you have a high test coverage index, and your tests for this pull request are passing, it should be both safe and recommended to merge this update.
 
 ### Updated packages

@@ -61,7 +61,7 @@ abstract class ComposerUpdateIntegrationBase extends Base
         $mock_provider->method('getDefaultBase')
             ->willReturn($default_sha);
         $mock_provider->method('getPrsNamed')
-            ->willReturn([]);
+            ->willReturn($this->getPrsNamed());
         $mock_provider_factory->method('createFromHost')
             ->willReturn($mock_provider);
 
@@ -82,6 +82,11 @@ abstract class ComposerUpdateIntegrationBase extends Base
 
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
+    }
+  
+    protected function getPrsNamed()
+    {
+        return [];
     }
 
     public function runtestExpectedOutput()

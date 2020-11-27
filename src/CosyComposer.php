@@ -463,6 +463,45 @@ class CosyComposer
     }
 
     /**
+     * Export things.
+     */
+    protected function exportEnvVars()
+    {
+        if (!$this->project) {
+            return;
+        }
+        $env = $this->project->getEnvString();
+        if (empty($env)) {
+            return;
+        }
+        // One per line.
+        $env_array = preg_split("/\r\n|\n|\r/", $env);
+        if (empty($env_array)) {
+            return;
+        }
+        foreach ($env_array as $env_string) {
+            if (empty($env_string)) {
+                continue;
+            }
+            $env_parts = explode('=', $env_string, 2);
+            if (count($env_parts) != 2) {
+                continue;
+            }
+            // We do not allow to override ENV vars.
+            $key = $env_parts[0];
+            $existing_env = getenv($key);
+            if ($existing_env) {
+                $this->logger->log('info', new Message("The ENV variable $key was skipped because it exists and can not be overwritten"));
+                continue;
+            }
+            $value = $env_parts[1];
+            $this->logger->log('info', new Message("Exporting ENV variable $key: $value"));
+            putenv($env_string);
+            $_ENV[$key] = $value;
+        }
+    }
+
+    /**
      * @throws \eiriksm\CosyComposer\Exceptions\ChdirException
      * @throws \eiriksm\CosyComposer\Exceptions\GitCloneException
      * @throws \InvalidArgumentException
@@ -477,6 +516,8 @@ class CosyComposer
                 throw new \RuntimeException(sprintf('Directory "%s" was not created', $directory));
             }
         }
+        // Export the environment variables if needed.
+        $this->exportEnvVars();
         if (!empty($_SERVER['violinist_hostname'])) {
             $this->log(sprintf('Running update check on %s', $_SERVER['violinist_hostname']));
         }

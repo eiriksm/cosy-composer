@@ -27,7 +27,23 @@ class LockDataComparer
             'packages-dev',
         ];
         $after_data = $this->afterData->getData();
+        $before_data = $this->beforeData->getData();
         foreach ($package_types as $package_type) {
+            foreach ($before_data->{$package_type} as $package) {
+                // See if we can find that one in the afterdata.
+                $new_package = null;
+                try {
+                    $new_package = $this->afterData->getPackageData($package->name);
+                } catch (\Exception $e) {
+                    // Since we can not find it after update, it was removed.
+                }
+                if (!$new_package) {
+                    $list_item = new UpdateListItem($package->name, $package->version);
+                    $list_item->setIsRemoved(true);
+                    $list_item->setIsNew(false);
+                    $list[] = $list_item;
+                }
+            }
             foreach ($after_data->{$package_type} as $package) {
                 // See if we can find that one in the before data.
                 $old_package = null;

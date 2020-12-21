@@ -18,6 +18,12 @@ abstract class ComposerUpdateIntegrationBase extends Base
 
     protected $composerAssetFiles;
 
+    protected $fakePrUrl = 'http://example.com/pr';
+
+    protected $checkPrUrl = false;
+
+    protected $prParams = [];
+
     /**
      * @var MockObject
      */
@@ -67,6 +73,15 @@ abstract class ComposerUpdateIntegrationBase extends Base
         $this->cosy->setProviderFactory($mock_provider_factory);
         $this->placeInitialComposerLock();
         $this->mockProvider = $mock_provider;
+        if ($this->checkPrUrl) {
+            $this->mockProvider->method('createPullRequest')
+                ->willReturnCallback(function (Slug $slug, array $params) {
+                    $this->prParams = $params;
+                    return [
+                        'html_url' => $this->fakePrUrl,
+                    ];
+                });
+        }
     }
 
     protected function placeInitialComposerLock()
@@ -91,5 +106,8 @@ abstract class ComposerUpdateIntegrationBase extends Base
     public function runtestExpectedOutput()
     {
         $this->cosy->run();
+        if ($this->checkPrUrl) {
+            $this->assertOutputContainsMessage($this->fakePrUrl, $this->cosy);
+        }
     }
 }

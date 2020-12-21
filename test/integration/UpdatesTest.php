@@ -640,6 +640,7 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 <details>
 <summary>List of updated packages</summary>
 
+- eirik/private-pack dev-master (package was removed)
 - psr/log: 1.0.2 (updated from 1.1.0)
 
 </details>
@@ -1064,6 +1065,10 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 <details>
 <summary>List of updated packages</summary>
 
+- zendframework/zend-diactoros 1.8.7 (package was removed)
+- zendframework/zend-escaper 2.6.1 (package was removed)
+- zendframework/zend-feed 2.12.0 (package was removed)
+- zendframework/zend-stdlib 3.2.1 (package was removed)
 - drupal/core: 8.9.3 (updated from 8.8.0)
 - laminas/laminas-diactoros: 1.8.7p2 (new package, previously not installed)
 - laminas/laminas-escaper: 2.6.1 (new package, previously not installed)

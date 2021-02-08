@@ -1235,13 +1235,13 @@ class CosyComposer
             } catch (ValidationFailedException $e) {
                 // @todo: Do some better checking. Could be several things, this.
                 $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
-                if (isset($branch_name) && isset($pr_params) && !empty($prs_named[$branch_name]['title']) && $prs_named[$branch_name]['title'] != $pr_params['title']) {
+                if ($this->shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
                     $this->log('Will try to update the PR.');
                     $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
                 }
             } catch (\Gitlab\Exception\RuntimeException $e) {
                 $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
-                if (isset($branch_name) && isset($pr_params) && !empty($prs_named[$branch_name]['title']) && $prs_named[$branch_name]['title'] != $pr_params['title']) {
+                if ($this->shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
                     $this->log('Will try to update the PR based on settings.');
                     $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
                 }
@@ -1274,6 +1274,27 @@ class CosyComposer
                 $this->log('Rolling back state on the default branch was not successful. Subsequent updates may be affected');
             }
         }
+    }
+
+    /**
+     * Helper function.
+     */
+    protected function shouldUpdatePr($branch_name, $pr_params, $prs_named) {
+        if (!isset($branch_name)) {
+            return false;
+        }
+        if (!isset($pr_params)) {
+            return false;
+        }
+        if (!empty($prs_named[$branch_name]['title']) && $prs_named[$branch_name]['title'] != $pr_params['title']) {
+            return true;
+        }
+        if (!empty($prs_named[$branch_name]['body']) && !empty($pr_params['body'])) {
+            if (trim($prs_named[$branch_name]['body']) != trim($pr_params['body'])) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

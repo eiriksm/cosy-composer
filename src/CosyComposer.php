@@ -1279,7 +1279,8 @@ class CosyComposer
     /**
      * Helper function.
      */
-    protected function shouldUpdatePr($branch_name, $pr_params, $prs_named) {
+    protected function shouldUpdatePr($branch_name, $pr_params, $prs_named)
+    {
         if (!isset($branch_name)) {
             return false;
         }

@@ -985,6 +985,8 @@ class CosyComposer
             }
             $security_update = false;
             $package_name = $item->name;
+            $branch_name = '';
+            $pr_params = [];
             try {
                 $pre_update_data = $this->getPackageData($package_name, $lockdata);
                 $version_from = $item->version;
@@ -1281,10 +1283,10 @@ class CosyComposer
      */
     protected function shouldUpdatePr($branch_name, $pr_params, $prs_named)
     {
-        if (!isset($branch_name)) {
+        if (empty($branch_name)) {
             return false;
         }
-        if (!isset($pr_params)) {
+        if (empty($pr_params)) {
             return false;
         }
         if (!empty($prs_named[$branch_name]['title']) && $prs_named[$branch_name]['title'] != $pr_params['title']) {

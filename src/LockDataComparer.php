@@ -58,14 +58,25 @@ class LockDataComparer
                 } else {
                     if ($old_package->version === $package->version) {
                         // Well, unless they are actually on for example dev-master. Then we compare the dist hashes.
-                        if (empty($old_package->dist->reference) || empty($package->dist->reference)) {
+                        $is_the_same = true;
+                        // For some packages, the dist part can be empty, but the version differ in the source hash. So
+                        // we compare them both.
+                        $useful_dist_property = 'dist';
+                        foreach (['dist', 'source'] as $key) {
+                            if (empty($old_package->{$key}->reference) || empty($package->{$key}->reference)) {
+                                continue;
+                            }
+                            if ($old_package->{$key}->reference === $package->{$key}->reference) {
+                                continue;
+                            }
+                            $is_the_same = false;
+                            $useful_dist_property = $key;
+                        }
+                        if ($is_the_same) {
                             continue;
                         }
-                        if ($old_package->dist->reference === $package->dist->reference) {
-                            continue;
-                        }
-                        $old_package->version = sprintf('%s#%s', $old_package->version, $old_package->dist->reference);
-                        $package->version = sprintf('%s#%s', $package->version, $package->dist->reference);
+                        $old_package->version = sprintf('%s#%s', $old_package->version, $old_package->{$useful_dist_property}->reference);
+                        $package->version = sprintf('%s#%s', $package->version, $package->{$useful_dist_property}->reference);
                     }
                     $list[] = new UpdateListItem($package->name, $package->version, $old_package->version);
                 }

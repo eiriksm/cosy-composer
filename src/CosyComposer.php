@@ -740,6 +740,10 @@ class CosyComposer
             if (!isset($item->latest) || !isset($item->{'latest-status'})) {
                 unset($data[$delta]);
             }
+            // If a package is abandoned, we do not really want to know. Since we can't update it anyway.
+            if ($item->latest === $item->version || $item->{'latest-status'} === 'up-to-date') {
+                unset($data[$delta]);
+            }
         }
         if (empty($data)) {
             $this->log('No updates found');

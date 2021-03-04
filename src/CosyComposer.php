@@ -25,9 +25,6 @@ use eiriksm\ViolinistMessages\ViolinistUpdate;
 use Github\Client;
 use Github\Exception\RuntimeException;
 use Github\Exception\ValidationFailedException;
-use Github\HttpClient\Builder;
-use Github\ResultPager;
-use GuzzleHttp\Psr7\Request;
 use League\Flysystem\Adapter\Local;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -638,6 +635,9 @@ class CosyComposer
             $this->log('Found ' . count($result) . ' security advisories for packages installed', 'message', [
                 'result' => $result,
             ]);
+            foreach ($result as $name => $value) {
+                $this->log("Security update available for $name");
+            }
             if (count($result)) {
                 $alerts = $result;
             }
@@ -645,14 +645,17 @@ class CosyComposer
             $this->log('Caught exception while looking for security updates:');
             $this->log($e->getMessage());
         }
-        $i = new ArrayInput([
+        $array_input_array = [
             'outdated',
             '-d' => $this->getCwd(),
-            '--direct' => true,
             '--minor-only' => true,
             '--format' => 'json',
             '--no-interaction' => true,
-        ]);
+        ];
+        if ($config->shouldCheckDirectOnly()) {
+            $array_input_array['--direct'] = true;
+        }
+        $i = new ArrayInput($array_input_array);
         $app->run($i, $this->output);
         $raw_data = $this->output->fetch();
         $data = null;
@@ -687,21 +690,28 @@ class CosyComposer
         if ($config->shouldOnlyUpdateSecurityUpdates()) {
             $this->log('Project indicated that it should only receive security updates. Removing non-security related updates from queue');
             foreach ($data as $delta => $item) {
-                $package_name_in_composer_json = self::getComposerJsonName($cdata, $item->name, $this->compserJsonDir);
-                if (isset($alerts[$package_name_in_composer_json])) {
-                    continue;
+                try {
+                    $package_name_in_composer_json = self::getComposerJsonName($cdata, $item->name, $this->compserJsonDir);
+                    if (isset($alerts[$package_name_in_composer_json])) {
+                        continue;
+                    }
+                } catch (\Exception $e) {
+                    // Totally fine. Let's check if it's there just by the name we have right here.
+                    if (isset($alerts[$item->name])) {
+                        continue;
+                    }
                 }
                 unset($data[$delta]);
                 $this->log(sprintf('Skipping update of %s because it is not indicated as a security update', $item->name));
             }
         }
         // Remove blacklisted packages.
-        $blacklist = $config->getBlackList();
-        if (!is_array($blacklist)) {
-                $this->log('The format for blacklisting packages was not correct. Expected an array, got ' . gettype($cdata->extra->violinist->blacklist), Message::VIOLINIST_ERROR);
+        $block_list = $config->getBlackList();
+        if (!is_array($block_list)) {
+                $this->log('The format for the package block list was not correct. Expected an array, got ' . gettype($cdata->extra->violinist->blacklist), Message::VIOLINIST_ERROR);
         } else {
             foreach ($data as $delta => $item) {
-                if (in_array($item->name, $blacklist)) {
+                if (in_array($item->name, $block_list)) {
                     $this->log(sprintf('Skipping update of %s because it is blacklisted', $item->name), Message::BLACKLISTED, [
                         'package' => $item->name,
                     ]);
@@ -709,7 +719,7 @@ class CosyComposer
                     continue;
                 }
                 // Also try to match on wildcards.
-                foreach ($blacklist as $blacklist_item) {
+                foreach ($block_list as $blacklist_item) {
                     if (fnmatch($blacklist_item, $item->name)) {
                         $this->log(sprintf('Skipping update of %s because it is blacklisted by pattern %s', $item->name, $blacklist_item), Message::BLACKLISTED, [
                             'package' => $item->name,
@@ -996,7 +1006,17 @@ class CosyComposer
                 $version_from = $item->version;
                 $version_to = $item->latest;
                 // See where this package is.
-                $package_name_in_composer_json = self::getComposerJsonName($cdata, $package_name, $this->compserJsonDir);
+                try {
+                    $package_name_in_composer_json = self::getComposerJsonName($cdata, $package_name, $this->compserJsonDir);
+                } catch (\Exception $e) {
+                    // If this was a package that we somehow got because we have allowed to update other than direct
+                    // dependencies we can avoid re-throwing this.
+                    if ($config->shouldCheckDirectOnly()) {
+                        throw $e;
+                    }
+                    // Taking a risk :o.
+                    $package_name_in_composer_json = $package_name;
+                }
                 if (isset($alerts[$package_name_in_composer_json])) {
                     $security_update = true;
                 }

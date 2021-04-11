@@ -645,6 +645,10 @@ class CosyComposer
             $this->log('Caught exception while looking for security updates:');
             $this->log($e->getMessage());
         }
+        // We also want to consult the Drupal security advisories, since the FriendsOfPHP/security-advisories
+        // repo is a manual job merging and maintaining. On top of that, it requires the built container to be
+        // up to date. So here could be several hours of delay on critical stuff.
+        $this->attachDrupalAdvisories($alerts);
         $array_input_array = [
             'outdated',
             '-d' => $this->getCwd(),
@@ -1449,6 +1453,72 @@ class CosyComposer
     {
 
         $this->getLogger()->log('info', new Message($message, $type), $context);
+    }
+
+    protected function attachDrupalAdvisories(array &$alerts) {
+        if (!$this->lockFileContents) {
+            return;
+        }
+        $data = ComposerLockData::createFromString(json_encode($this->lockFileContents));
+        try {
+            $drupal = $data->getPackageData('drupal/core');
+            // Now see if a newer version is available, and if it is a security update.
+            $endpoint = 'current';
+            $major_version = mb_substr($drupal->version, 0, 1);
+            switch ($major_version) {
+                case '8':
+                    $endpoint = '8.x';
+                    break;
+
+                case '7':
+                    $endpoint = '7.x';
+                    break;
+
+                case '9':
+                    // Using current.
+                    break;
+                default:
+                    throw new \Exception('No idea what endpoint to use to check for drupal security release');
+            }
+
+            $data = @file_get_contents(sprintf('https://updates.drupal.org/release-history/drupal/%s', $endpoint));
+            $xml = @simplexml_load_string($data);
+            $known_names = [
+                'drupal/core-recommended',
+                'drupal/core-composer-scaffold',
+                'drupal/core-project-message',
+                'drupal/core',
+                'drupal/drupal',
+            ];
+            foreach ($xml->releases->release as $release) {
+                $version = (string) $release->version;
+                if (version_compare($version, $drupal->version) !== 1) {
+                    continue;
+                }
+                $is_sec = false;
+                foreach ($release->terms->term as $item) {
+                    $type = (string) $item->value;
+                    if ($type === 'Security update') {
+                        $is_sec = true;
+                    }
+                }
+                if (!$is_sec) {
+                    continue;
+                }
+                $this->log('Found a security update in the update XML. Will populate advisories from this, if not already set.');
+                foreach ($known_names as $known_name) {
+                    if (!empty($alerts[$known_name])) {
+                        continue;
+                    }
+                    $alerts[$known_name] = [
+                        'version' => $version,
+                    ];
+                }
+                break;
+            }
+        } catch (\Exception $e) {
+            // Totally fine.
+        }
     }
 
   /**

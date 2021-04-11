@@ -1455,7 +1455,8 @@ class CosyComposer
         $this->getLogger()->log('info', new Message($message, $type), $context);
     }
 
-    protected function attachDrupalAdvisories(array &$alerts) {
+    protected function attachDrupalAdvisories(array &$alerts)
+    {
         if (!$this->lockFileContents) {
             return;
         }

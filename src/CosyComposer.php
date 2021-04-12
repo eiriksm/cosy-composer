@@ -12,6 +12,8 @@ use eiriksm\CosyComposer\Exceptions\GitCloneException;
 use eiriksm\CosyComposer\Exceptions\GitPushException;
 use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
+use GuzzleHttp\Psr7\Request;
+use Http\Client\HttpClient;
 use Violinist\ChangelogFetcher\ChangelogRetriever;
 use Violinist\ChangelogFetcher\DependencyRepoRetriever;
 use Violinist\ComposerLockData\ComposerLockData;
@@ -258,6 +260,25 @@ class CosyComposer
     public function getCacheDir()
     {
         return $this->cacheDir;
+    }
+
+    /**
+     * @return HttpClient
+     */
+    public function getHttpClient()
+    {
+        if (!$this->httpClient) {
+            $this->httpClient = new \Http\Adapter\Guzzle6\Client();
+        }
+        return $this->httpClient;
+    }
+
+    /**
+     * @param HttpClient $httpClient
+     */
+    public function setHttpClient(HttpClient $httpClient)
+    {
+        $this->httpClient = $httpClient;
     }
 
     /**
@@ -1482,7 +1503,11 @@ class CosyComposer
                     throw new \Exception('No idea what endpoint to use to check for drupal security release');
             }
 
-            $data = @file_get_contents(sprintf('https://updates.drupal.org/release-history/drupal/%s', $endpoint));
+            $client = $this->getHttpClient();
+            $url = sprintf('https://updates.drupal.org/release-history/drupal/%s', $endpoint);
+            $request = new Request('GET', $url);
+            $response = $client->sendRequest($request);
+            $data = $response->getBody();
             $xml = @simplexml_load_string($data);
             $known_names = [
                 'drupal/core-recommended',

@@ -88,7 +88,7 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
         if (empty($version_array[$key])) {
             $key = 1;
         }
-        $version_array[$key] = $version_array[$key] + 1;
+        $version_array[$key] = (int) $version_array[$key] + 1;
         $new_version = implode('.', $version_array);
         return $new_version;
     }

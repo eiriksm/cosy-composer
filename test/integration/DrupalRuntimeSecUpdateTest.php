@@ -111,7 +111,7 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
 
     protected function placeInitialComposerLock()
     {
-
+        // Empty on purpose, since we place those files more dynamically.
     }
 
     public function getDrupalUpdatesAndSec()

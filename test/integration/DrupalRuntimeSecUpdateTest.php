@@ -133,6 +133,11 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
                 true,
             ],
             [
+                '8.10.6',
+                'drupal/core',
+                false,
+            ],
+            [
                 '7.212',
                 'drupal/core',
                 false

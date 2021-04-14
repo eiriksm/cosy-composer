@@ -1526,7 +1526,7 @@ class CosyComposer
                 if (empty($release->version)) {
                     continue;
                 }
-                if (empty($release->terms->term)) {
+                if (empty($release->terms) || empty($release->terms->term)) {
                     continue;
                 }
                 $version = (string) $release->version;

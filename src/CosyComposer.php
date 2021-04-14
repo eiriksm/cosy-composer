@@ -1509,6 +1509,9 @@ class CosyComposer
             $response = $client->sendRequest($request);
             $data = $response->getBody();
             $xml = @simplexml_load_string($data);
+            if (!$xml) {
+                return;
+            }
             $known_names = [
                 'drupal/core-recommended',
                 'drupal/core-composer-scaffold',
@@ -1516,7 +1519,16 @@ class CosyComposer
                 'drupal/core',
                 'drupal/drupal',
             ];
+            if (empty($xml->releases->release)) {
+                return;
+            }
             foreach ($xml->releases->release as $release) {
+                if (empty($release->version)) {
+                    continue;
+                }
+                if (empty($release->terms->term)) {
+                    continue;
+                }
                 $version = (string) $release->version;
                 if (version_compare($version, $drupal->version) !== 1) {
                     continue;
@@ -1542,7 +1554,7 @@ class CosyComposer
                 }
                 break;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Totally fine.
         }
     }

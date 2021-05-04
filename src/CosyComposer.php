@@ -1182,6 +1182,7 @@ class CosyComposer
                     }
                 }
                 $this->log('Successfully ran command composer update for package ' . $package_name);
+                $new_lock_data = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
                 $this->commitFiles($package_name);
                 $this->runAuthExport($hostname);
                 $origin = 'fork';
@@ -1211,7 +1212,6 @@ class CosyComposer
                 if ($this->isPrivate) {
                     $head = $branch_name;
                 }
-                $new_lock_data = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
                 $comparer = new LockDataComparer($lock_file_contents, $new_lock_data);
                 $update_list = $comparer->getUpdateList();
                 $body = $this->createBody($item, $post_update_data, $changelog, $security_update, $update_list);

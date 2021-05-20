@@ -60,6 +60,10 @@ jobs:
 
       - name: Coveralls
         run: php vendor/bin/php-coveralls -v
+        env:
+          GITHUB_RUN_ID: ${{ env.CI_JOB_ID }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
 
       - name: Run phpstan
         if: matrix.php-version != 7.0

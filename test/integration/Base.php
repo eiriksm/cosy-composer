@@ -97,7 +97,10 @@ abstract class Base extends TestCase
 
     protected function placeComposerLockContentsFromFixture($filename, $dir)
     {
-        $composer_lock_contents = file_get_contents(__DIR__ . '/../fixtures/' . $filename);
+        $composer_lock_contents = @file_get_contents(__DIR__ . '/../fixtures/' . $filename);
+        if (empty($composer_lock_contents)) {
+            return;
+        }
         file_put_contents("$dir/composer.lock", $composer_lock_contents);
     }
 

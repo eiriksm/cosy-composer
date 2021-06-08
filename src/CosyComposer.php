@@ -1213,7 +1213,7 @@ class CosyComposer
                 if ($this->isPrivate) {
                     $head = $branch_name;
                 }
-                $comparer = new LockDataComparer($lock_file_contents, $new_lock_data);
+                $comparer = new LockDataComparer($lockdata, $new_lock_data);
                 $update_list = $comparer->getUpdateList();
                 $body = $this->createBody($item, $post_update_data, $changelog, $security_update, $update_list);
                 if ($this->slug->getProvider() === 'bitbucket.org') {

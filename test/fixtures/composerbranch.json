@@ -1,0 +1,10 @@
+{
+    "require": {
+        "psr/log": "^1.0.0"
+    },
+    "extra": {
+        "violinist": {
+            "branch_prefix": "my_prefix"
+        }
+    }
+}

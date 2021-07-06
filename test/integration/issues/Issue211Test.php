@@ -18,6 +18,7 @@ class Issue211Test extends ComposerUpdateIntegrationBase
     public function testLockDataNotFailed()
     {
         $this->runtestExpectedOutput();
+        self::assertEquals('psrlog100113', $this->prParams["head"]);
     }
 
     protected function createExpectedCommandForPackage($package)

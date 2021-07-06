@@ -48,6 +48,7 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
         $this->runtestExpectedOutput();
         $output = $this->cosy->getOutput();
         self::assertEquals($sec, strpos($this->prParams["title"], '[SECURITY]') === 0);
+        self::assertEquals('drupalcorerecommended99969997', $this->prParams["head"]);
     }
 
     protected function createExpectedCommandForRequiredPackage($package, $new_version)

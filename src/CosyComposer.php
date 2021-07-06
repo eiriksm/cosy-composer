@@ -861,7 +861,7 @@ class CosyComposer
             $one_pr_per_dependency = (bool) $violinist_config->one_pull_request_per_package;
         }
         foreach ($data as $delta => $item) {
-            $branch_name = $this->createBranchName($item, $one_pr_per_dependency);
+            $branch_name = $this->createBranchName($item, $one_pr_per_dependency, $config);
             if (in_array($branch_name, $branches_flattened)) {
                 // Is there a PR for this?
                 if (array_key_exists($branch_name, $prs_named)) {
@@ -1082,7 +1082,7 @@ class CosyComposer
                 }
 
                 // Create a new branch.
-                $branch_name = $this->createBranchName($item, $one_pr_per_dependency);
+                $branch_name = $this->createBranchName($item, $one_pr_per_dependency, $config);
                 $this->log('Checking out new branch: ' . $branch_name);
                 $this->execCommand('git checkout -b ' . $branch_name, false);
                 // Make sure we do not have any uncommitted changes.
@@ -1440,13 +1440,20 @@ class CosyComposer
     /**
      * Helper to create branch name.
      */
-    protected function createBranchName($item, $one_per_package = false)
+    protected function createBranchName($item, $one_per_package = false, $config = null)
     {
+
         if ($one_per_package) {
             // Add a prefix.
             return 'violinist' . $this->createBranchNameFromVersions($item->name, '', '');
         }
-        return $this->createBranchNameFromVersions($item->name, $item->version, $item->latest);
+        $name = $this->createBranchNameFromVersions($item->name, $item->version, $item->latest);
+        $prefix = '';
+        if ($config) {
+            /** @var Config $config */
+            $prefix = $config->getBranchPrefix();
+        }
+        return "$prefix$name";
     }
 
     protected function createBranchNameFromVersions($package, $version_from, $version_to)

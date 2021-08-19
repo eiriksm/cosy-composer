@@ -12,10 +12,13 @@ use eiriksm\CosyComposer\Exceptions\GitCloneException;
 use eiriksm\CosyComposer\Exceptions\GitPushException;
 use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
+use eiriksm\ViolinistMessages\UpdateListItem;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\HttpClient;
 use Violinist\ChangelogFetcher\ChangelogRetriever;
 use Violinist\ChangelogFetcher\DependencyRepoRetriever;
+use Violinist\CommitMessageCreator\Constant\Type;
+use Violinist\CommitMessageCreator\Creator;
 use Violinist\ComposerLockData\ComposerLockData;
 use Violinist\ComposerUpdater\Exception\ComposerUpdateProcessFailedException;
 use Violinist\ComposerUpdater\Exception\NotUpdatedException;
@@ -945,18 +948,30 @@ class CosyComposer
         }
     }
 
-    protected function commitFiles($package_name)
+    protected function commitFiles($package_name, UpdateListItem $item = null, Config $config = null, $is_dev = false)
     {
         // Clean up the composer.lock file if it was not part of the repo.
         $this->execCommand('git clean -f composer.*');
+        $creator = new Creator();
+        $type = Type::NONE;
+        $msg = sprintf('Update %s', $package_name);
+        $creator->setType($type);
+        if ($item) {
+            try {
+                $creator->setType($config->getCommitMessageConvention());
+            } catch (\InvalidArgumentException $e) {
+                // Fall back to using none.
+            }
+            $msg = $creator->generateMessage($item, $is_dev);
+        }
         $command = sprintf(
-            'GIT_AUTHOR_NAME="%s" GIT_AUTHOR_EMAIL="%s" GIT_COMMITTER_NAME="%s" GIT_COMMITTER_EMAIL="%s" git commit %s -m "Update %s"',
+            'GIT_AUTHOR_NAME="%s" GIT_AUTHOR_EMAIL="%s" GIT_COMMITTER_NAME="%s" GIT_COMMITTER_EMAIL="%s" git commit %s -m "%s"',
             $this->githubUserName,
             $this->githubEmail,
             $this->githubUserName,
             $this->githubEmail,
             $this->lockFileContents ? 'composer.json composer.lock' : 'composer.json',
-            $package_name
+            $msg
         );
         if ($this->execCommand($command, false)) {
             $this->log($this->getLastStdOut(), Message::COMMAND);
@@ -1184,7 +1199,8 @@ class CosyComposer
                 }
                 $this->log('Successfully ran command composer update for package ' . $package_name);
                 $new_lock_data = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
-                $this->commitFiles($package_name);
+                $item = new UpdateListItem($package_name, $post_update_data->version, $item->version);
+                $this->commitFiles($package_name, $item, $config, $is_require_dev);
                 $this->runAuthExport($hostname);
                 $origin = 'fork';
                 if ($this->isPrivate) {

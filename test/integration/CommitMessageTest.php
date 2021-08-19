@@ -13,7 +13,7 @@ class CommitMessageTest extends ComposerUpdateIntegrationBase
     protected $composerAssetFiles = 'composer-commit';
     protected $hasCorrectCommit = false;
 
-    public function testRequireDevAdded()
+    public function testCommitMessage()
     {
         $this->runtestExpectedOutput();
         self::assertEquals($this->hasCorrectCommit, true);

@@ -98,7 +98,7 @@ class NoUpdatesTest extends Base
         $this->assertEquals(true, $called);
     }
 
-    public function testNoUpdatesBecauseBlacklisted()
+    public function testNoUpdatesBecauseBlocklisted()
     {
         $c = $this->getMockCosy();
         $dir = '/tmp/' . uniqid();
@@ -139,7 +139,7 @@ class NoUpdatesTest extends Base
         $this->assertEquals(false, $called);
         $c->run();
         $this->assertEquals(true, $called);
-        $this->assertOutputContainsMessage('Skipping update of eiriksm/fake-package because it is blacklisted', $c);
+        $this->assertOutputContainsMessage('Skipping update of eiriksm/fake-package because it is on the block list', $c);
         $this->assertOutputContainsMessage('No updates found', $c);
     }
 }

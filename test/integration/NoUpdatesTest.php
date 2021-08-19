@@ -98,7 +98,12 @@ class NoUpdatesTest extends Base
         $this->assertEquals(true, $called);
     }
 
-    public function testNoUpdatesBecauseBlacklisted()
+    /**
+     * Test that block list works.
+     *
+     * @dataProvider getBlockListOptions
+     */
+    public function testNoUpdatesBecauseBlocklisted($opt)
     {
         $c = $this->getMockCosy();
         $dir = '/tmp/' . uniqid();
@@ -121,7 +126,7 @@ class NoUpdatesTest extends Base
             ]);
         $c->setOutput($mock_output);
 
-        $composer_contents = '{"require": {"drupal/core": "8.0.0"}, "extra": {"violinist": { "blacklist": ["eiriksm/fake-package"]}}}';
+        $composer_contents = '{"require": {"drupal/core": "8.0.0"}, "extra": {"violinist": { "' . $opt . '": ["eiriksm/fake-package"]}}}';
         $composer_file = "$dir/composer.json";
         file_put_contents($composer_file, $composer_contents);
         $called = false;
@@ -139,7 +144,20 @@ class NoUpdatesTest extends Base
         $this->assertEquals(false, $called);
         $c->run();
         $this->assertEquals(true, $called);
-        $this->assertOutputContainsMessage('Skipping update of eiriksm/fake-package because it is blacklisted', $c);
+        $this->assertOutputContainsMessage('Skipping update of eiriksm/fake-package because it is on the block list', $c);
         $this->assertOutputContainsMessage('No updates found', $c);
+    }
+
+    public function getBlockListOptions()
+    {
+        return [
+            [
+                'blocklist',
+            ],
+            [
+                // The old deprecated option name that we still support.
+                'blacklist',
+            ],
+        ];
     }
 }

@@ -730,23 +730,23 @@ class CosyComposer
                 $this->log(sprintf('Skipping update of %s because it is not indicated as a security update', $item->name));
             }
         }
-        // Remove blacklisted packages.
-        $block_list = $config->getBlackList();
+        // Remove block listed packages.
+        $block_list = $config->getBlockList();
         if (!is_array($block_list)) {
                 $this->log('The format for the package block list was not correct. Expected an array, got ' . gettype($cdata->extra->violinist->blacklist), Message::VIOLINIST_ERROR);
         } else {
             foreach ($data as $delta => $item) {
                 if (in_array($item->name, $block_list)) {
-                    $this->log(sprintf('Skipping update of %s because it is blacklisted', $item->name), Message::BLACKLISTED, [
+                    $this->log(sprintf('Skipping update of %s because it is on the block list', $item->name), Message::BLACKLISTED, [
                         'package' => $item->name,
                     ]);
                     unset($data[$delta]);
                     continue;
                 }
                 // Also try to match on wildcards.
-                foreach ($block_list as $blacklist_item) {
-                    if (fnmatch($blacklist_item, $item->name)) {
-                        $this->log(sprintf('Skipping update of %s because it is blacklisted by pattern %s', $item->name, $blacklist_item), Message::BLACKLISTED, [
+                foreach ($block_list as $block_list_item) {
+                    if (fnmatch($block_list_item, $item->name)) {
+                        $this->log(sprintf('Skipping update of %s because it is on the block list by pattern %s', $item->name, $block_list_item), Message::BLACKLISTED, [
                             'package' => $item->name,
                         ]);
                         unset($data[$delta]);

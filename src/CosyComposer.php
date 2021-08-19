@@ -1199,8 +1199,8 @@ class CosyComposer
                 }
                 $this->log('Successfully ran command composer update for package ' . $package_name);
                 $new_lock_data = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
-                $item = new UpdateListItem($package_name, $post_update_data->version, $item->version);
-                $this->commitFiles($package_name, $item, $config, $is_require_dev);
+                $list_item = new UpdateListItem($package_name, $post_update_data->version, $item->version);
+                $this->commitFiles($package_name, $list_item, $config, $is_require_dev);
                 $this->runAuthExport($hostname);
                 $origin = 'fork';
                 if ($this->isPrivate) {

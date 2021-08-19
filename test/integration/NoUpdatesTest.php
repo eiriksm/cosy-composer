@@ -152,7 +152,7 @@ class NoUpdatesTest extends Base
     {
         return [
             [
-                'block_list',
+                'blocklist',
             ],
             [
                 'blacklist',

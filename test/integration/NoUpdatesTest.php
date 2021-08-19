@@ -155,6 +155,7 @@ class NoUpdatesTest extends Base
                 'blocklist',
             ],
             [
+                // The old deprecated option name that we still support.
                 'blacklist',
             ],
         ];

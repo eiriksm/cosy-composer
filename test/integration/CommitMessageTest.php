@@ -3,7 +3,7 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 /**
- * Test for issue 164.
+ * Test for a default commit message.
  */
 class CommitMessageTest extends ComposerUpdateIntegrationBase
 {

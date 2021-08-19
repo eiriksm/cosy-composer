@@ -3,7 +3,7 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 /**
- * Test for issue 164.
+ * Test for commit message type coventional commits.
  */
 class CommitMessageConventionalTest extends CommitMessageTest
 {

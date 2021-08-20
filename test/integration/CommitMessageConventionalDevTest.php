@@ -11,6 +11,6 @@ class CommitMessageConventionalDevTest extends CommitMessageTest
 
     protected function getCorrectCommit()
     {
-        return 'git commit composer.json composer.lock -m "build(deps): Update psr/log from 1.0.0 to 1.0.2"';
+        return 'git commit composer.json composer.lock -m "build(deps-dev): Update psr/log from 1.0.0 to 1.0.2"';
     }
 }

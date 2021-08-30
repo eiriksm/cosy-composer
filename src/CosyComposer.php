@@ -1285,7 +1285,7 @@ class CosyComposer
             } catch (NotUpdatedException $e) {
                 // Not updated because of the composer command, not the
                 // restriction itself.
-                $command = sprintf('composer why-not %s:%s', $item->name, $item->latest);
+                $command = sprintf('composer why-not %s "%s"', $item->name, $item->latest);
                 $this->execCommand(sprintf('%s', $command), false);
                 $this->log($this->getLastStdErr(), Message::COMMAND, [
                     'command' => $command,

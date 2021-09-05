@@ -807,9 +807,25 @@ class CosyComposer
         $this->client = $this->getClient($this->slug);
         $this->privateClient = $this->getClient($this->slug);
         $this->privateClient->authenticate($this->userToken, null);
-        $this->isPrivate = $this->privateClient->repoIsPrivate($this->slug);
-        // Get the default branch of the repo.
-        $default_branch = $this->privateClient->getDefaultBranch($this->slug);
+        try {
+            $this->isPrivate = $this->privateClient->repoIsPrivate($this->slug);
+            // Get the default branch of the repo.
+            $default_branch = $this->privateClient->getDefaultBranch($this->slug);
+        } catch (\Throwable $e) {
+            // Could be a personal access token.
+            if (!method_exists($this->privateClient, 'authenticatePersonalAccessToken')) {
+                throw $e;
+            }
+            try {
+                $this->privateClient->authenticatePersonalAccessToken($this->userToken, null);
+                $this->isPrivate = $this->privateClient->repoIsPrivate($this->slug);
+                // Get the default branch of the repo.
+                $default_branch = $this->privateClient->getDefaultBranch($this->slug);
+            } catch (\Throwable $other_exception) {
+                // Throw the first exception, probably.
+                throw $e;
+            }
+        }
         // We also allow the project to override this for violinist.
         if ($config->getDefaultBranch()) {
             // @todo: Would be better to make sure this can actually be set, based on the branches available. Either

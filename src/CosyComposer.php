@@ -1562,6 +1562,15 @@ class CosyComposer
             if (empty($xml->releases->release)) {
                 return;
             }
+            $drupal_version_array = explode('.', $drupal->version);
+            $active_branch = sprintf('%s.%s', $drupal_version_array[0], $drupal_version_array[1]);
+            $supported_branches = explode(',', (string) $xml->supported_branches);
+            $is_supported = false;
+            foreach ($supported_branches as $branch) {
+                if (strpos($branch, $active_branch) === 0) {
+                    $is_supported = true;
+                }
+            }
             foreach ($xml->releases->release as $release) {
                 if (empty($release->version)) {
                     continue;
@@ -1570,6 +1579,12 @@ class CosyComposer
                     continue;
                 }
                 $version = (string) $release->version;
+                // If they are not on the same branch, then let's skip it as well.
+                if ($endpoint !== '7.x') {
+                    if ($is_supported && strpos($version, $active_branch) !== 0) {
+                        continue;
+                    }
+                }
                 if (version_compare($version, $drupal->version) !== 1) {
                     continue;
                 }

@@ -609,7 +609,6 @@ class CosyComposer
         if (!$this->chdir($this->compserJsonDir)) {
             throw new ChdirException('Problem with changing dir to the clone dir.');
         }
-        $this->runAuthExport($hostname);
         $local_adapter = new Local($this->compserJsonDir);
         if (!empty($_SERVER['config_branch'])) {
             $config_branch = $_SERVER['config_branch'];
@@ -628,6 +627,48 @@ class CosyComposer
         if (false == $cdata) {
             throw new \InvalidArgumentException('Invalid composer.json file');
         }
+        $config = Config::createFromComposerData($cdata);
+        $this->client = $this->getClient($this->slug);
+        $this->privateClient = $this->getClient($this->slug);
+        $this->privateClient->authenticate($this->userToken, null);
+        try {
+            $this->isPrivate = $this->privateClient->repoIsPrivate($this->slug);
+            // Get the default branch of the repo.
+            $default_branch = $this->privateClient->getDefaultBranch($this->slug);
+        } catch (\Throwable $e) {
+            // Could be a personal access token.
+            if (!method_exists($this->privateClient, 'authenticatePersonalAccessToken')) {
+                throw $e;
+            }
+            try {
+                $this->privateClient->authenticatePersonalAccessToken($this->userToken, null);
+                $this->isPrivate = $this->privateClient->repoIsPrivate($this->slug);
+                // Get the default branch of the repo.
+                $default_branch = $this->privateClient->getDefaultBranch($this->slug);
+            } catch (\Throwable $other_exception) {
+                // Throw the first exception, probably.
+                throw $e;
+            }
+        }
+        // We also allow the project to override this for violinist.
+        if ($config->getDefaultBranch()) {
+            // @todo: Would be better to make sure this can actually be set, based on the branches available. Either
+            // way, if a person configures this wrong, several parts will fail spectacularly anyway.
+            $default_branch = $config->getDefaultBranch();
+        }
+        // Now make sure we are actually on that branch.
+        if ($this->execCommand('git remote set-branches origin "*"')) {
+            throw new \Exception('There was an error trying to configure default branch');
+        }
+        if ($this->execCommand('git fetch origin ' . $default_branch)) {
+            throw new \Exception('There was an error trying to fetch default branch');
+        }
+        if ($this->execCommand('git checkout ' . $default_branch)) {
+            throw new \Exception('There was an error trying to switch to default branch');
+        }
+        // Re-read the composer.json file, since it can be different on the default branch,
+        $cdata = $this->composerGetter->getComposerJsonData();
+        $this->runAuthExport($hostname);
         $this->handleDrupalContribSa($cdata);
         $config = Config::createFromComposerData($cdata);
         $this->handleTimeIntervalSetting($cdata);
@@ -804,44 +845,6 @@ class CosyComposer
         $this->log($updates_string, Message::UPDATE, [
             'packages' => $data,
         ]);
-        $this->client = $this->getClient($this->slug);
-        $this->privateClient = $this->getClient($this->slug);
-        $this->privateClient->authenticate($this->userToken, null);
-        try {
-            $this->isPrivate = $this->privateClient->repoIsPrivate($this->slug);
-            // Get the default branch of the repo.
-            $default_branch = $this->privateClient->getDefaultBranch($this->slug);
-        } catch (\Throwable $e) {
-            // Could be a personal access token.
-            if (!method_exists($this->privateClient, 'authenticatePersonalAccessToken')) {
-                throw $e;
-            }
-            try {
-                $this->privateClient->authenticatePersonalAccessToken($this->userToken, null);
-                $this->isPrivate = $this->privateClient->repoIsPrivate($this->slug);
-                // Get the default branch of the repo.
-                $default_branch = $this->privateClient->getDefaultBranch($this->slug);
-            } catch (\Throwable $other_exception) {
-                // Throw the first exception, probably.
-                throw $e;
-            }
-        }
-        // We also allow the project to override this for violinist.
-        if ($config->getDefaultBranch()) {
-            // @todo: Would be better to make sure this can actually be set, based on the branches available. Either
-            // way, if a person configures this wrong, several parts will fail spectacularly anyway.
-            $default_branch = $config->getDefaultBranch();
-        }
-        // Now make sure we are actually on that branch.
-        if ($this->execCommand('git remote set-branches origin "*"')) {
-            throw new \Exception('There was an error trying to configure default branch');
-        }
-        if ($this->execCommand('git fetch origin ' . $default_branch)) {
-            throw new \Exception('There was an error trying to fetch default branch');
-        }
-        if ($this->execCommand('git checkout ' . $default_branch)) {
-            throw new \Exception('There was an error trying to switch to default branch');
-        }
         // Try to see if we have already dealt with this (i.e already have a branch for all the updates.
         $branch_user = $this->forkUser;
         if ($this->isPrivate) {

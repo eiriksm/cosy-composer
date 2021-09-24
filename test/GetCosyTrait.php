@@ -6,6 +6,8 @@ use Composer\Console\Application;
 use eiriksm\ArrayOutput\ArrayOutput;
 use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\CosyComposer;
+use eiriksm\CosyComposer\ProviderFactory;
+use eiriksm\CosyComposer\ProviderInterface;
 use GuzzleHttp\Psr7\Response;
 use Http\Adapter\Guzzle6\Client;
 use Violinist\ProjectData\ProjectData;
@@ -38,6 +40,11 @@ trait GetCosyTrait
         $client->method('sendRequest')
             ->willReturn($response);
         $c->setHttpClient($client);
+        $mock_client = $this->createMock(ProviderInterface::class);
+        $mock_provider_factory = $this->createMock(ProviderFactory::class);
+        $mock_provider_factory->method('createFromHost')
+            ->willReturn($mock_client);
+        $c->setProviderFactory($mock_provider_factory);
         return $c;
     }
 }

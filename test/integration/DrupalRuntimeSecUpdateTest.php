@@ -9,6 +9,12 @@ use Violinist\Slug\Slug;
 class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
 {
 
+    public function setUp()
+    {
+        parent::setUp();
+        $this->cosy->setHttpClient(new Client());
+    }
+
     /**
      * @dataProvider getDrupalUpdatesAndSec
      */
@@ -44,7 +50,6 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
                     'html_url' => $this->fakePrUrl,
                 ];
             });
-        $this->cosy->setHttpClient(new Client());
         $this->runtestExpectedOutput();
         $output = $this->cosy->getOutput();
         self::assertEquals($sec, strpos($this->prParams["title"], '[SECURITY]') === 0);

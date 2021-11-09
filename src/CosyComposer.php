@@ -15,6 +15,7 @@ use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\ViolinistMessages\UpdateListItem;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\HttpClient;
+use Violinist\AllowListHandler\AllowListHandler;
 use Violinist\ChangelogFetcher\ChangelogRetriever;
 use Violinist\ChangelogFetcher\DependencyRepoRetriever;
 use Violinist\CommitMessageCreator\Constant\Type;
@@ -755,6 +756,10 @@ class CosyComposer
             $this->cleanUp();
             return;
         }
+        // Only update the ones in the allow list, if indicated.
+        $handler = AllowListHandler::createFromConfig($config);
+        $handler->setLogger($this->getLogger());
+        $data = $handler->applyToItems($data);
         // Remove non-security packages, if indicated.
         if ($config->shouldOnlyUpdateSecurityUpdates()) {
             $this->log('Project indicated that it should only receive security updates. Removing non-security related updates from queue');

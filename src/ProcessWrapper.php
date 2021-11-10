@@ -23,6 +23,7 @@ class ProcessWrapper extends Process
 
     public function run($callback = null/*, array $env = array()*/)
     {
+        $env = 1 < \func_num_args() ? func_get_arg(1) : null;
         if (empty($env)) {
             $env = [];
         }

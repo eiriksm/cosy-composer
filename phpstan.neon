@@ -1,5 +1,5 @@
 parameters:
     level: 2
-    excludes_analyse:
+    excludePaths:
         - %rootDir%/../../../src/ProviderFactory.php
         - %rootDir%/../../../src/Providers/Bitbucket.php

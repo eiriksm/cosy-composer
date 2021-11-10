@@ -932,7 +932,7 @@ class CosyComposer
                 }
             }
         }
-        if (empty($data)) {
+        if (!count($data)) {
             $this->log('No updates that have not already been pushed.');
             $this->cleanUp();
             return;

@@ -18,5 +18,4 @@ class AllowListTest extends ComposerUpdateIntegrationBase
         $this->runtestExpectedOutput();
         self::assertEquals($this->hasUpdatedPsrLog, false);
     }
-
 }

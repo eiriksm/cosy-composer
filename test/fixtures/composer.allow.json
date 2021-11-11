@@ -1,0 +1,13 @@
+{
+    "require": {
+        "psr/log": "^1.0.0",
+        "psr/cache": "^1.0.0"
+    },
+    "extra": {
+        "violinist": {
+            "allow_list": [
+                "psr/cache"
+            ]
+        }
+    }
+}

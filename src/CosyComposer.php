@@ -759,7 +759,7 @@ class CosyComposer
         // Only update the ones in the allow list, if indicated.
         $handler = AllowListHandler::createFromConfig($config);
         $handler->setLogger($this->getLogger());
-        $data = $handler->applyToItems($data);
+        //$data = $handler->applyToItems($data);
         // Remove non-security packages, if indicated.
         if ($config->shouldOnlyUpdateSecurityUpdates()) {
             $this->log('Project indicated that it should only receive security updates. Removing non-security related updates from queue');

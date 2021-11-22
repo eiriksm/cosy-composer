@@ -3,6 +3,7 @@
 namespace eiriksm\CosyComposer\Providers;
 
 use Bitbucket\Client;
+use Bitbucket\ResultPager;
 use eiriksm\CosyComposer\ProviderInterface;
 use Violinist\Slug\Slug;
 
@@ -57,9 +58,14 @@ class Bitbucket implements ProviderInterface
     protected function getBranches($user, $repo)
     {
         if (!isset($this->cache['branches'])) {
+            $paginator = new ResultPager($this->client);
             $repo_users = $this->client->repositories()->users($user);
             $repo_users->setPerPage(1000);
-            $this->cache['branches'] = $repo_users->refs($repo)->branches()->list();
+            $branch_client = $repo_users->refs($repo)->branches();
+
+            $this->cache['branches'] = [
+                'values' => $paginator->fetchAll($branch_client, 'list'),
+            ];
         }
         return $this->cache["branches"]["values"];
     }
@@ -83,10 +89,14 @@ class Bitbucket implements ProviderInterface
         $repo = $slug->getUserRepo();
         $repo_users = $this->client->repositories()->users($user);
         $repo_users->setPerPage(1000);
-        $prs = $repo_users->pullRequests($repo)->list();
+        $prs_client = $repo_users->pullRequests($repo);
+        $paginator = new ResultPager($this->client);
+        $prs = [
+            'values' => $paginator->fetchAll($prs_client, 'list'),
+        ];
         $prs_named = [];
         foreach ($prs["values"] as $pr) {
-            if ($pr["state"] != 'OPEN') {
+            if ($pr["state"] !== 'OPEN') {
                 continue;
             }
             $prs_named[$pr["source"]["branch"]["name"]] = [

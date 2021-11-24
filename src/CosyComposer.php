@@ -752,7 +752,11 @@ class CosyComposer
             }
         }
         if (!is_array($data)) {
-            $this->log('No updates found');
+            $this->log('Update data was in wrong format or missing. This is an error in violinist and should be reported');
+            $this->log(print_r($raw_data, TRUE), Message::COMMAND, [
+              'data' => $raw_data,
+              'data_guessed' => $data,
+            ]);
             $this->cleanUp();
             return;
         }

@@ -82,8 +82,8 @@ class CosyComposerChangelogTest extends TestCase
                 ],
             ],
         ]])), 1, 2);
-        $this->assertEquals('- [112233](https://github.com/vendor/package/commit/112233) This is the first line
-- [445566](https://github.com/vendor/package/commit/445566) This is the second line
+        $this->assertEquals('- [112233](https://github.com/vendor/package/commit/112233) `This is the first line`
+- [445566](https://github.com/vendor/package/commit/445566) `This is the second line`
 ', $log->getAsMarkdown());
         $this->assertEquals(true, $called);
     }

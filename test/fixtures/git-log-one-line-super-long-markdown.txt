@@ -1,430 +1,430 @@
-- [b73ab73d39](https://github.com/drupal/core/commit/b73ab73d39) Drupal 8.5.0
-- [e0577f77ed](https://github.com/drupal/core/commit/e0577f77ed) Issue #2940165 by mondrake, Berdir: [regression] Cannot add effects to image style via the UI
-- [9076756cd7](https://github.com/drupal/core/commit/9076756cd7) Issue #2647824 by xjm: Determine what should go in CHANGELOG.txt for 8.x core releases.
-- [8e302d1d34](https://github.com/drupal/core/commit/8e302d1d34) Issue #2940890 by plach, Wim Leers, effulgentsia, matsbla, timmillwood: Don’t allow deleting revision translations in pending revisions
-- [9a4cc552c1](https://github.com/drupal/core/commit/9a4cc552c1) Issue #2942986 by alexpott, Lendude, chr.fritsch, larowlan, dawehner, catch: Views should be dependent on providers of table data via hook_views_data
-- [ce330dbe35](https://github.com/drupal/core/commit/ce330dbe35) Issue #2949815 by plach, catch: Flagging translations as outdated in a pending revision causes multiple translations to be marked as affected
-- [634bb29618](https://github.com/drupal/core/commit/634bb29618) Issue #2937799 by EclipseGc, tim.plunkett, effulgentsia, tedbow, Kristen Pol: Allow greater flexibility within SectionComponent::toRenderArray()
-- [809d71bd7b](https://github.com/drupal/core/commit/809d71bd7b) Issue #2949710 by plach, catch: Pending revisions may become unavailable when untranslatable fields affect all translations
-- [29b0fb6081](https://github.com/drupal/core/commit/29b0fb6081) Issue #2949619 by plach: Removed revision translations may reappear when creating a new revision
-- [ee7970c481](https://github.com/drupal/core/commit/ee7970c481) Issue #2910706 by joelpittet, droplet, alexpott, Yogesh Pawar: Update Stylelint related Packages
-- [e644f945a2](https://github.com/drupal/core/commit/e644f945a2) Issue #2946425 by vaplas, borisson_, Lendude, dawehner: Correcting the tests that lie in BTB but using WTB
-- [906327c77a](https://github.com/drupal/core/commit/906327c77a) Issue #2935193 by Sutharsan, alexpott: Fix broken exceptions in Gettext component
-- [a189a0604a](https://github.com/drupal/core/commit/a189a0604a) Issue #2941062 by plach, Wim Leers: EntityUntranslatableFieldsConstraintValidator always allows changes in default revisions
-- [6bc47ae09c](https://github.com/drupal/core/commit/6bc47ae09c) Issue #2946041 by neerajsingh: Theme development link should point to the version specific documentation
-- [94db9ade01](https://github.com/drupal/core/commit/94db9ade01) Issue #2931443 by Wim Leers, casey, zuuperman, drpal: Browser parsing race condition: JSON.parse sometimes called on partially streamed BigPipe placholder replacements, causes fatal JS error
-- [ed37dfe2b4](https://github.com/drupal/core/commit/ed37dfe2b4) Revert "Issue #2945306 by alexpott, dawehner: The new ModuleList in 8.6.x can discover modules in tests the previous code could not"
-- [594a0f6713](https://github.com/drupal/core/commit/594a0f6713) Issue #2843617 by maxocub, hussainweb, joelpittet, quietone, heddn, Jo Fitzgerald: Field formatter mappings defined in getFieldFormatterMap have no effect
-- [8f40d97557](https://github.com/drupal/core/commit/8f40d97557) Issue #2788087 by alexpott, dawehner, shafiqhossain: Drupal 8: You have requested a non-existent service "router.route_provider.old"
-- [a0484ea61b](https://github.com/drupal/core/commit/a0484ea61b) Issue #2945306 by alexpott, dawehner: The new ModuleList in 8.6.x can discover modules in tests the previous code could not
-- [340165716e](https://github.com/drupal/core/commit/340165716e) git commit -m 'Issue #2941945 by L-four, chiranjeeb2410: path.api.php references to a non-existent PathInterface class and updated to AliasStorageInterface'
-- [1c383910b8](https://github.com/drupal/core/commit/1c383910b8) Issue #2945275 by alexpott: Remove hack to fix bug in symfony/yaml
-- [860b5c2e12](https://github.com/drupal/core/commit/860b5c2e12) Issue #2940146 by Eli-T, cehfisher, nicolarbell, markconroy, kjay, Gábor Hojtsy, andrewmacpherson, JayKandari, volkswagenchick: Standardize writing style for Umami
-- [ae5ffa9fde](https://github.com/drupal/core/commit/ae5ffa9fde) Issue #2943627 by tim.plunkett, Falco010, alexpott, samuel.mortenson, xjm: Layout Builder does not consult layout plugin for dependencies
-- [9a4e8a9a98](https://github.com/drupal/core/commit/9a4e8a9a98) Issue #2942769 by neclimdul: Consolidate umami .htaccess files and testing - coding standards followup
-- [bc219620b6](https://github.com/drupal/core/commit/bc219620b6) Revert "Issue #2943627 by tim.plunkett, Falco010, alexpott, samuel.mortenson: Layout Builder does not consult layout plugin for dependencies"
-- [bc6f172f55](https://github.com/drupal/core/commit/bc6f172f55) Issue #2943627 by tim.plunkett, Falco010, alexpott, samuel.mortenson: Layout Builder does not consult layout plugin for dependencies
-- [fcb7dd9d0b](https://github.com/drupal/core/commit/fcb7dd9d0b) Issue #2918761 by quietone, chiranjeeb2410, phenaproxima, maxocub, heddn, alexpott: Break up MigrateUpgradeForm into smaller forms
-- [d6674ad27c](https://github.com/drupal/core/commit/d6674ad27c) Issue #2942769 by alexpott, vaplas, smaz, Gábor Hojtsy, borisson_, Eli-T: Consolidate umami .htaccess files and testing
-- [50f4ceae89](https://github.com/drupal/core/commit/50f4ceae89) Issue #2934145 by quietone, heddn, Jo Fitzgerald, David Hernández, alexpott, joelpittet, phenaproxima, Gábor Hojtsy: Image field migration plugin in wrong module
-- [8eb79476f2](https://github.com/drupal/core/commit/8eb79476f2) Issue #2940513 by Sam152, Berdir: ModerationStateFieldItemList fails after an entity has been serialized/unserialized
-- [f40b9de3a0](https://github.com/drupal/core/commit/f40b9de3a0) Back to dev.
-- [d01769c8d8](https://github.com/drupal/core/commit/d01769c8d8) Drupal 8.5.0-rc1
-- [faf360b695](https://github.com/drupal/core/commit/faf360b695) SA-CORE-2018-001 by cashwilliams, catch, cilefen, droplet, dawehner, bonus, agentrickard, David_Rothstein, Chi, Gábor Hojtsy, Heine, Wim Leers, Schnitzel, drpal, effulgentsia, tedbow, tim.plunkett, tstoeckler, xjm, will_c, stefan.r, samuel.mortenson, larowlan, greggles, logaritmisk, mpdonadio, pwolanin, plach
-- [d0af739e12](https://github.com/drupal/core/commit/d0af739e12) Issue #2885583 by drpal, keeganstreet, Dinesh18, naiduharish, sim_1, idebr, larowlan, Gábor Hojtsy, nick_schuch, droplet: Close button in tour module lacks descriptive text
-- [6beb0f478d](https://github.com/drupal/core/commit/6beb0f478d) Issue #2944658 by neerajsingh, cilefen: Creating distributions link should point to the version specific documentation
-- [5d27615c22](https://github.com/drupal/core/commit/5d27615c22) Issue #2899392 by idebr, neclimdul, rgpublic: user_hook_toolbar() makes all pages uncacheable
-- [9a1d26721a](https://github.com/drupal/core/commit/9a1d26721a) Issue #2915175 by vaplas, Phonoman, Lendude: Duplicating a Page to Block after changing the display id and then saving the view destroys the Page
-- [ab140c2100](https://github.com/drupal/core/commit/ab140c2100) Issue #2937850 by Wim Leers, plach: Mark revision_default as internal for REST consumers
-- [84e302e00c](https://github.com/drupal/core/commit/84e302e00c) Issue #2778167 by Wim Leers, arunkumark: Build link in Statistics block with toRenderable()
-- [f5f0896031](https://github.com/drupal/core/commit/f5f0896031) Issue #2932083 by Lendude, andreyjan, siva_drupal: Views Table style plugin breaks dynamic cache
-- [c94a751691](https://github.com/drupal/core/commit/c94a751691) Issue #2934960 by marcoscano, mycw1991, seanB, evankay, chr.fritsch, andrewmacpherson, jefuri, Jeroen Witte: Clean up icons that ship with Media
-- [82500fa9bc](https://github.com/drupal/core/commit/82500fa9bc) Issue #2945369 by Pasqualle: Wrong variable name in \Drupal\node\Form\DeleteMultiple
-- [c4db7a8e35](https://github.com/drupal/core/commit/c4db7a8e35) Issue #2945041 by heddn, maxocub: Categorize derived migrations according to their type
-- [1bc2d2f383](https://github.com/drupal/core/commit/1bc2d2f383) Issue #2711099 by heddn, Jo Fitzgerald, edysmp, edgewl2, alexpott, Charlotte17, mikeryan, masipila, quietone, maxocub, phenaproxima: Categorize migrations according to their type
-- [8fab69caa8](https://github.com/drupal/core/commit/8fab69caa8) Issue #2938643 by markconroy, andrewmacpherson, David_Rothstein, yoroy: Umami Banner Block does not have accessible text alternative at wide viewport
-- [bd09718af2](https://github.com/drupal/core/commit/bd09718af2) Issue #2938194 by markconroy, andrewmacpherson: Focus styles should meet accessibility guidelines in Umami theme
-- [0d71c78654](https://github.com/drupal/core/commit/0d71c78654) Issue #2941647 by markconroy, JayKandari, cehfisher, smaz, andrewmacpherson: Link hover styles unintentionally applied to administration toolbar
-- [1285938b7d](https://github.com/drupal/core/commit/1285938b7d) Issue #2938800 by markconroy, David_Rothstein, ckrina, smaz, Eli-T, cehfisher, larowlan: Finalize wording for Toolbar warning message
-- [79b2e3b306](https://github.com/drupal/core/commit/79b2e3b306) Revert "Issue #2942769 by alexpott, Eli-T: Consolidate umami .htaccess files and testing"
-- [3c79fbcfc2](https://github.com/drupal/core/commit/3c79fbcfc2) Issue #2661542 by Mile23, Mixologic: Isolate Drupal\Tests\Component\Plugin\DefaultFactoryTest from core test module
-- [779f756419](https://github.com/drupal/core/commit/779f756419) Issue #2942769 by alexpott, Eli-T: Consolidate umami .htaccess files and testing
-- [17e48810a1](https://github.com/drupal/core/commit/17e48810a1) Issue #2942590 by tim.plunkett: Layout Builder defaults should work regardless of the ability to provide overrides
-- [aa591cd9ea](https://github.com/drupal/core/commit/aa591cd9ea) Issue #2921367 by ApacheEx, xjm, effulgentsia, drpal, webchick, justafish, dawehner: Add the JS modernization initiative to MAINTAINERS.txt
-- [08fbb0bff9](https://github.com/drupal/core/commit/08fbb0bff9) Issue #2942600 by tim.plunkett: SectionComponent::toRenderArray() runs access checks even when not needed
-- [e751f4d004](https://github.com/drupal/core/commit/e751f4d004) Issue #2936085 by tim.plunkett, Kristen Pol, larowlan: Remove 'display title' or make it unchecked by default for Field Block
-- [9507c19af3](https://github.com/drupal/core/commit/9507c19af3) Issue #2713073 by harsha012, Mile23, dawehner, webflo, jibran: Add required php extensions to composer.json
-- [2d0151b8f1](https://github.com/drupal/core/commit/2d0151b8f1) Issue #2933620 by masipila, mpdonadio, heddn, quietone, phenaproxima, maxocub, kay_v, cilefen: Polish migrate.api.php API documentation
-- [c6296d553b](https://github.com/drupal/core/commit/c6296d553b) Issue #2944524 by wundo: Typo in Drupal\Core\Routing\UrlGenerator
-- [0bc2b9b4b5](https://github.com/drupal/core/commit/0bc2b9b4b5) Issue #2942388 by alexpott, quietone: Ensure d7_url_alias migration works for paths without a slashes
-- [b79a827697](https://github.com/drupal/core/commit/b79a827697) Issue #2887161 by Mohit Malik, joelpittet: Ensure argument order is correct for assertSame() assertions
-- [720b520aab](https://github.com/drupal/core/commit/720b520aab) Issue #2784015 by amateescu, jlbellido, Gogowitsch, krknth, ibustos: Widget validation crashes on ItemList violations for widgets with a custom errorElement() implementation
-- [2a5cdaec84](https://github.com/drupal/core/commit/2a5cdaec84) Issue #2944291 by jibran, Mixologic: Upgrade behat/mink-selenium2-driver to 1.3.x-dev
-- [af8e73f8d3](https://github.com/drupal/core/commit/af8e73f8d3) Issue #2943860 by Mixologic, alexpott: Add a LICENSE.txt to Serialization and Transliteration components
-- [f4fd08a7e3](https://github.com/drupal/core/commit/f4fd08a7e3) Issue #2944215 by jeqq, alexpott: Aliases generated by PathItem::generateSampleValue() should start with a slash
-- [80eac4a11e](https://github.com/drupal/core/commit/80eac4a11e) Issue #2943226 by droplet: Remove droplet from MAINTAINERS.txt
-- [9fa428b4b8](https://github.com/drupal/core/commit/9fa428b4b8) Issue #2942497 by scott_euser, timmillwood, malcomio, Berdir: Using content moderation block in preview mode causes EntityStorageException
-- [1cf634359d](https://github.com/drupal/core/commit/1cf634359d) Issue #2941106 by droplet, idebr: Site email address in the install profile form is no longer copied to the user email address
-- [6b83e79c84](https://github.com/drupal/core/commit/6b83e79c84) Issue #2939988 by bn_code, xjm, Sam152: Remove content moderation exclusion from StableLibraryOverrideTest
-- [ed7ab51d9e](https://github.com/drupal/core/commit/ed7ab51d9e) Issue #2933099 by Sam152, sathish.redcrackle, amaisano, Berdir: "Default Revision cannot be deleted." But it's not the default revision
-- [8fb4418024](https://github.com/drupal/core/commit/8fb4418024) Issue #2943209 by gabesullice, amateescu, Wim Leers: Mark at least one entity_test entity type as 'internal'
-- [fdb66ec509](https://github.com/drupal/core/commit/fdb66ec509) Issue #2866801 by harsha012, joelpittet, BrightBold, droplet, Akshay kashyap, arunkumark, bmx269: Update stylelint rules color-hex-length to be consistent with Drupal's CSS standards
-- [a8802f74cd](https://github.com/drupal/core/commit/a8802f74cd) Issue #2942068 by kim.pepper, jibran: FileTestSaveUploadFromForm incorrectly counts messages
-- [fcd1465565](https://github.com/drupal/core/commit/fcd1465565) Issue #2914503 by jibran, tim.plunkett, samuel.mortenson: Determine if serializing blobs is safe for use in Layout Builder
-- [acb5c9e415](https://github.com/drupal/core/commit/acb5c9e415) Issue #2943445 by VitaliyB98: Incorrect path to icons in stable/settings_tray CSS files
-- [0ddf7699bd](https://github.com/drupal/core/commit/0ddf7699bd) Back to dev.
-- [99379d7d9f](https://github.com/drupal/core/commit/99379d7d9f) Drupal 8.5.0-beta1
-- [d575b05c27](https://github.com/drupal/core/commit/d575b05c27) Issue #2943004 by alexpott, webchick, smaz, xjm, catch: Backport Umami to 8.5, but mark it hidden (for now)
-- [f224778200](https://github.com/drupal/core/commit/f224778200) Issue #2941902 by smaz: Reduce the file size for bundled images in Umami
-- [1dfe9945cd](https://github.com/drupal/core/commit/1dfe9945cd) Issue #2942406 by Eli-T, markconroy, andrewmacpherson: Text alternative for Umami mobile search link
-- [8c0a00b2c0](https://github.com/drupal/core/commit/8c0a00b2c0) Issue #2941837 by Eli-T, kjay, cehfisher: Move article body out of csv file in to their own text file
-- [a0be792af3](https://github.com/drupal/core/commit/a0be792af3) Issue #2938185 by tedbow, JayKandari, navneet0693, acbramley, Eli-T, larowlan, webchick, markconroy, andrewmacpherson, David_Rothstein, smaz, ckrina: When installing Umami, only show warning if 'Demo Umami' radio button is selected (and ensure that it is obvious that warning message only applies to the Umami profile)
-- [24fb9bb61f](https://github.com/drupal/core/commit/24fb9bb61f) Issue #2941558 by markconroy, Eli-T, oakulm: Theme does not provide logged in users menu item or controls to edit his/hers user details
-- [447346823c](https://github.com/drupal/core/commit/447346823c) Issue #2942007 by David_Rothstein, navneet0693, andrewmacpherson: Move the footer promo block image to a field, for better configurability and accessibility
-- [81cdac84f5](https://github.com/drupal/core/commit/81cdac84f5) Issue #2940362 by Eli-T, kjay, navneet0693, markconroy, larowlan, Gábor Hojtsy: Move recipe instruction out of csv file in to their own text file
-- [79d9c1502a](https://github.com/drupal/core/commit/79d9c1502a) Issue #2938805 by markconroy, David_Rothstein, ckrina, Eli-T: Finalise the wording of the warning message on the status report page
-- [b26073c6fd](https://github.com/drupal/core/commit/b26073c6fd) Issue #2941582 by markconroy, Eli-T, smaz, ckrina, steveparks: Create a drupal.org documentation page for Umami profile to explain why it shouldn't be used in production sites
-- [88728d372c](https://github.com/drupal/core/commit/88728d372c) Issue #2939019 by David_Rothstein: Umami theme has a confusing theme description
-- [28c833e256](https://github.com/drupal/core/commit/28c833e256) Issue #2941488 by larowlan, Eli-T: Add a .htaccess file to core/profiles/demo_umami/modules/demo_umami_content/default_content/images to prevent direct downloading of images
-- [709012d38f](https://github.com/drupal/core/commit/709012d38f) Issue #2938186 by navneet0693, John Cook, Eli-T, markconroy, smaz, ckrina, andrewmacpherson, larowlan: Set toolbar warning message to only appear on admin/edit pages
-- [327ca9f01f](https://github.com/drupal/core/commit/327ca9f01f) Issue #2938900 by David_Rothstein, navneet0693, JayKandari: Replace profile-defined blocks with custom blocks to fix a variety of problems
-- [f5ad645584](https://github.com/drupal/core/commit/f5ad645584) Issue #2938686 by Adam_Moulsdale, andrewmacpherson: Pink button/link style in Umami fails WCAG 2.0 SC 1.4.3 Contrast (minimum)
-- [8121e64c29](https://github.com/drupal/core/commit/8121e64c29) Issue #2939940 by bmx269, joelpittet: Update stylelint rules color-hex-case to be consistent with Drupal's CSS standards
-- [cd36c8ff0b](https://github.com/drupal/core/commit/cd36c8ff0b) Issue #2939018 by smaz, David_Rothstein: Umami theme and modules don't have version numbers in their info files
-- [cf4950d800](https://github.com/drupal/core/commit/cf4950d800) Issue #2939835 by David_Rothstein, markconroy: Documentation for testAppearance() says that it tests that Umami is the default theme, but it doesn't
-- [12955b4591](https://github.com/drupal/core/commit/12955b4591) Issue #2938170 by navneet0693, andrewmacpherson, markconroy, owenpm3, larowlan: Enable ALT text for Banner Block image field
-- [bbb17577d7](https://github.com/drupal/core/commit/bbb17577d7) Issue #2938918 by David_Rothstein, markconroy, larowlan: Impossible to switch back to the Umami theme after switching away from it
-- [a516724a66](https://github.com/drupal/core/commit/a516724a66) Issue #2938187 by markconroy, andrewmacpherson: Homepage/Recipes page banner image is duplicating on small screens
-- [7eaad7133d](https://github.com/drupal/core/commit/7eaad7133d) Issue #2937636 by piyuesh23, markconroy: Umami Theme - follow-up - Use hook_form_alter() for search block placeholder
-- [7c45bb5e79](https://github.com/drupal/core/commit/7c45bb5e79) Issue #2938360 by markconroy: Change hook_preprocess_block to use $variables instead of $vars
-- [634ce6aafe](https://github.com/drupal/core/commit/634ce6aafe) Issue #2937894 by navneet0693: Remove unneeded schema entry from demo_umami.schema.yml
-- [f065a566ca](https://github.com/drupal/core/commit/f065a566ca) Issue #2809635 by markconroy, navneet0693, alexpott, smaz, larowlan, Eli-T, webchick, yoroy, ikit-claw, budda, kjay, timmillwood, tkoleary, Gábor Hojtsy, andrewmacpherson, lauriii, JayKandari, jibran, ok_lyndsey, big_man, ckrina, nathancz, Paul_Gregory, vijaycs85, SharJay, tomphippen, tim.plunkett, Tarun Lewis, cehfisher, kreynen, Petr Illek, mariohernandez, thamas, thatdamnqa, John Cook, philipnorton42, h2cm, kattekrab, martin_q, waako: Create experimental installation profile
-- [1d52eabafa](https://github.com/drupal/core/commit/1d52eabafa) Issue #2931436 by amateescu, dillix, Berdir, DuneBL, plach: field_purge_batch expects an array of objects but instead gets an array of arrays
-- [d43708069a](https://github.com/drupal/core/commit/d43708069a) Issue #2939563 by webchick: Un-hide Media from the UI. With special thanks to all contributors who helped us get here!
-- [22618248c6](https://github.com/drupal/core/commit/22618248c6) Issue #2943486 by xjm: media-reference-help.html.twig missing from stable theme
-- [5e2dc5c5a4](https://github.com/drupal/core/commit/5e2dc5c5a4) Revert "Issue #2939563 by webchick: Un-hide Media from the UI. With special thanks to all contributors to helped us get here!"
-- [f2ea35d944](https://github.com/drupal/core/commit/f2ea35d944) Issue #2939563 by webchick: Un-hide Media from the UI. With special thanks to all contributors to helped us get here!
-- [ab4fea34d3](https://github.com/drupal/core/commit/ab4fea34d3) Issue #2936293 by xjm, tedbow, marcoscano, ershov.andrey, phenaproxima, benjifisher, samuel.mortenson, davidhernandez, tim.plunkett, Gábor Hojtsy, seanB, ckrina, yoroy, DyanneNova, amateescu: At least inform content authors where they can list and add media
-- [b9bd2dc889](https://github.com/drupal/core/commit/b9bd2dc889) Issue #2802403 by _Archy_, Berdir, rjay, catch, Tachion, jacktonkin, oriol_e9g, willwh, tameeshb, dawehner, dhansen, bmcclure, DeFr, david.gil, gagarine, plach: Combination of language negotiation and path aliasing can cause a corrupted route cache, 404s
-- [e084a0d20f](https://github.com/drupal/core/commit/e084a0d20f) Issue #2940899 by plach, Wim Leers, hchonov: Regression: _entity_form routes should not get load_latest_revision_flag by default: changes default behavior (= regression) while only Content Moderation needs it
-- [b5c4aa5dbf](https://github.com/drupal/core/commit/b5c4aa5dbf) Issue #2943035 by tedbow, xjm, tim.plunkett: hook_field_widget_multivalue_form_alter and hook_field_widget_multivalue_WIDGET_TYPE_alter are not invoked for single widget that handle multiple values
-- [054722c94c](https://github.com/drupal/core/commit/054722c94c) Issue #2941622 by Wim Leers: Make REST's EntityResource deriver exclude internal entity types and mark ContentModerationState entity type as internal instead of the current hack
-- [b724598670](https://github.com/drupal/core/commit/b724598670) Issue #2942293 by Neograph734: Uppercase letter in Bartik's color.inc causes incorrect color replacements
-- [effcfdb45f](https://github.com/drupal/core/commit/effcfdb45f) Issue #2937469 by alexpott, Mixologic: Automatic upgrade to PHPUnit 6 is dangerous
-- [a52fc43666](https://github.com/drupal/core/commit/a52fc43666) Issue #2941318 by davewilly, chiranjeeb2410, kiamlaluno: Incorrectly formatted documentation in Get migrate process plugin
-- [b88bfd25bc](https://github.com/drupal/core/commit/b88bfd25bc) Issue #2939026 by tstoeckler: Installer does not fix the database connection after creating the database on MySQL
-- [cf1b8bfd8b](https://github.com/drupal/core/commit/cf1b8bfd8b) Issue #2936511 by hchonov, Berdir, plach, Wim Leers, catch, amateescu, sdewitt: ContentEntityType::getRevisionMetadataKeys() never considers the BC logic because of the new "revision_default" key
-- [eddad1b9c9](https://github.com/drupal/core/commit/eddad1b9c9) Issue #2935951 by heddn, maxocub, quietone, Jo Fitzgerald, phenaproxima, alexpott, larowlan: Copy migrate source plugin from migrate_drupal_d8 into migrate_drupal
-- [381e7554e4](https://github.com/drupal/core/commit/381e7554e4) Issue #2940088 by joelpittet, cilefen: Shorthand hex colors in CSS files break color module's comparisons
-- [10ee6ebff9](https://github.com/drupal/core/commit/10ee6ebff9) Issue #2775653 by dawehner, droplet, michielnugter, Lendude, jibran, alexpott, Mixologic, klausi, juampynr, cosmicdreams, cspitzlay, justafish, drpal, larowlan, claudiu.cristea, Berdir, Mile23, andypost, xjm, mtodor: JavascriptTests with webDriver
-- [f3a5f932a0](https://github.com/drupal/core/commit/f3a5f932a0) Issue #2866817 by harsha012, Jo Fitzgerald, BrightBold, alexpott, joelpittet: Update stylelint rule no-empty-source to be consistent with Drupal's CSS standards
-- [37f992ea2d](https://github.com/drupal/core/commit/37f992ea2d) Issue #2940201 by xjm, amateescu, benjifisher, tedbow, tim.plunkett, Berdir: hook_field_widget_form_alter() can no longer affect the whole widget for multi-value fields
-- [bf47414a25](https://github.com/drupal/core/commit/bf47414a25) Issue #2927227 by Jo Fitzgerald, Olarin, ao2, quietone, heddn: d6_url_alias migration fails when the src path in D6 contains no slashes
-- [f50cc6591b](https://github.com/drupal/core/commit/f50cc6591b) Issue #2860097 by plach, timmillwood, Sam152, Wim Leers, hchonov, catch, amateescu, matsbla: Ensure that content translations can be moderated independently
-- [122e840b08](https://github.com/drupal/core/commit/122e840b08) Issue #2938140 by tim.plunkett, EclipseGc, DyanneNova, larowlan: Mark Layout Builder as Beta in 8.5.x
-- [50f0a25035](https://github.com/drupal/core/commit/50f0a25035) Issue #2920963 by quietone, Saviktor, shashikant_chauhan: Remove the migrate.migration prefix from core test migrations
-- [42baaa6566](https://github.com/drupal/core/commit/42baaa6566) Issue #2941736 by plach, Sam152, amateescu, timmillwood: Moderation state revisions should have their isDefaultRevision() match the host entity's
-- [606353a540](https://github.com/drupal/core/commit/606353a540) Issue #2941912 by Mohit Malik, quietone: Remove incremental @todo from MigrateUpgradeForm
-- [d4fd35c1ef](https://github.com/drupal/core/commit/d4fd35c1ef) Issue #2942073 by effulgentsia, Sam152: Add a "bare.standard.php.gz" test fixture that starts from Drupal 8.4.0
-- [9139b0801a](https://github.com/drupal/core/commit/9139b0801a) Revert "Issue #2893117 by Mile23, Berdir: Improve HTML caching of Simpletest UI test form"
-- [9117bdb3ca](https://github.com/drupal/core/commit/9117bdb3ca) Issue #2927344 by Wim Leers, xjm, TR, webchick, larowlan, David_Rothstein, catch, yoroy: Specifically warn about end dates for PHP support for old versions
-- [7da71a20a9](https://github.com/drupal/core/commit/7da71a20a9) Issue #2940956 by alexpott: Properly disable resource tracking in the ContainerBuilder
-- [de17645f4a](https://github.com/drupal/core/commit/de17645f4a) Issue #2939208 by alexpott, tim.plunkett: Services registered with ContainerBuilder::setDefinition() are removed from container causing a BC break
-- [dd5bae6905](https://github.com/drupal/core/commit/dd5bae6905) Issue #2936642 by tim.plunkett: Getting runtime contexts will generate an E_WARNING for anonymous users
-- [7966f130d4](https://github.com/drupal/core/commit/7966f130d4) Issue #2916084 by tim.plunkett, John Cook, andrewmacpherson, borisson_: Add John Cook as Batch API subsystem maintainer
-- [8830ce72bb](https://github.com/drupal/core/commit/8830ce72bb) Issue #2941457 by agentrickard, tim.plunkett, hbensalem: EntityAdapter::getIterator requires undocumented methods
-- [bf7dbd1045](https://github.com/drupal/core/commit/bf7dbd1045) Issue #2914839 by Sam152: The current moderation state in the "meta" region on content entity forms is coupled to the moderation_state field widget
-- [1e5c50e932](https://github.com/drupal/core/commit/1e5c50e932) Issue #2939692 by Leksat, blazey, larowlan: menu_link_content_entity_predelete deletes "collection", "add-form", etc. links
-- [bbb42220c1](https://github.com/drupal/core/commit/bbb42220c1) Issue #2940204 by plach, Wim Leers, effulgentsia, matsbla, Gábor Hojtsy, tacituseu: Translatable fields with synchronization enabled should behave as untranslatable fields with respect to pending revisions
-- [fb2ebac655](https://github.com/drupal/core/commit/fb2ebac655) Issue #2941275 by zuhair_ak, joachim: improve the exception message for a missing source ID value in \Drupal\migrate\Row
-- [da5cca892a](https://github.com/drupal/core/commit/da5cca892a) Issue #2937964 by Jo Fitzgerald, quietone: RequirementException summary doc line is incomplete
-- [774ee68cfe](https://github.com/drupal/core/commit/774ee68cfe) Issue #2937945 by yo30, kim.pepper, dawehner, voleger, larowlan: Add messenger to ControllerBase and FormBase
-- [062835e590](https://github.com/drupal/core/commit/062835e590) Issue #2940108 by yo30, quietone, maxocub: getLegacyDrupalVersion() returns string not int as documented
-- [cfbe3fcf9c](https://github.com/drupal/core/commit/cfbe3fcf9c) Revert "Issue #2940204 by plach, Wim Leers, effulgentsia, matsbla: Translatable fields with synchronization enabled should behave as untranslatable fields with respect to pending revisions"
-- [c15775f348](https://github.com/drupal/core/commit/c15775f348) Issue #2936714 by gabesullice, Wim Leers, amateescu, Sam152, Berdir: Entity type definitions cannot be set as 'internal'
-- [fb3c36a0a7](https://github.com/drupal/core/commit/fb3c36a0a7) Issue #2940204 by plach, Wim Leers, effulgentsia, matsbla: Translatable fields with synchronization enabled should behave as untranslatable fields with respect to pending revisions
-- [4d6bead355](https://github.com/drupal/core/commit/4d6bead355) Issue #2791907 by ddrozdik, Chi: Improve TranslatableMarkup and FormattableMarkup classes
-- [d85dada0a1](https://github.com/drupal/core/commit/d85dada0a1) Issue #2927344 by Wim Leers, xjm, webchick, larowlan, catch, David_Rothstein, yoroy: Specifically warn about end dates for PHP support for old versions
-- [3df4d825c7](https://github.com/drupal/core/commit/3df4d825c7) Issue #2905098 by tedbow, Jo Fitzgerald, Wim Leers, MerryHamster, Yogesh Pawar, rajeshwari10, larowlan, xjm: Change block entity form handler from 'off_canvas' to 'settings_tray'
-- [79357bff46](https://github.com/drupal/core/commit/79357bff46) Issue #2747789 by jhedstrom, pashupathi nath gajawada: Improve UpdatePathTestBase debuggablity
-- [fbd7960ca3](https://github.com/drupal/core/commit/fbd7960ca3) Issue #2940367 by jibran: Update Symfony components to 3.4.4
-- [e8a2d7c78a](https://github.com/drupal/core/commit/e8a2d7c78a) Issue #2932715 by alexpott, mondrake, vaplas: PHPUnit testing fails on Windows since #2928249
-- [add9968785](https://github.com/drupal/core/commit/add9968785) Issue #2659616 by Lendude, greggmarshall, katzilla, hexabinaer: Check field order and fix below/above in descriptions
-- [f00676452a](https://github.com/drupal/core/commit/f00676452a) Issue #2809491 by ApacheEx, dawehner, Lendude: Convert AJAX part of \Drupal\field\Tests\Boolean\BooleanFieldTest::testBooleanField to JavascriptTestBase
-- [1b40c7ca49](https://github.com/drupal/core/commit/1b40c7ca49) Issue #2843707 by Chirag_Garg, lokapujya, xjm, gerzenstl: Default config for entity displays does not match what is saved
-- [5a48c60711](https://github.com/drupal/core/commit/5a48c60711) Issue #2768823 by Jo Fitzgerald, Berdir, quietone: Store uploads in correct translation
-- [b4cf8d07f8](https://github.com/drupal/core/commit/b4cf8d07f8) Issue #2939802 by Wim Leers, cburschka: Follow-up for #2824851: EntityResourceTestBase::getModifiedEntityForPatchTesting() handles @FieldType=path incorrectly
-- [a8b80d85c8](https://github.com/drupal/core/commit/a8b80d85c8) Issue #2935783 by larowlan, Wim Leers: RequestHandler's handle method interacts with the Route object but should be able to just declare arguments
-- [6db700c8e9](https://github.com/drupal/core/commit/6db700c8e9) Issue #2843328 by mpdonadio, alexpott, Mile23, cburschka, xjm: Enforce minimum PHP version in composer dependencies
-- [0934fdc54a](https://github.com/drupal/core/commit/0934fdc54a) Issue #2936704 by Wim Leers, amateescu, alexpott, Berdir: Remove REST route deprecations from DeprecationListenerTrait::getSkippedDeprecations(), use ExpectDeprecationTrait::expectDeprecation() instead
-- [81fd2724c4](https://github.com/drupal/core/commit/81fd2724c4) Issue #2857857 by vegantriathlete, Jo Fitzgerald, snehi, plach, xjm, Skabbkladden: Check use of "it's" in core to ensure proper use
-- [cd8e2e20c9](https://github.com/drupal/core/commit/cd8e2e20c9) Issue #2940050 by Mohit Malik, kiamlaluno: Fix the grammar for the comment describing TranslatableInterface::hasTranslation()
-- [3320b3b477](https://github.com/drupal/core/commit/3320b3b477) Issue #2940051 by Mohit Malik, kiamlaluno: Fix the punctuation in the comment describing what ContentEntityBase::isTranslatable() does
-- [437636669e](https://github.com/drupal/core/commit/437636669e) Revert "Issue #2932715 by mondrake, alexpott, vaplas: PHPUnit testing fails on Windows since #2928249"
-- [28de462c65](https://github.com/drupal/core/commit/28de462c65) Revert "Revert "Issue #2935157 by neclimdul, alexpott: Run-test.sh does not run TestSuite tests""
-- [553d91a58d](https://github.com/drupal/core/commit/553d91a58d) Issue #2922603 by tedbow, Wim Leers, andrewmacpherson: Mark Settings Tray module as stable
-- [b3bf798c31](https://github.com/drupal/core/commit/b3bf798c31) Revert "Issue #2935157 by neclimdul, alexpott: Run-test.sh does not run TestSuite tests"
-- [b235999e33](https://github.com/drupal/core/commit/b235999e33) Issue #2937666 by Jo Fitzgerald, quietone: errorCount() returns string not int as documented
-- [d66fb147b8](https://github.com/drupal/core/commit/d66fb147b8) Issue #2931420 by harsha012, chiranjeeb2410, marcoscano, heddn: Fix wrong documentation on \Drupal\migrate\Plugin\migrate\source\SourcePluginBase::initializeIterator()
-- [cb8f3f2578](https://github.com/drupal/core/commit/cb8f3f2578) Issue #1014816 by mondrake, Dave Reid, m1n0, leschekfm, jwilson3, claudiu.cristea, fietserwin, guybedford: Allow image fields to use any extensions the current image toolkit supports (instead of hard-coding jpg, png and gif only)
-- [63fa6f2258](https://github.com/drupal/core/commit/63fa6f2258) Issue #2745491 by mcdruid, juampynr, Jo Fitzgerald, sanduhrs, snehi, mparker17, rodrigoaguilera: ImageWidget::validateRequiredFields() produces a PHP Warning message if triggering element is a non-button
-- [bfa44123aa](https://github.com/drupal/core/commit/bfa44123aa) Issue #2797639 by jzavrl, slashrsm, yobottehg, tassilogroeper, Yogesh Pawar, Berdir: For multi language private files FileDownloadController is used for the ImageStyle instead of ImageStyleDownloadController
-- [494bbac6ef](https://github.com/drupal/core/commit/494bbac6ef) Issue #2932715 by mondrake, alexpott, vaplas: PHPUnit testing fails on Windows since #2928249
-- [c70c4f4165](https://github.com/drupal/core/commit/c70c4f4165) Issue #2867960 by Eric_A, Mile23, Jo Fitzgerald, mpdonadio: Merge Component composer.json files to account for them during build
-- [968c43f35d](https://github.com/drupal/core/commit/968c43f35d) Issue #2687843 by quietone, heddn, Jo Fitzgerald, alexpott, piggito, mallezie, mikeryan, xjm, phenaproxima, benjifisher, webchick, Gábor Hojtsy, masipila, benjy, abhishek-anand, catch: Add back incremental migrations through the UI
-- [8023a1c572](https://github.com/drupal/core/commit/8023a1c572) Issue #2923915 by tstoeckler, heddn: Stubbing content entities with required fields with a default value is broken
-- [c1070219b1](https://github.com/drupal/core/commit/c1070219b1) Issue #2935076 by amateescu: EntityResourceTestBase::getNormalizedPostEntity() wrongly assumes that all entity types have auto-generated sequential IDs
-- [5e69700e0a](https://github.com/drupal/core/commit/5e69700e0a) Issue #2915398 by Sam152, amateescu, timmillwood, plach, mstef: The moderation_state field is not computed during the creation of a new entity translation
-- [0b2d458da9](https://github.com/drupal/core/commit/0b2d458da9) Issue #2929198 by alexpott: .ht.router.php does not support update.php
-- [9d5a928c4e](https://github.com/drupal/core/commit/9d5a928c4e) Issue #2880703 by alexpott, droplet, Daniel.Moberly, yogesh01: Status report page without JavaScript is messed up
-- [d90b997a07](https://github.com/drupal/core/commit/d90b997a07) Issue #2940169 by Nitebreed, jefuri, seanB: Remove all occurences of 'media entity' in core
-- [1e17288985](https://github.com/drupal/core/commit/1e17288985) Issue #2922862 by jibran: Update non-Symfony dependencies in lock file
-- [9a8c545117](https://github.com/drupal/core/commit/9a8c545117) Issue #1712106: Fix spelling mistake introduced on commit
-- [fd2d6c259d](https://github.com/drupal/core/commit/fd2d6c259d) Issue #1712106 by jamix, dawehner, m4olivei, Boobaa, InternetDevels, JacobSanford: truncate_utf8() cuts on the first newline character when $wordsafe == TRUE
-- [4984a6d07c](https://github.com/drupal/core/commit/4984a6d07c) Issue #2910705 by droplet, drpal: Update JS Build Script Packages
-- [b26f5d80f9](https://github.com/drupal/core/commit/b26f5d80f9) Issue #2936368 by gaurav.kapoor: Duplicate css property in toolbar module
-- [b8d30703dd](https://github.com/drupal/core/commit/b8d30703dd) Issue #2935157 by neclimdul, alexpott: Run-test.sh does not run TestSuite tests
-- [d4acfb86bd](https://github.com/drupal/core/commit/d4acfb86bd) Issue #2940174 by jefuri: Soundcould rename to Soundcloud in MediaSourceInterface
-- [3a8ede60ae](https://github.com/drupal/core/commit/3a8ede60ae) Issue #2938645 by kmbremner, swarad07, Gábor Hojtsy: invalid YAML in example
-- [bb9c5a2665](https://github.com/drupal/core/commit/bb9c5a2665) Issue #2939940 by bmx269, joelpittet: Update stylelint rules color-hex-case to be consistent with Drupal's CSS standards
-- [c2f2111781](https://github.com/drupal/core/commit/c2f2111781) Issue #2866818 by harsha012, BrightBold, brahmjeet789, joelpittet: Update stylelint rule number-leading-zero to be consistent with Drupal's CSS standards
-- [2deb0f1d08](https://github.com/drupal/core/commit/2deb0f1d08) Issue #2866806 by harsha012, Mukeysh, joelpittet: Update stylelint rule declaration-block-no-shorthand-property-overrides to be consistent with Drupal's CSS standards
-- [b84567df38](https://github.com/drupal/core/commit/b84567df38) Issue #2939917 by plach, jibran, Wim Leers: Field synchronization should run only for Content Translation-enabled entities
-- [82a20b9af8](https://github.com/drupal/core/commit/82a20b9af8) Issue #2939909 by plach, xjm, Wim Leers: Ensure that hook_bundle_info_alter() implementations know whether bundles are translatable
-- [a55b528693](https://github.com/drupal/core/commit/a55b528693) Issue #2938623 by kmbremner: broken link in docs for Condition::notExists()
-- [441f198ba3](https://github.com/drupal/core/commit/441f198ba3) Issue #2939724 by ryanhayes, joachim, Samvel, andrewmacpherson, sacha@wellborn.co.uk, Adam_Moulsdale, rachel_norfolk: wrong variable name in sample code
-- [ced17a4912](https://github.com/drupal/core/commit/ced17a4912) Issue #2897132 by timmillwood, Sam152, amateescu, pameeela, xjm, Wim Leers, webchick, lauriii, esod: Mark Content Moderation module as stable
-- [4d13415e0d](https://github.com/drupal/core/commit/4d13415e0d) Issue #2922701 by quietone, masipila, heddn, benjifisher, phenaproxima, larowlan, xjm, catch: Migrate UI - refer to modules and add help text
-- [384b0fd25b](https://github.com/drupal/core/commit/384b0fd25b) Revert "Issue #2939909 by plach, Wim Leers: Ensure that hook_bundle_info_alter() implementations know whether bundles are translatable"
-- [4aab62aa32](https://github.com/drupal/core/commit/4aab62aa32) Issue #2939742 by plach, Wim Leers: Node links always load the default revision during rendering
-- [321e306145](https://github.com/drupal/core/commit/321e306145) Issue #2939795 by plach, Wim Leers: Multilingual logic is not applied when a new revision translation is being added
-- [400300843c](https://github.com/drupal/core/commit/400300843c) Issue #2939909 by plach, Wim Leers: Ensure that hook_bundle_info_alter() implementations know whether bundles are translatable
-- [237d23a007](https://github.com/drupal/core/commit/237d23a007) Revert "Issue #2895271 by navneet0693, Lendude, dawehner, pasan.gamage, larowlan: Convert web tests to JTB and KTB tests for user module part-3"
-- [7e351605f8](https://github.com/drupal/core/commit/7e351605f8) Issue #2939894 by xjm: Temporarily skip LocaleConfigTranslationImportTest because it is failing massively in HEAD
-- [274d50c513](https://github.com/drupal/core/commit/274d50c513) Issue #2895271 by navneet0693, Lendude, dawehner, pasan.gamage, larowlan: Convert web tests to JTB and KTB tests for user module part-3
-- [35eca78561](https://github.com/drupal/core/commit/35eca78561) Issue #2939242 by yo30: Update Drupal Documentation to reflect that assert() eval syntax is no longer to be used
-- [a03daf0b1b](https://github.com/drupal/core/commit/a03daf0b1b) Issue #2938309 by tedbow, tacituseu, Wim Leers: Only install Quick Edit when necessary for Settings Tray tests
-- [62886de5ee](https://github.com/drupal/core/commit/62886de5ee) Revert "Issue #2817833 by Jo Fitzgerald, ckaotik, svendecabooter: Delay sql map table creation"
-- [f8a87ecc2a](https://github.com/drupal/core/commit/f8a87ecc2a) Issue #2893117 by Mile23, Berdir: Improve HTML caching of Simpletest UI test form
-- [936b75299a](https://github.com/drupal/core/commit/936b75299a) Issue #2817833 by Jo Fitzgerald, ckaotik, svendecabooter: Delay sql map table creation
-- [bc85165e35](https://github.com/drupal/core/commit/bc85165e35) Issue #2924812 by Sam152, plach, Wim Leers, timmillwood, xjm: Deprecate EntityRevisionConverter in content_moderation
-- [15c6d126c1](https://github.com/drupal/core/commit/15c6d126c1) Issue #2939247 by plach, hchonov: Revert Content Translation routes to act on default rather than latest revisions
-- [9e76e618b9](https://github.com/drupal/core/commit/9e76e618b9) Issue #2926412 by Wim Leers: Follow-up for #2883680: deprecation message indicates the wrong deprecation introduction version
-- [b6408bb296](https://github.com/drupal/core/commit/b6408bb296) Issue #2874904 by Mixologic, alexpott: Fix YamlTest to not scan core/node_modules
-- [7279503b37](https://github.com/drupal/core/commit/7279503b37) Issue #2938947 by Wim Leers, plach: Always list a "Current revision" for each available content translation
-- [db9c0e672b](https://github.com/drupal/core/commit/db9c0e672b) Issue #2939107 by plach, Wim Leers: Follow-up for #2924724: Clean up the node revision translation revert logic to leverage the new API
-- [087c590c52](https://github.com/drupal/core/commit/087c590c52) Issue #2931765 by timmillwood, Wim Leers: Regression: \Drupal\hal\LinkManager\LinkManagerBase implicitly depends on REST module
-- [dbeef2335a](https://github.com/drupal/core/commit/dbeef2335a) Issue #2938895 by plach, Wim Leers, hchonov, timmillwood: Make EntityConverter load the latest translation-affecting revision for translated entities
-- [8ad40fc104](https://github.com/drupal/core/commit/8ad40fc104) Issue #2938834 by alexpott: Resolve out-dated @todo in DefaultConfigTest
-- [8525135ea4](https://github.com/drupal/core/commit/8525135ea4) Issue #2936725 by gabesullice, Wim Leers, dawehner, Berdir: EntityDataDefinition::create() does not respect derived entity definitions
-- [cc8c7a85bc](https://github.com/drupal/core/commit/cc8c7a85bc) Issue #2937980 by pameeela, Jigar.addweb: Standard install sets article comment field to required
-- [f25a62f060](https://github.com/drupal/core/commit/f25a62f060) Issue #2935215 by alexpott: Apply coding standards to Drupal 8 PHP code in core/scripts
-- [db92bf5055](https://github.com/drupal/core/commit/db92bf5055) Issue #2936253 by gabesullice: Clarify usage of AccountProxyInterface: recommend AccountInterface for most use cases
-- [1b33730d48](https://github.com/drupal/core/commit/1b33730d48) Issue #2938799 by claudiu.cristea: Provide the timestamp scalar data type
-- [d69758a89b](https://github.com/drupal/core/commit/d69758a89b) Issue #2924165 by TravisCarden: Doxygen for callable arguments missing callable keyword
-- [8d0135d52b](https://github.com/drupal/core/commit/8d0135d52b) Issue #2935137 by el7cosmos, Mixologic: License "GPL-2.0+" is a deprecated SPDX license identifier, use "GPL-2.0+-only" or "GPL-2.0+-or-later" instead
-- [9414fb5e06](https://github.com/drupal/core/commit/9414fb5e06) Issue #2936802 by alexpott, Wim Leers: expectDeprecation() doesn't work in isolated tests
-- [29d131c3ec](https://github.com/drupal/core/commit/29d131c3ec) Issue #2925997 by tikaszvince, ndolley: position-min.js issue since 8.4 upgrade
-- [6fbccf3ee6](https://github.com/drupal/core/commit/6fbccf3ee6) Issue #2872355 by sarguna raj M, chiranjeeb2410, joachim: expand and clarify docs for DefaultPluginManager::alterInfo()
-- [18ef80802a](https://github.com/drupal/core/commit/18ef80802a) Issue #2938369 by Mohit Malik, yo30, mondrake, alexpott: The Symfony\Component\ClassLoader\WinCacheClassLoader class is deprecated
-- [ce3bd3653b](https://github.com/drupal/core/commit/ce3bd3653b) Issue #2921706 by Daniel Korte, bkosborne: Update example.settings.local.php to include ['cache']['bins']['page']
-- [bd02cffe3c](https://github.com/drupal/core/commit/bd02cffe3c) Issue #2914834 by snehi, tresti88, joachim: missing @return for drupal_get_user_timezone() and return types for other methods in bootstrap.inc
-- [4ef20795f0](https://github.com/drupal/core/commit/4ef20795f0) Issue #2936641 by alokvermaei: 'Path alias' in PathFilterForm.php is not translated
-- [648d7c5484](https://github.com/drupal/core/commit/648d7c5484) Issue #2935575 by gaurav.kapoor, kiamlaluno, amateescu: Fix or remove the @see tag
-- [f3ca2c9481](https://github.com/drupal/core/commit/f3ca2c9481) Issue #2934997 by benjifisher, Lendude, xjm: Intermittent failure in MediaUiJavascriptTest
-- [4787a15df4](https://github.com/drupal/core/commit/4787a15df4) Issue #2936525 by priya.chat, benjifisher: Confusing documentation for setConfigOverrideLanguage()
-- [1cbb164879](https://github.com/drupal/core/commit/1cbb164879) Issue #2936941 by alexpott: Diff can infinitely loop since #2885309
-- [6fc5ef10cf](https://github.com/drupal/core/commit/6fc5ef10cf) Issue #2930542 by sahil432, sdewitt, andrewmacpherson: Disabled form labels in Seven theme's node meta-data  do not meet WCAG AA 1.4.3 Contrast (minimum)
-- [d229279900](https://github.com/drupal/core/commit/d229279900) Issue #2878556 by plach, matsbla, vijaycs85, Gábor Hojtsy, catch, gabesullice, effulgentsia, hchonov, hass, amateescu, xjm: Ensure that changes to untranslatable fields affect only one translation in pending revisions
-- [9aaf79dfa5](https://github.com/drupal/core/commit/9aaf79dfa5) Issue #2919373 by tedbow, Wim Leers, Adita, webchick, Berdir, drpal, xjm, samuel.mortenson, bircher: Prevent Settings Tray functionality for blocks that have configuration overrides
-- [0cb1cd502b](https://github.com/drupal/core/commit/0cb1cd502b) Issue #2891215 by plach, timmillwood, hchonov, amateescu, catch, gabesullice: Add a way to track whether a revision was default when originally created
-- [4c7237cb09](https://github.com/drupal/core/commit/4c7237cb09) Issue #2937902 by jibran: Remove "drupal/layout_builder": "self.version" from core/composer.json
-- [7871cc00ee](https://github.com/drupal/core/commit/7871cc00ee) Issue #2937889 by larowlan, Sam152: Regression: LinkWidget no longer supports base fields with optional title
-- [8a19bec6e7](https://github.com/drupal/core/commit/8a19bec6e7) Back to dev.
-- [be644a6b49](https://github.com/drupal/core/commit/be644a6b49) Drupal 8.5.0-alpha1
-- [568053d9c3](https://github.com/drupal/core/commit/568053d9c3) Issue #2927746 by alexpott, catch, slasher13, mpdonadio, martin107, RoSk0, jibran, larowlan, pounard, Mile23, Jo Fitzgerald, deviantintegral, pritish.kumar: Update Symfony components to 3.4.*
-- [32d6b67697](https://github.com/drupal/core/commit/32d6b67697) Remove alpha-stability experimental modules in preparation for 8.5.0-alpha1.
-- [14ea7b01a8](https://github.com/drupal/core/commit/14ea7b01a8) Revert "Issue #2891215 by plach, timmillwood, hchonov, amateescu, catch, gabesullice: Add a way to track whether a revision was default when originally created"
-- [e6be0300a1](https://github.com/drupal/core/commit/e6be0300a1) Issue #2908952 by sahil432, martin107: drupal_get_complete_schema() and drupal_get_schema() are not completely removed
-- [02af9bc3f6](https://github.com/drupal/core/commit/02af9bc3f6) Issue #2936793 follow-up by tim.plunkett: Fix PHP5's hacking and wheezing.
-- [877918c7ed](https://github.com/drupal/core/commit/877918c7ed) Issue #2936793 by tim.plunkett, tstoeckler, EclipseGc: EntityReferenceItem::generateSampleValue() should create a sample entity if a referenceable entity is not found
-- [1802d32140](https://github.com/drupal/core/commit/1802d32140) Issue #2935779 by tim.plunkett, EclipseGc, webchick, xjm, dead_arm: Come up with an affordance for what parts of the page are/are not affected by Layout Builder
-- [535d519c33](https://github.com/drupal/core/commit/535d519c33) Issue #2902187 by amateescu, timmillwood, Sam152, webchick, Manuel Garcia, xjm, plach, DuneBL, larowlan, Bojhan, jibran, Berdir, jojototh: Provide a way for users to moderate content
-- [14e2ed669c](https://github.com/drupal/core/commit/14e2ed669c) Issue #2936457 by Berdir, larowlan: views_post_update_filter_placeholder_text() can result in errors in filter plugins due to incomplete definition
-- [fb74ea47ad](https://github.com/drupal/core/commit/fb74ea47ad) Issue #2862422 by chr.fritsch, robpowell, phenaproxima, webflo, bdimaggio, seanB, naveenvalecha, sunset_bill, vijaycs85, yoroy, starshaped, xjm, Berdir, hazong: Add per-media type creation permissions for media
-- [86b363eb0e](https://github.com/drupal/core/commit/86b363eb0e) Issue #2935755 by alexpott, Wim Leers: Add a trait to allow dynamic setting of expected deprecations
-- [b15791c03e](https://github.com/drupal/core/commit/b15791c03e) Issue #2858482 by Wim Leers, dawehner, benjy, larowlan, tedbow, borisson_: Simplify REST routing: disallow requesting POST/PATCH in any format, make consistent
-- [6c92a2a862](https://github.com/drupal/core/commit/6c92a2a862) Issue #2935725 by markconroy: Add vw and vh to the CSS stylelint
-- [c9cb478028](https://github.com/drupal/core/commit/c9cb478028) Issue #2914974 by quietone, rakesh.gectcr, maxocub, heddn, Jo Fitzgerald, Yogesh Pawar, masipila, phenaproxima, jhodgdon, Gábor Hojtsy, larowlan, neclimdul: Migrate UI - handle sources that do not need an upgrade
-- [c060f5de66](https://github.com/drupal/core/commit/c060f5de66) Issue #2936435 by Berdir, alexpott: Better BC for deprecated container parameter user.tempstore.expire
-- [dafa5f1176](https://github.com/drupal/core/commit/dafa5f1176) Issue #2885469 by Wim Leers, amateescu, timmillwood, alexpott, tstoeckler, xjm, remram, Berdir, dawehner, larowlan, samuel.mortenson: Regression: manually setting the ID field for newly-created content entities is not possible anymore (public follow-up to SA-2017-002)
-- [58cf7593ab](https://github.com/drupal/core/commit/58cf7593ab) Issue #2862041 by Sam152, amateescu, timmillwood, jibran, hamrant, dawehner, plach, Manuel Garcia, Jo Fitzgerald, mgalalm, xjm, larowlan, webchick, Wim Leers, gambry, kkus, tim.plunkett, tedbow, CatherineOmega: Provide useful Views filters for Content Moderation State fields
-- [a0f31bc763](https://github.com/drupal/core/commit/a0f31bc763) Issue #2862744 by masipila, heddn: Add documentation to EntityBaseFieldOverride destination plugin
-- [253b1020fc](https://github.com/drupal/core/commit/253b1020fc) Issue #2862748 by masipila, Jo Fitzgerald, quietone, phenaproxima: Add documentation to EntityRevision destination plugin
-- [36ea4d333d](https://github.com/drupal/core/commit/36ea4d333d) Issue #2933773 by masipila, quietone: Merge handbook documentation to API: skip_on_empty process plugin
-- [ed35f803c2](https://github.com/drupal/core/commit/ed35f803c2) Issue #2933776 by masipila, quietone: Merge handbook documentation to API: sub_process process plugin
-- [eb9b03e3fd](https://github.com/drupal/core/commit/eb9b03e3fd) Issue #2933770 by masipila, quietone, phenaproxima: Merge handbook documentation to API: static_map process plugin
-- [9182b21697](https://github.com/drupal/core/commit/9182b21697) Issue #2891215 by plach, timmillwood, hchonov, amateescu, catch, gabesullice: Add a way to track whether a revision was default when originally created
-- [e428304f34](https://github.com/drupal/core/commit/e428304f34) Issue #2934178 by samuel.mortenson, DyanneNova, xjm, yoroy, andrewmacpherson: Contrast issues with off-canvas dialog styling
-- [8351e1bc9f](https://github.com/drupal/core/commit/8351e1bc9f) Issue #2931165 by heddn, phenaproxima, maxocub, quietone, masipila: Mark Migrate (API) as stable
-- [80390b6b5e](https://github.com/drupal/core/commit/80390b6b5e) Issue #2921626 by tim.plunkett, EclipseGc, larowlan, dead_arm, xjm: Add proper context-awareness to Layout Builder
-- [4637781212](https://github.com/drupal/core/commit/4637781212) Revert "Issue #2921626 by tim.plunkett, EclipseGc, larowlan, dead_arm: Add proper context-awareness to Layout Builder"
-- [2909c978d0](https://github.com/drupal/core/commit/2909c978d0) Issue #2924724 by plach, hchonov, timmillwood, Gábor Hojtsy, amateescu, gabesullice, catch: Add an API to create a new revision correctly handling multilingual pending revisions
-- [749f41ff44](https://github.com/drupal/core/commit/749f41ff44) Issue #2921626 by tim.plunkett, EclipseGc, larowlan, dead_arm: Add proper context-awareness to Layout Builder
-- [358989eaa1](https://github.com/drupal/core/commit/358989eaa1) Issue #2918837 by heddn, neclimdul, phenaproxima, quietone, Gábor Hojtsy: SqlBase throws fatal error when extended directly
-- [1e2583bb31](https://github.com/drupal/core/commit/1e2583bb31) Issue #2934885 by marcoscano, benjifisher, seanB, starshaped, xjm, chr.fritsch, phenaproxima, Gábor Hojtsy: Document the difference between File, Image, and Media fields
-- [601593f06e](https://github.com/drupal/core/commit/601593f06e) Issue #2935617 by alexpott, chr.fritsch: Move User module's temp stores to core
-- [e965387d6f](https://github.com/drupal/core/commit/e965387d6f) Issue #2866819 by harsha012, jpassetti, joelpittet: Update stylelint rule number-no-trailing-zeros to be consistent with Drupal's CSS standards
-- [18bba35a27](https://github.com/drupal/core/commit/18bba35a27) Issue #2920172 by sushantpaste, dev.patrick, Ashreen Kaur, yoroy, xjm: User Guide link on front page in new Install should  open in new tab
-- [5b62f5dc94](https://github.com/drupal/core/commit/5b62f5dc94) Issue #2883892 by Jo Fitzgerald, voleger, ozin, mpdonadio, Taran2L, heddn: Add from/to timezone settings for the "FormatDate process plugin"
-- [f22b0385b2](https://github.com/drupal/core/commit/f22b0385b2) Issue #2908282 by heddn, phenaproxima, Jo Fitzgerald, quietone, xjm, larowlan, mikeryan, dipakmdhrm: Throw exception for source plugins without a source_module property
-- [9d4f798fe6](https://github.com/drupal/core/commit/9d4f798fe6) Issue #2862662 by masipila, Jo Fitzgerald, heddn, quietone, ohthehugemanatee: Add documentation to EntityContentBase destination plugin
-- [8419cf3d4a](https://github.com/drupal/core/commit/8419cf3d4a) Issue #2930832 by phenaproxima, heddn, larowlan, quietone: Add isAuditable() method to MigrationInterface
-- [c944475c55](https://github.com/drupal/core/commit/c944475c55) Issue #2935822 by sonu.raj.chauhan, quietone: Correct test group for two migrate tests
-- [c433063c12](https://github.com/drupal/core/commit/c433063c12) Issue #2926932 by matthiasm11, Wim Leers, vijaycs85: Update CKEditor library to 4.8.0
-- [d778f80bc2](https://github.com/drupal/core/commit/d778f80bc2) Issue #2912803 by Jo Fitzgerald, heddn: MigrationPluginManagerInterface is missing createInstancesByTag
-- [1d2289547c](https://github.com/drupal/core/commit/1d2289547c) Issue #2916199 by quietone, heddn: MigrateUpgradeTestBase shouldn't enable modules
-- [848e20e3b2](https://github.com/drupal/core/commit/848e20e3b2) Issue #2933774 by masipila, quietone: Merge handbook documentation to API: migration_lookup process plugin
-- [412c75674d](https://github.com/drupal/core/commit/412c75674d) Issue #2848085 by snehi, rkoller, Sutharsan, Gábor Hojtsy: "Translation update status" in locale.install is not translated
-- [c805443531](https://github.com/drupal/core/commit/c805443531) Issue #2927349 by tim.plunkett: Decouple the Layout Builder UI from entities
-- [bcb5afd44a](https://github.com/drupal/core/commit/bcb5afd44a) Issue #2862248 by m4olivei, Wim Leers, cburschka, larowlan: UnitTestCase::getConfigFactoryStub() doesn't accept dotted keys
-- [21b9f7d1b8](https://github.com/drupal/core/commit/21b9f7d1b8) Issue #2923004 by tedbow, bircher, samuel.mortenson, alexpott, Wim Leers, axel.rutz, Berdir, borisson_, xjm, tim.plunkett: Add method to check if any overrides are applied to \Drupal\Core\Config\Config
-- [92787ef805](https://github.com/drupal/core/commit/92787ef805) Issue #2897272 by tedbow, Wim Leers, Jo Fitzgerald, Adita, xjm: Fix module description, hook_help(), and document module scope in *.api.php file
-- [c1df3d2b93](https://github.com/drupal/core/commit/c1df3d2b93) Issue #2853460 by Wim Leers, dawehner, gabesullice, neclimdul, larowlan: Simplify RequestHandler: make it no longer ContainerAware, split up ::handle()
-- [d1e91cbf56](https://github.com/drupal/core/commit/d1e91cbf56) Issue #2934336 by alexpott: Update symfony/phpunit-bridge to the latest released version
-- [7bf384b29c](https://github.com/drupal/core/commit/7bf384b29c) Issue #2866816 by harsha012, BrightBold, cwells, joelpittet, idebr: Update stylelint rule length-zero-no-unit to be consistent with Drupal's CSS standards
-- [1f0b7604d0](https://github.com/drupal/core/commit/1f0b7604d0) Issue #2935524 by neclimdul: PHPCS failure on DrupalStandardsListenerTrait
-- [3af9d071a9](https://github.com/drupal/core/commit/3af9d071a9) Issue #2935151 by alexpott: Long array syntax checking in ./core files is broken
-- [ba4f89edf0](https://github.com/drupal/core/commit/ba4f89edf0) Issue #2934424 by chr.fritsch, benjifisher, tstoeckler, phenaproxima, xjm, marcoscano, larowlan: Media has no collection route
-- [0013e901fe](https://github.com/drupal/core/commit/0013e901fe) Issue #2866810 by BrightBold, harsha012, joelpittet: Update stylelint rule function-comma-space-after to be consistent with Drupal's CSS standards
-- [6abe25edc5](https://github.com/drupal/core/commit/6abe25edc5) Issue #2935318 by marcoscano: Improve default display of Audio and Video media types shipped with Standard profile
-- [62cf4b50e5](https://github.com/drupal/core/commit/62cf4b50e5) Issue #2904084 by Ruslan P, Venkatesh Rajan.J: Confusing title for "Boolean" field in "Manage form display"
-- [cbd3299e68](https://github.com/drupal/core/commit/cbd3299e68) Issue #2916740 by chr.fritsch, xjm, Manuel Garcia, tstoeckler, alexpott, seanB, Sam152, amateescu, tim.plunkett, dawehner, larowlan, Berdir: Add generic entity actions
-- [c9ca954cb9](https://github.com/drupal/core/commit/c9ca954cb9) Issue #2934499 by samuel.mortenson: Adjust foccus styling for the Settings Tray [x] close button to match the dialog system
-- [27ff71aacf](https://github.com/drupal/core/commit/27ff71aacf) Issue #2934162 by marcoscano, phenaproxima, chr.fritsch, robpowell, Berdir, xjm, effulgentsia: Provide better defaults to media form displays
-- [60a2dc0be4](https://github.com/drupal/core/commit/60a2dc0be4) Issue #2866823 by harsha012, Mukeysh, joelpittet: Update stylelint rule selector-type-no-unknown to be consistent with Drupal's CSS standards
-- [b8d018e325](https://github.com/drupal/core/commit/b8d018e325) Issue #2775131 by chr.fritsch, marcoscano, katzilla, seanB, xjm, gippy, phenaproxima, alexpott, Berdir, lauriii, webflo, dawehner: Media entities should support contextual links
-- [9f54d00d40](https://github.com/drupal/core/commit/9f54d00d40) Revert "Issue #2775131 by chr.fritsch, marcoscano, katzilla, seanB, xjm, gippy, phenaproxima, alexpott, Berdir, lauriii, webflo, dawehner: Media entities should support contextual links"
-- [1da5a5ccb3](https://github.com/drupal/core/commit/1da5a5ccb3) Issue #2775131 by chr.fritsch, marcoscano, katzilla, seanB, xjm, gippy, phenaproxima, alexpott, Berdir, lauriii, webflo, dawehner: Media entities should support contextual links
-- [d039f07cb7](https://github.com/drupal/core/commit/d039f07cb7) Issue #2933964 by kiamlaluno, oakulm: Remove the left-over @todo comments in the BaseFieldDefinition class
-- [ec31a14195](https://github.com/drupal/core/commit/ec31a14195) Issue #2934649 by chr.fritsch, marcoscano: Fix wrong header "Source" on media overview page
-- [b022734be8](https://github.com/drupal/core/commit/b022734be8) Issue #2917594 by kevin.dutra, robin.ingelbrecht, jwkovell, Lendude: Add support for HTML5 placeholder in views exposed filters
-- [694b95b98a](https://github.com/drupal/core/commit/694b95b98a) Issue #2575135 by quietone, ckaotik, olegel, mikeryan, larowlan: Dummy map/message tables being created
-- [bfe514a0d4](https://github.com/drupal/core/commit/bfe514a0d4) Issue #2934966 by benjifisher, starshaped: Make it easier to get source field values from media items
-- [0c1de8e423](https://github.com/drupal/core/commit/0c1de8e423) Issue #2671964 by EclipseGc, tim.plunkett, Jo Fitzgerald, larowlan, fago, dawehner, Berdir, phenaproxima: ContextHandler cannot validate constraints
-- [ee7f7f2a25](https://github.com/drupal/core/commit/ee7f7f2a25) Issue #2932226 by robpowell, marcoscano, phenaproxima, Darvanen, larowlan: Media Type entities don't validate machine name properly
-- [6eafe72da8](https://github.com/drupal/core/commit/6eafe72da8) Issue #2934096 by kiamlaluno, joelpittet: Simplify the ListDataDefinition::getClass() code
-- [a9d3f0ab31](https://github.com/drupal/core/commit/a9d3f0ab31) Issue #2934962 by starshaped, xjm: Ship local audio and video media types in Standard
-- [3d0e79f229](https://github.com/drupal/core/commit/3d0e79f229) Issue #2928798 by balsama, axel.rutz, xjm, phenaproxima, chr.fritsch, jeetendrakumar: Add extractors: mimetype & filesize
-- [db68052953](https://github.com/drupal/core/commit/db68052953) Issue #2924631 by marcoscano, starshaped, chr.fritsch, xjm, phenaproxima, Gábor Hojtsy, seanB, yoroy, evankay: Media sources for local video and audio support
-- [28830054bb](https://github.com/drupal/core/commit/28830054bb) Issue #2866805 by Mukeysh, joelpittet, harsha012: Update stylelint rule declaration-block-no-redundant-longhand-properties to be consistent with Drupal's CSS standards
-- [319f023727](https://github.com/drupal/core/commit/319f023727) Issue #2934850 by balsama, Berdir: Media Images should be rendered at a reasonable size by default
-- [32fc1125e7](https://github.com/drupal/core/commit/32fc1125e7) Issue #2934840 by robpowell, marcoscano: MediaAccessTest wrongly extends another test class, instead of base class
-- [b23aebd77e](https://github.com/drupal/core/commit/b23aebd77e) Issue #2932369 by marcoscano, balsama, Berdir, Grimreaper, alexpott: Media Types missing access control handler result in empty column in media overview page
-- [895db7dd8a](https://github.com/drupal/core/commit/895db7dd8a) Issue #2934517 by Berdir: Setting a revision ID on a new entity sets the newRevision flag to false
-- [128cb26225](https://github.com/drupal/core/commit/128cb26225) Issue #2856950 by dmsmidt, marcvangend, tim.plunkett, andrewmacpherson, Lendude, tameeshb, Berdir, xjm, tedbow, Gábor Hojtsy, Sutharsan: Add a possibility to disable inline form errors for a complete form
-- [ad1e35c7b0](https://github.com/drupal/core/commit/ad1e35c7b0) Issue #2816861 by dpi, jibran, bucefal91, harsha012, tim.plunkett, catch: Action configuration form does not support #ajax
-- [0428e20aa1](https://github.com/drupal/core/commit/0428e20aa1) Issue #2931883 by moshe weitzman, David_Rothstein, Wim Leers: Unneeded always_populate_raw_post_data requirements check while on CLI
-- [0cfb103b42](https://github.com/drupal/core/commit/0cfb103b42) Issue #2933980 by richgerdes, Maheshwaran.j: JQuery UI CSS dependencies are not met in core.libraries.yml
-- [a0ce0b879d](https://github.com/drupal/core/commit/a0ce0b879d) Issue #2765849 by kiamlaluno: The description for template_preprocess() has not been update for Drupal 8
-- [6930e1b18b](https://github.com/drupal/core/commit/6930e1b18b) Issue #2929835 by amateescu, dawehner: [regression] Modules can no longer alter the the table queue of a \Drupal\views\Plugin\views\query\Sql query object
-- [3e0376353b](https://github.com/drupal/core/commit/3e0376353b) Issue #2934233 by neclimdul: Fix reference to DrupalKernelTest in system module
-- [0f2bebf2e0](https://github.com/drupal/core/commit/0f2bebf2e0) Issue #2861840 by tim.plunkett, lauriii: Preprocess functions are not merged when a module registers a theme hook for a theme-provided template
-- [71584842ea](https://github.com/drupal/core/commit/71584842ea) Issue #2931047 by Dropa, D34dMan, borisson_, catch: hook_post_update_NAME documentation is misleading
-- [a46090e0aa](https://github.com/drupal/core/commit/a46090e0aa) Issue #2934152 by Wim Leers, neclimdul: ContentTypeHeaderMatcher should not run for GET, HEAD, OPTIONS or TRACE requests
-- [891c39b37c](https://github.com/drupal/core/commit/891c39b37c) Issue #2933991 by alexpott, neclimdul: Deprecation tests fail when all PHPUnit tests are run via PHPUnit
-- [e538433ffc](https://github.com/drupal/core/commit/e538433ffc) Issue #2863354 by benqwerty, DuaelFr, andrewmacpherson, xjm, mgifford, lauriii, ckrina: Add border to dialog [x] close button for hover and focus states
-- [5616f9b877](https://github.com/drupal/core/commit/5616f9b877) Issue #2866808 by BrightBold, pk188, idebr: Update stylelint rule declaration-block-trailing-semicolon to be consistent with Drupal's CSS standards
-- [e8a584a7d3](https://github.com/drupal/core/commit/e8a584a7d3) Issue #2866800 by BrightBold: Update stylelint rule block-no-empty to be consistent with Drupal's CSS standards
-- [c5654de7aa](https://github.com/drupal/core/commit/c5654de7aa) Issue #2866809 by BrightBold: Update stylelint rule declaration-colon-space-after to be consistent with Drupal's CSS standards
-- [d540d6426f](https://github.com/drupal/core/commit/d540d6426f) Issue #2866799 by cwells: Update stylelint rule at-rule-empty-line-before to be consistent with Drupal's CSS standards
-- [3b06c57e4f](https://github.com/drupal/core/commit/3b06c57e4f) Issue #2866812 by idebr: Update stylelint rule function-name-case to be consistent with Drupal's CSS standards
-- [2971ea9d10](https://github.com/drupal/core/commit/2971ea9d10) Issue #2934520 by tstoeckler: Avoid information disclosure by timing attack in EntityResource::patch()
-- [be569c75d7](https://github.com/drupal/core/commit/be569c75d7) Issue #2859381 by Manuel Garcia, Sam152, mstef, jhedstrom: Broken/missing handler for Moderation state field
-- [1911dc4056](https://github.com/drupal/core/commit/1911dc4056) Issue #2862741 by masipila: Add documentation to ComponentEntityDisplayBase destination plugin
-- [32cc90b3c1](https://github.com/drupal/core/commit/32cc90b3c1) Issue #2933424 by David_Rothstein, harsha012, jhodgdon, vaplas: English-specific links to php.net shouldn't be used in non-translatable strings
-- [b66af73c82](https://github.com/drupal/core/commit/b66af73c82) Issue #2918500 by tim.plunkett, EclipseGc, tedbow, larowlan, jibran, Wim Leers, phenaproxima, amateescu, borisson_, samuel.mortenson, gaurav.kapoor, KarlShea, hctom, mroycroft, neerajsingh, DamienMcKenna, dsnopek, Xano, TravisCarden, Tim Bozeman: Create a block which can render entity fields
-- [81b7676391](https://github.com/drupal/core/commit/81b7676391) Issue #2915759 by samuel.mortenson, tedbow, xjm, yoroy: :focus is is hard to see for links in the off-canvas dialog
-- [03e3d7a3a0](https://github.com/drupal/core/commit/03e3d7a3a0) Issue #2377747 by mondrake, eiriksm, rpayanm, adci_contributor, mgifford, oakulm, Truptti, chetan2111, joyceg, alexpott, xjm, yoroy, catch: Incorrect node create validation error when an invalid image is attached to a field
-- [44805b25e6](https://github.com/drupal/core/commit/44805b25e6) Issue #2933769 by masipila: Merge handbook documentation to API: substr process plugin
-- [f1e33ca3d8](https://github.com/drupal/core/commit/f1e33ca3d8) Issue #2925064 by drpal, dawehner, droplet, xjm, webchick, justafish: [1/2] JS codestyle: no-restricted-syntax
-- [9d552cad6c](https://github.com/drupal/core/commit/9d552cad6c) Issue #2926309 by vaplas, alexpott, mpdonadio, tacituseu, Mixologic: Random fail due to APCu not being able to allocate memory
-- [cf805af249](https://github.com/drupal/core/commit/cf805af249) Issue #2928699 by marcoscano, phenaproxima, amateescu, seanB, yoroy: Add an alter hook for the pre-configured field UI options and implement it in the Media module
-- [72c76b73c5](https://github.com/drupal/core/commit/72c76b73c5) Issue #2359389 by harsha012, hgoto, jeqq, fago, sureshcj, larowlan: Call to a member function filters() on a non-object in core/modules/text/text.module on line 83
-- [354462c6f6](https://github.com/drupal/core/commit/354462c6f6) Issue #2932774 by harsha012, gaurav.kapoor, neelam.chaudhary, dpi: Update docs for getEmail, can return null
-- [f9445b466b](https://github.com/drupal/core/commit/f9445b466b) Issue #2919147 by tedbow, tim.plunkett: When edit mode is enabled new page loads will not have Contextual tabbing constrained
-- [35de151d0e](https://github.com/drupal/core/commit/35de151d0e) Issue #2924351 by drpal, tedbow, xjm, dawehner: Fix coding standards issues with existing settings tray JavaScript
-- [5485720ee8](https://github.com/drupal/core/commit/5485720ee8) Issue #2866779 by Mile23, dawehner: Add a way to trigger_error() for deprecated hooks
-- [c5fba61258](https://github.com/drupal/core/commit/c5fba61258) Issue #2894068 by Jo Fitzgerald, davidsickmiller, alexpott, heddn, Yogesh Pawar, quietone, xjm: datetime_type is not set correctly when migrating datetime fields from D7
-- [3f57ebc31b](https://github.com/drupal/core/commit/3f57ebc31b) Issue #2862743 by masipila: Add documentation to DestinationBase destination plugin
-- [c2d7454b54](https://github.com/drupal/core/commit/c2d7454b54) Issue #2932865 by kiamlaluno, joachim: Incorrect description for ExtensionDiscovery::scanDirectory()
-- [0d2a45adc2](https://github.com/drupal/core/commit/0d2a45adc2) Issue #2930715 by alexpott, dawehner: Recursive rebuild caused by installing admin_toolbar_tools module
-- [7f00c34194](https://github.com/drupal/core/commit/7f00c34194) Issue #2926483 by plach, amateescu, effulgentsia, xjm, Sam152, timmillwood, jibran, larowlan, Gábor Hojtsy: Add API methods for determining whether an entity object is the latest (translation-affecting) revision
-- [0dc30938c7](https://github.com/drupal/core/commit/0dc30938c7) Issue #2824851 by Wim Leers, arshadcn, amateescu, effulgentsia, tedbow, timmillwood, cburschka, tstoeckler, Berdir, xjm, catch: EntityResource::patch() makes an incorrect assumption about entity keys, hence results in incorrect behavior
-- [0c20200d12](https://github.com/drupal/core/commit/0c20200d12) Issue #2837022 by hchonov, xjm, vlad.dancer, plach, matsbla, Gábor Hojtsy: Concurrently editing two translations of a node may result in data loss for non-translatable fields
-- [4cd7b4950c](https://github.com/drupal/core/commit/4cd7b4950c) Issue #2933125 by Tessa Bakker: Case mismatch in ExportForm.php
-- [9ba7824211](https://github.com/drupal/core/commit/9ba7824211) Issue #2626924 by Wim Leers, tedbow, dawehner, frob, martin107, damiankloip, dagmar, almaudoh, Berdir, larowlan, amateescu: Include processed text in normalizations: "text" field type's "processed" computed property should be non-internal and carry cacheability metadata
-- [efab31b7f2](https://github.com/drupal/core/commit/efab31b7f2) Issue #2862894 by fgm, Wim Leers, bkosborne, borisson_, catch: Docs for Internal Page Cache incorrectly state that it respects the maximum age performance setting
-- [d372f6d8ee](https://github.com/drupal/core/commit/d372f6d8ee) Issue #2323459 by harsha012, jhodgdon, joachim: Change wording of annotation keys to properties
-- [ed45b4d5dc](https://github.com/drupal/core/commit/ed45b4d5dc) Issue #2840257 by kiamlaluno: The documentation makes reference to a function that doesn't exist
-- [384a35caf6](https://github.com/drupal/core/commit/384a35caf6) Issue #2779921 by kiamlaluno, alexpott: hook_field_widget_form_alter() still reference a hook that is not used anymore
-- [1872e83be5](https://github.com/drupal/core/commit/1872e83be5) Issue #2931294 by claudiu.cristea, Wim Leers: Timestamp field type misses schema for value
-- [6585630775](https://github.com/drupal/core/commit/6585630775) Issue #2931709 by marcoscano, claudiu.cristea: Wrong constant name in \Drupal\image\Plugin\Field\FieldType\ImageItem::generateSampleValue()
-- [984a268454](https://github.com/drupal/core/commit/984a268454) Issue #2931264 by markcarver, claudiu.cristea: Remove static \Drupal::$legacyMessenger property
-- [8946662d75](https://github.com/drupal/core/commit/8946662d75) Issue #2928450 by tim.plunkett: Remove dead code in the Layout Builder following Section refactoring
-- [a351d726a6](https://github.com/drupal/core/commit/a351d726a6) Issue #2931598 by kim.pepper, markcarver, almaudoh, Sam152: Messenger methods drop repeat flag
-- [f3b60edab6](https://github.com/drupal/core/commit/f3b60edab6) Issue #2932154 by jhedstrom: ModerationInformation::getLatestRevisionId returns access-specific results
-- [e145f2a543](https://github.com/drupal/core/commit/e145f2a543) Issue #2932551 by jeqq: Error when calling ModerationStateFieldItemList::updateModeratedEntity() if the entity doesn't have workflow
-- [f9548751b8](https://github.com/drupal/core/commit/f9548751b8) Issue #2346893 by lauriii, idebr, slashrsm, RavindraSingh, Rade, Fabianx, alexpott, swentel, gauravjeet, darrenwh, deepak_zyxware, joelpittet, Wim Leers, Yogesh Pawar, Vj, ivan.chavarro, josephdpurcell, josmera01, rloos289, kattekrab, Tanvish Jha, csakiistvan, xjm, larowlan, akalata: Duplicate AJAX wrapper around a file field
-- [abebbfb06d](https://github.com/drupal/core/commit/abebbfb06d) Issue #2845361 by claudiu.cristea, Munavijayalakshmi: Don't compute children and parents of a new term on TermForm
-- [824fff57f3](https://github.com/drupal/core/commit/824fff57f3) Issue #2899708 by gaurav.kapoor, tedbow, droplet, Wim Leers: `quote` should be `blockquote` in off-canvas.base.css
-- [26235da61b](https://github.com/drupal/core/commit/26235da61b) Issue #2930788 by marcoscano, phenaproxima, Berdir, seanB: Do not show name by default in media displays
-- [a83b06a46b](https://github.com/drupal/core/commit/a83b06a46b) Issue #2923015 by cburschka, amateescu, tstoeckler, alexpott, hchonov, mondrake, pfrenssen: [PHP 7.2] Incompatible method declarations
-- [03fd77c842](https://github.com/drupal/core/commit/03fd77c842) Issue #2927806 by alexpott, mondrake, jibran, Mile23: Use PHPUnit 6 for testing when PHP version >= 7.2
-- [4e5b4b09bd](https://github.com/drupal/core/commit/4e5b4b09bd) Issue #2931368 by opdavies: Add missing param documentation for hook_migrate_prepare_row, document hook_migrate_MIGRATION_ID_prepare_row
-- [962122efc7](https://github.com/drupal/core/commit/962122efc7) Issue #2884675 by rodrigoaguilera, joelpittet, TR: Remove twig uses of Twig_Node::getLine to Twig_Node::getTemplateLine
-- [93b9f58426](https://github.com/drupal/core/commit/93b9f58426) Issue #2932044 by alexpott: Remove \PHPUnit_Util_XML::cssSelect() from \Drupal\tour\Tests\TourTestBase
-- [6ac6325024](https://github.com/drupal/core/commit/6ac6325024) Issue #2931339 by manuel.adan: Unused variable $admin_permission in EntityAccessControlHandler::checkAccess
-- [aee6bea5cd](https://github.com/drupal/core/commit/aee6bea5cd) Issue #2921033 by Jo Fitzgerald, masipila, phenaproxima, xjm, Wim Leers: Improve API documentation of DrupalSqlBase source plugin
-- [4851f311e2](https://github.com/drupal/core/commit/4851f311e2) Issue #2862671 by masipila, Jo Fitzgerald, kleog, phenaproxima, quietone: Add documentation to SqlBase source plugin
-- [be64202643](https://github.com/drupal/core/commit/be64202643) Issue #2825487 by damiankloip, Wim Leers, garphy, cburschka, tedbow, dpovshed, tstoeckler, Munavijayalakshmi, Berdir, dawehner, e0ipso: Fix normalization of File entities: file entities should expose the file URL as a computed property on the 'uri' base field
-- [0308764eb4](https://github.com/drupal/core/commit/0308764eb4) Issue #2551259 by Mile23, gaurav.kapoor, Jo Fitzgerald, googletorp, Jeremy, xjm, webchick: Deprecate dead code locale_translation_manual_status()
-- [8e9f1b6120](https://github.com/drupal/core/commit/8e9f1b6120) Issue #2929496 by plach, hchonov, timmillwood, catch, Wim Leers, amateescu, Calystod, andypost: Add dedicated interfaces to group methods dealing with revision translation and clean up the related documentation
-- [2e16f2a35d](https://github.com/drupal/core/commit/2e16f2a35d) Issue #2926914 by tim.plunkett, xjm, larowlan, tedbow, EclipseGc: Rewrite \Drupal\layout_builder\Section to represent the entire section, not just the block info
-- [3cf0815a54](https://github.com/drupal/core/commit/3cf0815a54) Issue #2930072 by vaplas, Lendude: Module: Convert system functional tests to phpunit
-- [dad8d64eed](https://github.com/drupal/core/commit/dad8d64eed) Issue #2913864 by Jo Fitzgerald, chiranjeeb2410, matslats, phenaproxima: badly constructred link in drupal_set_message
-- [a44a23e64f](https://github.com/drupal/core/commit/a44a23e64f) Issue #1489692 by Liam Morland, pfrenssen, YesCT, geekinpink, sudishth, josmera01, David_Rothstein: Incorrect handling of file upload limit exceeded - file widget disappears
-- [522ed00526](https://github.com/drupal/core/commit/522ed00526) Issue #2914938 by timmillwood, RajabNatshah, xjm, Manuel Garcia, amateescu, Wim Leers: Preview of content - Notice: Undefined offset: 0 in _quickedit_entity_is_latest_revision() (line 196 of core/modules/quickedit/quickedit.module)
-- [968da88d76](https://github.com/drupal/core/commit/968da88d76) Issue #2928846 by alexpott, Berdir: [PHP 7.2] count() parameter must be an array or an object that implements Countable
-- [40856ccd26](https://github.com/drupal/core/commit/40856ccd26) Issue #2760167 by kim.pepper, markcarver, jibran, dawehner, znerol, Wim Leers, larowlan, xjm, tim.plunkett: Add \Drupal\Core\Messenger\Messenger
-- [5ea62f1d3e](https://github.com/drupal/core/commit/5ea62f1d3e) Issue #2876085 by heddn, maxocub, phenaproxima, Jo Fitzgerald, vasi, quietone, yoroy, masipila, larowlan, neclimdul, krystalcode, catch: Before upgrading, audit for potential ID conflicts
-- [66d19eaa71](https://github.com/drupal/core/commit/66d19eaa71) Issue #2927566 by Wim Leers: Unit test EntityReferenceFieldItemNormalizerTest mocks incorrectly
-- [ee22a47cd2](https://github.com/drupal/core/commit/ee22a47cd2) Issue #2928702 by Wim Leers, borisson_, tedbow: Make EntityResourceTestBase's field_rest_test_multivalue test field less invasive: omit it from normalizations
-- [8fb5919181](https://github.com/drupal/core/commit/8fb5919181) Issue #2880445 by pjcdawkins, japerry, gargsuchi, q0rban: Config sync should not throw a warning when not being writable
-- [6f6abec964](https://github.com/drupal/core/commit/6f6abec964) Issue #2894014 by adriancid, Cottser: Additional space in a field setting schema label
-- [4a338bf833](https://github.com/drupal/core/commit/4a338bf833) Issue #2928522 by yo30, dawehner: \Drupal\FunctionalJavascriptTests\WebDriverWebAssert misses some deprecations
-- [0ee253116f](https://github.com/drupal/core/commit/0ee253116f) Issue #2928778 by plach: Exception when trying to save a new revision after manually setting the original revision ID
-- [0b67173a1f](https://github.com/drupal/core/commit/0b67173a1f) Issue #2929464 by tedbow, mpdonadio: Tests under "core/modules/ckeditor/tests/modules/src/Kernel" are in the wrong folder and do not get tested
-- [4d629c4d81](https://github.com/drupal/core/commit/4d629c4d81) Issue #2627512 by gambry, jhedstrom, mpdonadio, Jo Fitzgerald, jibran, tedbow, bkosborne, alexpott, vprocessor, xjm: Datetime Views plugins don't support timezones
-- [8c44f2085e](https://github.com/drupal/core/commit/8c44f2085e) Issue #2930197 by mondrake, amateescu: EntityDefinitionUpdateTest fails with contrib db driver (again)
-- [89e64c1fe0](https://github.com/drupal/core/commit/89e64c1fe0) Issue #2928249 by alexpott, mondrake: Introduce a PHPUnit 6+ compatibility layer for Drupal\Tests\Listeners classes
-- [f320141dda](https://github.com/drupal/core/commit/f320141dda) Issue #2795317 by hswong3i, alexpott, Lendude, bircher, dawehner, martin107, Jo Fitzgerald, mondrake: Allow PHPUnit 6+ support for object mocking
-- [b5b3949b14](https://github.com/drupal/core/commit/b5b3949b14) Issue #2928256 by marcoscano, seanB: Users shouldn't be able to change the media source plugin after the media type is created
-- [de9e2d7061](https://github.com/drupal/core/commit/de9e2d7061) Issue #2865184 by chr.fritsch, phenaproxima, larowlan, marcoscano, xjm: Allow MediaSource plugins provide default field form/view display settings
-- [5564bba7d7](https://github.com/drupal/core/commit/5564bba7d7) Issue #2862745 by masipila, quietone: Add documentation to EntityFieldInstance destination plugin
-- [8859f625ad](https://github.com/drupal/core/commit/8859f625ad) Issue #2862746 by masipila, quietone, phenaproxima: Add documentation to EntityFieldStorageConfig destination plugin
-- [d98f9b8e17](https://github.com/drupal/core/commit/d98f9b8e17) Issue #2927844 by Jo Fitzgerald, quietone, heddn: Correct references to 'iterator' plugin to be 'sub_process'
-- [017e42ed76](https://github.com/drupal/core/commit/017e42ed76) Issue #2928137 by blakemorgan, dawehner: Correct deprecation note in ajax.es6.js
-- [297092718a](https://github.com/drupal/core/commit/297092718a) Issue #2929477 by alexpott, droplet: Update jcalderonzumba/mink-phantomjs-driver
-- [8da25f6fb7](https://github.com/drupal/core/commit/8da25f6fb7) Issue #2927563 by tstoeckler, amateescu: Aggregator feed "refresh" field should have a default value
-- [7d1545b32a](https://github.com/drupal/core/commit/7d1545b32a) Issue #2927569 by tstoeckler, amateescu: Various tests do not set values for required field when creating entities
-- [bdba2942e1](https://github.com/drupal/core/commit/bdba2942e1) Issue #2923567 by Sam152, amateescu: Select from correct entity tables for additional entity/field definitions when moving data to dedicated table storage from shared table storage for the purposes of purging
-- [e4c874e18c](https://github.com/drupal/core/commit/e4c874e18c) Issue #2862207 by kalpaitch, jmmarquez, jeetendrakumar: Config import change profile message
-- [eca600bdb6](https://github.com/drupal/core/commit/eca600bdb6) Issue #2500521 by Jo Fitzgerald, RytoEX, quietone, gaurav.kapoor, hussainweb, phenaproxima: Upgrade path for Statistics 7.x and 6.x
-- [bc1e39c66b](https://github.com/drupal/core/commit/bc1e39c66b) Issue #2929076 by marcoscano: Fix wrong \Drupal\Core\Entity\EntityTypeInterface::getBundleLabel() docblock
-- [1aab6ab23d](https://github.com/drupal/core/commit/1aab6ab23d) Issue #2927758 by Wim Leers, dagmar: Update DbLogResourceTest to use the ResourceTestBase base class instead of the deprecated RESTTestBase
-- [66fc18077a](https://github.com/drupal/core/commit/66fc18077a) Issue #2717965 by Yogesh Pawar, pguillard, alexpott, Liam Morland, skylord, oxy86, cilefen, balagan, Anthony Fok: Site name is not UTF-8 encoded in email headers
-- [8203805823](https://github.com/drupal/core/commit/8203805823) Issue #2929124 by Wim Leers, tstoeckler: Remove EntityResource::getCastedValueFromFieldItemList() helper in favor of FieldItemList::equals()
-- [723712ca3d](https://github.com/drupal/core/commit/723712ca3d) Issue #2791571 by chr.fritsch, kristiaanvandeneynde, phenaproxima, Berdir, seanB, tstoeckler, Wim Leers, xjm: Automatically supply contextual links for entities
-- [a4dd446ee9](https://github.com/drupal/core/commit/a4dd446ee9) Issue #2895001 by marcoscano, vijaycs85, Wim Leers, benjifisher, xjm, Berdir, amateescu: Use the bundle label (e.g. "Media type") instead of "Bundles" in the Entity Reference field configuration
-- [2](https://github.com/drupal/core/commit/2) ...more commits found, but message is too long for PR
+- [b73ab73d39](https://github.com/drupal/core/commit/b73ab73d39) `Drupal 8.5.0`
+- [e0577f77ed](https://github.com/drupal/core/commit/e0577f77ed) `Issue #2940165 by mondrake, Berdir: [regression] Cannot add effects to image style via the UI`
+- [9076756cd7](https://github.com/drupal/core/commit/9076756cd7) `Issue #2647824 by xjm: Determine what should go in CHANGELOG.txt for 8.x core releases.`
+- [8e302d1d34](https://github.com/drupal/core/commit/8e302d1d34) `Issue #2940890 by plach, Wim Leers, effulgentsia, matsbla, timmillwood: Don’t allow deleting revision translations in pending revisions`
+- [9a4cc552c1](https://github.com/drupal/core/commit/9a4cc552c1) `Issue #2942986 by alexpott, Lendude, chr.fritsch, larowlan, dawehner, catch: Views should be dependent on providers of table data via hook_views_data`
+- [ce330dbe35](https://github.com/drupal/core/commit/ce330dbe35) `Issue #2949815 by plach, catch: Flagging translations as outdated in a pending revision causes multiple translations to be marked as affected`
+- [634bb29618](https://github.com/drupal/core/commit/634bb29618) `Issue #2937799 by EclipseGc, tim.plunkett, effulgentsia, tedbow, Kristen Pol: Allow greater flexibility within SectionComponent::toRenderArray()`
+- [809d71bd7b](https://github.com/drupal/core/commit/809d71bd7b) `Issue #2949710 by plach, catch: Pending revisions may become unavailable when untranslatable fields affect all translations`
+- [29b0fb6081](https://github.com/drupal/core/commit/29b0fb6081) `Issue #2949619 by plach: Removed revision translations may reappear when creating a new revision`
+- [ee7970c481](https://github.com/drupal/core/commit/ee7970c481) `Issue #2910706 by joelpittet, droplet, alexpott, Yogesh Pawar: Update Stylelint related Packages`
+- [e644f945a2](https://github.com/drupal/core/commit/e644f945a2) `Issue #2946425 by vaplas, borisson_, Lendude, dawehner: Correcting the tests that lie in BTB but using WTB`
+- [906327c77a](https://github.com/drupal/core/commit/906327c77a) `Issue #2935193 by Sutharsan, alexpott: Fix broken exceptions in Gettext component`
+- [a189a0604a](https://github.com/drupal/core/commit/a189a0604a) `Issue #2941062 by plach, Wim Leers: EntityUntranslatableFieldsConstraintValidator always allows changes in default revisions`
+- [6bc47ae09c](https://github.com/drupal/core/commit/6bc47ae09c) `Issue #2946041 by neerajsingh: Theme development link should point to the version specific documentation`
+- [94db9ade01](https://github.com/drupal/core/commit/94db9ade01) `Issue #2931443 by Wim Leers, casey, zuuperman, drpal: Browser parsing race condition: JSON.parse sometimes called on partially streamed BigPipe placholder replacements, causes fatal JS error`
+- [ed37dfe2b4](https://github.com/drupal/core/commit/ed37dfe2b4) `Revert "Issue #2945306 by alexpott, dawehner: The new ModuleList in 8.6.x can discover modules in tests the previous code could not"`
+- [594a0f6713](https://github.com/drupal/core/commit/594a0f6713) `Issue #2843617 by maxocub, hussainweb, joelpittet, quietone, heddn, Jo Fitzgerald: Field formatter mappings defined in getFieldFormatterMap have no effect`
+- [8f40d97557](https://github.com/drupal/core/commit/8f40d97557) `Issue #2788087 by alexpott, dawehner, shafiqhossain: Drupal 8: You have requested a non-existent service "router.route_provider.old"`
+- [a0484ea61b](https://github.com/drupal/core/commit/a0484ea61b) `Issue #2945306 by alexpott, dawehner: The new ModuleList in 8.6.x can discover modules in tests the previous code could not`
+- [340165716e](https://github.com/drupal/core/commit/340165716e) `git commit -m 'Issue #2941945 by L-four, chiranjeeb2410: path.api.php references to a non-existent PathInterface class and updated to AliasStorageInterface'`
+- [1c383910b8](https://github.com/drupal/core/commit/1c383910b8) `Issue #2945275 by alexpott: Remove hack to fix bug in symfony/yaml`
+- [860b5c2e12](https://github.com/drupal/core/commit/860b5c2e12) `Issue #2940146 by Eli-T, cehfisher, nicolarbell, markconroy, kjay, Gábor Hojtsy, andrewmacpherson, JayKandari, volkswagenchick: Standardize writing style for Umami`
+- [ae5ffa9fde](https://github.com/drupal/core/commit/ae5ffa9fde) `Issue #2943627 by tim.plunkett, Falco010, alexpott, samuel.mortenson, xjm: Layout Builder does not consult layout plugin for dependencies`
+- [9a4e8a9a98](https://github.com/drupal/core/commit/9a4e8a9a98) `Issue #2942769 by neclimdul: Consolidate umami .htaccess files and testing - coding standards followup`
+- [bc219620b6](https://github.com/drupal/core/commit/bc219620b6) `Revert "Issue #2943627 by tim.plunkett, Falco010, alexpott, samuel.mortenson: Layout Builder does not consult layout plugin for dependencies"`
+- [bc6f172f55](https://github.com/drupal/core/commit/bc6f172f55) `Issue #2943627 by tim.plunkett, Falco010, alexpott, samuel.mortenson: Layout Builder does not consult layout plugin for dependencies`
+- [fcb7dd9d0b](https://github.com/drupal/core/commit/fcb7dd9d0b) `Issue #2918761 by quietone, chiranjeeb2410, phenaproxima, maxocub, heddn, alexpott: Break up MigrateUpgradeForm into smaller forms`
+- [d6674ad27c](https://github.com/drupal/core/commit/d6674ad27c) `Issue #2942769 by alexpott, vaplas, smaz, Gábor Hojtsy, borisson_, Eli-T: Consolidate umami .htaccess files and testing`
+- [50f4ceae89](https://github.com/drupal/core/commit/50f4ceae89) `Issue #2934145 by quietone, heddn, Jo Fitzgerald, David Hernández, alexpott, joelpittet, phenaproxima, Gábor Hojtsy: Image field migration plugin in wrong module`
+- [8eb79476f2](https://github.com/drupal/core/commit/8eb79476f2) `Issue #2940513 by Sam152, Berdir: ModerationStateFieldItemList fails after an entity has been serialized/unserialized`
+- [f40b9de3a0](https://github.com/drupal/core/commit/f40b9de3a0) `Back to dev.`
+- [d01769c8d8](https://github.com/drupal/core/commit/d01769c8d8) `Drupal 8.5.0-rc1`
+- [faf360b695](https://github.com/drupal/core/commit/faf360b695) `SA-CORE-2018-001 by cashwilliams, catch, cilefen, droplet, dawehner, bonus, agentrickard, David_Rothstein, Chi, Gábor Hojtsy, Heine, Wim Leers, Schnitzel, drpal, effulgentsia, tedbow, tim.plunkett, tstoeckler, xjm, will_c, stefan.r, samuel.mortenson, larowlan, greggles, logaritmisk, mpdonadio, pwolanin, plach`
+- [d0af739e12](https://github.com/drupal/core/commit/d0af739e12) `Issue #2885583 by drpal, keeganstreet, Dinesh18, naiduharish, sim_1, idebr, larowlan, Gábor Hojtsy, nick_schuch, droplet: Close button in tour module lacks descriptive text`
+- [6beb0f478d](https://github.com/drupal/core/commit/6beb0f478d) `Issue #2944658 by neerajsingh, cilefen: Creating distributions link should point to the version specific documentation`
+- [5d27615c22](https://github.com/drupal/core/commit/5d27615c22) `Issue #2899392 by idebr, neclimdul, rgpublic: user_hook_toolbar() makes all pages uncacheable`
+- [9a1d26721a](https://github.com/drupal/core/commit/9a1d26721a) `Issue #2915175 by vaplas, Phonoman, Lendude: Duplicating a Page to Block after changing the display id and then saving the view destroys the Page`
+- [ab140c2100](https://github.com/drupal/core/commit/ab140c2100) `Issue #2937850 by Wim Leers, plach: Mark revision_default as internal for REST consumers`
+- [84e302e00c](https://github.com/drupal/core/commit/84e302e00c) `Issue #2778167 by Wim Leers, arunkumark: Build link in Statistics block with toRenderable()`
+- [f5f0896031](https://github.com/drupal/core/commit/f5f0896031) `Issue #2932083 by Lendude, andreyjan, siva_drupal: Views Table style plugin breaks dynamic cache`
+- [c94a751691](https://github.com/drupal/core/commit/c94a751691) `Issue #2934960 by marcoscano, mycw1991, seanB, evankay, chr.fritsch, andrewmacpherson, jefuri, Jeroen Witte: Clean up icons that ship with Media`
+- [82500fa9bc](https://github.com/drupal/core/commit/82500fa9bc) `Issue #2945369 by Pasqualle: Wrong variable name in \Drupal\node\Form\DeleteMultiple`
+- [c4db7a8e35](https://github.com/drupal/core/commit/c4db7a8e35) `Issue #2945041 by heddn, maxocub: Categorize derived migrations according to their type`
+- [1bc2d2f383](https://github.com/drupal/core/commit/1bc2d2f383) `Issue #2711099 by heddn, Jo Fitzgerald, edysmp, edgewl2, alexpott, Charlotte17, mikeryan, masipila, quietone, maxocub, phenaproxima: Categorize migrations according to their type`
+- [8fab69caa8](https://github.com/drupal/core/commit/8fab69caa8) `Issue #2938643 by markconroy, andrewmacpherson, David_Rothstein, yoroy: Umami Banner Block does not have accessible text alternative at wide viewport`
+- [bd09718af2](https://github.com/drupal/core/commit/bd09718af2) `Issue #2938194 by markconroy, andrewmacpherson: Focus styles should meet accessibility guidelines in Umami theme`
+- [0d71c78654](https://github.com/drupal/core/commit/0d71c78654) `Issue #2941647 by markconroy, JayKandari, cehfisher, smaz, andrewmacpherson: Link hover styles unintentionally applied to administration toolbar`
+- [1285938b7d](https://github.com/drupal/core/commit/1285938b7d) `Issue #2938800 by markconroy, David_Rothstein, ckrina, smaz, Eli-T, cehfisher, larowlan: Finalize wording for Toolbar warning message`
+- [79b2e3b306](https://github.com/drupal/core/commit/79b2e3b306) `Revert "Issue #2942769 by alexpott, Eli-T: Consolidate umami .htaccess files and testing"`
+- [3c79fbcfc2](https://github.com/drupal/core/commit/3c79fbcfc2) `Issue #2661542 by Mile23, Mixologic: Isolate Drupal\Tests\Component\Plugin\DefaultFactoryTest from core test module`
+- [779f756419](https://github.com/drupal/core/commit/779f756419) `Issue #2942769 by alexpott, Eli-T: Consolidate umami .htaccess files and testing`
+- [17e48810a1](https://github.com/drupal/core/commit/17e48810a1) `Issue #2942590 by tim.plunkett: Layout Builder defaults should work regardless of the ability to provide overrides`
+- [aa591cd9ea](https://github.com/drupal/core/commit/aa591cd9ea) `Issue #2921367 by ApacheEx, xjm, effulgentsia, drpal, webchick, justafish, dawehner: Add the JS modernization initiative to MAINTAINERS.txt`
+- [08fbb0bff9](https://github.com/drupal/core/commit/08fbb0bff9) `Issue #2942600 by tim.plunkett: SectionComponent::toRenderArray() runs access checks even when not needed`
+- [e751f4d004](https://github.com/drupal/core/commit/e751f4d004) `Issue #2936085 by tim.plunkett, Kristen Pol, larowlan: Remove 'display title' or make it unchecked by default for Field Block`
+- [9507c19af3](https://github.com/drupal/core/commit/9507c19af3) `Issue #2713073 by harsha012, Mile23, dawehner, webflo, jibran: Add required php extensions to composer.json`
+- [2d0151b8f1](https://github.com/drupal/core/commit/2d0151b8f1) `Issue #2933620 by masipila, mpdonadio, heddn, quietone, phenaproxima, maxocub, kay_v, cilefen: Polish migrate.api.php API documentation`
+- [c6296d553b](https://github.com/drupal/core/commit/c6296d553b) `Issue #2944524 by wundo: Typo in Drupal\Core\Routing\UrlGenerator`
+- [0bc2b9b4b5](https://github.com/drupal/core/commit/0bc2b9b4b5) `Issue #2942388 by alexpott, quietone: Ensure d7_url_alias migration works for paths without a slashes`
+- [b79a827697](https://github.com/drupal/core/commit/b79a827697) `Issue #2887161 by Mohit Malik, joelpittet: Ensure argument order is correct for assertSame() assertions`
+- [720b520aab](https://github.com/drupal/core/commit/720b520aab) `Issue #2784015 by amateescu, jlbellido, Gogowitsch, krknth, ibustos: Widget validation crashes on ItemList violations for widgets with a custom errorElement() implementation`
+- [2a5cdaec84](https://github.com/drupal/core/commit/2a5cdaec84) `Issue #2944291 by jibran, Mixologic: Upgrade behat/mink-selenium2-driver to 1.3.x-dev`
+- [af8e73f8d3](https://github.com/drupal/core/commit/af8e73f8d3) `Issue #2943860 by Mixologic, alexpott: Add a LICENSE.txt to Serialization and Transliteration components`
+- [f4fd08a7e3](https://github.com/drupal/core/commit/f4fd08a7e3) `Issue #2944215 by jeqq, alexpott: Aliases generated by PathItem::generateSampleValue() should start with a slash`
+- [80eac4a11e](https://github.com/drupal/core/commit/80eac4a11e) `Issue #2943226 by droplet: Remove droplet from MAINTAINERS.txt`
+- [9fa428b4b8](https://github.com/drupal/core/commit/9fa428b4b8) `Issue #2942497 by scott_euser, timmillwood, malcomio, Berdir: Using content moderation block in preview mode causes EntityStorageException`
+- [1cf634359d](https://github.com/drupal/core/commit/1cf634359d) `Issue #2941106 by droplet, idebr: Site email address in the install profile form is no longer copied to the user email address`
+- [6b83e79c84](https://github.com/drupal/core/commit/6b83e79c84) `Issue #2939988 by bn_code, xjm, Sam152: Remove content moderation exclusion from StableLibraryOverrideTest`
+- [ed7ab51d9e](https://github.com/drupal/core/commit/ed7ab51d9e) `Issue #2933099 by Sam152, sathish.redcrackle, amaisano, Berdir: "Default Revision cannot be deleted." But it's not the default revision`
+- [8fb4418024](https://github.com/drupal/core/commit/8fb4418024) `Issue #2943209 by gabesullice, amateescu, Wim Leers: Mark at least one entity_test entity type as 'internal'`
+- [fdb66ec509](https://github.com/drupal/core/commit/fdb66ec509) `Issue #2866801 by harsha012, joelpittet, BrightBold, droplet, Akshay kashyap, arunkumark, bmx269: Update stylelint rules color-hex-length to be consistent with Drupal's CSS standards`
+- [a8802f74cd](https://github.com/drupal/core/commit/a8802f74cd) `Issue #2942068 by kim.pepper, jibran: FileTestSaveUploadFromForm incorrectly counts messages`
+- [fcd1465565](https://github.com/drupal/core/commit/fcd1465565) `Issue #2914503 by jibran, tim.plunkett, samuel.mortenson: Determine if serializing blobs is safe for use in Layout Builder`
+- [acb5c9e415](https://github.com/drupal/core/commit/acb5c9e415) `Issue #2943445 by VitaliyB98: Incorrect path to icons in stable/settings_tray CSS files`
+- [0ddf7699bd](https://github.com/drupal/core/commit/0ddf7699bd) `Back to dev.`
+- [99379d7d9f](https://github.com/drupal/core/commit/99379d7d9f) `Drupal 8.5.0-beta1`
+- [d575b05c27](https://github.com/drupal/core/commit/d575b05c27) `Issue #2943004 by alexpott, webchick, smaz, xjm, catch: Backport Umami to 8.5, but mark it hidden (for now)`
+- [f224778200](https://github.com/drupal/core/commit/f224778200) `Issue #2941902 by smaz: Reduce the file size for bundled images in Umami`
+- [1dfe9945cd](https://github.com/drupal/core/commit/1dfe9945cd) `Issue #2942406 by Eli-T, markconroy, andrewmacpherson: Text alternative for Umami mobile search link`
+- [8c0a00b2c0](https://github.com/drupal/core/commit/8c0a00b2c0) `Issue #2941837 by Eli-T, kjay, cehfisher: Move article body out of csv file in to their own text file`
+- [a0be792af3](https://github.com/drupal/core/commit/a0be792af3) `Issue #2938185 by tedbow, JayKandari, navneet0693, acbramley, Eli-T, larowlan, webchick, markconroy, andrewmacpherson, David_Rothstein, smaz, ckrina: When installing Umami, only show warning if 'Demo Umami' radio button is selected (and ensure that it is obvious that warning message only applies to the Umami profile)`
+- [24fb9bb61f](https://github.com/drupal/core/commit/24fb9bb61f) `Issue #2941558 by markconroy, Eli-T, oakulm: Theme does not provide logged in users menu item or controls to edit his/hers user details`
+- [447346823c](https://github.com/drupal/core/commit/447346823c) `Issue #2942007 by David_Rothstein, navneet0693, andrewmacpherson: Move the footer promo block image to a field, for better configurability and accessibility`
+- [81cdac84f5](https://github.com/drupal/core/commit/81cdac84f5) `Issue #2940362 by Eli-T, kjay, navneet0693, markconroy, larowlan, Gábor Hojtsy: Move recipe instruction out of csv file in to their own text file`
+- [79d9c1502a](https://github.com/drupal/core/commit/79d9c1502a) `Issue #2938805 by markconroy, David_Rothstein, ckrina, Eli-T: Finalise the wording of the warning message on the status report page`
+- [b26073c6fd](https://github.com/drupal/core/commit/b26073c6fd) `Issue #2941582 by markconroy, Eli-T, smaz, ckrina, steveparks: Create a drupal.org documentation page for Umami profile to explain why it shouldn't be used in production sites`
+- [88728d372c](https://github.com/drupal/core/commit/88728d372c) `Issue #2939019 by David_Rothstein: Umami theme has a confusing theme description`
+- [28c833e256](https://github.com/drupal/core/commit/28c833e256) `Issue #2941488 by larowlan, Eli-T: Add a .htaccess file to core/profiles/demo_umami/modules/demo_umami_content/default_content/images to prevent direct downloading of images`
+- [709012d38f](https://github.com/drupal/core/commit/709012d38f) `Issue #2938186 by navneet0693, John Cook, Eli-T, markconroy, smaz, ckrina, andrewmacpherson, larowlan: Set toolbar warning message to only appear on admin/edit pages`
+- [327ca9f01f](https://github.com/drupal/core/commit/327ca9f01f) `Issue #2938900 by David_Rothstein, navneet0693, JayKandari: Replace profile-defined blocks with custom blocks to fix a variety of problems`
+- [f5ad645584](https://github.com/drupal/core/commit/f5ad645584) `Issue #2938686 by Adam_Moulsdale, andrewmacpherson: Pink button/link style in Umami fails WCAG 2.0 SC 1.4.3 Contrast (minimum)`
+- [8121e64c29](https://github.com/drupal/core/commit/8121e64c29) `Issue #2939940 by bmx269, joelpittet: Update stylelint rules color-hex-case to be consistent with Drupal's CSS standards`
+- [cd36c8ff0b](https://github.com/drupal/core/commit/cd36c8ff0b) `Issue #2939018 by smaz, David_Rothstein: Umami theme and modules don't have version numbers in their info files`
+- [cf4950d800](https://github.com/drupal/core/commit/cf4950d800) `Issue #2939835 by David_Rothstein, markconroy: Documentation for testAppearance() says that it tests that Umami is the default theme, but it doesn't`
+- [12955b4591](https://github.com/drupal/core/commit/12955b4591) `Issue #2938170 by navneet0693, andrewmacpherson, markconroy, owenpm3, larowlan: Enable ALT text for Banner Block image field`
+- [bbb17577d7](https://github.com/drupal/core/commit/bbb17577d7) `Issue #2938918 by David_Rothstein, markconroy, larowlan: Impossible to switch back to the Umami theme after switching away from it`
+- [a516724a66](https://github.com/drupal/core/commit/a516724a66) `Issue #2938187 by markconroy, andrewmacpherson: Homepage/Recipes page banner image is duplicating on small screens`
+- [7eaad7133d](https://github.com/drupal/core/commit/7eaad7133d) `Issue #2937636 by piyuesh23, markconroy: Umami Theme - follow-up - Use hook_form_alter() for search block placeholder`
+- [7c45bb5e79](https://github.com/drupal/core/commit/7c45bb5e79) `Issue #2938360 by markconroy: Change hook_preprocess_block to use $variables instead of $vars`
+- [634ce6aafe](https://github.com/drupal/core/commit/634ce6aafe) `Issue #2937894 by navneet0693: Remove unneeded schema entry from demo_umami.schema.yml`
+- [f065a566ca](https://github.com/drupal/core/commit/f065a566ca) `Issue #2809635 by markconroy, navneet0693, alexpott, smaz, larowlan, Eli-T, webchick, yoroy, ikit-claw, budda, kjay, timmillwood, tkoleary, Gábor Hojtsy, andrewmacpherson, lauriii, JayKandari, jibran, ok_lyndsey, big_man, ckrina, nathancz, Paul_Gregory, vijaycs85, SharJay, tomphippen, tim.plunkett, Tarun Lewis, cehfisher, kreynen, Petr Illek, mariohernandez, thamas, thatdamnqa, John Cook, philipnorton42, h2cm, kattekrab, martin_q, waako: Create experimental installation profile`
+- [1d52eabafa](https://github.com/drupal/core/commit/1d52eabafa) `Issue #2931436 by amateescu, dillix, Berdir, DuneBL, plach: field_purge_batch expects an array of objects but instead gets an array of arrays`
+- [d43708069a](https://github.com/drupal/core/commit/d43708069a) `Issue #2939563 by webchick: Un-hide Media from the UI. With special thanks to all contributors who helped us get here!`
+- [22618248c6](https://github.com/drupal/core/commit/22618248c6) `Issue #2943486 by xjm: media-reference-help.html.twig missing from stable theme`
+- [5e2dc5c5a4](https://github.com/drupal/core/commit/5e2dc5c5a4) `Revert "Issue #2939563 by webchick: Un-hide Media from the UI. With special thanks to all contributors to helped us get here!"`
+- [f2ea35d944](https://github.com/drupal/core/commit/f2ea35d944) `Issue #2939563 by webchick: Un-hide Media from the UI. With special thanks to all contributors to helped us get here!`
+- [ab4fea34d3](https://github.com/drupal/core/commit/ab4fea34d3) `Issue #2936293 by xjm, tedbow, marcoscano, ershov.andrey, phenaproxima, benjifisher, samuel.mortenson, davidhernandez, tim.plunkett, Gábor Hojtsy, seanB, ckrina, yoroy, DyanneNova, amateescu: At least inform content authors where they can list and add media`
+- [b9bd2dc889](https://github.com/drupal/core/commit/b9bd2dc889) `Issue #2802403 by _Archy_, Berdir, rjay, catch, Tachion, jacktonkin, oriol_e9g, willwh, tameeshb, dawehner, dhansen, bmcclure, DeFr, david.gil, gagarine, plach: Combination of language negotiation and path aliasing can cause a corrupted route cache, 404s`
+- [e084a0d20f](https://github.com/drupal/core/commit/e084a0d20f) `Issue #2940899 by plach, Wim Leers, hchonov: Regression: _entity_form routes should not get load_latest_revision_flag by default: changes default behavior (= regression) while only Content Moderation needs it`
+- [b5c4aa5dbf](https://github.com/drupal/core/commit/b5c4aa5dbf) `Issue #2943035 by tedbow, xjm, tim.plunkett: hook_field_widget_multivalue_form_alter and hook_field_widget_multivalue_WIDGET_TYPE_alter are not invoked for single widget that handle multiple values`
+- [054722c94c](https://github.com/drupal/core/commit/054722c94c) `Issue #2941622 by Wim Leers: Make REST's EntityResource deriver exclude internal entity types and mark ContentModerationState entity type as internal instead of the current hack`
+- [b724598670](https://github.com/drupal/core/commit/b724598670) `Issue #2942293 by Neograph734: Uppercase letter in Bartik's color.inc causes incorrect color replacements`
+- [effcfdb45f](https://github.com/drupal/core/commit/effcfdb45f) `Issue #2937469 by alexpott, Mixologic: Automatic upgrade to PHPUnit 6 is dangerous`
+- [a52fc43666](https://github.com/drupal/core/commit/a52fc43666) `Issue #2941318 by davewilly, chiranjeeb2410, kiamlaluno: Incorrectly formatted documentation in Get migrate process plugin`
+- [b88bfd25bc](https://github.com/drupal/core/commit/b88bfd25bc) `Issue #2939026 by tstoeckler: Installer does not fix the database connection after creating the database on MySQL`
+- [cf1b8bfd8b](https://github.com/drupal/core/commit/cf1b8bfd8b) `Issue #2936511 by hchonov, Berdir, plach, Wim Leers, catch, amateescu, sdewitt: ContentEntityType::getRevisionMetadataKeys() never considers the BC logic because of the new "revision_default" key`
+- [eddad1b9c9](https://github.com/drupal/core/commit/eddad1b9c9) `Issue #2935951 by heddn, maxocub, quietone, Jo Fitzgerald, phenaproxima, alexpott, larowlan: Copy migrate source plugin from migrate_drupal_d8 into migrate_drupal`
+- [381e7554e4](https://github.com/drupal/core/commit/381e7554e4) `Issue #2940088 by joelpittet, cilefen: Shorthand hex colors in CSS files break color module's comparisons`
+- [10ee6ebff9](https://github.com/drupal/core/commit/10ee6ebff9) `Issue #2775653 by dawehner, droplet, michielnugter, Lendude, jibran, alexpott, Mixologic, klausi, juampynr, cosmicdreams, cspitzlay, justafish, drpal, larowlan, claudiu.cristea, Berdir, Mile23, andypost, xjm, mtodor: JavascriptTests with webDriver`
+- [f3a5f932a0](https://github.com/drupal/core/commit/f3a5f932a0) `Issue #2866817 by harsha012, Jo Fitzgerald, BrightBold, alexpott, joelpittet: Update stylelint rule no-empty-source to be consistent with Drupal's CSS standards`
+- [37f992ea2d](https://github.com/drupal/core/commit/37f992ea2d) `Issue #2940201 by xjm, amateescu, benjifisher, tedbow, tim.plunkett, Berdir: hook_field_widget_form_alter() can no longer affect the whole widget for multi-value fields`
+- [bf47414a25](https://github.com/drupal/core/commit/bf47414a25) `Issue #2927227 by Jo Fitzgerald, Olarin, ao2, quietone, heddn: d6_url_alias migration fails when the src path in D6 contains no slashes`
+- [f50cc6591b](https://github.com/drupal/core/commit/f50cc6591b) `Issue #2860097 by plach, timmillwood, Sam152, Wim Leers, hchonov, catch, amateescu, matsbla: Ensure that content translations can be moderated independently`
+- [122e840b08](https://github.com/drupal/core/commit/122e840b08) `Issue #2938140 by tim.plunkett, EclipseGc, DyanneNova, larowlan: Mark Layout Builder as Beta in 8.5.x`
+- [50f0a25035](https://github.com/drupal/core/commit/50f0a25035) `Issue #2920963 by quietone, Saviktor, shashikant_chauhan: Remove the migrate.migration prefix from core test migrations`
+- [42baaa6566](https://github.com/drupal/core/commit/42baaa6566) `Issue #2941736 by plach, Sam152, amateescu, timmillwood: Moderation state revisions should have their isDefaultRevision() match the host entity's`
+- [606353a540](https://github.com/drupal/core/commit/606353a540) `Issue #2941912 by Mohit Malik, quietone: Remove incremental @todo from MigrateUpgradeForm`
+- [d4fd35c1ef](https://github.com/drupal/core/commit/d4fd35c1ef) `Issue #2942073 by effulgentsia, Sam152: Add a "bare.standard.php.gz" test fixture that starts from Drupal 8.4.0`
+- [9139b0801a](https://github.com/drupal/core/commit/9139b0801a) `Revert "Issue #2893117 by Mile23, Berdir: Improve HTML caching of Simpletest UI test form"`
+- [9117bdb3ca](https://github.com/drupal/core/commit/9117bdb3ca) `Issue #2927344 by Wim Leers, xjm, TR, webchick, larowlan, David_Rothstein, catch, yoroy: Specifically warn about end dates for PHP support for old versions`
+- [7da71a20a9](https://github.com/drupal/core/commit/7da71a20a9) `Issue #2940956 by alexpott: Properly disable resource tracking in the ContainerBuilder`
+- [de17645f4a](https://github.com/drupal/core/commit/de17645f4a) `Issue #2939208 by alexpott, tim.plunkett: Services registered with ContainerBuilder::setDefinition() are removed from container causing a BC break`
+- [dd5bae6905](https://github.com/drupal/core/commit/dd5bae6905) `Issue #2936642 by tim.plunkett: Getting runtime contexts will generate an E_WARNING for anonymous users`
+- [7966f130d4](https://github.com/drupal/core/commit/7966f130d4) `Issue #2916084 by tim.plunkett, John Cook, andrewmacpherson, borisson_: Add John Cook as Batch API subsystem maintainer`
+- [8830ce72bb](https://github.com/drupal/core/commit/8830ce72bb) `Issue #2941457 by agentrickard, tim.plunkett, hbensalem: EntityAdapter::getIterator requires undocumented methods`
+- [bf7dbd1045](https://github.com/drupal/core/commit/bf7dbd1045) `Issue #2914839 by Sam152: The current moderation state in the "meta" region on content entity forms is coupled to the moderation_state field widget`
+- [1e5c50e932](https://github.com/drupal/core/commit/1e5c50e932) `Issue #2939692 by Leksat, blazey, larowlan: menu_link_content_entity_predelete deletes "collection", "add-form", etc. links`
+- [bbb42220c1](https://github.com/drupal/core/commit/bbb42220c1) `Issue #2940204 by plach, Wim Leers, effulgentsia, matsbla, Gábor Hojtsy, tacituseu: Translatable fields with synchronization enabled should behave as untranslatable fields with respect to pending revisions`
+- [fb2ebac655](https://github.com/drupal/core/commit/fb2ebac655) `Issue #2941275 by zuhair_ak, joachim: improve the exception message for a missing source ID value in \Drupal\migrate\Row`
+- [da5cca892a](https://github.com/drupal/core/commit/da5cca892a) `Issue #2937964 by Jo Fitzgerald, quietone: RequirementException summary doc line is incomplete`
+- [774ee68cfe](https://github.com/drupal/core/commit/774ee68cfe) `Issue #2937945 by yo30, kim.pepper, dawehner, voleger, larowlan: Add messenger to ControllerBase and FormBase`
+- [062835e590](https://github.com/drupal/core/commit/062835e590) `Issue #2940108 by yo30, quietone, maxocub: getLegacyDrupalVersion() returns string not int as documented`
+- [cfbe3fcf9c](https://github.com/drupal/core/commit/cfbe3fcf9c) `Revert "Issue #2940204 by plach, Wim Leers, effulgentsia, matsbla: Translatable fields with synchronization enabled should behave as untranslatable fields with respect to pending revisions"`
+- [c15775f348](https://github.com/drupal/core/commit/c15775f348) `Issue #2936714 by gabesullice, Wim Leers, amateescu, Sam152, Berdir: Entity type definitions cannot be set as 'internal'`
+- [fb3c36a0a7](https://github.com/drupal/core/commit/fb3c36a0a7) `Issue #2940204 by plach, Wim Leers, effulgentsia, matsbla: Translatable fields with synchronization enabled should behave as untranslatable fields with respect to pending revisions`
+- [4d6bead355](https://github.com/drupal/core/commit/4d6bead355) `Issue #2791907 by ddrozdik, Chi: Improve TranslatableMarkup and FormattableMarkup classes`
+- [d85dada0a1](https://github.com/drupal/core/commit/d85dada0a1) `Issue #2927344 by Wim Leers, xjm, webchick, larowlan, catch, David_Rothstein, yoroy: Specifically warn about end dates for PHP support for old versions`
+- [3df4d825c7](https://github.com/drupal/core/commit/3df4d825c7) `Issue #2905098 by tedbow, Jo Fitzgerald, Wim Leers, MerryHamster, Yogesh Pawar, rajeshwari10, larowlan, xjm: Change block entity form handler from 'off_canvas' to 'settings_tray'`
+- [79357bff46](https://github.com/drupal/core/commit/79357bff46) `Issue #2747789 by jhedstrom, pashupathi nath gajawada: Improve UpdatePathTestBase debuggablity`
+- [fbd7960ca3](https://github.com/drupal/core/commit/fbd7960ca3) `Issue #2940367 by jibran: Update Symfony components to 3.4.4`
+- [e8a2d7c78a](https://github.com/drupal/core/commit/e8a2d7c78a) `Issue #2932715 by alexpott, mondrake, vaplas: PHPUnit testing fails on Windows since #2928249`
+- [add9968785](https://github.com/drupal/core/commit/add9968785) `Issue #2659616 by Lendude, greggmarshall, katzilla, hexabinaer: Check field order and fix below/above in descriptions`
+- [f00676452a](https://github.com/drupal/core/commit/f00676452a) `Issue #2809491 by ApacheEx, dawehner, Lendude: Convert AJAX part of \Drupal\field\Tests\Boolean\BooleanFieldTest::testBooleanField to JavascriptTestBase`
+- [1b40c7ca49](https://github.com/drupal/core/commit/1b40c7ca49) `Issue #2843707 by Chirag_Garg, lokapujya, xjm, gerzenstl: Default config for entity displays does not match what is saved`
+- [5a48c60711](https://github.com/drupal/core/commit/5a48c60711) `Issue #2768823 by Jo Fitzgerald, Berdir, quietone: Store uploads in correct translation`
+- [b4cf8d07f8](https://github.com/drupal/core/commit/b4cf8d07f8) `Issue #2939802 by Wim Leers, cburschka: Follow-up for #2824851: EntityResourceTestBase::getModifiedEntityForPatchTesting() handles @FieldType=path incorrectly`
+- [a8b80d85c8](https://github.com/drupal/core/commit/a8b80d85c8) `Issue #2935783 by larowlan, Wim Leers: RequestHandler's handle method interacts with the Route object but should be able to just declare arguments`
+- [6db700c8e9](https://github.com/drupal/core/commit/6db700c8e9) `Issue #2843328 by mpdonadio, alexpott, Mile23, cburschka, xjm: Enforce minimum PHP version in composer dependencies`
+- [0934fdc54a](https://github.com/drupal/core/commit/0934fdc54a) `Issue #2936704 by Wim Leers, amateescu, alexpott, Berdir: Remove REST route deprecations from DeprecationListenerTrait::getSkippedDeprecations(), use ExpectDeprecationTrait::expectDeprecation() instead`
+- [81fd2724c4](https://github.com/drupal/core/commit/81fd2724c4) `Issue #2857857 by vegantriathlete, Jo Fitzgerald, snehi, plach, xjm, Skabbkladden: Check use of "it's" in core to ensure proper use`
+- [cd8e2e20c9](https://github.com/drupal/core/commit/cd8e2e20c9) `Issue #2940050 by Mohit Malik, kiamlaluno: Fix the grammar for the comment describing TranslatableInterface::hasTranslation()`
+- [3320b3b477](https://github.com/drupal/core/commit/3320b3b477) `Issue #2940051 by Mohit Malik, kiamlaluno: Fix the punctuation in the comment describing what ContentEntityBase::isTranslatable() does`
+- [437636669e](https://github.com/drupal/core/commit/437636669e) `Revert "Issue #2932715 by mondrake, alexpott, vaplas: PHPUnit testing fails on Windows since #2928249"`
+- [28de462c65](https://github.com/drupal/core/commit/28de462c65) `Revert "Revert "Issue #2935157 by neclimdul, alexpott: Run-test.sh does not run TestSuite tests""`
+- [553d91a58d](https://github.com/drupal/core/commit/553d91a58d) `Issue #2922603 by tedbow, Wim Leers, andrewmacpherson: Mark Settings Tray module as stable`
+- [b3bf798c31](https://github.com/drupal/core/commit/b3bf798c31) `Revert "Issue #2935157 by neclimdul, alexpott: Run-test.sh does not run TestSuite tests"`
+- [b235999e33](https://github.com/drupal/core/commit/b235999e33) `Issue #2937666 by Jo Fitzgerald, quietone: errorCount() returns string not int as documented`
+- [d66fb147b8](https://github.com/drupal/core/commit/d66fb147b8) `Issue #2931420 by harsha012, chiranjeeb2410, marcoscano, heddn: Fix wrong documentation on \Drupal\migrate\Plugin\migrate\source\SourcePluginBase::initializeIterator()`
+- [cb8f3f2578](https://github.com/drupal/core/commit/cb8f3f2578) `Issue #1014816 by mondrake, Dave Reid, m1n0, leschekfm, jwilson3, claudiu.cristea, fietserwin, guybedford: Allow image fields to use any extensions the current image toolkit supports (instead of hard-coding jpg, png and gif only)`
+- [63fa6f2258](https://github.com/drupal/core/commit/63fa6f2258) `Issue #2745491 by mcdruid, juampynr, Jo Fitzgerald, sanduhrs, snehi, mparker17, rodrigoaguilera: ImageWidget::validateRequiredFields() produces a PHP Warning message if triggering element is a non-button`
+- [bfa44123aa](https://github.com/drupal/core/commit/bfa44123aa) `Issue #2797639 by jzavrl, slashrsm, yobottehg, tassilogroeper, Yogesh Pawar, Berdir: For multi language private files FileDownloadController is used for the ImageStyle instead of ImageStyleDownloadController`
+- [494bbac6ef](https://github.com/drupal/core/commit/494bbac6ef) `Issue #2932715 by mondrake, alexpott, vaplas: PHPUnit testing fails on Windows since #2928249`
+- [c70c4f4165](https://github.com/drupal/core/commit/c70c4f4165) `Issue #2867960 by Eric_A, Mile23, Jo Fitzgerald, mpdonadio: Merge Component composer.json files to account for them during build`
+- [968c43f35d](https://github.com/drupal/core/commit/968c43f35d) `Issue #2687843 by quietone, heddn, Jo Fitzgerald, alexpott, piggito, mallezie, mikeryan, xjm, phenaproxima, benjifisher, webchick, Gábor Hojtsy, masipila, benjy, abhishek-anand, catch: Add back incremental migrations through the UI`
+- [8023a1c572](https://github.com/drupal/core/commit/8023a1c572) `Issue #2923915 by tstoeckler, heddn: Stubbing content entities with required fields with a default value is broken`
+- [c1070219b1](https://github.com/drupal/core/commit/c1070219b1) `Issue #2935076 by amateescu: EntityResourceTestBase::getNormalizedPostEntity() wrongly assumes that all entity types have auto-generated sequential IDs`
+- [5e69700e0a](https://github.com/drupal/core/commit/5e69700e0a) `Issue #2915398 by Sam152, amateescu, timmillwood, plach, mstef: The moderation_state field is not computed during the creation of a new entity translation`
+- [0b2d458da9](https://github.com/drupal/core/commit/0b2d458da9) `Issue #2929198 by alexpott: .ht.router.php does not support update.php`
+- [9d5a928c4e](https://github.com/drupal/core/commit/9d5a928c4e) `Issue #2880703 by alexpott, droplet, Daniel.Moberly, yogesh01: Status report page without JavaScript is messed up`
+- [d90b997a07](https://github.com/drupal/core/commit/d90b997a07) `Issue #2940169 by Nitebreed, jefuri, seanB: Remove all occurences of 'media entity' in core`
+- [1e17288985](https://github.com/drupal/core/commit/1e17288985) `Issue #2922862 by jibran: Update non-Symfony dependencies in lock file`
+- [9a8c545117](https://github.com/drupal/core/commit/9a8c545117) `Issue #1712106: Fix spelling mistake introduced on commit`
+- [fd2d6c259d](https://github.com/drupal/core/commit/fd2d6c259d) `Issue #1712106 by jamix, dawehner, m4olivei, Boobaa, InternetDevels, JacobSanford: truncate_utf8() cuts on the first newline character when $wordsafe == TRUE`
+- [4984a6d07c](https://github.com/drupal/core/commit/4984a6d07c) `Issue #2910705 by droplet, drpal: Update JS Build Script Packages`
+- [b26f5d80f9](https://github.com/drupal/core/commit/b26f5d80f9) `Issue #2936368 by gaurav.kapoor: Duplicate css property in toolbar module`
+- [b8d30703dd](https://github.com/drupal/core/commit/b8d30703dd) `Issue #2935157 by neclimdul, alexpott: Run-test.sh does not run TestSuite tests`
+- [d4acfb86bd](https://github.com/drupal/core/commit/d4acfb86bd) `Issue #2940174 by jefuri: Soundcould rename to Soundcloud in MediaSourceInterface`
+- [3a8ede60ae](https://github.com/drupal/core/commit/3a8ede60ae) `Issue #2938645 by kmbremner, swarad07, Gábor Hojtsy: invalid YAML in example`
+- [bb9c5a2665](https://github.com/drupal/core/commit/bb9c5a2665) `Issue #2939940 by bmx269, joelpittet: Update stylelint rules color-hex-case to be consistent with Drupal's CSS standards`
+- [c2f2111781](https://github.com/drupal/core/commit/c2f2111781) `Issue #2866818 by harsha012, BrightBold, brahmjeet789, joelpittet: Update stylelint rule number-leading-zero to be consistent with Drupal's CSS standards`
+- [2deb0f1d08](https://github.com/drupal/core/commit/2deb0f1d08) `Issue #2866806 by harsha012, Mukeysh, joelpittet: Update stylelint rule declaration-block-no-shorthand-property-overrides to be consistent with Drupal's CSS standards`
+- [b84567df38](https://github.com/drupal/core/commit/b84567df38) `Issue #2939917 by plach, jibran, Wim Leers: Field synchronization should run only for Content Translation-enabled entities`
+- [82a20b9af8](https://github.com/drupal/core/commit/82a20b9af8) `Issue #2939909 by plach, xjm, Wim Leers: Ensure that hook_bundle_info_alter() implementations know whether bundles are translatable`
+- [a55b528693](https://github.com/drupal/core/commit/a55b528693) `Issue #2938623 by kmbremner: broken link in docs for Condition::notExists()`
+- [441f198ba3](https://github.com/drupal/core/commit/441f198ba3) `Issue #2939724 by ryanhayes, joachim, Samvel, andrewmacpherson, sacha@wellborn.co.uk, Adam_Moulsdale, rachel_norfolk: wrong variable name in sample code`
+- [ced17a4912](https://github.com/drupal/core/commit/ced17a4912) `Issue #2897132 by timmillwood, Sam152, amateescu, pameeela, xjm, Wim Leers, webchick, lauriii, esod: Mark Content Moderation module as stable`
+- [4d13415e0d](https://github.com/drupal/core/commit/4d13415e0d) `Issue #2922701 by quietone, masipila, heddn, benjifisher, phenaproxima, larowlan, xjm, catch: Migrate UI - refer to modules and add help text`
+- [384b0fd25b](https://github.com/drupal/core/commit/384b0fd25b) `Revert "Issue #2939909 by plach, Wim Leers: Ensure that hook_bundle_info_alter() implementations know whether bundles are translatable"`
+- [4aab62aa32](https://github.com/drupal/core/commit/4aab62aa32) `Issue #2939742 by plach, Wim Leers: Node links always load the default revision during rendering`
+- [321e306145](https://github.com/drupal/core/commit/321e306145) `Issue #2939795 by plach, Wim Leers: Multilingual logic is not applied when a new revision translation is being added`
+- [400300843c](https://github.com/drupal/core/commit/400300843c) `Issue #2939909 by plach, Wim Leers: Ensure that hook_bundle_info_alter() implementations know whether bundles are translatable`
+- [237d23a007](https://github.com/drupal/core/commit/237d23a007) `Revert "Issue #2895271 by navneet0693, Lendude, dawehner, pasan.gamage, larowlan: Convert web tests to JTB and KTB tests for user module part-3"`
+- [7e351605f8](https://github.com/drupal/core/commit/7e351605f8) `Issue #2939894 by xjm: Temporarily skip LocaleConfigTranslationImportTest because it is failing massively in HEAD`
+- [274d50c513](https://github.com/drupal/core/commit/274d50c513) `Issue #2895271 by navneet0693, Lendude, dawehner, pasan.gamage, larowlan: Convert web tests to JTB and KTB tests for user module part-3`
+- [35eca78561](https://github.com/drupal/core/commit/35eca78561) `Issue #2939242 by yo30: Update Drupal Documentation to reflect that assert() eval syntax is no longer to be used`
+- [a03daf0b1b](https://github.com/drupal/core/commit/a03daf0b1b) `Issue #2938309 by tedbow, tacituseu, Wim Leers: Only install Quick Edit when necessary for Settings Tray tests`
+- [62886de5ee](https://github.com/drupal/core/commit/62886de5ee) `Revert "Issue #2817833 by Jo Fitzgerald, ckaotik, svendecabooter: Delay sql map table creation"`
+- [f8a87ecc2a](https://github.com/drupal/core/commit/f8a87ecc2a) `Issue #2893117 by Mile23, Berdir: Improve HTML caching of Simpletest UI test form`
+- [936b75299a](https://github.com/drupal/core/commit/936b75299a) `Issue #2817833 by Jo Fitzgerald, ckaotik, svendecabooter: Delay sql map table creation`
+- [bc85165e35](https://github.com/drupal/core/commit/bc85165e35) `Issue #2924812 by Sam152, plach, Wim Leers, timmillwood, xjm: Deprecate EntityRevisionConverter in content_moderation`
+- [15c6d126c1](https://github.com/drupal/core/commit/15c6d126c1) `Issue #2939247 by plach, hchonov: Revert Content Translation routes to act on default rather than latest revisions`
+- [9e76e618b9](https://github.com/drupal/core/commit/9e76e618b9) `Issue #2926412 by Wim Leers: Follow-up for #2883680: deprecation message indicates the wrong deprecation introduction version`
+- [b6408bb296](https://github.com/drupal/core/commit/b6408bb296) `Issue #2874904 by Mixologic, alexpott: Fix YamlTest to not scan core/node_modules`
+- [7279503b37](https://github.com/drupal/core/commit/7279503b37) `Issue #2938947 by Wim Leers, plach: Always list a "Current revision" for each available content translation`
+- [db9c0e672b](https://github.com/drupal/core/commit/db9c0e672b) `Issue #2939107 by plach, Wim Leers: Follow-up for #2924724: Clean up the node revision translation revert logic to leverage the new API`
+- [087c590c52](https://github.com/drupal/core/commit/087c590c52) `Issue #2931765 by timmillwood, Wim Leers: Regression: \Drupal\hal\LinkManager\LinkManagerBase implicitly depends on REST module`
+- [dbeef2335a](https://github.com/drupal/core/commit/dbeef2335a) `Issue #2938895 by plach, Wim Leers, hchonov, timmillwood: Make EntityConverter load the latest translation-affecting revision for translated entities`
+- [8ad40fc104](https://github.com/drupal/core/commit/8ad40fc104) `Issue #2938834 by alexpott: Resolve out-dated @todo in DefaultConfigTest`
+- [8525135ea4](https://github.com/drupal/core/commit/8525135ea4) `Issue #2936725 by gabesullice, Wim Leers, dawehner, Berdir: EntityDataDefinition::create() does not respect derived entity definitions`
+- [cc8c7a85bc](https://github.com/drupal/core/commit/cc8c7a85bc) `Issue #2937980 by pameeela, Jigar.addweb: Standard install sets article comment field to required`
+- [f25a62f060](https://github.com/drupal/core/commit/f25a62f060) `Issue #2935215 by alexpott: Apply coding standards to Drupal 8 PHP code in core/scripts`
+- [db92bf5055](https://github.com/drupal/core/commit/db92bf5055) `Issue #2936253 by gabesullice: Clarify usage of AccountProxyInterface: recommend AccountInterface for most use cases`
+- [1b33730d48](https://github.com/drupal/core/commit/1b33730d48) `Issue #2938799 by claudiu.cristea: Provide the timestamp scalar data type`
+- [d69758a89b](https://github.com/drupal/core/commit/d69758a89b) `Issue #2924165 by TravisCarden: Doxygen for callable arguments missing callable keyword`
+- [8d0135d52b](https://github.com/drupal/core/commit/8d0135d52b) `Issue #2935137 by el7cosmos, Mixologic: License "GPL-2.0+" is a deprecated SPDX license identifier, use "GPL-2.0+-only" or "GPL-2.0+-or-later" instead`
+- [9414fb5e06](https://github.com/drupal/core/commit/9414fb5e06) `Issue #2936802 by alexpott, Wim Leers: expectDeprecation() doesn't work in isolated tests`
+- [29d131c3ec](https://github.com/drupal/core/commit/29d131c3ec) `Issue #2925997 by tikaszvince, ndolley: position-min.js issue since 8.4 upgrade`
+- [6fbccf3ee6](https://github.com/drupal/core/commit/6fbccf3ee6) `Issue #2872355 by sarguna raj M, chiranjeeb2410, joachim: expand and clarify docs for DefaultPluginManager::alterInfo()`
+- [18ef80802a](https://github.com/drupal/core/commit/18ef80802a) `Issue #2938369 by Mohit Malik, yo30, mondrake, alexpott: The Symfony\Component\ClassLoader\WinCacheClassLoader class is deprecated`
+- [ce3bd3653b](https://github.com/drupal/core/commit/ce3bd3653b) `Issue #2921706 by Daniel Korte, bkosborne: Update example.settings.local.php to include ['cache']['bins']['page']`
+- [bd02cffe3c](https://github.com/drupal/core/commit/bd02cffe3c) `Issue #2914834 by snehi, tresti88, joachim: missing @return for drupal_get_user_timezone() and return types for other methods in bootstrap.inc`
+- [4ef20795f0](https://github.com/drupal/core/commit/4ef20795f0) `Issue #2936641 by alokvermaei: 'Path alias' in PathFilterForm.php is not translated`
+- [648d7c5484](https://github.com/drupal/core/commit/648d7c5484) `Issue #2935575 by gaurav.kapoor, kiamlaluno, amateescu: Fix or remove the @see tag`
+- [f3ca2c9481](https://github.com/drupal/core/commit/f3ca2c9481) `Issue #2934997 by benjifisher, Lendude, xjm: Intermittent failure in MediaUiJavascriptTest`
+- [4787a15df4](https://github.com/drupal/core/commit/4787a15df4) `Issue #2936525 by priya.chat, benjifisher: Confusing documentation for setConfigOverrideLanguage()`
+- [1cbb164879](https://github.com/drupal/core/commit/1cbb164879) `Issue #2936941 by alexpott: Diff can infinitely loop since #2885309`
+- [6fc5ef10cf](https://github.com/drupal/core/commit/6fc5ef10cf) `Issue #2930542 by sahil432, sdewitt, andrewmacpherson: Disabled form labels in Seven theme's node meta-data  do not meet WCAG AA 1.4.3 Contrast (minimum)`
+- [d229279900](https://github.com/drupal/core/commit/d229279900) `Issue #2878556 by plach, matsbla, vijaycs85, Gábor Hojtsy, catch, gabesullice, effulgentsia, hchonov, hass, amateescu, xjm: Ensure that changes to untranslatable fields affect only one translation in pending revisions`
+- [9aaf79dfa5](https://github.com/drupal/core/commit/9aaf79dfa5) `Issue #2919373 by tedbow, Wim Leers, Adita, webchick, Berdir, drpal, xjm, samuel.mortenson, bircher: Prevent Settings Tray functionality for blocks that have configuration overrides`
+- [0cb1cd502b](https://github.com/drupal/core/commit/0cb1cd502b) `Issue #2891215 by plach, timmillwood, hchonov, amateescu, catch, gabesullice: Add a way to track whether a revision was default when originally created`
+- [4c7237cb09](https://github.com/drupal/core/commit/4c7237cb09) `Issue #2937902 by jibran: Remove "drupal/layout_builder": "self.version" from core/composer.json`
+- [7871cc00ee](https://github.com/drupal/core/commit/7871cc00ee) `Issue #2937889 by larowlan, Sam152: Regression: LinkWidget no longer supports base fields with optional title`
+- [8a19bec6e7](https://github.com/drupal/core/commit/8a19bec6e7) `Back to dev.`
+- [be644a6b49](https://github.com/drupal/core/commit/be644a6b49) `Drupal 8.5.0-alpha1`
+- [568053d9c3](https://github.com/drupal/core/commit/568053d9c3) `Issue #2927746 by alexpott, catch, slasher13, mpdonadio, martin107, RoSk0, jibran, larowlan, pounard, Mile23, Jo Fitzgerald, deviantintegral, pritish.kumar: Update Symfony components to 3.4.*`
+- [32d6b67697](https://github.com/drupal/core/commit/32d6b67697) `Remove alpha-stability experimental modules in preparation for 8.5.0-alpha1.`
+- [14ea7b01a8](https://github.com/drupal/core/commit/14ea7b01a8) `Revert "Issue #2891215 by plach, timmillwood, hchonov, amateescu, catch, gabesullice: Add a way to track whether a revision was default when originally created"`
+- [e6be0300a1](https://github.com/drupal/core/commit/e6be0300a1) `Issue #2908952 by sahil432, martin107: drupal_get_complete_schema() and drupal_get_schema() are not completely removed`
+- [02af9bc3f6](https://github.com/drupal/core/commit/02af9bc3f6) `Issue #2936793 follow-up by tim.plunkett: Fix PHP5's hacking and wheezing.`
+- [877918c7ed](https://github.com/drupal/core/commit/877918c7ed) `Issue #2936793 by tim.plunkett, tstoeckler, EclipseGc: EntityReferenceItem::generateSampleValue() should create a sample entity if a referenceable entity is not found`
+- [1802d32140](https://github.com/drupal/core/commit/1802d32140) `Issue #2935779 by tim.plunkett, EclipseGc, webchick, xjm, dead_arm: Come up with an affordance for what parts of the page are/are not affected by Layout Builder`
+- [535d519c33](https://github.com/drupal/core/commit/535d519c33) `Issue #2902187 by amateescu, timmillwood, Sam152, webchick, Manuel Garcia, xjm, plach, DuneBL, larowlan, Bojhan, jibran, Berdir, jojototh: Provide a way for users to moderate content`
+- [14e2ed669c](https://github.com/drupal/core/commit/14e2ed669c) `Issue #2936457 by Berdir, larowlan: views_post_update_filter_placeholder_text() can result in errors in filter plugins due to incomplete definition`
+- [fb74ea47ad](https://github.com/drupal/core/commit/fb74ea47ad) `Issue #2862422 by chr.fritsch, robpowell, phenaproxima, webflo, bdimaggio, seanB, naveenvalecha, sunset_bill, vijaycs85, yoroy, starshaped, xjm, Berdir, hazong: Add per-media type creation permissions for media`
+- [86b363eb0e](https://github.com/drupal/core/commit/86b363eb0e) `Issue #2935755 by alexpott, Wim Leers: Add a trait to allow dynamic setting of expected deprecations`
+- [b15791c03e](https://github.com/drupal/core/commit/b15791c03e) `Issue #2858482 by Wim Leers, dawehner, benjy, larowlan, tedbow, borisson_: Simplify REST routing: disallow requesting POST/PATCH in any format, make consistent`
+- [6c92a2a862](https://github.com/drupal/core/commit/6c92a2a862) `Issue #2935725 by markconroy: Add vw and vh to the CSS stylelint`
+- [c9cb478028](https://github.com/drupal/core/commit/c9cb478028) `Issue #2914974 by quietone, rakesh.gectcr, maxocub, heddn, Jo Fitzgerald, Yogesh Pawar, masipila, phenaproxima, jhodgdon, Gábor Hojtsy, larowlan, neclimdul: Migrate UI - handle sources that do not need an upgrade`
+- [c060f5de66](https://github.com/drupal/core/commit/c060f5de66) `Issue #2936435 by Berdir, alexpott: Better BC for deprecated container parameter user.tempstore.expire`
+- [dafa5f1176](https://github.com/drupal/core/commit/dafa5f1176) `Issue #2885469 by Wim Leers, amateescu, timmillwood, alexpott, tstoeckler, xjm, remram, Berdir, dawehner, larowlan, samuel.mortenson: Regression: manually setting the ID field for newly-created content entities is not possible anymore (public follow-up to SA-2017-002)`
+- [58cf7593ab](https://github.com/drupal/core/commit/58cf7593ab) `Issue #2862041 by Sam152, amateescu, timmillwood, jibran, hamrant, dawehner, plach, Manuel Garcia, Jo Fitzgerald, mgalalm, xjm, larowlan, webchick, Wim Leers, gambry, kkus, tim.plunkett, tedbow, CatherineOmega: Provide useful Views filters for Content Moderation State fields`
+- [a0f31bc763](https://github.com/drupal/core/commit/a0f31bc763) `Issue #2862744 by masipila, heddn: Add documentation to EntityBaseFieldOverride destination plugin`
+- [253b1020fc](https://github.com/drupal/core/commit/253b1020fc) `Issue #2862748 by masipila, Jo Fitzgerald, quietone, phenaproxima: Add documentation to EntityRevision destination plugin`
+- [36ea4d333d](https://github.com/drupal/core/commit/36ea4d333d) `Issue #2933773 by masipila, quietone: Merge handbook documentation to API: skip_on_empty process plugin`
+- [ed35f803c2](https://github.com/drupal/core/commit/ed35f803c2) `Issue #2933776 by masipila, quietone: Merge handbook documentation to API: sub_process process plugin`
+- [eb9b03e3fd](https://github.com/drupal/core/commit/eb9b03e3fd) `Issue #2933770 by masipila, quietone, phenaproxima: Merge handbook documentation to API: static_map process plugin`
+- [9182b21697](https://github.com/drupal/core/commit/9182b21697) `Issue #2891215 by plach, timmillwood, hchonov, amateescu, catch, gabesullice: Add a way to track whether a revision was default when originally created`
+- [e428304f34](https://github.com/drupal/core/commit/e428304f34) `Issue #2934178 by samuel.mortenson, DyanneNova, xjm, yoroy, andrewmacpherson: Contrast issues with off-canvas dialog styling`
+- [8351e1bc9f](https://github.com/drupal/core/commit/8351e1bc9f) `Issue #2931165 by heddn, phenaproxima, maxocub, quietone, masipila: Mark Migrate (API) as stable`
+- [80390b6b5e](https://github.com/drupal/core/commit/80390b6b5e) `Issue #2921626 by tim.plunkett, EclipseGc, larowlan, dead_arm, xjm: Add proper context-awareness to Layout Builder`
+- [4637781212](https://github.com/drupal/core/commit/4637781212) `Revert "Issue #2921626 by tim.plunkett, EclipseGc, larowlan, dead_arm: Add proper context-awareness to Layout Builder"`
+- [2909c978d0](https://github.com/drupal/core/commit/2909c978d0) `Issue #2924724 by plach, hchonov, timmillwood, Gábor Hojtsy, amateescu, gabesullice, catch: Add an API to create a new revision correctly handling multilingual pending revisions`
+- [749f41ff44](https://github.com/drupal/core/commit/749f41ff44) `Issue #2921626 by tim.plunkett, EclipseGc, larowlan, dead_arm: Add proper context-awareness to Layout Builder`
+- [358989eaa1](https://github.com/drupal/core/commit/358989eaa1) `Issue #2918837 by heddn, neclimdul, phenaproxima, quietone, Gábor Hojtsy: SqlBase throws fatal error when extended directly`
+- [1e2583bb31](https://github.com/drupal/core/commit/1e2583bb31) `Issue #2934885 by marcoscano, benjifisher, seanB, starshaped, xjm, chr.fritsch, phenaproxima, Gábor Hojtsy: Document the difference between File, Image, and Media fields`
+- [601593f06e](https://github.com/drupal/core/commit/601593f06e) `Issue #2935617 by alexpott, chr.fritsch: Move User module's temp stores to core`
+- [e965387d6f](https://github.com/drupal/core/commit/e965387d6f) `Issue #2866819 by harsha012, jpassetti, joelpittet: Update stylelint rule number-no-trailing-zeros to be consistent with Drupal's CSS standards`
+- [18bba35a27](https://github.com/drupal/core/commit/18bba35a27) `Issue #2920172 by sushantpaste, dev.patrick, Ashreen Kaur, yoroy, xjm: User Guide link on front page in new Install should  open in new tab`
+- [5b62f5dc94](https://github.com/drupal/core/commit/5b62f5dc94) `Issue #2883892 by Jo Fitzgerald, voleger, ozin, mpdonadio, Taran2L, heddn: Add from/to timezone settings for the "FormatDate process plugin"`
+- [f22b0385b2](https://github.com/drupal/core/commit/f22b0385b2) `Issue #2908282 by heddn, phenaproxima, Jo Fitzgerald, quietone, xjm, larowlan, mikeryan, dipakmdhrm: Throw exception for source plugins without a source_module property`
+- [9d4f798fe6](https://github.com/drupal/core/commit/9d4f798fe6) `Issue #2862662 by masipila, Jo Fitzgerald, heddn, quietone, ohthehugemanatee: Add documentation to EntityContentBase destination plugin`
+- [8419cf3d4a](https://github.com/drupal/core/commit/8419cf3d4a) `Issue #2930832 by phenaproxima, heddn, larowlan, quietone: Add isAuditable() method to MigrationInterface`
+- [c944475c55](https://github.com/drupal/core/commit/c944475c55) `Issue #2935822 by sonu.raj.chauhan, quietone: Correct test group for two migrate tests`
+- [c433063c12](https://github.com/drupal/core/commit/c433063c12) `Issue #2926932 by matthiasm11, Wim Leers, vijaycs85: Update CKEditor library to 4.8.0`
+- [d778f80bc2](https://github.com/drupal/core/commit/d778f80bc2) `Issue #2912803 by Jo Fitzgerald, heddn: MigrationPluginManagerInterface is missing createInstancesByTag`
+- [1d2289547c](https://github.com/drupal/core/commit/1d2289547c) `Issue #2916199 by quietone, heddn: MigrateUpgradeTestBase shouldn't enable modules`
+- [848e20e3b2](https://github.com/drupal/core/commit/848e20e3b2) `Issue #2933774 by masipila, quietone: Merge handbook documentation to API: migration_lookup process plugin`
+- [412c75674d](https://github.com/drupal/core/commit/412c75674d) `Issue #2848085 by snehi, rkoller, Sutharsan, Gábor Hojtsy: "Translation update status" in locale.install is not translated`
+- [c805443531](https://github.com/drupal/core/commit/c805443531) `Issue #2927349 by tim.plunkett: Decouple the Layout Builder UI from entities`
+- [bcb5afd44a](https://github.com/drupal/core/commit/bcb5afd44a) `Issue #2862248 by m4olivei, Wim Leers, cburschka, larowlan: UnitTestCase::getConfigFactoryStub() doesn't accept dotted keys`
+- [21b9f7d1b8](https://github.com/drupal/core/commit/21b9f7d1b8) `Issue #2923004 by tedbow, bircher, samuel.mortenson, alexpott, Wim Leers, axel.rutz, Berdir, borisson_, xjm, tim.plunkett: Add method to check if any overrides are applied to \Drupal\Core\Config\Config`
+- [92787ef805](https://github.com/drupal/core/commit/92787ef805) `Issue #2897272 by tedbow, Wim Leers, Jo Fitzgerald, Adita, xjm: Fix module description, hook_help(), and document module scope in *.api.php file`
+- [c1df3d2b93](https://github.com/drupal/core/commit/c1df3d2b93) `Issue #2853460 by Wim Leers, dawehner, gabesullice, neclimdul, larowlan: Simplify RequestHandler: make it no longer ContainerAware, split up ::handle()`
+- [d1e91cbf56](https://github.com/drupal/core/commit/d1e91cbf56) `Issue #2934336 by alexpott: Update symfony/phpunit-bridge to the latest released version`
+- [7bf384b29c](https://github.com/drupal/core/commit/7bf384b29c) `Issue #2866816 by harsha012, BrightBold, cwells, joelpittet, idebr: Update stylelint rule length-zero-no-unit to be consistent with Drupal's CSS standards`
+- [1f0b7604d0](https://github.com/drupal/core/commit/1f0b7604d0) `Issue #2935524 by neclimdul: PHPCS failure on DrupalStandardsListenerTrait`
+- [3af9d071a9](https://github.com/drupal/core/commit/3af9d071a9) `Issue #2935151 by alexpott: Long array syntax checking in ./core files is broken`
+- [ba4f89edf0](https://github.com/drupal/core/commit/ba4f89edf0) `Issue #2934424 by chr.fritsch, benjifisher, tstoeckler, phenaproxima, xjm, marcoscano, larowlan: Media has no collection route`
+- [0013e901fe](https://github.com/drupal/core/commit/0013e901fe) `Issue #2866810 by BrightBold, harsha012, joelpittet: Update stylelint rule function-comma-space-after to be consistent with Drupal's CSS standards`
+- [6abe25edc5](https://github.com/drupal/core/commit/6abe25edc5) `Issue #2935318 by marcoscano: Improve default display of Audio and Video media types shipped with Standard profile`
+- [62cf4b50e5](https://github.com/drupal/core/commit/62cf4b50e5) `Issue #2904084 by Ruslan P, Venkatesh Rajan.J: Confusing title for "Boolean" field in "Manage form display"`
+- [cbd3299e68](https://github.com/drupal/core/commit/cbd3299e68) `Issue #2916740 by chr.fritsch, xjm, Manuel Garcia, tstoeckler, alexpott, seanB, Sam152, amateescu, tim.plunkett, dawehner, larowlan, Berdir: Add generic entity actions`
+- [c9ca954cb9](https://github.com/drupal/core/commit/c9ca954cb9) `Issue #2934499 by samuel.mortenson: Adjust foccus styling for the Settings Tray [x] close button to match the dialog system`
+- [27ff71aacf](https://github.com/drupal/core/commit/27ff71aacf) `Issue #2934162 by marcoscano, phenaproxima, chr.fritsch, robpowell, Berdir, xjm, effulgentsia: Provide better defaults to media form displays`
+- [60a2dc0be4](https://github.com/drupal/core/commit/60a2dc0be4) `Issue #2866823 by harsha012, Mukeysh, joelpittet: Update stylelint rule selector-type-no-unknown to be consistent with Drupal's CSS standards`
+- [b8d018e325](https://github.com/drupal/core/commit/b8d018e325) `Issue #2775131 by chr.fritsch, marcoscano, katzilla, seanB, xjm, gippy, phenaproxima, alexpott, Berdir, lauriii, webflo, dawehner: Media entities should support contextual links`
+- [9f54d00d40](https://github.com/drupal/core/commit/9f54d00d40) `Revert "Issue #2775131 by chr.fritsch, marcoscano, katzilla, seanB, xjm, gippy, phenaproxima, alexpott, Berdir, lauriii, webflo, dawehner: Media entities should support contextual links"`
+- [1da5a5ccb3](https://github.com/drupal/core/commit/1da5a5ccb3) `Issue #2775131 by chr.fritsch, marcoscano, katzilla, seanB, xjm, gippy, phenaproxima, alexpott, Berdir, lauriii, webflo, dawehner: Media entities should support contextual links`
+- [d039f07cb7](https://github.com/drupal/core/commit/d039f07cb7) `Issue #2933964 by kiamlaluno, oakulm: Remove the left-over @todo comments in the BaseFieldDefinition class`
+- [ec31a14195](https://github.com/drupal/core/commit/ec31a14195) `Issue #2934649 by chr.fritsch, marcoscano: Fix wrong header "Source" on media overview page`
+- [b022734be8](https://github.com/drupal/core/commit/b022734be8) `Issue #2917594 by kevin.dutra, robin.ingelbrecht, jwkovell, Lendude: Add support for HTML5 placeholder in views exposed filters`
+- [694b95b98a](https://github.com/drupal/core/commit/694b95b98a) `Issue #2575135 by quietone, ckaotik, olegel, mikeryan, larowlan: Dummy map/message tables being created`
+- [bfe514a0d4](https://github.com/drupal/core/commit/bfe514a0d4) `Issue #2934966 by benjifisher, starshaped: Make it easier to get source field values from media items`
+- [0c1de8e423](https://github.com/drupal/core/commit/0c1de8e423) `Issue #2671964 by EclipseGc, tim.plunkett, Jo Fitzgerald, larowlan, fago, dawehner, Berdir, phenaproxima: ContextHandler cannot validate constraints`
+- [ee7f7f2a25](https://github.com/drupal/core/commit/ee7f7f2a25) `Issue #2932226 by robpowell, marcoscano, phenaproxima, Darvanen, larowlan: Media Type entities don't validate machine name properly`
+- [6eafe72da8](https://github.com/drupal/core/commit/6eafe72da8) `Issue #2934096 by kiamlaluno, joelpittet: Simplify the ListDataDefinition::getClass() code`
+- [a9d3f0ab31](https://github.com/drupal/core/commit/a9d3f0ab31) `Issue #2934962 by starshaped, xjm: Ship local audio and video media types in Standard`
+- [3d0e79f229](https://github.com/drupal/core/commit/3d0e79f229) `Issue #2928798 by balsama, axel.rutz, xjm, phenaproxima, chr.fritsch, jeetendrakumar: Add extractors: mimetype & filesize`
+- [db68052953](https://github.com/drupal/core/commit/db68052953) `Issue #2924631 by marcoscano, starshaped, chr.fritsch, xjm, phenaproxima, Gábor Hojtsy, seanB, yoroy, evankay: Media sources for local video and audio support`
+- [28830054bb](https://github.com/drupal/core/commit/28830054bb) `Issue #2866805 by Mukeysh, joelpittet, harsha012: Update stylelint rule declaration-block-no-redundant-longhand-properties to be consistent with Drupal's CSS standards`
+- [319f023727](https://github.com/drupal/core/commit/319f023727) `Issue #2934850 by balsama, Berdir: Media Images should be rendered at a reasonable size by default`
+- [32fc1125e7](https://github.com/drupal/core/commit/32fc1125e7) `Issue #2934840 by robpowell, marcoscano: MediaAccessTest wrongly extends another test class, instead of base class`
+- [b23aebd77e](https://github.com/drupal/core/commit/b23aebd77e) `Issue #2932369 by marcoscano, balsama, Berdir, Grimreaper, alexpott: Media Types missing access control handler result in empty column in media overview page`
+- [895db7dd8a](https://github.com/drupal/core/commit/895db7dd8a) `Issue #2934517 by Berdir: Setting a revision ID on a new entity sets the newRevision flag to false`
+- [128cb26225](https://github.com/drupal/core/commit/128cb26225) `Issue #2856950 by dmsmidt, marcvangend, tim.plunkett, andrewmacpherson, Lendude, tameeshb, Berdir, xjm, tedbow, Gábor Hojtsy, Sutharsan: Add a possibility to disable inline form errors for a complete form`
+- [ad1e35c7b0](https://github.com/drupal/core/commit/ad1e35c7b0) `Issue #2816861 by dpi, jibran, bucefal91, harsha012, tim.plunkett, catch: Action configuration form does not support #ajax`
+- [0428e20aa1](https://github.com/drupal/core/commit/0428e20aa1) `Issue #2931883 by moshe weitzman, David_Rothstein, Wim Leers: Unneeded always_populate_raw_post_data requirements check while on CLI`
+- [0cfb103b42](https://github.com/drupal/core/commit/0cfb103b42) `Issue #2933980 by richgerdes, Maheshwaran.j: JQuery UI CSS dependencies are not met in core.libraries.yml`
+- [a0ce0b879d](https://github.com/drupal/core/commit/a0ce0b879d) `Issue #2765849 by kiamlaluno: The description for template_preprocess() has not been update for Drupal 8`
+- [6930e1b18b](https://github.com/drupal/core/commit/6930e1b18b) `Issue #2929835 by amateescu, dawehner: [regression] Modules can no longer alter the the table queue of a \Drupal\views\Plugin\views\query\Sql query object`
+- [3e0376353b](https://github.com/drupal/core/commit/3e0376353b) `Issue #2934233 by neclimdul: Fix reference to DrupalKernelTest in system module`
+- [0f2bebf2e0](https://github.com/drupal/core/commit/0f2bebf2e0) `Issue #2861840 by tim.plunkett, lauriii: Preprocess functions are not merged when a module registers a theme hook for a theme-provided template`
+- [71584842ea](https://github.com/drupal/core/commit/71584842ea) `Issue #2931047 by Dropa, D34dMan, borisson_, catch: hook_post_update_NAME documentation is misleading`
+- [a46090e0aa](https://github.com/drupal/core/commit/a46090e0aa) `Issue #2934152 by Wim Leers, neclimdul: ContentTypeHeaderMatcher should not run for GET, HEAD, OPTIONS or TRACE requests`
+- [891c39b37c](https://github.com/drupal/core/commit/891c39b37c) `Issue #2933991 by alexpott, neclimdul: Deprecation tests fail when all PHPUnit tests are run via PHPUnit`
+- [e538433ffc](https://github.com/drupal/core/commit/e538433ffc) `Issue #2863354 by benqwerty, DuaelFr, andrewmacpherson, xjm, mgifford, lauriii, ckrina: Add border to dialog [x] close button for hover and focus states`
+- [5616f9b877](https://github.com/drupal/core/commit/5616f9b877) `Issue #2866808 by BrightBold, pk188, idebr: Update stylelint rule declaration-block-trailing-semicolon to be consistent with Drupal's CSS standards`
+- [e8a584a7d3](https://github.com/drupal/core/commit/e8a584a7d3) `Issue #2866800 by BrightBold: Update stylelint rule block-no-empty to be consistent with Drupal's CSS standards`
+- [c5654de7aa](https://github.com/drupal/core/commit/c5654de7aa) `Issue #2866809 by BrightBold: Update stylelint rule declaration-colon-space-after to be consistent with Drupal's CSS standards`
+- [d540d6426f](https://github.com/drupal/core/commit/d540d6426f) `Issue #2866799 by cwells: Update stylelint rule at-rule-empty-line-before to be consistent with Drupal's CSS standards`
+- [3b06c57e4f](https://github.com/drupal/core/commit/3b06c57e4f) `Issue #2866812 by idebr: Update stylelint rule function-name-case to be consistent with Drupal's CSS standards`
+- [2971ea9d10](https://github.com/drupal/core/commit/2971ea9d10) `Issue #2934520 by tstoeckler: Avoid information disclosure by timing attack in EntityResource::patch()`
+- [be569c75d7](https://github.com/drupal/core/commit/be569c75d7) `Issue #2859381 by Manuel Garcia, Sam152, mstef, jhedstrom: Broken/missing handler for Moderation state field`
+- [1911dc4056](https://github.com/drupal/core/commit/1911dc4056) `Issue #2862741 by masipila: Add documentation to ComponentEntityDisplayBase destination plugin`
+- [32cc90b3c1](https://github.com/drupal/core/commit/32cc90b3c1) `Issue #2933424 by David_Rothstein, harsha012, jhodgdon, vaplas: English-specific links to php.net shouldn't be used in non-translatable strings`
+- [b66af73c82](https://github.com/drupal/core/commit/b66af73c82) `Issue #2918500 by tim.plunkett, EclipseGc, tedbow, larowlan, jibran, Wim Leers, phenaproxima, amateescu, borisson_, samuel.mortenson, gaurav.kapoor, KarlShea, hctom, mroycroft, neerajsingh, DamienMcKenna, dsnopek, Xano, TravisCarden, Tim Bozeman: Create a block which can render entity fields`
+- [81b7676391](https://github.com/drupal/core/commit/81b7676391) `Issue #2915759 by samuel.mortenson, tedbow, xjm, yoroy: :focus is is hard to see for links in the off-canvas dialog`
+- [03e3d7a3a0](https://github.com/drupal/core/commit/03e3d7a3a0) `Issue #2377747 by mondrake, eiriksm, rpayanm, adci_contributor, mgifford, oakulm, Truptti, chetan2111, joyceg, alexpott, xjm, yoroy, catch: Incorrect node create validation error when an invalid image is attached to a field`
+- [44805b25e6](https://github.com/drupal/core/commit/44805b25e6) `Issue #2933769 by masipila: Merge handbook documentation to API: substr process plugin`
+- [f1e33ca3d8](https://github.com/drupal/core/commit/f1e33ca3d8) `Issue #2925064 by drpal, dawehner, droplet, xjm, webchick, justafish: [1/2] JS codestyle: no-restricted-syntax`
+- [9d552cad6c](https://github.com/drupal/core/commit/9d552cad6c) `Issue #2926309 by vaplas, alexpott, mpdonadio, tacituseu, Mixologic: Random fail due to APCu not being able to allocate memory`
+- [cf805af249](https://github.com/drupal/core/commit/cf805af249) `Issue #2928699 by marcoscano, phenaproxima, amateescu, seanB, yoroy: Add an alter hook for the pre-configured field UI options and implement it in the Media module`
+- [72c76b73c5](https://github.com/drupal/core/commit/72c76b73c5) `Issue #2359389 by harsha012, hgoto, jeqq, fago, sureshcj, larowlan: Call to a member function filters() on a non-object in core/modules/text/text.module on line 83`
+- [354462c6f6](https://github.com/drupal/core/commit/354462c6f6) `Issue #2932774 by harsha012, gaurav.kapoor, neelam.chaudhary, dpi: Update docs for getEmail, can return null`
+- [f9445b466b](https://github.com/drupal/core/commit/f9445b466b) `Issue #2919147 by tedbow, tim.plunkett: When edit mode is enabled new page loads will not have Contextual tabbing constrained`
+- [35de151d0e](https://github.com/drupal/core/commit/35de151d0e) `Issue #2924351 by drpal, tedbow, xjm, dawehner: Fix coding standards issues with existing settings tray JavaScript`
+- [5485720ee8](https://github.com/drupal/core/commit/5485720ee8) `Issue #2866779 by Mile23, dawehner: Add a way to trigger_error() for deprecated hooks`
+- [c5fba61258](https://github.com/drupal/core/commit/c5fba61258) `Issue #2894068 by Jo Fitzgerald, davidsickmiller, alexpott, heddn, Yogesh Pawar, quietone, xjm: datetime_type is not set correctly when migrating datetime fields from D7`
+- [3f57ebc31b](https://github.com/drupal/core/commit/3f57ebc31b) `Issue #2862743 by masipila: Add documentation to DestinationBase destination plugin`
+- [c2d7454b54](https://github.com/drupal/core/commit/c2d7454b54) `Issue #2932865 by kiamlaluno, joachim: Incorrect description for ExtensionDiscovery::scanDirectory()`
+- [0d2a45adc2](https://github.com/drupal/core/commit/0d2a45adc2) `Issue #2930715 by alexpott, dawehner: Recursive rebuild caused by installing admin_toolbar_tools module`
+- [7f00c34194](https://github.com/drupal/core/commit/7f00c34194) `Issue #2926483 by plach, amateescu, effulgentsia, xjm, Sam152, timmillwood, jibran, larowlan, Gábor Hojtsy: Add API methods for determining whether an entity object is the latest (translation-affecting) revision`
+- [0dc30938c7](https://github.com/drupal/core/commit/0dc30938c7) `Issue #2824851 by Wim Leers, arshadcn, amateescu, effulgentsia, tedbow, timmillwood, cburschka, tstoeckler, Berdir, xjm, catch: EntityResource::patch() makes an incorrect assumption about entity keys, hence results in incorrect behavior`
+- [0c20200d12](https://github.com/drupal/core/commit/0c20200d12) `Issue #2837022 by hchonov, xjm, vlad.dancer, plach, matsbla, Gábor Hojtsy: Concurrently editing two translations of a node may result in data loss for non-translatable fields`
+- [4cd7b4950c](https://github.com/drupal/core/commit/4cd7b4950c) `Issue #2933125 by Tessa Bakker: Case mismatch in ExportForm.php`
+- [9ba7824211](https://github.com/drupal/core/commit/9ba7824211) `Issue #2626924 by Wim Leers, tedbow, dawehner, frob, martin107, damiankloip, dagmar, almaudoh, Berdir, larowlan, amateescu: Include processed text in normalizations: "text" field type's "processed" computed property should be non-internal and carry cacheability metadata`
+- [efab31b7f2](https://github.com/drupal/core/commit/efab31b7f2) `Issue #2862894 by fgm, Wim Leers, bkosborne, borisson_, catch: Docs for Internal Page Cache incorrectly state that it respects the maximum age performance setting`
+- [d372f6d8ee](https://github.com/drupal/core/commit/d372f6d8ee) `Issue #2323459 by harsha012, jhodgdon, joachim: Change wording of annotation keys to properties`
+- [ed45b4d5dc](https://github.com/drupal/core/commit/ed45b4d5dc) `Issue #2840257 by kiamlaluno: The documentation makes reference to a function that doesn't exist`
+- [384a35caf6](https://github.com/drupal/core/commit/384a35caf6) `Issue #2779921 by kiamlaluno, alexpott: hook_field_widget_form_alter() still reference a hook that is not used anymore`
+- [1872e83be5](https://github.com/drupal/core/commit/1872e83be5) `Issue #2931294 by claudiu.cristea, Wim Leers: Timestamp field type misses schema for value`
+- [6585630775](https://github.com/drupal/core/commit/6585630775) `Issue #2931709 by marcoscano, claudiu.cristea: Wrong constant name in \Drupal\image\Plugin\Field\FieldType\ImageItem::generateSampleValue()`
+- [984a268454](https://github.com/drupal/core/commit/984a268454) `Issue #2931264 by markcarver, claudiu.cristea: Remove static \Drupal::$legacyMessenger property`
+- [8946662d75](https://github.com/drupal/core/commit/8946662d75) `Issue #2928450 by tim.plunkett: Remove dead code in the Layout Builder following Section refactoring`
+- [a351d726a6](https://github.com/drupal/core/commit/a351d726a6) `Issue #2931598 by kim.pepper, markcarver, almaudoh, Sam152: Messenger methods drop repeat flag`
+- [f3b60edab6](https://github.com/drupal/core/commit/f3b60edab6) `Issue #2932154 by jhedstrom: ModerationInformation::getLatestRevisionId returns access-specific results`
+- [e145f2a543](https://github.com/drupal/core/commit/e145f2a543) `Issue #2932551 by jeqq: Error when calling ModerationStateFieldItemList::updateModeratedEntity() if the entity doesn't have workflow`
+- [f9548751b8](https://github.com/drupal/core/commit/f9548751b8) `Issue #2346893 by lauriii, idebr, slashrsm, RavindraSingh, Rade, Fabianx, alexpott, swentel, gauravjeet, darrenwh, deepak_zyxware, joelpittet, Wim Leers, Yogesh Pawar, Vj, ivan.chavarro, josephdpurcell, josmera01, rloos289, kattekrab, Tanvish Jha, csakiistvan, xjm, larowlan, akalata: Duplicate AJAX wrapper around a file field`
+- [abebbfb06d](https://github.com/drupal/core/commit/abebbfb06d) `Issue #2845361 by claudiu.cristea, Munavijayalakshmi: Don't compute children and parents of a new term on TermForm`
+- [824fff57f3](https://github.com/drupal/core/commit/824fff57f3) `Issue #2899708 by gaurav.kapoor, tedbow, droplet, Wim Leers: `quote` should be `blockquote` in off-canvas.base.css`
+- [26235da61b](https://github.com/drupal/core/commit/26235da61b) `Issue #2930788 by marcoscano, phenaproxima, Berdir, seanB: Do not show name by default in media displays`
+- [a83b06a46b](https://github.com/drupal/core/commit/a83b06a46b) `Issue #2923015 by cburschka, amateescu, tstoeckler, alexpott, hchonov, mondrake, pfrenssen: [PHP 7.2] Incompatible method declarations`
+- [03fd77c842](https://github.com/drupal/core/commit/03fd77c842) `Issue #2927806 by alexpott, mondrake, jibran, Mile23: Use PHPUnit 6 for testing when PHP version >= 7.2`
+- [4e5b4b09bd](https://github.com/drupal/core/commit/4e5b4b09bd) `Issue #2931368 by opdavies: Add missing param documentation for hook_migrate_prepare_row, document hook_migrate_MIGRATION_ID_prepare_row`
+- [962122efc7](https://github.com/drupal/core/commit/962122efc7) `Issue #2884675 by rodrigoaguilera, joelpittet, TR: Remove twig uses of Twig_Node::getLine to Twig_Node::getTemplateLine`
+- [93b9f58426](https://github.com/drupal/core/commit/93b9f58426) `Issue #2932044 by alexpott: Remove \PHPUnit_Util_XML::cssSelect() from \Drupal\tour\Tests\TourTestBase`
+- [6ac6325024](https://github.com/drupal/core/commit/6ac6325024) `Issue #2931339 by manuel.adan: Unused variable $admin_permission in EntityAccessControlHandler::checkAccess`
+- [aee6bea5cd](https://github.com/drupal/core/commit/aee6bea5cd) `Issue #2921033 by Jo Fitzgerald, masipila, phenaproxima, xjm, Wim Leers: Improve API documentation of DrupalSqlBase source plugin`
+- [4851f311e2](https://github.com/drupal/core/commit/4851f311e2) `Issue #2862671 by masipila, Jo Fitzgerald, kleog, phenaproxima, quietone: Add documentation to SqlBase source plugin`
+- [be64202643](https://github.com/drupal/core/commit/be64202643) `Issue #2825487 by damiankloip, Wim Leers, garphy, cburschka, tedbow, dpovshed, tstoeckler, Munavijayalakshmi, Berdir, dawehner, e0ipso: Fix normalization of File entities: file entities should expose the file URL as a computed property on the 'uri' base field`
+- [0308764eb4](https://github.com/drupal/core/commit/0308764eb4) `Issue #2551259 by Mile23, gaurav.kapoor, Jo Fitzgerald, googletorp, Jeremy, xjm, webchick: Deprecate dead code locale_translation_manual_status()`
+- [8e9f1b6120](https://github.com/drupal/core/commit/8e9f1b6120) `Issue #2929496 by plach, hchonov, timmillwood, catch, Wim Leers, amateescu, Calystod, andypost: Add dedicated interfaces to group methods dealing with revision translation and clean up the related documentation`
+- [2e16f2a35d](https://github.com/drupal/core/commit/2e16f2a35d) `Issue #2926914 by tim.plunkett, xjm, larowlan, tedbow, EclipseGc: Rewrite \Drupal\layout_builder\Section to represent the entire section, not just the block info`
+- [3cf0815a54](https://github.com/drupal/core/commit/3cf0815a54) `Issue #2930072 by vaplas, Lendude: Module: Convert system functional tests to phpunit`
+- [dad8d64eed](https://github.com/drupal/core/commit/dad8d64eed) `Issue #2913864 by Jo Fitzgerald, chiranjeeb2410, matslats, phenaproxima: badly constructred link in drupal_set_message`
+- [a44a23e64f](https://github.com/drupal/core/commit/a44a23e64f) `Issue #1489692 by Liam Morland, pfrenssen, YesCT, geekinpink, sudishth, josmera01, David_Rothstein: Incorrect handling of file upload limit exceeded - file widget disappears`
+- [522ed00526](https://github.com/drupal/core/commit/522ed00526) `Issue #2914938 by timmillwood, RajabNatshah, xjm, Manuel Garcia, amateescu, Wim Leers: Preview of content - Notice: Undefined offset: 0 in _quickedit_entity_is_latest_revision() (line 196 of core/modules/quickedit/quickedit.module)`
+- [968da88d76](https://github.com/drupal/core/commit/968da88d76) `Issue #2928846 by alexpott, Berdir: [PHP 7.2] count() parameter must be an array or an object that implements Countable`
+- [40856ccd26](https://github.com/drupal/core/commit/40856ccd26) `Issue #2760167 by kim.pepper, markcarver, jibran, dawehner, znerol, Wim Leers, larowlan, xjm, tim.plunkett: Add \Drupal\Core\Messenger\Messenger`
+- [5ea62f1d3e](https://github.com/drupal/core/commit/5ea62f1d3e) `Issue #2876085 by heddn, maxocub, phenaproxima, Jo Fitzgerald, vasi, quietone, yoroy, masipila, larowlan, neclimdul, krystalcode, catch: Before upgrading, audit for potential ID conflicts`
+- [66d19eaa71](https://github.com/drupal/core/commit/66d19eaa71) `Issue #2927566 by Wim Leers: Unit test EntityReferenceFieldItemNormalizerTest mocks incorrectly`
+- [ee22a47cd2](https://github.com/drupal/core/commit/ee22a47cd2) `Issue #2928702 by Wim Leers, borisson_, tedbow: Make EntityResourceTestBase's field_rest_test_multivalue test field less invasive: omit it from normalizations`
+- [8fb5919181](https://github.com/drupal/core/commit/8fb5919181) `Issue #2880445 by pjcdawkins, japerry, gargsuchi, q0rban: Config sync should not throw a warning when not being writable`
+- [6f6abec964](https://github.com/drupal/core/commit/6f6abec964) `Issue #2894014 by adriancid, Cottser: Additional space in a field setting schema label`
+- [4a338bf833](https://github.com/drupal/core/commit/4a338bf833) `Issue #2928522 by yo30, dawehner: \Drupal\FunctionalJavascriptTests\WebDriverWebAssert misses some deprecations`
+- [0ee253116f](https://github.com/drupal/core/commit/0ee253116f) `Issue #2928778 by plach: Exception when trying to save a new revision after manually setting the original revision ID`
+- [0b67173a1f](https://github.com/drupal/core/commit/0b67173a1f) `Issue #2929464 by tedbow, mpdonadio: Tests under "core/modules/ckeditor/tests/modules/src/Kernel" are in the wrong folder and do not get tested`
+- [4d629c4d81](https://github.com/drupal/core/commit/4d629c4d81) `Issue #2627512 by gambry, jhedstrom, mpdonadio, Jo Fitzgerald, jibran, tedbow, bkosborne, alexpott, vprocessor, xjm: Datetime Views plugins don't support timezones`
+- [8c44f2085e](https://github.com/drupal/core/commit/8c44f2085e) `Issue #2930197 by mondrake, amateescu: EntityDefinitionUpdateTest fails with contrib db driver (again)`
+- [89e64c1fe0](https://github.com/drupal/core/commit/89e64c1fe0) `Issue #2928249 by alexpott, mondrake: Introduce a PHPUnit 6+ compatibility layer for Drupal\Tests\Listeners classes`
+- [f320141dda](https://github.com/drupal/core/commit/f320141dda) `Issue #2795317 by hswong3i, alexpott, Lendude, bircher, dawehner, martin107, Jo Fitzgerald, mondrake: Allow PHPUnit 6+ support for object mocking`
+- [b5b3949b14](https://github.com/drupal/core/commit/b5b3949b14) `Issue #2928256 by marcoscano, seanB: Users shouldn't be able to change the media source plugin after the media type is created`
+- [de9e2d7061](https://github.com/drupal/core/commit/de9e2d7061) `Issue #2865184 by chr.fritsch, phenaproxima, larowlan, marcoscano, xjm: Allow MediaSource plugins provide default field form/view display settings`
+- [5564bba7d7](https://github.com/drupal/core/commit/5564bba7d7) `Issue #2862745 by masipila, quietone: Add documentation to EntityFieldInstance destination plugin`
+- [8859f625ad](https://github.com/drupal/core/commit/8859f625ad) `Issue #2862746 by masipila, quietone, phenaproxima: Add documentation to EntityFieldStorageConfig destination plugin`
+- [d98f9b8e17](https://github.com/drupal/core/commit/d98f9b8e17) `Issue #2927844 by Jo Fitzgerald, quietone, heddn: Correct references to 'iterator' plugin to be 'sub_process'`
+- [017e42ed76](https://github.com/drupal/core/commit/017e42ed76) `Issue #2928137 by blakemorgan, dawehner: Correct deprecation note in ajax.es6.js`
+- [297092718a](https://github.com/drupal/core/commit/297092718a) `Issue #2929477 by alexpott, droplet: Update jcalderonzumba/mink-phantomjs-driver`
+- [8da25f6fb7](https://github.com/drupal/core/commit/8da25f6fb7) `Issue #2927563 by tstoeckler, amateescu: Aggregator feed "refresh" field should have a default value`
+- [7d1545b32a](https://github.com/drupal/core/commit/7d1545b32a) `Issue #2927569 by tstoeckler, amateescu: Various tests do not set values for required field when creating entities`
+- [bdba2942e1](https://github.com/drupal/core/commit/bdba2942e1) `Issue #2923567 by Sam152, amateescu: Select from correct entity tables for additional entity/field definitions when moving data to dedicated table storage from shared table storage for the purposes of purging`
+- [e4c874e18c](https://github.com/drupal/core/commit/e4c874e18c) `Issue #2862207 by kalpaitch, jmmarquez, jeetendrakumar: Config import change profile message`
+- [eca600bdb6](https://github.com/drupal/core/commit/eca600bdb6) `Issue #2500521 by Jo Fitzgerald, RytoEX, quietone, gaurav.kapoor, hussainweb, phenaproxima: Upgrade path for Statistics 7.x and 6.x`
+- [bc1e39c66b](https://github.com/drupal/core/commit/bc1e39c66b) `Issue #2929076 by marcoscano: Fix wrong \Drupal\Core\Entity\EntityTypeInterface::getBundleLabel() docblock`
+- [1aab6ab23d](https://github.com/drupal/core/commit/1aab6ab23d) `Issue #2927758 by Wim Leers, dagmar: Update DbLogResourceTest to use the ResourceTestBase base class instead of the deprecated RESTTestBase`
+- [66fc18077a](https://github.com/drupal/core/commit/66fc18077a) `Issue #2717965 by Yogesh Pawar, pguillard, alexpott, Liam Morland, skylord, oxy86, cilefen, balagan, Anthony Fok: Site name is not UTF-8 encoded in email headers`
+- [8203805823](https://github.com/drupal/core/commit/8203805823) `Issue #2929124 by Wim Leers, tstoeckler: Remove EntityResource::getCastedValueFromFieldItemList() helper in favor of FieldItemList::equals()`
+- [723712ca3d](https://github.com/drupal/core/commit/723712ca3d) `Issue #2791571 by chr.fritsch, kristiaanvandeneynde, phenaproxima, Berdir, seanB, tstoeckler, Wim Leers, xjm: Automatically supply contextual links for entities`
+- [a4dd446ee9](https://github.com/drupal/core/commit/a4dd446ee9) `Issue #2895001 by marcoscano, vijaycs85, Wim Leers, benjifisher, xjm, Berdir, amateescu: Use the bundle label (e.g. "Media type") instead of "Bundles" in the Entity Reference field configuration`
+- [2](https://github.com/drupal/core/commit/2) `...more commits found, but message is too long for PR`

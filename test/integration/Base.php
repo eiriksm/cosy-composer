@@ -4,7 +4,6 @@ namespace eiriksm\CosyComposerTest\integration;
 
 use Composer\Console\Application;
 use eiriksm\ArrayOutput\ArrayOutput;
-use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\Providers\Github;
@@ -12,6 +11,7 @@ use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputDefinition;
+use Violinist\Slug\Slug;
 
 abstract class Base extends TestCase
 {
@@ -24,6 +24,10 @@ abstract class Base extends TestCase
      * @var string
      */
     protected $dir;
+
+    protected $mockProvider;
+
+    protected $mockProviderFactory;
 
     public function setUp()
     {
@@ -139,6 +143,52 @@ abstract class Base extends TestCase
         $mock_app->method('getDefinition')
             ->willReturn($mock_definition);
         return $mock_app;
+    }
+
+    protected function getMockProvider()
+    {
+        if (!$this->mockProvider) {
+            $this->mockProvider = $this->createMock(Github::class);
+        }
+        return $this->mockProvider;
+    }
+
+    protected function getMockProviderFactory()
+    {
+        if (!$this->mockProviderFactory) {
+            $this->mockProviderFactory = $this->createMock(ProviderFactory::class);
+        }
+
+        return $this->mockProviderFactory;
+    }
+
+    protected function setDummyGithubProvider()
+    {
+        $mock_provider = $this->getMockProvider();
+        $slug = new Slug();
+        $slug->setProvider('github.com');
+        $slug->setSlug('a/b');
+        $mock_provider->method('repoIsPrivate')
+            ->willReturn(true);
+        $mock_provider->method('getDefaultBranch')
+            ->willReturn('master');
+        $mock_provider->method('getBranchesFlattened')
+            ->willReturn([]);
+        $default_sha = 123;
+        $mock_provider->method('getDefaultBase')
+            ->willReturn($default_sha);
+        $mock_provider->method('getPrsNamed')
+            ->willReturn($this->getPrsNamed());
+        $mock_provider_factory = $this->getMockProviderFactory();
+        $mock_provider_factory->method('createFromHost')
+            ->willReturn($mock_provider);
+
+        $this->cosy->setProviderFactory($mock_provider_factory);
+    }
+
+    protected function getPrsNamed()
+    {
+        return [];
     }
 
     protected function getMockOutputWithUpdate($package, $version_from, $version_to)

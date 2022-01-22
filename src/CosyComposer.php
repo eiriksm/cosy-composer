@@ -953,6 +953,17 @@ class CosyComposer
         // Now read the lockfile.
         $lockdata = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
         $update_type = self::UPDATE_INDIVIDUAL;
+        if ($config->shouldAlwaysUpdateAll()) {
+            $update_type = self::UPDATE_ALL;
+        }
+        $this->log('Config suggested update type ' . $update_type);
+        if ($this->project->shouldUpdateAll()) {
+            // Only log this if this might end up being surprising. I mean override all with all. So what?
+            if ($update_type === self::UPDATE_INDIVIDUAL) {
+                $this->log('Override of update type from project data. Probably meaning first run, allowed update all');
+            }
+            $update_type = self::UPDATE_ALL;
+        }
         switch ($update_type) {
             case self::UPDATE_INDIVIDUAL:
                 $this->handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $total_prs);
@@ -972,7 +983,7 @@ class CosyComposer
             $this->execCommand('composer update');
             $this->commitFiles('all dependencies');
         } catch (\Throwable $e) {
-            $this->log('Caught exception while running update all');
+            $this->log('Caught exception while running update all: ' . $e->getMessage());
         }
     }
 

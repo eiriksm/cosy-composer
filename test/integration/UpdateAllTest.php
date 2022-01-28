@@ -5,7 +5,7 @@ namespace eiriksm\CosyComposerTest\integration;
 class UpdateAllTest extends Base
 {
 
-    public function testUpdateAll()
+    public function testUpdateAllPlain()
     {
         $this->createComposerFileFromFixtures($this->dir, 'composer.allow_all.json');
         $mock_output = $this->getMockOutputWithUpdate('psr/log', '1.0.0', '1.1.4');
@@ -17,6 +17,8 @@ class UpdateAllTest extends Base
             // We are looking for the very blindly calling of composer update.
             if ($command === 'composer update') {
                 $found_command = true;
+                // We also want to place the updated lock file there.
+                $this->placeComposerLockContentsFromFixture('composer.allow_all.lock.updated', $this->dir);
             }
         });
         $this->cosy->setExecuter($executor);

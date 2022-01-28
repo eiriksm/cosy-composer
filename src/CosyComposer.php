@@ -1139,6 +1139,72 @@ class CosyComposer
         }
     }
 
+    protected function createPullrequest($branch_name, $body, $title, $default_branch)
+    {
+        $head = $this->forkUser . ':' . $branch_name;
+        if ($this->isPrivate) {
+            $head = $branch_name;
+        }
+        if ($this->slug->getProvider() === 'bitbucket.org') {
+            // Currently does not support having the collapsible section thing.
+            // @todo: Revisit from time to time?
+            // @todo: Make sure we replace the correct one. What if the changelog has this in it?
+            $body = str_replace([
+                '<details>',
+                '<summary>',
+                '</summary>',
+                '</details>',
+            ], '', $body);
+        }
+        $assignees = [];
+        if (!empty($cdata->extra->violinist->assignees)) {
+            if (is_array($cdata->extra->violinist->assignees)) {
+                $assignees = $cdata->extra->violinist->assignees;
+            }
+        }
+        $assignees_allowed_roles = [
+            'agency',
+            'enterprise',
+        ];
+        $assignees_allowed = false;
+        if ($this->project && $this->project->getRoles()) {
+            foreach ($this->project->getRoles() as $role) {
+                if (in_array($role, $assignees_allowed_roles)) {
+                    $assignees_allowed = true;
+                }
+            }
+        }
+        if (!$assignees_allowed) {
+            $assignees = [];
+        }
+        $pr_params = [
+            'base'  => $default_branch,
+            'head'  => $head,
+            'title' => $title,
+            'body'  => $body,
+            'assignees' => $assignees,
+        ];
+        $this->log('Creating pull request from ' . $branch_name);
+        return $this->getPrClient()->createPullRequest($this->slug, $pr_params);
+    }
+
+    protected function pushCode($branch_name, $default_base, $lock_file_contents)
+    {
+        if ($this->isPrivate) {
+            $origin = 'origin';
+            if ($this->execCommand("git push $origin $branch_name --force")) {
+                throw new GitPushException('Could not push to ' . $branch_name);
+            }
+        } else {
+            $this->preparePrClient();
+            /** @var PublicGithubWrapper $this_client */
+            $this_client = $this->client;
+            $this_client->forceUpdateBranch($branch_name, $default_base);
+            $msg = $this->commitMessage;
+            $this_client->commitNewFiles($this->tmpDir, $default_base, $branch_name, $msg, $lock_file_contents);
+        }
+    }
+
     protected function runAuthExport($hostname)
     {
         // If we have multiple auth tokens, export them all.
@@ -1221,10 +1287,7 @@ class CosyComposer
 
                 // Create a new branch.
                 $branch_name = $this->createBranchName($item, $one_pr_per_dependency, $config);
-                $this->log('Checking out new branch: ' . $branch_name);
-                $this->execCommand('git checkout -b ' . $branch_name, false);
-                // Make sure we do not have any uncommitted changes.
-                $this->execCommand('git checkout .', false);
+                $this->switchBranch($branch_name);
                 // Try to use the same version constraint.
                 $version = (string) $req_item;
                 // @todo: This is not nearly something that covers the world of constraints. Probably possible to use
@@ -1323,21 +1386,9 @@ class CosyComposer
                 $this->log('Successfully ran command composer update for package ' . $package_name);
                 $new_lock_data = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
                 $list_item = new UpdateListItem($package_name, $post_update_data->version, $item->version);
-                $this->commitFiles($package_name, $list_item, $config, $is_require_dev);
+                $this->commitFilesForPackage($list_item, $config, $is_require_dev);
                 $this->runAuthExport($hostname);
-                $origin = 'fork';
-                if ($this->isPrivate) {
-                    $origin = 'origin';
-                    if ($this->execCommand("git push $origin $branch_name --force")) {
-                        throw new GitPushException('Could not push to ' . $branch_name);
-                    }
-                } else {
-                    $this->preparePrClient();
-                    /** @var PublicGithubWrapper $this_client */
-                    $this_client = $this->client;
-                    $this_client->forceUpdateBranch($branch_name, $default_base);
-                    $this_client->commitNewFiles($this->tmpDir, $default_base, $branch_name, sprintf("Update %s", $package_name), $lock_file_contents);
-                }
+                $this->pushCode($branch_name, $default_base, $lock_file_contents);
                 $this->log('Trying to retrieve changelog for ' . $package_name);
                 $changelog = null;
                 try {
@@ -1347,54 +1398,11 @@ class CosyComposer
                     // New feature. Just log it.
                     $this->log('Exception for changelog: ' . $e->getMessage());
                 }
-                $this->log('Creating pull request from ' . $branch_name);
-                $head = $this->forkUser . ':' . $branch_name;
-                if ($this->isPrivate) {
-                    $head = $branch_name;
-                }
                 $comparer = new LockDataComparer($lockdata, $new_lock_data);
                 $update_list = $comparer->getUpdateList();
                 $body = $this->createBody($item, $post_update_data, $changelog, $security_update, $update_list);
-                if ($this->slug->getProvider() === 'bitbucket.org') {
-                    // Currently does not support having the collapsible section thing.
-                    // @todo: Revisit from time to time?
-                    // @todo: Make sure we replace the correct one. What if the changelog has this in it?
-                    $body = str_replace([
-                        '<details>',
-                        '<summary>',
-                        '</summary>',
-                        '</details>',
-                    ], '', $body);
-                }
-                $assignees = [];
-                if (!empty($cdata->extra->violinist->assignees)) {
-                    if (is_array($cdata->extra->violinist->assignees)) {
-                        $assignees = $cdata->extra->violinist->assignees;
-                    }
-                }
-                $assignees_allowed_roles = [
-                    'agency',
-                    'enterprise',
-                ];
-                $assignees_allowed = false;
-                if ($this->project && $this->project->getRoles()) {
-                    foreach ($this->project->getRoles() as $role) {
-                        if (in_array($role, $assignees_allowed_roles)) {
-                            $assignees_allowed = true;
-                        }
-                    }
-                }
-                if (!$assignees_allowed) {
-                    $assignees = [];
-                }
-                $pr_params = [
-                    'base'  => $default_branch,
-                    'head'  => $head,
-                    'title' => $this->createTitle($item, $post_update_data, $security_update),
-                    'body'  => $body,
-                    'assignees' => $assignees,
-                ];
-                $pullRequest = $this->getPrClient()->createPullRequest($this->slug, $pr_params);
+                $title = $this->createTitle($item, $post_update_data, $security_update);
+                $pullRequest = $this->createPullrequest($branch_name, $body, $title, $default_branch);
                 if (!empty($pullRequest['html_url'])) {
                     $this->log($pullRequest['html_url'], Message::PR_URL, [
                         'package' => $package_name,

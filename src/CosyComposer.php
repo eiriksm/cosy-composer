@@ -679,13 +679,13 @@ class CosyComposer
         $config = Config::createFromComposerData($cdata);
         $this->handleTimeIntervalSetting($cdata);
         $lock_file = $this->compserJsonDir . '/composer.lock';
-        $lock_file_contents = false;
-        $alerts = [];
+        $initial_composer_lock_data = false;
+        $security_alerts = [];
         if (@file_exists($lock_file)) {
             // We might want to know whats in here.
-            $lock_file_contents = json_decode(file_get_contents($lock_file));
+            $initial_composer_lock_data = json_decode(file_get_contents($lock_file));
         }
-        $this->lockFileContents = $lock_file_contents;
+        $this->lockFileContents = $initial_composer_lock_data;
         $app = $this->app;
         $d = $app->getDefinition();
         $opts = $d->getOptions();
@@ -710,7 +710,7 @@ class CosyComposer
                 $this->log("Security update available for $name");
             }
             if (count($result)) {
-                $alerts = $result;
+                $security_alerts = $result;
             }
         } catch (\Exception $e) {
             $this->log('Caught exception while looking for security updates:');
@@ -719,7 +719,7 @@ class CosyComposer
         // We also want to consult the Drupal security advisories, since the FriendsOfPHP/security-advisories
         // repo is a manual job merging and maintaining. On top of that, it requires the built container to be
         // up to date. So here could be several hours of delay on critical stuff.
-        $this->attachDrupalAdvisories($alerts);
+        $this->attachDrupalAdvisories($security_alerts);
         $array_input_array = [
             'outdated',
             '-d' => $this->getCwd(),
@@ -775,12 +775,12 @@ class CosyComposer
             foreach ($data as $delta => $item) {
                 try {
                     $package_name_in_composer_json = self::getComposerJsonName($cdata, $item->name, $this->compserJsonDir);
-                    if (isset($alerts[$package_name_in_composer_json])) {
+                    if (isset($security_alerts[$package_name_in_composer_json])) {
                         continue;
                     }
                 } catch (\Exception $e) {
                     // Totally fine. Let's check if it's there just by the name we have right here.
-                    if (isset($alerts[$item->name])) {
+                    if (isset($security_alerts[$item->name])) {
                         continue;
                     }
                 }
@@ -916,7 +916,7 @@ class CosyComposer
                         ];
                         $security_update = false;
                         $package_name_in_composer_json = self::getComposerJsonName($cdata, $item->name, $this->compserJsonDir);
-                        if (isset($alerts[$package_name_in_composer_json])) {
+                        if (isset($security_alerts[$package_name_in_composer_json])) {
                             $security_update = true;
                         }
                         // If the title does not match, it means either has there arrived a security issue for the
@@ -956,7 +956,7 @@ class CosyComposer
             $this->client->createFork($user_name, $user_repo, $this->forkUser);
         }
         // Now read the lockfile.
-        $lockdata = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
+        $composer_lock_after_installing = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
         $update_type = self::UPDATE_INDIVIDUAL;
         if ($config->shouldAlwaysUpdateAll()) {
             $update_type = self::UPDATE_ALL;

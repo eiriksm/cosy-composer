@@ -1022,7 +1022,9 @@ class CosyComposer
                 // @todo: Use message factory and package.
                 $title = sprintf('[SECURITY] %s', $title);
             }
-            $fake_item = $fake_post =  (object) [
+            // We can do this, since the body creates a title, which it does not use. This is only used for the title.
+            // Which, again, we do not use.
+            $fake_item = $fake_post = (object) [
                 'name' => 'all',
                 'version' => '0.0.0',
             ];

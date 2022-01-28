@@ -2,6 +2,9 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use Violinist\Slug\Slug;
+use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
+
 class UpdateAllTest extends Base
 {
 
@@ -24,5 +27,27 @@ class UpdateAllTest extends Base
         $this->cosy->setExecuter($executor);
         $this->cosy->run();
         self::assertEquals($found_command, true);
+    }
+
+    public function testUpdateAllSecurity()
+    {
+        $checker = $this->createMock(SecurityChecker::class);
+        $checker->method('checkDirectory')
+            ->willReturn([
+                'psr/log' => true,
+            ]);
+        $has_security_title = false;
+        $this->cosy->getCheckerFactory()->setChecker($checker);
+        $this->getMockProvider()->method('createPullRequest')
+            ->willReturnCallback(function (Slug $slug, array $params) use (&$has_security_title) {
+                if ($params["title"] === '[SECURITY] Update all composer dependencies') {
+                    $has_security_title = true;
+                }
+                return [
+                    'html_url' => 'warez',
+                ];
+            });
+        $this->testUpdateAllPlain();
+        self::assertTrue($has_security_title);
     }
 }

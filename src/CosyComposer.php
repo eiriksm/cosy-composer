@@ -1027,7 +1027,7 @@ class CosyComposer
                 'version' => '0.0.0',
             ];
             $body = $this->createBody($fake_item, $fake_post, null, $security_update, $list);
-            $pullRequest = $this->createPullrequest($branch_name, $body, $title, $default_base);
+            $pullRequest = $this->createPullrequest($branch_name, $body, $title, $default_base, $config);
             if (!empty($pullRequest['html_url'])) {
                 $this->log($pullRequest['html_url'], Message::PR_URL, [
                     'package' => 'all',
@@ -1139,7 +1139,7 @@ class CosyComposer
         }
     }
 
-    protected function createPullrequest($branch_name, $body, $title, $default_branch)
+    protected function createPullrequest($branch_name, $body, $title, $default_branch, Config $config)
     {
         $head = $this->forkUser . ':' . $branch_name;
         if ($this->isPrivate) {
@@ -1156,12 +1156,7 @@ class CosyComposer
                 '</details>',
             ], '', $body);
         }
-        $assignees = [];
-        if (!empty($cdata->extra->violinist->assignees)) {
-            if (is_array($cdata->extra->violinist->assignees)) {
-                $assignees = $cdata->extra->violinist->assignees;
-            }
-        }
+        $assignees = $config->getAssignees();
         $assignees_allowed_roles = [
             'agency',
             'enterprise',
@@ -1402,7 +1397,7 @@ class CosyComposer
                 $update_list = $comparer->getUpdateList();
                 $body = $this->createBody($item, $post_update_data, $changelog, $security_update, $update_list);
                 $title = $this->createTitle($item, $post_update_data, $security_update);
-                $pullRequest = $this->createPullrequest($branch_name, $body, $title, $default_branch);
+                $pullRequest = $this->createPullrequest($branch_name, $body, $title, $default_branch, $config);
                 if (!empty($pullRequest['html_url'])) {
                     $this->log($pullRequest['html_url'], Message::PR_URL, [
                         'package' => $package_name,

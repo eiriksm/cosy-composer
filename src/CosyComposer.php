@@ -50,6 +50,11 @@ class CosyComposer
     private $urlArray;
 
     /**
+     * @var string
+     */
+    private $commitMessage;
+
+    /**
      * @var bool|string
      */
     private $lockFileContents;
@@ -966,43 +971,121 @@ class CosyComposer
         }
         switch ($update_type) {
             case self::UPDATE_INDIVIDUAL:
-                $this->handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $total_prs);
+                $this->handleIndividualUpdates($data, $composer_lock_after_installing, $cdata, $one_pr_per_dependency, $initial_composer_lock_data, $prs_named, $default_base, $hostname, $default_branch, $security_alerts, $total_prs);
                 break;
 
             case self::UPDATE_ALL:
-                $this->handleUpdateAll();
+                $this->handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $security_alerts, $config, $default_base);
                 break;
         }
         // Clean up.
         $this->cleanUp();
     }
 
-    protected function handleUpdateAll()
+    protected function handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $alerts, Config $config, $default_base)
     {
+        // We are going to hack an item here. We want the package to be "all" and the versions to be blank.
+        $item = (object) [
+            'name' => 'violinist-all',
+            'version' => '',
+            'latest' => '',
+        ];
+        $branch_name = $this->createBranchName($item, false, $config);
+        $pr_params = [];
+        $security_update = false;
         try {
-            $this->execCommand('composer update');
-            $this->commitFiles('all dependencies');
+            $this->switchBranch($branch_name);
+            $status = $this->execCommand('composer update');
+            if ($status) {
+                throw new \Exception('Composer update command existed with status code ' . $status);
+            }
+            // Now let's find out what has actually been updated.
+            $new_lock_contents = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
+            $comparer = new LockDataComparer($composer_lock_after_installing, $new_lock_contents);
+            $list = $comparer->getUpdateList();
+            if (empty($list)) {
+                // That's too bad. Let's throw an exception for this.
+                throw new \UnexpectedValueException('No updates detected after running composer update');
+            }
+            // Now see if any of the packages updated was in the alerts.
+            foreach ($list as $value) {
+                if (empty($alerts[$value->getPackageName()])) {
+                    continue;
+                }
+                $security_update = true;
+            }
+            $this->log('Successfully ran command composer update for all packages');
+            $this->commitFilesForAll($config);
+            $this->pushCode($branch_name, $default_base, $initial_composer_lock_data);
+            $title = 'Update all composer dependencies';
+            if ($security_update) {
+                // @todo: Use message factory and package.
+                $title = sprintf('[SECURITY] %s', $title);
+            }
+            $fake_item = $fake_post =  (object) [
+                'name' => 'all',
+                'version' => '0.0.0',
+            ];
+            $body = $this->createBody($fake_item, $fake_post, null, $security_update, $list);
+            $pullRequest = $this->createPullrequest($branch_name, $body, $title, $default_base);
+            if (!empty($pullRequest['html_url'])) {
+                $this->log($pullRequest['html_url'], Message::PR_URL, [
+                    'package' => 'all',
+                ]);
+            }
         } catch (\Throwable $e) {
             $this->log('Caught exception while running update all: ' . $e->getMessage());
         }
     }
 
-    protected function commitFiles($package_name, UpdateListItem $item = null, Config $config = null, $is_dev = false)
+    protected function commitFilesForAll(Config $config)
+    {
+        $this->cleanRepoForCommit();
+        $creator = $this->getCommitCreator($config);
+        $msg = $creator->generateMessageFromString('Update all dependencies');
+        $this->commitFiles($msg);
+    }
+
+    protected function switchBranch($branch_name)
+    {
+        $this->log('Checking out new branch: ' . $branch_name);
+        $this->execCommand('git checkout -b ' . $branch_name, false);
+        // Make sure we do not have any uncommitted changes.
+        $this->execCommand('git checkout .', false);
+    }
+
+    protected function cleanRepoForCommit()
     {
         // Clean up the composer.lock file if it was not part of the repo.
         $this->execCommand('git clean -f composer.*');
+    }
+
+    protected function getCommitCreator(Config $config) : Creator
+    {
         $creator = new Creator();
         $type = Type::NONE;
-        $msg = sprintf('Update %s', $package_name);
         $creator->setType($type);
-        if ($item) {
-            try {
+        try {
+            if ($config) {
                 $creator->setType($config->getCommitMessageConvention());
-            } catch (\InvalidArgumentException $e) {
-                // Fall back to using none.
             }
-            $msg = $creator->generateMessage($item, $is_dev);
+        } catch (\InvalidArgumentException $e) {
+            // Fall back to using none.
         }
+        return $creator;
+    }
+
+    protected function commitFilesForPackage(UpdateListItem $item, Config $config, $is_dev = false)
+    {
+        $this->cleanRepoForCommit();
+        $creator = $this->getCommitCreator($config);
+        $msg = $creator->generateMessage($item, $is_dev);
+        $this->commitFiles($msg);
+    }
+
+    protected function commitFiles($msg)
+    {
+
         $command = sprintf(
             'GIT_AUTHOR_NAME="%s" GIT_AUTHOR_EMAIL="%s" GIT_COMMITTER_NAME="%s" GIT_COMMITTER_EMAIL="%s" git commit %s -m "%s"',
             $this->githubUserName,
@@ -1017,6 +1100,7 @@ class CosyComposer
             $this->log($this->getLastStdErr(), Message::COMMAND);
             throw new \Exception('Error committing the composer files. They are probably not changed.');
         }
+        $this->commitMessage = $msg;
     }
 
     protected function runAuthExportToken($hostname, $token)

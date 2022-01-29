@@ -686,6 +686,11 @@ class CosyComposer
             $initial_composer_lock_data = json_decode(file_get_contents($lock_file));
         }
         $this->lockFileContents = $initial_composer_lock_data;
+        if ($config->shouldAlwaysUpdateAll() && !$initial_composer_lock_data) {
+            $this->log('Update all enabled, but no lock file present. This is not supported');
+            $this->cleanUp();
+            return;
+        }
         $app = $this->app;
         $d = $app->getDefinition();
         $opts = $d->getOptions();

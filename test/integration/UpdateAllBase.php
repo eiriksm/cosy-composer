@@ -14,6 +14,7 @@ abstract class UpdateAllBase extends Base
     protected $foundCommand = false;
     protected $foundBranch = false;
     protected $branchName = 'violinistall';
+    protected $usesDirect = false;
 
     public function setUp()
     {

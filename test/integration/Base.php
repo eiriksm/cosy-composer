@@ -15,6 +15,8 @@ use Violinist\Slug\Slug;
 
 abstract class Base extends TestCase
 {
+    protected $usesDirect = true;
+
     /**
      * @var CosyComposer
      */
@@ -142,6 +144,10 @@ abstract class Base extends TestCase
         $mock_app = $this->createMock(Application::class);
         $mock_app->method('getDefinition')
             ->willReturn($mock_definition);
+        $mock_app->method('run')
+            ->willReturnCallback(function ($input) {
+                self::assertEquals($this->usesDirect, $input->getParameterOption('--direct'));
+            });
         return $mock_app;
     }
 

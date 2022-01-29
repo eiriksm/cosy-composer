@@ -8,7 +8,6 @@ class UpdateAllAssigneesTest extends UpdateAllBase
 {
 
     protected $composerJson = 'composer.allow_all_assignees.json';
-    protected $branchName = 'my_prefixviolinistall';
 
     public function testUpdateAllPlain()
     {

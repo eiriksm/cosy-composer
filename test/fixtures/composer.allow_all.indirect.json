@@ -1,0 +1,10 @@
+{
+    "require": {
+        "symfony/var-dumper": "^5.4"
+    },
+    "extra": {
+        "violinist": {
+            "always_update_all": 1
+        }
+    }
+}

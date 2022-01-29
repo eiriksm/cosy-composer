@@ -731,9 +731,15 @@ class CosyComposer
             '--minor-only' => true,
             '--format' => 'json',
             '--no-interaction' => true,
+            '--direct' => false,
         ];
         if ($config->shouldCheckDirectOnly()) {
             $array_input_array['--direct'] = true;
+        }
+        // If we should always update all, then of course we should not only check direct dependencies outdated.
+        // Regardless of the option above actually.
+        if ($config->shouldAlwaysUpdateAll()) {
+            $array_input_array['--direct'] = false;
         }
         $i = new ArrayInput($array_input_array);
         $app->run($i, $this->output);

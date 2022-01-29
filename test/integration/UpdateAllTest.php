@@ -44,7 +44,7 @@ class UpdateAllTest extends Base
                     $has_security_title = true;
                 }
                 return [
-                    'html_url' => 'warez',
+                    'html_url' => 'http://example.com/my/pr/1',
                 ];
             });
         $this->testUpdateAllPlain();

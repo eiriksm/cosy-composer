@@ -30,5 +30,4 @@ class UpdateAllConventionalTest extends Base
         $this->cosy->run();
         self::assertEquals($found_commit, true);
     }
-
 }

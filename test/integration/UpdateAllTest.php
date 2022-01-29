@@ -16,17 +16,22 @@ class UpdateAllTest extends Base
         $this->cosy->setOutput($mock_output);
         $this->setDummyGithubProvider();
         $found_command = false;
-        $executor = $this->getMockExecuterWithReturnCallback(function ($command) use (&$found_command) {
+        $found_commit = false;
+        $executor = $this->getMockExecuterWithReturnCallback(function ($command) use (&$found_command, &$found_commit) {
             // We are looking for the very blindly calling of composer update.
             if ($command === 'composer update') {
                 $found_command = true;
                 // We also want to place the updated lock file there.
                 $this->placeComposerLockContentsFromFixture('composer.allow_all.lock.updated', $this->dir);
             }
+            if (mb_strpos($command, '"Update all dependencies"')) {
+                $found_commit = true;
+            }
         });
         $this->cosy->setExecuter($executor);
         $this->cosy->run();
         self::assertEquals($found_command, true);
+        self::assertEquals($found_commit, true);
     }
 
     public function testUpdateAllSecurity()

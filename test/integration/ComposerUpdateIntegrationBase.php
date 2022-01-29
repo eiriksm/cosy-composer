@@ -2,8 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use eiriksm\CosyComposer\ProviderFactory;
-use eiriksm\CosyComposer\Providers\Github;
 use PHPUnit\Framework\MockObject\MockObject;
 use Violinist\Slug\Slug;
 

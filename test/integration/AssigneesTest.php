@@ -4,18 +4,23 @@ namespace eiriksm\CosyComposerTest\integration;
 
 use Violinist\ProjectData\ProjectData;
 
-class UpdateAllAssigneesTest extends UpdateAllBase
+/**
+ * Test for assignees.
+ */
+class AssigneesTest extends ComposerUpdateIntegrationBase
 {
+    protected $composerAssetFiles = 'composer.assignees';
+    protected $packageForUpdateOutput = 'psr/log';
+    protected $packageVersionForFromUpdateOutput = '1.0.0';
+    protected $packageVersionForToUpdateOutput = '1.1.4';
+    protected $checkPrUrl = true;
 
-    protected $composerJson = 'composer.allow_all_assignees.json';
-    protected $branchName = 'my_prefixviolinistall';
-
-    public function testUpdateAllPlain()
+    public function testAssignees()
     {
+        $found_assignees = false;
         $project = new ProjectData();
         $project->setRoles(['agency']);
         $this->cosy->setProject($project);
-        $found_assignees = false;
         $this->getMockProvider()->method('createPullRequest')
             ->willReturnCallback(function ($slug, $pr_params) use (&$found_assignees) {
                 if (empty($pr_params["assignees"])) {
@@ -31,7 +36,7 @@ class UpdateAllAssigneesTest extends UpdateAllBase
                 }
                 $found_assignees = true;
             });
-        $this->cosy->run();
-        self::assertEquals($found_assignees, true);
+        $this->runtestExpectedOutput();
+        self::assertTrue($found_assignees);
     }
 }

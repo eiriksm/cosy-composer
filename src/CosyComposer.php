@@ -973,7 +973,7 @@ class CosyComposer
             $update_type = self::UPDATE_ALL;
         }
         $this->log('Config suggested update type ' . $update_type);
-        if ($this->project->shouldUpdateAll()) {
+        if ($this->project && $this->project->shouldUpdateAll()) {
             // Only log this if this might end up being surprising. I mean override all with all. So what?
             if ($update_type === self::UPDATE_INDIVIDUAL) {
                 $this->log('Override of update type from project data. Probably meaning first run, allowed update all');
@@ -986,14 +986,14 @@ class CosyComposer
                 break;
 
             case self::UPDATE_ALL:
-                $this->handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $security_alerts, $config, $default_base);
+                $this->handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $security_alerts, $config, $default_base, $default_branch);
                 break;
         }
         // Clean up.
         $this->cleanUp();
     }
 
-    protected function handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $alerts, Config $config, $default_base)
+    protected function handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $alerts, Config $config, $default_base, $default_branch)
     {
         // We are going to hack an item here. We want the package to be "all" and the versions to be blank.
         $item = (object) [
@@ -1040,7 +1040,7 @@ class CosyComposer
                 'version' => '0.0.0',
             ];
             $body = $this->createBody($fake_item, $fake_post, null, $security_update, $list);
-            $pullRequest = $this->createPullrequest($branch_name, $body, $title, $default_base, $config);
+            $pullRequest = $this->createPullrequest($branch_name, $body, $title, $default_branch, $config);
             if (!empty($pullRequest['html_url'])) {
                 $this->log($pullRequest['html_url'], Message::PR_URL, [
                     'package' => 'all',

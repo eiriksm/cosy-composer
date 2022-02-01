@@ -1040,7 +1040,8 @@ class CosyComposer
                 'version' => '0.0.0',
             ];
             $body = $this->createBody($fake_item, $fake_post, null, $security_update, $list);
-            $pullRequest = $this->createPullrequest($branch_name, $body, $title, $default_branch, $config);
+            $pr_params = $this->getPrParams($branch_name, $body, $title, $default_branch, $config);
+            $pullRequest = $this->createPullrequest($pr_params);
             if (!empty($pullRequest['html_url'])) {
                 $this->log($pullRequest['html_url'], Message::PR_URL, [
                     'package' => 'all',
@@ -1152,7 +1153,7 @@ class CosyComposer
         }
     }
 
-    protected function createPullrequest($branch_name, $body, $title, $default_branch, Config $config)
+    protected function getPrParams($branch_name, $body, $title, $default_branch, Config $config)
     {
         $head = $this->forkUser . ':' . $branch_name;
         if ($this->isPrivate) {
@@ -1185,14 +1186,18 @@ class CosyComposer
         if (!$assignees_allowed) {
             $assignees = [];
         }
-        $pr_params = [
+        return [
             'base'  => $default_branch,
             'head'  => $head,
             'title' => $title,
             'body'  => $body,
             'assignees' => $assignees,
         ];
-        $this->log('Creating pull request from ' . $branch_name);
+    }
+
+    protected function createPullrequest($pr_params)
+    {
+        $this->log('Creating pull request from ' . $pr_params['head']);
         return $this->getPrClient()->createPullRequest($this->slug, $pr_params);
     }
 
@@ -1410,7 +1415,8 @@ class CosyComposer
                 $update_list = $comparer->getUpdateList();
                 $body = $this->createBody($item, $post_update_data, $changelog, $security_update, $update_list);
                 $title = $this->createTitle($item, $post_update_data, $security_update);
-                $pullRequest = $this->createPullrequest($branch_name, $body, $title, $default_branch, $config);
+                $pr_params = $this->getPrParams($branch_name, $body, $title, $default_branch, $config);
+                $pullRequest = $this->createPullrequest($pr_params);
                 if (!empty($pullRequest['html_url'])) {
                     $this->log($pullRequest['html_url'], Message::PR_URL, [
                         'package' => $package_name,

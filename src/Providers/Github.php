@@ -75,7 +75,7 @@ class Github implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed(Slug $slug)
+    public function getPrsNamed(Slug $slug) : array
     {
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();

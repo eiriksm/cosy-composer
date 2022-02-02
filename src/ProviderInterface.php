@@ -16,7 +16,11 @@ interface ProviderInterface
 
     public function getBranchesFlattened(Slug $slug);
 
-    public function getPrsNamed(Slug $slug);
+    /**
+     * @param Slug $slug
+     * @return array
+     */
+    public function getPrsNamed(Slug $slug) : array;
 
     public function getDefaultBase(Slug $slug, $default_branch);
 

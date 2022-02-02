@@ -986,14 +986,14 @@ class CosyComposer
                 break;
 
             case self::UPDATE_ALL:
-                $this->handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $security_alerts, $config, $default_base, $default_branch);
+                $this->handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $security_alerts, $config, $default_base, $default_branch, $prs_named);
                 break;
         }
         // Clean up.
         $this->cleanUp();
     }
 
-    protected function handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $alerts, Config $config, $default_base, $default_branch)
+    protected function handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $alerts, Config $config, $default_base, $default_branch, $prs_named)
     {
         // We are going to hack an item here. We want the package to be "all" and the versions to be blank.
         $item = (object) [

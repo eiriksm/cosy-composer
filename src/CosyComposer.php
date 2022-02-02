@@ -1047,6 +1047,11 @@ class CosyComposer
                     'package' => 'all',
                 ]);
             }
+        } catch (ValidationFailedException $e) {
+            // @todo: Do some better checking. Could be several things, this.
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named);
+        } catch (\Gitlab\Exception\RuntimeException $e) {
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named);
         } catch (\Throwable $e) {
             $this->log('Caught exception while running update all: ' . $e->getMessage());
         }
@@ -1447,17 +1452,9 @@ class CosyComposer
                 ]);
             } catch (ValidationFailedException $e) {
                 // @todo: Do some better checking. Could be several things, this.
-                $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
-                if ($this->shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
-                    $this->log('Will try to update the PR.');
-                    $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
-                }
+                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named);
             } catch (\Gitlab\Exception\RuntimeException $e) {
-                $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
-                if ($this->shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
-                    $this->log('Will try to update the PR based on settings.');
-                    $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
-                }
+                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named);
             } catch (ComposerUpdateProcessFailedException $e) {
                 $this->log('Caught an exception: ' . $e->getMessage(), 'error');
                 $this->log($e->getErrorOutput(), Message::COMMAND, [
@@ -1486,6 +1483,15 @@ class CosyComposer
             } catch (\Throwable $e) {
                 $this->log('Rolling back state on the default branch was not successful. Subsequent updates may be affected');
             }
+        }
+    }
+
+    protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, $prs_named)
+    {
+        $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
+        if ($this->shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
+            $this->log('Will try to update the PR.');
+            $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
         }
     }
 

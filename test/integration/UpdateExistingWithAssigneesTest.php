@@ -3,6 +3,7 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 use Github\Exception\ValidationFailedException;
+use Gitlab\Exception\RuntimeException;
 use Violinist\ProjectData\ProjectData;
 use Violinist\Slug\Slug;
 
@@ -14,16 +15,19 @@ class UpdateExistingWithAssigneesTest extends ComposerUpdateIntegrationBase
     protected $packageVersionForToUpdateOutput = '10.3.6';
     protected $composerAssetFiles = 'composer.update_assignees';
 
-    public function testRemovalsInPackagesUpdated()
+    /**
+     * @dataProvider exceptionDataProvider
+     */
+    public function testRemovalsInPackagesUpdated($exception_class)
     {
         $project = new ProjectData();
         $project->setRoles(['agency']);
         $this->cosy->setProject($project);
         $update_called = false;
         $this->getMockProvider()->method('createPullRequest')
-            ->willReturnCallback(function ($slug, $pr_params) {
+            ->willReturnCallback(function ($slug, $pr_params) use ($exception_class) {
                 $this->prParams = $pr_params;
-                throw new ValidationFailedException('We are faking a PR exists');
+                throw new $exception_class('We are faking a PR exists');
             });
         $this->getMockProvider()->method('updatePullRequest')
             ->willReturnCallback(function (Slug $slug, $id, $params) use (&$update_called) {
@@ -33,6 +37,18 @@ class UpdateExistingWithAssigneesTest extends ComposerUpdateIntegrationBase
         $this->runtestExpectedOutput();
         self::assertTrue($update_called);
         self::assertNotEmpty($this->prParams["assignees"]);
+    }
+
+    public function exceptionDataProvider()
+    {
+        return [
+            [
+                ValidationFailedException::class,
+            ],
+            [
+                RuntimeException::class,
+            ]
+        ];
     }
 
     protected function getPrsNamed()

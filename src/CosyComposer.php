@@ -1490,7 +1490,7 @@ class CosyComposer
     {
         $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
         if ($this->shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
-            $this->log('Will try to update the PR.');
+            $this->log('Will try to update the PR based on settings.');
             $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
         }
     }

@@ -9,7 +9,7 @@ class UpdateAllAssigneesTest extends UpdateAllBase
 
     protected $composerJson = 'composer.allow_all_assignees.json';
 
-    public function testUpdateAllPlain()
+    public function testUpdateAllAssignees()
     {
         $project = new ProjectData();
         $project->setRoles(['agency']);

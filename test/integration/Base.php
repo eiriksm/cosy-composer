@@ -184,7 +184,9 @@ abstract class Base extends TestCase
         $mock_provider->method('getDefaultBase')
             ->willReturn($default_sha);
         $mock_provider->method('getPrsNamed')
-            ->willReturn($this->getPrsNamed());
+            ->willReturnCallback(function () {
+                return $this->getPrsNamed();
+            });
         $mock_provider_factory = $this->getMockProviderFactory();
         $mock_provider_factory->method('createFromHost')
             ->willReturn($mock_provider);

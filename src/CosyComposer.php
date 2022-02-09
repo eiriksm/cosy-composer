@@ -1026,8 +1026,6 @@ class CosyComposer
                 $security_update = true;
             }
             $this->log('Successfully ran command composer update for all packages');
-            $this->commitFilesForAll($config);
-            $this->pushCode($branch_name, $default_base, $initial_composer_lock_data);
             $title = 'Update all composer dependencies';
             if ($security_update) {
                 // @todo: Use message factory and package.
@@ -1041,6 +1039,23 @@ class CosyComposer
             ];
             $body = $this->createBody($fake_item, $fake_post, null, $security_update, $list);
             $pr_params = $this->getPrParams($branch_name, $body, $title, $default_branch, $config);
+            // OK, so... If we already have a branch named the name we are about to use. Is that one a branch
+            // containing all the updates we now got? And is it actually up to date with the target branch? Of course,
+            // if there is no such branch, then we will happily push it.
+            if (!empty($prs_named[$branch_name])) {
+                $up_to_date = false;
+                if ($prs_named[$branch_name]['base']['sha'] == $default_base) {
+                    $up_to_date = true;
+                }
+                $should_update = $this->shouldUpdatePr($branch_name, $pr_params, $prs_named);
+                if (!$should_update && $up_to_date) {
+                    // Well well well. Let's not push this branch over and over, shall we?
+                    $this->log(sprintf('The branch %s with all updates is already up to date. Aborting the PR update', $branch_name));
+                    return;
+                }
+            }
+            $this->commitFilesForAll($config);
+            $this->pushCode($branch_name, $default_base, $initial_composer_lock_data);
             $pullRequest = $this->createPullrequest($pr_params);
             if (!empty($pullRequest['html_url'])) {
                 $this->log($pullRequest['html_url'], Message::PR_URL, [

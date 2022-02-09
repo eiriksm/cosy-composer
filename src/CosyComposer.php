@@ -1044,7 +1044,7 @@ class CosyComposer
             // if there is no such branch, then we will happily push it.
             if (!empty($prs_named[$branch_name])) {
                 $up_to_date = false;
-                if ($prs_named[$branch_name]['base']['sha'] == $default_base) {
+                if (!empty($prs_named[$branch_name]['base']['sha']) && $prs_named[$branch_name]['base']['sha'] == $default_base) {
                     $up_to_date = true;
                 }
                 $should_update = $this->shouldUpdatePr($branch_name, $pr_params, $prs_named);

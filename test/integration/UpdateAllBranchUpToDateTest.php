@@ -24,6 +24,10 @@ class UpdateAllBranchUpToDateTest extends UpdateAllBase
     {
         return [
             'violinistall' => [
+                'base' => [
+                    // The dummy API response will return 123 as the SHA.
+                    'sha' => 123,
+                ],
                 'title' => 'Update all composer dependencies',
                 'body' => 'If you have a high test coverage index, and your tests for this pull request are passing, it should be both safe and recommended to merge this update.
 

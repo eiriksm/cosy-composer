@@ -2,9 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Violinist\Slug\Slug;
-use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
-
 class UpdateAllBranchPrefixTest extends UpdateAllBase
 {
 

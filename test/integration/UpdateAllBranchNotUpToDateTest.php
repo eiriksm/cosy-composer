@@ -43,7 +43,8 @@ class UpdateAllBranchNotUpToDateTest extends UpdateAllBase
         $this->runTheExpectedTest();
     }
 
-    protected function runTheExpectedTest() {
+    protected function runTheExpectedTest()
+    {
         $this->cosy->run();
         // We tried to update to see what happened. For sure.
         self::assertEquals($this->foundCommand, true);

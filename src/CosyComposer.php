@@ -11,6 +11,7 @@ use eiriksm\CosyComposer\Exceptions\ComposerInstallException;
 use eiriksm\CosyComposer\Exceptions\GitCloneException;
 use eiriksm\CosyComposer\Exceptions\GitPushException;
 use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
+use eiriksm\CosyComposer\ListFilterer\IndirectWithDirectFilterer;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\ViolinistMessages\UpdateListItem;
 use GuzzleHttp\Psr7\Request;
@@ -629,11 +630,11 @@ class CosyComposer
         if (!$this->composerGetter->hasComposerFile()) {
             throw new \InvalidArgumentException('No composer.json file found.');
         }
-        $cdata = $this->composerGetter->getComposerJsonData();
-        if (false == $cdata) {
+        $composer_json_data = $this->composerGetter->getComposerJsonData();
+        if (false == $composer_json_data) {
             throw new \InvalidArgumentException('Invalid composer.json file');
         }
-        $config = Config::createFromComposerData($cdata);
+        $config = Config::createFromComposerData($composer_json_data);
         $this->client = $this->getClient($this->slug);
         $this->privateClient = $this->getClient($this->slug);
         $this->privateClient->authenticate($this->userToken, null);
@@ -673,11 +674,11 @@ class CosyComposer
             throw new \Exception('There was an error trying to switch to default branch');
         }
         // Re-read the composer.json file, since it can be different on the default branch,
-        $cdata = $this->composerGetter->getComposerJsonData();
+        $composer_json_data = $this->composerGetter->getComposerJsonData();
         $this->runAuthExport($hostname);
-        $this->handleDrupalContribSa($cdata);
-        $config = Config::createFromComposerData($cdata);
-        $this->handleTimeIntervalSetting($cdata);
+        $this->handleDrupalContribSa($composer_json_data);
+        $config = Config::createFromComposerData($composer_json_data);
+        $this->handleTimeIntervalSetting($composer_json_data);
         $lock_file = $this->compserJsonDir . '/composer.lock';
         $initial_composer_lock_data = false;
         $security_alerts = [];
@@ -741,6 +742,11 @@ class CosyComposer
         if ($config->shouldAlwaysUpdateAll()) {
             $array_input_array['--direct'] = false;
         }
+        // If we should allow indirect packages to updated via running composer update my/direct, then we need to
+        // uncover which indirect are actually out of date. Meaning direct is required to be false.
+        if ($config->shouldUpdateIndirectWithDirect()) {
+            $array_input_array['--direct'] = false;
+        }
         $i = new ArrayInput($array_input_array);
         $app->run($i, $this->output);
         $raw_data = $this->output->fetch();
@@ -785,7 +791,7 @@ class CosyComposer
             $this->log('Project indicated that it should only receive security updates. Removing non-security related updates from queue');
             foreach ($data as $delta => $item) {
                 try {
-                    $package_name_in_composer_json = self::getComposerJsonName($cdata, $item->name, $this->compserJsonDir);
+                    $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->compserJsonDir);
                     if (isset($security_alerts[$package_name_in_composer_json])) {
                         continue;
                     }
@@ -802,7 +808,7 @@ class CosyComposer
         // Remove block listed packages.
         $block_list = $config->getBlockList();
         if (!is_array($block_list)) {
-                $this->log('The format for the package block list was not correct. Expected an array, got ' . gettype($cdata->extra->violinist->blacklist), Message::VIOLINIST_ERROR);
+                $this->log('The format for the package block list was not correct. Expected an array, got ' . gettype($composer_json_data->extra->violinist->blacklist), Message::VIOLINIST_ERROR);
         } else {
             foreach ($data as $delta => $item) {
                 if (in_array($item->name, $block_list)) {
@@ -827,8 +833,8 @@ class CosyComposer
         // Remove dev dependencies, if indicated.
         if (!$config->shouldUpdateDevDependencies()) {
             foreach ($data as $delta => $item) {
-                $cname = self::getComposerJsonName($cdata, $item->name, $this->compserJsonDir);
-                if (isset($cdata->{'require-dev'}->{$cname})) {
+                $cname = self::getComposerJsonName($composer_json_data, $item->name, $this->compserJsonDir);
+                if (isset($composer_json_data->{'require-dev'}->{$cname})) {
                     unset($data[$delta]);
                 }
             }
@@ -900,8 +906,8 @@ class CosyComposer
             $this->log('Had a runtime exception with the fetching of branches and Prs: ' . $e->getMessage());
         }
         $violinist_config = (object) [];
-        if (!empty($cdata->extra) && !empty($cdata->extra->violinist)) {
-            $violinist_config = $cdata->extra->violinist;
+        if (!empty($composer_json_data->extra) && !empty($composer_json_data->extra->violinist)) {
+            $violinist_config = $composer_json_data->extra->violinist;
         }
         $one_pr_per_dependency = false;
         if (!empty($violinist_config->one_pull_request_per_package)) {
@@ -926,7 +932,7 @@ class CosyComposer
                             'version' => $item->latest,
                         ];
                         $security_update = false;
-                        $package_name_in_composer_json = self::getComposerJsonName($cdata, $item->name, $this->compserJsonDir);
+                        $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->compserJsonDir);
                         if (isset($security_alerts[$package_name_in_composer_json])) {
                             $security_update = true;
                         }
@@ -952,6 +958,12 @@ class CosyComposer
                 }
             }
         }
+        // Now read the lockfile.
+        $composer_lock_after_installing = json_decode(@file_get_contents($this->compserJsonDir . '/composer.lock'));
+        if ($config->shouldUpdateIndirectWithDirect()) {
+            $filterer = IndirectWithDirectFilterer::create($composer_lock_after_installing, $composer_json_data);
+            $data = $filterer->filter($data);
+        }
         if (!count($data)) {
             $this->log('No updates that have not already been pushed.');
             $this->cleanUp();
@@ -966,8 +978,6 @@ class CosyComposer
             $this->log('Creating fork to ' . $this->forkUser);
             $this->client->createFork($user_name, $user_repo, $this->forkUser);
         }
-        // Now read the lockfile.
-        $composer_lock_after_installing = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
         $update_type = self::UPDATE_INDIVIDUAL;
         if ($config->shouldAlwaysUpdateAll()) {
             $update_type = self::UPDATE_ALL;
@@ -982,7 +992,7 @@ class CosyComposer
         }
         switch ($update_type) {
             case self::UPDATE_INDIVIDUAL:
-                $this->handleIndividualUpdates($data, $composer_lock_after_installing, $cdata, $one_pr_per_dependency, $initial_composer_lock_data, $prs_named, $default_base, $hostname, $default_branch, $security_alerts, $total_prs);
+                $this->handleIndividualUpdates($data, $composer_lock_after_installing, $composer_json_data, $one_pr_per_dependency, $initial_composer_lock_data, $prs_named, $default_base, $hostname, $default_branch, $security_alerts, $total_prs);
                 break;
 
             case self::UPDATE_ALL:
@@ -1363,6 +1373,9 @@ class CosyComposer
                 $updater->setConstraint($constraint);
                 $updater->setDevPackage($is_require_dev);
                 $updater->setRunScripts($config->shouldRunScripts());
+                if ($config->shouldUpdateIndirectWithDirect()) {
+                    $updater->setShouldThrowOnUnupdated(false);
+                }
                 if (!$lock_file_contents || ($should_update_beyond && $can_update_beyond)) {
                     $updater->executeRequire($version_to);
                 } else {
@@ -1595,6 +1608,10 @@ class CosyComposer
         $update->setCurrentVersion($item->version);
         $update->setNewVersion($post_update_data->version);
         $update->setSecurityUpdate($security_update);
+        if ($item->version === $post_update_data->version) {
+            // I guess we are updating the dependencies? We are surely not updating from one version to the same.
+            return sprintf('Update dependencies of %s', $item->name);
+        }
         return trim($this->messageFactory->getPullRequestTitle($update));
     }
 

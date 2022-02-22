@@ -7,6 +7,16 @@ use Violinist\ComposerLockData\ComposerLockData;
 class IndirectWithDirectFilterer
 {
 
+    /**
+     * @var string
+     */
+    protected $lockData;
+
+    /**
+     * @var string
+     */
+    protected $composerJson;
+
     const REQUIRE_TYPES = [
         'require',
         'require-dev',

@@ -8,12 +8,12 @@ class IndirectWithDirectFilterer
 {
 
     /**
-     * @var string
+     * @var \stdClass
      */
     protected $lockData;
 
     /**
-     * @var string
+     * @var \stdClass
      */
     protected $composerJson;
 

@@ -26,7 +26,8 @@ class IndirectWithDirectTest extends TestCase
         self::assertEquals($list, $new_list);
     }
 
-    public function getNoneFilteredOptions() {
+    public function getNoneFilteredOptions()
+    {
         return [
             [
                 'lock' => (object) [

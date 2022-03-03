@@ -18,19 +18,13 @@ class UpdateIndirectButHasDirectTest extends ComposerUpdateIntegrationBase
         $output = $this->cosy->getOutput();
         $found_msg = false;
         foreach ($output as $item) {
-            if ($item->getType() !== 'update') {
+            if ($item->getType() !== 'message') {
                 continue;
             }
-            $context = $item->getContext();
-            foreach ($context['packages'] as $package) {
-                if (empty($package->name) || $package->name !== 'symfony/polyfill-mbstring') {
-                    continue;
-                }
-                if (empty($package->latest) || $package->latest !== 'v1.24.0') {
-                    continue;
-                }
-                $found_msg = true;
+            if ($item->getMessage() !== 'Checking out new branch: symfonypolyfillmbstringv1230v1240') {
+                continue;
             }
+            $found_msg = true;
         }
         self::assertEquals(true, $found_msg);
     }

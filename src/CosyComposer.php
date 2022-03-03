@@ -1093,7 +1093,11 @@ class CosyComposer
     protected function switchBranch($branch_name)
     {
         $this->log('Checking out new branch: ' . $branch_name);
-        $this->execCommand('git checkout -b ' . $branch_name, false);
+        $result = $this->execCommand('git checkout -b ' . $branch_name, false);
+        if ($result) {
+            $this->log($this->getLastStdErr());
+            throw new \Exception(sprintf('There was an error checking out branch %s. Exit code was %d', $branch_name, $result));
+        }
         // Make sure we do not have any uncommitted changes.
         $this->execCommand('git checkout .', false);
     }
@@ -1496,8 +1500,10 @@ class CosyComposer
                 ]);
             }
             $this->log('Checking out default branch - ' . $default_branch);
-            if ($this->execCommand('git checkout ' . $default_branch, false)) {
-                throw new \Exception('There was an error trying to check out the default branch');
+            $checkout_default_exit_code = $this->execCommand('git checkout ' . $default_branch, false);
+            if ($checkout_default_exit_code) {
+                $this->log($this->getLastStdErr());
+                throw new \Exception('There was an error trying to check out the default branch. The process ended with exit code ' . $checkout_default_exit_code);
             }
             // Also do a git checkout of the files, since we want them in the state they were on the default branch
             $this->execCommand('git checkout .', false);

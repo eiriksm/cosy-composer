@@ -38,25 +38,25 @@ class IndirectWithDirectFilterer
         $new_list = [];
         foreach ($list as $value) {
             // Find the reason we have this.
-            $new_list = array_merge($this->findRequiresForPackage($value->name), $new_list);
+            $new_list = array_merge($this->findRequiresForPackage($value), $new_list);
         }
         // So, let's create just a fake report of the ones we want. They should for sure be "semver safe update",
         // either way.
         $lock_data = ComposerLockData::createFromString(json_encode($this->lockData));
         return array_map(function ($item) use ($lock_data) {
-            $package = $lock_data->getPackageData($item);
+            $package = $lock_data->getPackageData($item->name);
             return (object) [
-                'name' => $item,
+                'name' => $item->name,
                 'version' => $package->version,
-                'latest' => 'dependencies',
-                'latest-status' => 'semver-safe-update',
+                'latest' => $item->latest ?? 'dependencies',
+                'latest-status' => $item->{"latest-status"} ?? 'semver-safe-update',
             ];
         }, $new_list);
     }
 
-    protected function findRequiresForPackage($package_name)
+    protected function findRequiresForPackage($package_obj)
     {
-        $package_name = mb_strtolower($package_name);
+        $package_name = mb_strtolower($package_obj->name);
         // Loop over all packages, and see if any of the hits actually are required as top level require or require-dev.
         $types = [
             'packages',
@@ -64,7 +64,7 @@ class IndirectWithDirectFilterer
         ];
         // First see if it's actually directly from the composer.json
         if ($this->isInComposerJson($package_name)) {
-            return [$package_name];
+            return [$package_obj];
         }
         $requires = [];
         foreach ($types as $type) {
@@ -86,9 +86,11 @@ class IndirectWithDirectFilterer
                         // Now see if this is in fact a direct dependency itself.
                         $candidate = mb_strtolower($package->name);
                         if ($this->isInComposerJson($candidate)) {
-                            $requires[] = $candidate;
+                            $requires[] = (object) [
+                                'name' => $candidate,
+                            ];
                         } else {
-                            $requires = array_merge($requires, $this->findRequiresForPackage($candidate));
+                            $requires = array_merge($requires, $this->findRequiresForPackage($package));
                         }
                     }
                 }

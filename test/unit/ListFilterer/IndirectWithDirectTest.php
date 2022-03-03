@@ -45,6 +45,27 @@ class IndirectWithDirectTest extends TestCase
                     ]
                 ],
             ],
+            [
+                'lock' => (object) [
+                    'packages' => [
+                        (object) [
+                            'name' => 'psr/log',
+                            'version' => '1.0.0',
+                        ],
+                        (object) [
+                            'name' => 'psr/cache',
+                            'version' => '1.0.0',
+                        ],
+                    ],
+                    'packages-dev' => [],
+                ],
+                'json' => (object) [
+                    'require' => (object) [
+                        'psr/log' => '~1.0.0',
+                        'psr/cache' => '~1.0.0',
+                    ]
+                ],
+            ],
         ];
     }
 }

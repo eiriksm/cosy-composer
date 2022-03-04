@@ -22,6 +22,8 @@ class IndirectWithDirectFilterer
         'require-dev',
     ];
 
+    private $scannedCache = [];
+
     public function __construct($composer_lock, $composer_json)
     {
         $this->lockData = $composer_lock;
@@ -85,6 +87,11 @@ class IndirectWithDirectFilterer
                         }
                         // Now see if this is in fact a direct dependency itself.
                         $candidate = mb_strtolower($package->name);
+                        if (in_array($candidate, $this->scannedCache)) {
+                            continue;
+                        }
+                        $this->scannedCache[] = $candidate;
+
                         if ($this->isInComposerJson($candidate)) {
                             $requires[] = (object) [
                                 'name' => $candidate,

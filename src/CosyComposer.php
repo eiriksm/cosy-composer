@@ -1405,7 +1405,10 @@ class CosyComposer
                         $post_update_data->version = $item->latest;
                     }
                 }
-                if ($post_update_data->version != $item->latest) {
+                // If the item->latest key is set to dependencies, we actually want to allow the branch to change, since
+                // the version of the package will of course be an actual version instead of the version called
+                // "latest".
+                if ('dependencies' !== $item->latest && $post_update_data->version != $item->latest) {
                     $new_branch_name = $this->createBranchNameFromVersions(
                         $item->name,
                         $item->version,

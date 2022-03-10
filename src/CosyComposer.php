@@ -1653,7 +1653,12 @@ class CosyComposer
 
         if ($one_per_package) {
             // Add a prefix.
-            return 'violinist' . $this->createBranchNameFromVersions($item->name, '', '');
+            $prefix = '';
+            if ($config) {
+                /** @var Config $config */
+                $prefix = $config->getBranchPrefix();
+            }
+            return sprintf('%sviolinist%s', $prefix, $this->createBranchNameFromVersions($item->name, '', ''));
         }
         $name = $this->createBranchNameFromVersions($item->name, $item->version, $item->latest);
         $prefix = '';

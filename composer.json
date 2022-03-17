@@ -27,7 +27,7 @@
         "symfony/process": "^3",
         "violinist-dev/composer-changelog-fetcher": "dev-master",
         "violinist-dev/violinist-config": "^1.2",
-        "violinist-dev/commit-message-creator": "^1.1",
+        "violinist-dev/commit-message-creator": "^1.2",
         "violinist-dev/allow-list-handler": "^1.0"
     },
     "minimum-stability": "dev",

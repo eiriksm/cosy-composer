@@ -51,6 +51,11 @@ class CosyComposer
     private $urlArray;
 
     /**
+     * @var ChangelogRetriever
+     */
+    private $fetcher;
+
+    /**
      * @var string
      */
     private $commitMessage;
@@ -1444,16 +1449,24 @@ class CosyComposer
                 $this->pushCode($branch_name, $default_base, $lock_file_contents);
                 $this->log('Trying to retrieve changelog for ' . $package_name);
                 $changelog = null;
+                $changed_files = [];
                 try {
                     $changelog = $this->retrieveChangeLog($package_name, $lockdata, $version_from, $version_to);
                     $this->log('Changelog retrieved');
-                } catch (\Exception $e) {
-                    // New feature. Just log it.
+                } catch (\Throwable $e) {
+                    // If the changelog can not be retrieved, we can live with that.
                     $this->log('Exception for changelog: ' . $e->getMessage());
+                }
+                try {
+                    $changed_files = $this->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
+                    $this->log('Changed files retrieved');
+                } catch (\Throwable $e) {
+                    // If the changed files can not be retrieved, we can live with that.
+                    $this->log('Exception for retrieving changed files: ' . $e->getMessage());
                 }
                 $comparer = new LockDataComparer($lockdata, $new_lock_data);
                 $update_list = $comparer->getUpdateList();
-                $body = $this->createBody($item, $post_update_data, $changelog, $security_update, $update_list);
+                $body = $this->createBody($item, $post_update_data, $changelog, $security_update, $update_list, $changed_files);
                 $title = $this->createTitle($item, $post_update_data, $security_update);
                 $pr_params = $this->getPrParams($branch_name, $body, $title, $default_branch, $config);
                 $pullRequest = $this->createPullrequest($pr_params);
@@ -1627,7 +1640,7 @@ class CosyComposer
   /**
    * Helper to create body.
    */
-    public function createBody($item, $post_update_data, $changelog = null, $security_update = false, array $update_list = [])
+    public function createBody($item, $post_update_data, $changelog = null, $security_update = false, array $update_list = [], $changed_files = [])
     {
         $update = new ViolinistUpdate();
         $update->setName($item->name);
@@ -1642,6 +1655,9 @@ class CosyComposer
             $update->setCustomMessage($this->project->getCustomPrMessage());
         }
         $update->setUpdatedList($update_list);
+        if ($changed_files) {
+            $update->setChangedFiles($changed_files);
+        }
         return $this->messageFactory->getPullRequestBody($update);
     }
 
@@ -1856,19 +1872,34 @@ class CosyComposer
         $this->tmpDir = $tmpDir;
     }
 
+    protected function retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to)
+    {
+        return $this->getFetcher()
+            ->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
+    }
+
+    protected function getFetcher() : ChangelogRetriever
+    {
+        if ($this->fetcher) {
+            return $this->fetcher;
+        }
+        $cosy_factory_wrapper = new ProcessFactoryWrapper();
+        $cosy_factory_wrapper->setExecutor($this->executer);
+        $retriever = new DependencyRepoRetriever($cosy_factory_wrapper);
+        $retriever->setAuthToken($this->userToken);
+        $this->fetcher = new ChangelogRetriever($retriever, $cosy_factory_wrapper);
+        return $this->fetcher;
+    }
+
     /**
      * Helper to retrieve changelog.
      */
     public function retrieveChangeLog($package_name, $lockdata, $version_from, $version_to)
     {
-        $cosy_factory_wrapper = new ProcessFactoryWrapper();
-        $cosy_factory_wrapper->setExecutor($this->executer);
-        $retriever = new DependencyRepoRetriever($cosy_factory_wrapper);
-        $retriever->setAuthToken($this->userToken);
-        $fetcher = new ChangelogRetriever($retriever, $cosy_factory_wrapper);
-        $log = $fetcher->retrieveChangelog($package_name, $lockdata, $version_from, $version_to);
+        $fetcher = $this->getFetcher();
+        $log_obj = $fetcher->retrieveChangelog($package_name, $lockdata, $version_from, $version_to);
         $changelog_string = '';
-        $json = json_decode($log->getAsJson());
+        $json = json_decode($log_obj->getAsJson());
         foreach ($json as $item) {
             $changelog_string .= sprintf("%s %s\n", $item->hash, $item->message);
         }

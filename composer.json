@@ -14,7 +14,7 @@
         "knplabs/github-api": "^2.0",
         "php-http/guzzle6-adapter": "^1.1",
         "violinist-dev/git-log-format": "^1.1.2",
-        "violinist-dev/violinist-messages": "^1.2.0",
+        "violinist-dev/violinist-messages": "^1.3.0",
         "violinist-dev/slug-from-url": "^1",
         "wa72/simplelogger": "^1.0",
         "league/flysystem": "^1.0",
@@ -25,9 +25,9 @@
         "violinist-dev/composer-updater": "dev-master",
         "violinist-dev/process-factory": "^1.0",
         "symfony/process": "^3",
-        "violinist-dev/composer-changelog-fetcher": "dev-master",
+        "violinist-dev/composer-changelog-fetcher": "^1.0",
         "violinist-dev/violinist-config": "^1.2",
-        "violinist-dev/commit-message-creator": "^1.1",
+        "violinist-dev/commit-message-creator": "^1.2",
         "violinist-dev/allow-list-handler": "^1.0"
     },
     "minimum-stability": "dev",
@@ -36,7 +36,11 @@
         "psr-4": {"eiriksm\\CosyComposer\\": "src"}
     },
     "config": {
-        "php": "7.0"
+        "php": "7.0",
+        "sort-packages": true,
+        "allow-plugins": {
+            "cweagans/composer-patches": true
+        }
     },
     "autoload-dev": {
         "psr-4": {

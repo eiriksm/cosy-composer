@@ -1,0 +1,11 @@
+{
+    "require": {
+        "psy/psysh": "^0.11.2",
+        "symfony/var-dumper": "v5.4.5"
+    },
+    "extra": {
+        "violinist": {
+            "allow_update_indirect_with_direct": 1
+        }
+    }
+}

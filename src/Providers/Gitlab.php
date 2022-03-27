@@ -72,7 +72,7 @@ class Gitlab implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed(Slug $slug)
+    public function getPrsNamed(Slug $slug) : array
     {
         $pager = new ResultPager($this->client);
         $api = $this->client->api('mr');

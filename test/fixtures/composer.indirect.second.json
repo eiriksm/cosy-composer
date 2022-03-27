@@ -1,0 +1,10 @@
+{
+    "require": {
+        "psy/psysh": "^0.11.2"
+    },
+    "extra": {
+        "violinist": {
+            "allow_update_indirect_with_direct": 1
+        }
+    }
+}

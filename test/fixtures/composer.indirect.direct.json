@@ -1,0 +1,11 @@
+{
+    "require": {
+        "symfony/var-dumper": "^5.4",
+        "symfony/polyfill-mbstring": "^1"
+    },
+    "extra": {
+        "violinist": {
+            "allow_update_indirect_with_direct": 1
+        }
+    }
+}

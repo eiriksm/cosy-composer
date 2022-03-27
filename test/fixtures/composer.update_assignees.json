@@ -1,0 +1,13 @@
+{
+    "require": {
+        "drush/drush": "^9||^10"
+    },
+    "extra": {
+        "violinist": {
+            "assignees": [
+                "user1",
+                "user2"
+            ]
+        }
+    }
+}

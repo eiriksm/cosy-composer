@@ -11,6 +11,7 @@ use eiriksm\CosyComposer\Exceptions\ComposerInstallException;
 use eiriksm\CosyComposer\Exceptions\GitCloneException;
 use eiriksm\CosyComposer\Exceptions\GitPushException;
 use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
+use eiriksm\CosyComposer\ListFilterer\DevDepsOnlyFilterer;
 use eiriksm\CosyComposer\ListFilterer\IndirectWithDirectFilterer;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\ViolinistMessages\UpdateListItem;
@@ -705,6 +706,8 @@ class CosyComposer
         $app->setDefinition($d);
         $app->setAutoExit(false);
         $this->doComposerInstall($config);
+        // Now read the lockfile.
+        $composer_lock_after_installing = json_decode(@file_get_contents($this->compserJsonDir . '/composer.lock'));
         // And do a quick security check in there as well.
         try {
             $this->log('Checking for security issues in project.');
@@ -837,12 +840,8 @@ class CosyComposer
         }
         // Remove dev dependencies, if indicated.
         if (!$config->shouldUpdateDevDependencies()) {
-            foreach ($data as $delta => $item) {
-                $cname = self::getComposerJsonName($composer_json_data, $item->name, $this->compserJsonDir);
-                if (isset($composer_json_data->{'require-dev'}->{$cname})) {
-                    unset($data[$delta]);
-                }
-            }
+            $filterer = DevDepsOnlyFilterer::create($composer_lock_after_installing, $composer_json_data);
+            $data = $filterer->filter($data);
         }
         foreach ($data as $delta => $item) {
             // Also unset those that are in an unexpected format. A new thing seen in the wild has been this:
@@ -963,8 +962,6 @@ class CosyComposer
                 }
             }
         }
-        // Now read the lockfile.
-        $composer_lock_after_installing = json_decode(@file_get_contents($this->compserJsonDir . '/composer.lock'));
         if ($config->shouldUpdateIndirectWithDirect()) {
             $filterer = IndirectWithDirectFilterer::create($composer_lock_after_installing, $composer_json_data);
             $data = $filterer->filter($data);
@@ -1962,11 +1959,11 @@ class CosyComposer
         }
         // If we can not find it, we have to search through the names, and try to normalize them. They could be in the
         // wrong casing, for example.
-        $possbile_types = [
+        $possible_types = [
             'require',
             'require-dev',
         ];
-        foreach ($possbile_types as $type) {
+        foreach ($possible_types as $type) {
             if (empty($cdata->{$type})) {
                 continue;
             }

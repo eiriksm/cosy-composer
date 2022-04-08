@@ -623,7 +623,7 @@ class CosyComposer
             throw new ChdirException('Problem with changing dir to the clone dir.');
         }
         $local_adapter = new Local($this->compserJsonDir);
-        if (!empty($_SERVER['config_branch'])) {
+        if (!empty($_ENV['config_branch'])) {
             $config_branch = $_SERVER['config_branch'];
             $this->log('Changing to config branch: ' . $config_branch);
             $tmpdir = sprintf('/tmp/%s', uniqid('', true));

@@ -1,0 +1,10 @@
+{
+    "require": {
+        "filp/whoops": "^2.13"
+    },
+    "extra": {
+        "violinist": {
+            "update_dev_dependencies": 0
+        }
+    }
+}

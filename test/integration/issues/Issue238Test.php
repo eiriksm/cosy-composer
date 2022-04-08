@@ -18,5 +18,4 @@ class Issue238Test extends ComposerUpdateIntegrationBase
     {
         $this->runtestExpectedOutput();
     }
-
 }

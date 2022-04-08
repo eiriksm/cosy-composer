@@ -17,5 +17,4 @@ class DevDepsRemovedTest extends ComposerUpdateIntegrationBase
         $this->runtestExpectedOutput();
         $this->assertOutputContainsMessage('No updates found', $this->cosy);
     }
-
 }

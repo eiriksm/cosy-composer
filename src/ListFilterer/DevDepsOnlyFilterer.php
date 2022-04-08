@@ -35,7 +35,20 @@ class DevDepsOnlyFilterer implements FilterInterface
         foreach ($list as $delta => $item) {
             $type = $this->getRequireTypeInComposerJsonForPackage($item->name);
             if (!$type) {
-                continue;
+                // Meaning this is actually not in composer.json. Which could mean it's an indirect dependency. But is
+                // it a dependency of a dev dependency?
+                $packages = $this->findRequiresForPackage($item);
+                $has_non_dev = false;
+                foreach ($packages as $package) {
+                    $parent_type = $this->getRequireTypeInComposerJsonForPackage($package->name);
+                    if ($parent_type === FilterInterface::REQUIRE_TYPE_REQUIRE) {
+                        $has_non_dev = true;
+                        break;
+                    }
+                }
+                if (!$has_non_dev) {
+                    unset($list[$delta]);
+                }
             }
             if ($type === FilterInterface::REQUIRE_TYPE_REQUIRE_DEV) {
                 unset($list[$delta]);

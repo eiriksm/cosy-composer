@@ -1,0 +1,13 @@
+{
+    "require": {
+        "filp/whoops": "^2.13"
+    },
+    "require-dev": {
+        "psr/log": "^1.0.1"
+    },
+    "extra": {
+        "violinist": {
+            "update_dev_dependencies": 0
+        }
+    }
+}

@@ -624,7 +624,7 @@ class CosyComposer
         }
         $local_adapter = new Local($this->compserJsonDir);
         if (!empty($_ENV['config_branch'])) {
-            $config_branch = $_SERVER['config_branch'];
+            $config_branch = $_ENV['config_branch'];
             $this->log('Changing to config branch: ' . $config_branch);
             $tmpdir = sprintf('/tmp/%s', uniqid('', true));
             $clone_result = $this->execCommand('git clone --depth=1 ' . $url . ' ' . $tmpdir . ' -b ' . $config_branch, false, 120);

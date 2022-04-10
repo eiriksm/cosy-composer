@@ -21,7 +21,14 @@ class ConfigBranchTest extends ComposerUpdateIntegrationBase
     protected $packageForUpdateOutput = 'psr/log';
     protected $packageVersionForFromUpdateOutput = '1.0.0';
     protected $packageVersionForToUpdateOutput = '1.1.4';
-    protected $composerAssetFiles = 'composerbranch';
+    protected $composerAssetFiles = 'empty';
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        putenv('config_branch');
+        unset($_ENV['config_branch']);
+    }
 
     /**
      * @dataProvider getEnvVariations
@@ -42,7 +49,8 @@ class ConfigBranchTest extends ComposerUpdateIntegrationBase
             ["PATH=/tmp\nconfig_branch=config"],
             ['config_branch=config
 derp=true'],
-            [' config_branch=config '],
+            [' config_branch=other_config 
+config_branch=config'],
             ["\n\nconfig_branch=config\n\n\nconfig_branch=other_config"],
             ["\n\nHOME=/tmp\n\n\nconfig_branch=config"],
         ];

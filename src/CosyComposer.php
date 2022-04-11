@@ -1414,7 +1414,8 @@ class CosyComposer
                     $new_branch_name = $this->createBranchNameFromVersions(
                         $item->name,
                         $item->version,
-                        $post_update_data->version
+                        $post_update_data->version,
+                        $config
                     );
                     $this->log('Changing branch because of an unexpected update result: ' . $branch_name);
                     $this->execCommand('git checkout -b ' . $new_branch_name, false);
@@ -1673,21 +1674,20 @@ class CosyComposer
             }
             return sprintf('%sviolinist%s', $prefix, $this->createBranchNameFromVersions($item->name, '', ''));
         }
-        $name = $this->createBranchNameFromVersions($item->name, $item->version, $item->latest);
+        return $this->createBranchNameFromVersions($item->name, $item->version, $item->latest, $config);
+    }
+
+    protected function createBranchNameFromVersions($package, $version_from, $version_to, $config = null)
+    {
+        $item_string = sprintf('%s%s%s', $package, $version_from, $version_to);
+        // @todo: Fix this properly.
+        $result = preg_replace('/[^a-zA-Z0-9]+/', '', $item_string);
         $prefix = '';
         if ($config) {
             /** @var Config $config */
             $prefix = $config->getBranchPrefix();
         }
-        return "$prefix$name";
-    }
-
-    protected function createBranchNameFromVersions($package, $version_from, $version_to)
-    {
-        $item_string = sprintf('%s%s%s', $package, $version_from, $version_to);
-        // @todo: Fix this properly.
-        $result = preg_replace('/[^a-zA-Z0-9]+/', '', $item_string);
-        return $result;
+        return $prefix.$result;
     }
 
     /**

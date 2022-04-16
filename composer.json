@@ -1,6 +1,6 @@
 {
     "name": "eiriksm/cosy-composer",
-    "description": "I will probably use this for something",
+    "description": "Library that runs updates for Violinist",
     "license": "MIT",
     "require-dev": {
         "phpunit/phpunit": "^6",

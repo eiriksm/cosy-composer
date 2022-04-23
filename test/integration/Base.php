@@ -179,7 +179,9 @@ abstract class Base extends TestCase
         $mock_provider->method('getDefaultBranch')
             ->willReturn('master');
         $mock_provider->method('getBranchesFlattened')
-            ->willReturn([]);
+            ->willReturnCallback(function () {
+                return $this->getBranchesFlattened();
+            });
         $default_sha = 123;
         $mock_provider->method('getDefaultBase')
             ->willReturn($default_sha);
@@ -192,6 +194,11 @@ abstract class Base extends TestCase
             ->willReturn($mock_provider);
 
         $this->cosy->setProviderFactory($mock_provider_factory);
+    }
+
+    protected function getBranchesFlattened()
+    {
+        return [];
     }
 
     protected function getPrsNamed()

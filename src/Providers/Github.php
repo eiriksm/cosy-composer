@@ -33,9 +33,9 @@ class Github implements ProviderInterface
     }
   }
 }', [
-    'input' => [
-        'pullRequestId' => $pr_data['node_id']
-    ]
+        'input' => [
+            'pullRequestId' => $pr_data['node_id']
+        ]
         ]);
         if (!empty($data["errors"])) {
             return false;

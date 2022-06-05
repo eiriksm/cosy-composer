@@ -21,6 +21,27 @@ class Github implements ProviderInterface
         $this->client = $client;
     }
 
+    public function enableAutomerge(array $pr_data)
+    {
+        if (!isset($pr_data["node_id"])) {
+            return false;
+        }
+        $data = $this->client->graphql()->execute('mutation MyMutation ($input: EnablePullRequestAutoMergeInput!) {
+  enablePullRequestAutoMerge(input: $input) {
+    pullRequest {
+      id
+    }
+  }
+}', [
+    'input' => [
+        'pullRequestId' => $pr_data['node_id']
+    ]
+        ]);
+        if (!empty($data["errors"])) {
+            return false;
+        }
+    }
+
     public function authenticate($user, $token)
     {
         $this->client->authenticate($user, null, Client::AUTH_HTTP_TOKEN);

@@ -1087,9 +1087,9 @@ class CosyComposer
             }
         } catch (ValidationFailedException $e) {
             // @todo: Do some better checking. Could be several things, this.
-            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named);
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config);
         } catch (\Gitlab\Exception\RuntimeException $e) {
-            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named);
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config);
         } catch (\Throwable $e) {
             $this->log('Caught exception while running update all: ' . $e->getMessage());
         }
@@ -1509,9 +1509,9 @@ class CosyComposer
                 ]);
             } catch (ValidationFailedException $e) {
                 // @todo: Do some better checking. Could be several things, this.
-                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named);
+                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config);
             } catch (\Gitlab\Exception\RuntimeException $e) {
-                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named);
+                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config);
             } catch (ComposerUpdateProcessFailedException $e) {
                 $this->log('Caught an exception: ' . $e->getMessage(), 'error');
                 $this->log($e->getErrorOutput(), Message::COMMAND, [
@@ -1545,12 +1545,16 @@ class CosyComposer
         }
     }
 
-    protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, $prs_named)
+    protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, $prs_named, Config $config)
     {
         $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
         if ($this->shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
             $this->log('Will try to update the PR based on settings.');
             $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
+            if ($config->shouldAutoMerge()) {
+                //
+                $this->getPrClient()->enableAutomerge($prs_named[$branch_name]);
+            }
         }
     }
 

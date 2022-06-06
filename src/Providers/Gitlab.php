@@ -154,4 +154,9 @@ class Gitlab implements ProviderInterface
         $url = parse_url($url);
         return ltrim($url['path'], '/');
     }
+
+    public function enableAutomerge(array $pr_data)
+    {
+        // TODO: Implement enableAutomerge() method.
+    }
 }

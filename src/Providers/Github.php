@@ -40,6 +40,7 @@ class Github implements ProviderInterface
         if (!empty($data["errors"])) {
             return false;
         }
+        return true;
     }
 
     public function authenticate($user, $token)

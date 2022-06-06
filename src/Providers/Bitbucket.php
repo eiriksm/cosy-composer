@@ -172,6 +172,7 @@ class Bitbucket implements ProviderInterface
 
     public function enableAutomerge(array $pr_data, Slug $slug) : bool
     {
-        // TODO: Implement enableAutomerge() method.
+        // @todo: Not implemented yet.
+        return false;
     }
 }

@@ -1485,7 +1485,7 @@ class CosyComposer
                     ]);
                     if ($config->shouldAutoMerge()) {
                         $this->log('Config indicated automerge should be enabled, Trying to enable automerge');
-                        $result = $this->getPrClient()->enableAutomerge($pullRequest);
+                        $result = $this->getPrClient()->enableAutomerge($pullRequest, $this->slug);
                         if (!$result) {
                             $this->log('Enabling automerge failed.');
                         }
@@ -1559,8 +1559,11 @@ class CosyComposer
             $this->log('Will try to update the PR based on settings.');
             $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
             if ($config->shouldAutoMerge()) {
-                //
-                $this->getPrClient()->enableAutomerge($prs_named[$branch_name]);
+                $this->log('Trying to update the PR with automerge option');
+                $result = $this->getPrClient()->enableAutomerge($prs_named[$branch_name], $this->slug);
+                if (!$result) {
+                    $this->log('Enable automerge failed');
+                }
             }
         }
     }

@@ -6,7 +6,7 @@ use Violinist\Slug\Slug;
 
 interface ProviderInterface
 {
-    public function enableAutomerge(array $pr_data);
+    public function enableAutomerge(array $pr_data, Slug $slug) : bool;
 
     public function authenticate($user, $token);
 

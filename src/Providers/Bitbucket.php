@@ -170,7 +170,7 @@ class Bitbucket implements ProviderInterface
         return $this->client->repositories()->users($user_name)->pullRequests($user_repo)->update($id, $params);
     }
 
-    public function enableAutomerge(array $pr_data)
+    public function enableAutomerge(array $pr_data, Slug $slug) : bool
     {
         // TODO: Implement enableAutomerge() method.
     }

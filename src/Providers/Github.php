@@ -21,7 +21,7 @@ class Github implements ProviderInterface
         $this->client = $client;
     }
 
-    public function enableAutomerge(array $pr_data)
+    public function enableAutomerge(array $pr_data, Slug $slug) : bool
     {
         if (!isset($pr_data["node_id"])) {
             return false;

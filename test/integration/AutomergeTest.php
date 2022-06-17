@@ -20,5 +20,4 @@ class AutomergeTest extends ComposerUpdateIntegrationBase
     {
         $this->runtestExpectedOutput();
     }
-
 }

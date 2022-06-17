@@ -22,6 +22,8 @@ abstract class ComposerUpdateIntegrationBase extends Base
 
     protected $prParams = [];
 
+    protected $hasAutoMerge = false;
+
     /**
      * @var MockObject
      */
@@ -84,5 +86,6 @@ abstract class ComposerUpdateIntegrationBase extends Base
         if ($this->checkPrUrl) {
             $this->assertOutputContainsMessage($this->fakePrUrl, $this->cosy);
         }
+        self::assertEquals($this->automergeEnabled, $this->hasAutoMerge);
     }
 }

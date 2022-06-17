@@ -31,6 +31,8 @@ abstract class Base extends TestCase
 
     protected $mockProviderFactory;
 
+    protected $automergeEnabled = false;
+
     public function setUp()
     {
         $c = $this->getMockCosy();
@@ -188,6 +190,11 @@ abstract class Base extends TestCase
         $mock_provider->method('getPrsNamed')
             ->willReturnCallback(function () {
                 return $this->getPrsNamed();
+            });
+        $mock_provider->method('enableAutomerge')
+            ->willReturnCallback(function () {
+                $this->automergeEnabled = true;
+                return true;
             });
         $mock_provider_factory = $this->getMockProviderFactory();
         $mock_provider_factory->method('createFromHost')

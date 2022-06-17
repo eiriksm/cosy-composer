@@ -1483,13 +1483,7 @@ class CosyComposer
                     $this->log($pullRequest['html_url'], Message::PR_URL, [
                         'package' => $package_name,
                     ]);
-                    if ($config->shouldAutoMerge()) {
-                        $this->log('Config indicated automerge should be enabled, Trying to enable automerge');
-                        $result = $this->getPrClient()->enableAutomerge($pullRequest, $this->slug);
-                        if (!$result) {
-                            $this->log('Enabling automerge failed.');
-                        }
-                    }
+                    $this->handleAutomerge($config, $pullRequest);
                 }
                 $total_prs++;
             } catch (CanNotUpdateException $e) {
@@ -1558,12 +1552,17 @@ class CosyComposer
         if ($this->shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
             $this->log('Will try to update the PR based on settings.');
             $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
-            if ($config->shouldAutoMerge()) {
-                $this->log('Trying to update the PR with automerge option');
-                $result = $this->getPrClient()->enableAutomerge($prs_named[$branch_name], $this->slug);
-                if (!$result) {
-                    $this->log('Enable automerge failed');
-                }
+            $this->handleAutoMerge($config, $prs_named[$branch_name]);
+        }
+    }
+
+    protected function handleAutoMerge(Config $config, $pullRequest)
+    {
+        if ($config->shouldAutoMerge()) {
+            $this->log('Config indicated automerge should be enabled, Trying to enable automerge');
+            $result = $this->getPrClient()->enableAutomerge($pullRequest, $this->slug);
+            if (!$result) {
+                $this->log('Enabling automerge failed.');
             }
         }
     }

@@ -1483,7 +1483,7 @@ class CosyComposer
                     $this->log($pullRequest['html_url'], Message::PR_URL, [
                         'package' => $package_name,
                     ]);
-                    $this->handleAutomerge($config, $pullRequest);
+                    $this->handleAutomerge($config, $pullRequest, $security_update);
                 }
                 $total_prs++;
             } catch (CanNotUpdateException $e) {
@@ -1556,9 +1556,9 @@ class CosyComposer
         }
     }
 
-    protected function handleAutoMerge(Config $config, $pullRequest)
+    protected function handleAutoMerge(Config $config, $pullRequest, $security_update = false)
     {
-        if ($config->shouldAutoMerge()) {
+        if ($config->shouldAutoMerge($security_update)) {
             $this->log('Config indicated automerge should be enabled, Trying to enable automerge');
             $result = $this->getPrClient()->enableAutomerge($pullRequest, $this->slug);
             if (!$result) {

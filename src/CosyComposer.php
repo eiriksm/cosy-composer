@@ -1510,9 +1510,9 @@ class CosyComposer
                 ]);
             } catch (ValidationFailedException $e) {
                 // @todo: Do some better checking. Could be several things, this.
-                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config);
+                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
             } catch (\Gitlab\Exception\RuntimeException $e) {
-                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config);
+                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
             } catch (ComposerUpdateProcessFailedException $e) {
                 $this->log('Caught an exception: ' . $e->getMessage(), 'error');
                 $this->log($e->getErrorOutput(), Message::COMMAND, [
@@ -1546,13 +1546,13 @@ class CosyComposer
         }
     }
 
-    protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, $prs_named, Config $config)
+    protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, $prs_named, Config $config, $security_update = false)
     {
         $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
         if ($this->shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
             $this->log('Will try to update the PR based on settings.');
             $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
-            $this->handleAutoMerge($config, $prs_named[$branch_name]);
+            $this->handleAutoMerge($config, $prs_named[$branch_name], $security_update);
         }
     }
 

@@ -2,6 +2,8 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use Github\Exception\ValidationFailedException;
+use Violinist\Slug\Slug;
 use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 /**
@@ -17,6 +19,7 @@ class AutomergeSecurityUpdateTest extends ComposerUpdateIntegrationBase
     protected $packageVersionForToUpdateOutput = '1.1.4';
     protected $hasAutoMerge = true;
     protected $checkPrUrl = true;
+    private $isUpdate = false;
 
     public function setUp()
     {
@@ -29,8 +32,53 @@ class AutomergeSecurityUpdateTest extends ComposerUpdateIntegrationBase
         $this->cosy->getCheckerFactory()->setChecker($checker);
     }
 
-    public function testAutomerge()
+    protected function getBranchesFlattened()
     {
+        if (!$this->isUpdate) {
+            return [];
+        }
+        return ['psrlog113114'];
+    }
+
+    protected function createPullRequest(Slug $slug, array $params)
+    {
+        if (!$this->isUpdate) {
+            return parent::createPullRequest($slug, $params);
+        }
+        throw new ValidationFailedException('I want you to update please');
+    }
+
+    protected function getPrsNamed()
+    {
+        if (!$this->isUpdate) {
+            return [];
+        }
+        return [
+            'psrlog113114' => [
+                'base' => [
+                    'sha' => 456,
+                ],
+                'title' => 'not the same as the other',
+                'number' => 666,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getUpdateVariations
+     */
+    public function testAutomerge($should_have_updated)
+    {
+        $this->isUpdate = $should_have_updated;
+        $this->checkPrUrl = !$should_have_updated;
         $this->runtestExpectedOutput();
+    }
+
+    public function getUpdateVariations()
+    {
+        return [
+            [true],
+            [false],
+        ];
     }
 }

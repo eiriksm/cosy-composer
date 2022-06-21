@@ -58,12 +58,17 @@ abstract class ComposerUpdateIntegrationBase extends Base
         if ($this->checkPrUrl) {
             $this->mockProvider->method('createPullRequest')
                 ->willReturnCallback(function (Slug $slug, array $params) {
-                    $this->prParams = $params;
-                    return [
-                        'html_url' => $this->fakePrUrl,
-                    ];
+                    return $this->createPullRequest($slug, $params);
                 });
         }
+    }
+
+    protected function createPullRequest(Slug $slug, array $params)
+    {
+        $this->prParams = $params;
+        return [
+            'html_url' => $this->fakePrUrl,
+        ];
     }
 
     protected function placeInitialComposerLock()

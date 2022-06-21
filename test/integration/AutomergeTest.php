@@ -2,10 +2,13 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use Github\Exception\ValidationFailedException;
+use Violinist\Slug\Slug;
+
 /**
  * Test for automerge being enabled.
  */
-class AutomergeTest extends ComposerUpdateIntegrationBase
+class AutomergeTest extends AutoMergeBase
 {
     protected $composerAssetFiles = 'composer.automerge';
     protected $hasUpdatedPsrLog = false;
@@ -15,9 +18,4 @@ class AutomergeTest extends ComposerUpdateIntegrationBase
     protected $packageVersionForToUpdateOutput = '1.1.4';
     protected $hasAutoMerge = true;
     protected $checkPrUrl = true;
-
-    public function testAutomerge()
-    {
-        $this->runtestExpectedOutput();
-    }
 }

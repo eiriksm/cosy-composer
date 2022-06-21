@@ -8,7 +8,7 @@ use Violinist\Slug\Slug;
 /**
  * Test for automerge being enabled for security, but no security updates.
  */
-class AutomergeSecurityNoUpdateTest extends ComposerUpdateIntegrationBase
+class AutomergeSecurityNoUpdateTest extends AutoMergeBase
 {
     protected $composerAssetFiles = 'composer.automerge_sec_no_update';
     protected $hasUpdatedPsrLog = false;
@@ -25,23 +25,5 @@ class AutomergeSecurityNoUpdateTest extends ComposerUpdateIntegrationBase
             return parent::createPullRequest($slug, $params);
         }
         throw new ValidationFailedException('I want you to update please');
-    }
-
-    /**
-     * @dataProvider getUpdateVariations
-     */
-    public function testAutomerge($should_have_updated)
-    {
-        $this->isUpdate = $should_have_updated;
-        $this->checkPrUrl = !$should_have_updated;
-        $this->runtestExpectedOutput();
-    }
-
-    public function getUpdateVariations()
-    {
-        return [
-            [true],
-            [false],
-        ];
     }
 }

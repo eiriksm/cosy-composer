@@ -1084,12 +1084,13 @@ class CosyComposer
                 $this->log($pullRequest['html_url'], Message::PR_URL, [
                     'package' => 'all',
                 ]);
+                $this->handleAutomerge($config, $pullRequest, $security_update);
             }
         } catch (ValidationFailedException $e) {
             // @todo: Do some better checking. Could be several things, this.
-            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config);
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
         } catch (\Gitlab\Exception\RuntimeException $e) {
-            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config);
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
         } catch (\Throwable $e) {
             $this->log('Caught exception while running update all: ' . $e->getMessage());
         }

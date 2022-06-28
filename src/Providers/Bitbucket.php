@@ -176,7 +176,7 @@ class Bitbucket implements ProviderInterface
         return false;
     }
 
-    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment): void
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment)
     {
         // TODO: Implement closePullRequestWithComment() method.
     }

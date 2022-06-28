@@ -163,7 +163,7 @@ class Github implements ProviderInterface
         return $this->client->api('pull_request')->update($user_name, $user_repo, $id, $params);
     }
 
-    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment): void
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment)
     {
         // TODO: Implement closePullRequestWithComment() method.
     }

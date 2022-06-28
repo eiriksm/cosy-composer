@@ -162,4 +162,9 @@ class Github implements ProviderInterface
         $user_repo = $slug->getUserRepo();
         return $this->client->api('pull_request')->update($user_name, $user_repo, $id, $params);
     }
+
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment): void
+    {
+        // TODO: Implement closePullRequestWithComment() method.
+    }
 }

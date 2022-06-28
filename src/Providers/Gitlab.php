@@ -116,6 +116,14 @@ class Gitlab implements ProviderInterface
         throw new \Exception('Gitlab integration only support creating PRs as the authenticated user.');
     }
 
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void
+    {
+        $this->client->mergeRequests()->addNote(self::getProjectId($slug->getUrl()), $pr_id, $comment);
+        $this->client->mergeRequests()->update(self::getProjectId($slug->getUrl()), $pr_id, [
+            'state_event' => 'close',
+        ]);
+    }
+
     public function createPullRequest(Slug $slug, $params)
     {
         /** @var MergeRequests $mr */

@@ -28,6 +28,8 @@ interface ProviderInterface
 
     public function createFork($user, $repo, $fork_user);
 
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void;
+
     /**
      * @param Slug $slug
      * @param array $params

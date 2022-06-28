@@ -90,6 +90,7 @@ class Gitlab implements ProviderInterface
             $prs_named[$pr['source_branch']] = [
                 'title' => $pr['title'],
                 'body' => !empty($pr['description']) ? $pr['description'] : '',
+                'html_url' => !empty($pr['web_url']) ? $pr['web_url'] : '',
                 'number' => $pr["iid"],
                 'base' => [
                     'sha' => !empty($commits[1]["id"]) ? $commits[1]["id"] : $pr['sha'],

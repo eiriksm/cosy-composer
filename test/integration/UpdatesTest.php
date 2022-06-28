@@ -112,6 +112,7 @@ class UpdatesTest extends Base
                     'base' => [
                         'sha' => $default_sha,
                     ],
+                    'number' => 123,
                     'title' => 'Update eiriksm/fake-package from 1.0.0 to 1.0.1',
                 ],
             ]);

@@ -63,6 +63,7 @@ class UpdateConcurrentOutdatedBranchTest extends ComposerUpdateIntegrationBase
                 'base' => [
                     'sha' => $this->sha,
                 ],
+                'number' => 123,
                 'title' => 'Update psr/cache from 1.0.0 to 1.0.1',
             ],
         ];

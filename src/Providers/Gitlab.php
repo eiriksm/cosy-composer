@@ -77,10 +77,12 @@ class Gitlab implements ProviderInterface
         $pager = new ResultPager($this->client);
         $api = $this->client->api('mr');
         $method = 'all';
-        $prs = $pager->fetchAll($api, $method, [self::getProjectId($slug->getUrl())]);
+        $prs = $pager->fetchAll($api, $method, [self::getProjectId($slug->getUrl()), [
+            'state' => 'opened',
+        ]]);
         $prs_named = [];
         foreach ($prs as $pr) {
-            if ($pr['state'] != 'opened') {
+            if ($pr['state'] !== 'opened') {
                 continue;
             }
             // Now get the last commits for this branch.

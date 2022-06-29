@@ -103,6 +103,7 @@ class Bitbucket implements ProviderInterface
                 'base' => [
                     'sha' => $pr["destination"]["commit"]["hash"],
                 ],
+                'html_url' => $pr["links"]["html"]["href"],
                 'number' => $pr["id"],
                 'title' => $pr["title"],
             ];
@@ -159,6 +160,9 @@ class Bitbucket implements ProviderInterface
         $data = $this->client->repositories()->users($user_name)->pullRequests($user_repo)->create($bitbucket_params);
         if (!empty($data["links"]["html"]["href"])) {
             $data['html_url'] = $data["links"]["html"]["href"];
+        }
+        if (!empty($data['id'])) {
+            $data['number'] = $data['id'];
         }
         return $data;
     }

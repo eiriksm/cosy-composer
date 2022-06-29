@@ -953,6 +953,7 @@ class CosyComposer
                             'package' => $item->name,
                         ]);
                         unset($data[$delta]);
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
                         $total_prs++;
                     }
                     // Is the pr up to date?
@@ -1466,6 +1467,7 @@ class CosyComposer
                                 'package' => $item->name,
                             ]);
                             $total_prs++;
+                            $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
                             continue;
                         }
                         // Is the pr up to date?
@@ -1474,6 +1476,7 @@ class CosyComposer
                                 'package' => $item->name,
                             ]);
                             $total_prs++;
+                            $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
                             continue;
                         }
                     }
@@ -1512,6 +1515,7 @@ class CosyComposer
                         'package' => $package_name,
                     ]);
                     $this->handleAutomerge($config, $pullRequest, $security_update);
+                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named);
                 }
                 $total_prs++;
             } catch (CanNotUpdateException $e) {
@@ -1539,8 +1543,16 @@ class CosyComposer
             } catch (ValidationFailedException $e) {
                 // @todo: Do some better checking. Could be several things, this.
                 $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
+                // If it failed validation because it already exists, we also want to make sure all outdated PRs are
+                // closed.
+                if (!empty($prs_named[$branch_name]['number'])) {
+                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                }
             } catch (\Gitlab\Exception\RuntimeException $e) {
                 $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
+                if (!empty($prs_named[$branch_name]['number'])) {
+                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                }
             } catch (ComposerUpdateProcessFailedException $e) {
                 $this->log('Caught an exception: ' . $e->getMessage(), 'error');
                 $this->log($e->getErrorOutput(), Message::COMMAND, [

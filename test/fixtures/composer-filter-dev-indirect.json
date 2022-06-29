@@ -1,0 +1,11 @@
+{
+    "require-dev": {
+        "filp/whoops": "^2.14"
+    },
+    "extra": {
+        "violinist": {
+            "update_dev_dependencies": 0,
+            "check_only_direct_dependencies": 0
+        }
+    }
+}

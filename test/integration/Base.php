@@ -31,6 +31,8 @@ abstract class Base extends TestCase
 
     protected $mockProviderFactory;
 
+    protected $automergeEnabled = false;
+
     public function setUp()
     {
         $c = $this->getMockCosy();
@@ -179,7 +181,9 @@ abstract class Base extends TestCase
         $mock_provider->method('getDefaultBranch')
             ->willReturn('master');
         $mock_provider->method('getBranchesFlattened')
-            ->willReturn([]);
+            ->willReturnCallback(function () {
+                return $this->getBranchesFlattened();
+            });
         $default_sha = 123;
         $mock_provider->method('getDefaultBase')
             ->willReturn($default_sha);
@@ -187,11 +191,21 @@ abstract class Base extends TestCase
             ->willReturnCallback(function () {
                 return $this->getPrsNamed();
             });
+        $mock_provider->method('enableAutomerge')
+            ->willReturnCallback(function () {
+                $this->automergeEnabled = true;
+                return true;
+            });
         $mock_provider_factory = $this->getMockProviderFactory();
         $mock_provider_factory->method('createFromHost')
             ->willReturn($mock_provider);
 
         $this->cosy->setProviderFactory($mock_provider_factory);
+    }
+
+    protected function getBranchesFlattened()
+    {
+        return [];
     }
 
     protected function getPrsNamed()

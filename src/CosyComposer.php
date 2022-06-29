@@ -11,6 +11,7 @@ use eiriksm\CosyComposer\Exceptions\ComposerInstallException;
 use eiriksm\CosyComposer\Exceptions\GitCloneException;
 use eiriksm\CosyComposer\Exceptions\GitPushException;
 use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
+use eiriksm\CosyComposer\ListFilterer\DevDepsOnlyFilterer;
 use eiriksm\CosyComposer\ListFilterer\IndirectWithDirectFilterer;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\ViolinistMessages\UpdateListItem;
@@ -524,11 +525,11 @@ class CosyComposer
             $key = $env_parts[0];
             $existing_env = getenv($key);
             if ($existing_env) {
-                $this->logger->log('info', new Message("The ENV variable $key was skipped because it exists and can not be overwritten"));
+                $this->getLogger()->log('info', new Message("The ENV variable $key was skipped because it exists and can not be overwritten"));
                 continue;
             }
             $value = $env_parts[1];
-            $this->logger->log('info', new Message("Exporting ENV variable $key: $value"));
+            $this->getLogger()->log('info', new Message("Exporting ENV variable $key: $value"));
             putenv($env_string);
             $_ENV[$key] = $value;
         }
@@ -608,8 +609,8 @@ class CosyComposer
         $clone_result = $this->execCommand('git clone --depth=1 ' . $url . ' ' . $this->tmpDir, false, 120);
         if ($clone_result) {
             // We had a problem.
-            $this->log($this->getLastStdOut(), Message::COMMAND);
-            $this->log($this->getLastStdErr(), Message::COMMAND);
+            $this->log($this->getLastStdOut());
+            $this->log($this->getLastStdErr());
             throw new GitCloneException('Problem with the execCommand git clone. Exit code was ' . $clone_result);
         }
         $this->log('Repository cloned');
@@ -622,8 +623,8 @@ class CosyComposer
             throw new ChdirException('Problem with changing dir to the clone dir.');
         }
         $local_adapter = new Local($this->compserJsonDir);
-        if (!empty($_SERVER['config_branch'])) {
-            $config_branch = $_SERVER['config_branch'];
+        if (!empty($_ENV['config_branch'])) {
+            $config_branch = $_ENV['config_branch'];
             $this->log('Changing to config branch: ' . $config_branch);
             $tmpdir = sprintf('/tmp/%s', uniqid('', true));
             $clone_result = $this->execCommand('git clone --depth=1 ' . $url . ' ' . $tmpdir . ' -b ' . $config_branch, false, 120);
@@ -705,6 +706,8 @@ class CosyComposer
         $app->setDefinition($d);
         $app->setAutoExit(false);
         $this->doComposerInstall($config);
+        // Now read the lockfile.
+        $composer_lock_after_installing = json_decode(@file_get_contents($this->compserJsonDir . '/composer.lock'));
         // And do a quick security check in there as well.
         try {
             $this->log('Checking for security issues in project.');
@@ -837,12 +840,8 @@ class CosyComposer
         }
         // Remove dev dependencies, if indicated.
         if (!$config->shouldUpdateDevDependencies()) {
-            foreach ($data as $delta => $item) {
-                $cname = self::getComposerJsonName($composer_json_data, $item->name, $this->compserJsonDir);
-                if (isset($composer_json_data->{'require-dev'}->{$cname})) {
-                    unset($data[$delta]);
-                }
-            }
+            $filterer = DevDepsOnlyFilterer::create($composer_lock_after_installing, $composer_json_data);
+            $data = $filterer->filter($data);
         }
         foreach ($data as $delta => $item) {
             // Also unset those that are in an unexpected format. A new thing seen in the wild has been this:
@@ -937,7 +936,18 @@ class CosyComposer
                             'version' => $item->latest,
                         ];
                         $security_update = false;
-                        $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->compserJsonDir);
+                        $package_name_in_composer_json = $item->name;
+                        try {
+                            $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->compserJsonDir);
+                        } catch (\Exception $e) {
+                            // If this was a package that we somehow got because we have allowed to update other than direct
+                            // dependencies we can avoid re-throwing this.
+                            if ($config->shouldCheckDirectOnly()) {
+                                throw $e;
+                            }
+                            // Taking a risk :o.
+                            $package_name_in_composer_json = $item->name;
+                        }
                         if (isset($security_alerts[$package_name_in_composer_json])) {
                             $security_update = true;
                         }
@@ -963,8 +973,6 @@ class CosyComposer
                 }
             }
         }
-        // Now read the lockfile.
-        $composer_lock_after_installing = json_decode(@file_get_contents($this->compserJsonDir . '/composer.lock'));
         if ($config->shouldUpdateIndirectWithDirect()) {
             $filterer = IndirectWithDirectFilterer::create($composer_lock_after_installing, $composer_json_data);
             $data = $filterer->filter($data);
@@ -1076,12 +1084,13 @@ class CosyComposer
                 $this->log($pullRequest['html_url'], Message::PR_URL, [
                     'package' => 'all',
                 ]);
+                $this->handleAutomerge($config, $pullRequest, $security_update);
             }
         } catch (ValidationFailedException $e) {
             // @todo: Do some better checking. Could be several things, this.
-            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named);
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
         } catch (\Gitlab\Exception\RuntimeException $e) {
-            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named);
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
         } catch (\Throwable $e) {
             $this->log('Caught exception while running update all: ' . $e->getMessage());
         }
@@ -1417,7 +1426,8 @@ class CosyComposer
                     $new_branch_name = $this->createBranchNameFromVersions(
                         $item->name,
                         $item->version,
-                        $post_update_data->version
+                        $post_update_data->version,
+                        $config
                     );
                     $this->log('Changing branch because of an unexpected update result: ' . $branch_name);
                     $this->execCommand('git checkout -b ' . $new_branch_name, false);
@@ -1474,6 +1484,7 @@ class CosyComposer
                     $this->log($pullRequest['html_url'], Message::PR_URL, [
                         'package' => $package_name,
                     ]);
+                    $this->handleAutomerge($config, $pullRequest, $security_update);
                 }
                 $total_prs++;
             } catch (CanNotUpdateException $e) {
@@ -1500,9 +1511,9 @@ class CosyComposer
                 ]);
             } catch (ValidationFailedException $e) {
                 // @todo: Do some better checking. Could be several things, this.
-                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named);
+                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
             } catch (\Gitlab\Exception\RuntimeException $e) {
-                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named);
+                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
             } catch (ComposerUpdateProcessFailedException $e) {
                 $this->log('Caught an exception: ' . $e->getMessage(), 'error');
                 $this->log($e->getErrorOutput(), Message::COMMAND, [
@@ -1536,12 +1547,24 @@ class CosyComposer
         }
     }
 
-    protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, $prs_named)
+    protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, $prs_named, Config $config, $security_update = false)
     {
         $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
         if ($this->shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
             $this->log('Will try to update the PR based on settings.');
             $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
+            $this->handleAutoMerge($config, $prs_named[$branch_name], $security_update);
+        }
+    }
+
+    protected function handleAutoMerge(Config $config, $pullRequest, $security_update = false)
+    {
+        if ($config->shouldAutoMerge($security_update)) {
+            $this->log('Config indicated automerge should be enabled, Trying to enable automerge');
+            $result = $this->getPrClient()->enableAutomerge($pullRequest, $this->slug);
+            if (!$result) {
+                $this->log('Enabling automerge failed.');
+            }
         }
     }
 
@@ -1676,21 +1699,20 @@ class CosyComposer
             }
             return sprintf('%sviolinist%s', $prefix, $this->createBranchNameFromVersions($item->name, '', ''));
         }
-        $name = $this->createBranchNameFromVersions($item->name, $item->version, $item->latest);
+        return $this->createBranchNameFromVersions($item->name, $item->version, $item->latest, $config);
+    }
+
+    protected function createBranchNameFromVersions($package, $version_from, $version_to, $config = null)
+    {
+        $item_string = sprintf('%s%s%s', $package, $version_from, $version_to);
+        // @todo: Fix this properly.
+        $result = preg_replace('/[^a-zA-Z0-9]+/', '', $item_string);
         $prefix = '';
         if ($config) {
             /** @var Config $config */
             $prefix = $config->getBranchPrefix();
         }
-        return "$prefix$name";
-    }
-
-    protected function createBranchNameFromVersions($package, $version_from, $version_to)
-    {
-        $item_string = sprintf('%s%s%s', $package, $version_from, $version_to);
-        // @todo: Fix this properly.
-        $result = preg_replace('/[^a-zA-Z0-9]+/', '', $item_string);
-        return $result;
+        return $prefix.$result;
     }
 
     /**
@@ -1962,11 +1984,11 @@ class CosyComposer
         }
         // If we can not find it, we have to search through the names, and try to normalize them. They could be in the
         // wrong casing, for example.
-        $possbile_types = [
+        $possible_types = [
             'require',
             'require-dev',
         ];
-        foreach ($possbile_types as $type) {
+        foreach ($possible_types as $type) {
             if (empty($cdata->{$type})) {
                 continue;
             }

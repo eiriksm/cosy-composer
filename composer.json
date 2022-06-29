@@ -1,6 +1,6 @@
 {
     "name": "eiriksm/cosy-composer",
-    "description": "I will probably use this for something",
+    "description": "Library that runs updates for Violinist",
     "license": "MIT",
     "require-dev": {
         "phpunit/phpunit": "^6",
@@ -14,7 +14,7 @@
         "knplabs/github-api": "^2.0",
         "php-http/guzzle6-adapter": "^1.1",
         "violinist-dev/git-log-format": "^1.1.2",
-        "violinist-dev/violinist-messages": "^1.3.0",
+        "violinist-dev/violinist-messages": "^1.3.1",
         "violinist-dev/slug-from-url": "^1",
         "wa72/simplelogger": "^1.0",
         "league/flysystem": "^1.0",
@@ -26,7 +26,7 @@
         "violinist-dev/process-factory": "^1.0",
         "symfony/process": "^3",
         "violinist-dev/composer-changelog-fetcher": "^1.0",
-        "violinist-dev/violinist-config": "^1.2",
+        "violinist-dev/violinist-config": "^1.3",
         "violinist-dev/commit-message-creator": "^1.2",
         "violinist-dev/allow-list-handler": "^1.0"
     },

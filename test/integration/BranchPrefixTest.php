@@ -28,4 +28,13 @@ class BranchPrefixTest extends ComposerUpdateIntegrationBase
         $this->runtestExpectedOutput();
         self::assertEquals('my_prefixpsrlog100114', $this->prParams["head"]);
     }
+
+    public function testBranchPrefixUsedNotLatest()
+    {
+        // Set latest version to be newer than the updated version
+        $this->packageVersionForToUpdateOutput = '1.2.4';
+        $this->setUp();
+        $this->runtestExpectedOutput();
+        self::assertEquals('my_prefixpsrlog100114', $this->prParams["head"]);
+    }
 }

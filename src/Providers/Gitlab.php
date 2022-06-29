@@ -77,10 +77,12 @@ class Gitlab implements ProviderInterface
         $pager = new ResultPager($this->client);
         $api = $this->client->api('mr');
         $method = 'all';
-        $prs = $pager->fetchAll($api, $method, [self::getProjectId($slug->getUrl())]);
+        $prs = $pager->fetchAll($api, $method, [self::getProjectId($slug->getUrl()), [
+            'state' => 'opened',
+        ]]);
         $prs_named = [];
         foreach ($prs as $pr) {
-            if ($pr['state'] != 'opened') {
+            if ($pr['state'] !== 'opened') {
                 continue;
             }
             // Now get the last commits for this branch.
@@ -90,6 +92,7 @@ class Gitlab implements ProviderInterface
             $prs_named[$pr['source_branch']] = [
                 'title' => $pr['title'],
                 'body' => !empty($pr['description']) ? $pr['description'] : '',
+                'html_url' => !empty($pr['web_url']) ? $pr['web_url'] : '',
                 'number' => $pr["iid"],
                 'base' => [
                     'sha' => !empty($commits[1]["id"]) ? $commits[1]["id"] : $pr['sha'],
@@ -153,5 +156,32 @@ class Gitlab implements ProviderInterface
     {
         $url = parse_url($url);
         return ltrim($url['path'], '/');
+    }
+
+    public function enableAutomerge(array $pr_data, Slug $slug) : bool
+    {
+        if (empty($pr_data['number']) && !empty($pr_data["iid"])) {
+            $pr_data['number'] = $pr_data["iid"];
+        }
+        $data = [
+            'merge_when_pipeline_succeeds' => true,
+        ];
+        $project_id = self::getProjectId($slug->getUrl());
+        $retries = 0;
+        while (true) {
+            try {
+                $result = $this->client->mergeRequests()->merge($project_id, $pr_data["number"], $data);
+                if (!empty($result["merge_when_pipeline_succeeds"])) {
+                    return true;
+                }
+            } catch (\Throwable $e) {
+            }
+            $retries++;
+            if ($retries > 10) {
+                return false;
+            }
+            usleep($retries * 100);
+        }
+        return true;
     }
 }

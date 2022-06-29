@@ -182,6 +182,11 @@ class Bitbucket implements ProviderInterface
 
     public function closePullRequestWithComment(Slug $slug, $pr_id, $comment)
     {
-        // TODO: Implement closePullRequestWithComment() method.
+        $this->client->repositories()->users($slug->getUserName())->pullRequests($slug->getUserRepo())->comments($pr_id)->create([
+            'content' => [
+                'raw' => $comment,
+            ]
+        ]);
+        $this->client->repositories()->users($slug->getUserName())->pullRequests($slug->getUserRepo())->decline($pr_id);
     }
 }

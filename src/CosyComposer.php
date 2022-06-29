@@ -545,6 +545,7 @@ class CosyComposer
         $branch_name_prefix = $this->createBranchName($fake_item, false, $config);
         foreach ($prs_named as $branch_name => $pr) {
             if ($pr["number"] == $pr_id) {
+                // We really don't want to close the one we are considering as the latest one, do we?
                 continue;
             }
             // We are just going to assume, if the number of the PR does not match. And the branch name does
@@ -557,7 +558,9 @@ class CosyComposer
                 continue;
             }
             $comment = $this->messageFactory->getPullRequestClosedMessage($pr_id);
-            $this->getPrClient()->closePullRequestWithComment($this->slug, $pr["number"], $comment);
+            $pr_number = $pr['number'];
+            $this->getLogger()->log('info', new Message("Trying to close PR number $pr_number since it has been superseded by $pr_id"));
+            $this->getPrClient()->closePullRequestWithComment($this->slug, $pr_number, $comment);
         }
     }
 

@@ -895,6 +895,7 @@ a custom message
         $mock_provider->expects($this->once())
             ->method('createPullRequest')
             ->willReturn([
+                'number' => 123,
                 'html_url' => $fake_pr_url,
             ]);
         $mock_provider->method('repoIsPrivate')

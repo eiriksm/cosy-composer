@@ -560,7 +560,12 @@ class CosyComposer
             $comment = $this->messageFactory->getPullRequestClosedMessage($pr_id);
             $pr_number = $pr['number'];
             $this->getLogger()->log('info', new Message("Trying to close PR number $pr_number since it has been superseded by $pr_id"));
-            $this->getPrClient()->closePullRequestWithComment($this->slug, $pr_number, $comment);
+            try {
+                $this->getPrClient()->closePullRequestWithComment($this->slug, $pr_number, $comment);
+            } catch (\Throwable $e) {
+                $msg = $e->getMessage();
+                $this->getLogger()->log('error', new Message("Caught an exception trying to close pr $pr_number. The message was '$msg'"));
+            }
         }
     }
 

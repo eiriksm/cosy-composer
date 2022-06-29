@@ -165,6 +165,11 @@ class Github implements ProviderInterface
 
     public function closePullRequestWithComment(Slug $slug, $pr_id, $comment)
     {
-        // TODO: Implement closePullRequestWithComment() method.
+        $this->client->issue()->comments()->create($slug->getUserName(), $slug->getUserRepo(), $pr_id, [
+            'body' => $comment,
+        ]);
+        $this->client->api('pull_request')->update($slug->getUserName(), $slug->getUserRepo(), $pr_id, [
+            'state' => 'closed',
+        ]);
     }
 }

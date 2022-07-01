@@ -1520,7 +1520,9 @@ class CosyComposer
                         'package' => $package_name,
                     ]);
                     $this->handleAutomerge($config, $pullRequest, $security_update);
-                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named);
+                    if (!empty($pullRequest['number'])) {
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named);
+                    }
                 }
                 $total_prs++;
             } catch (CanNotUpdateException $e) {

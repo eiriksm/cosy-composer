@@ -947,10 +947,7 @@ class CosyComposer
         if (!empty($composer_json_data->extra) && !empty($composer_json_data->extra->violinist)) {
             $violinist_config = $composer_json_data->extra->violinist;
         }
-        $one_pr_per_dependency = false;
-        if (!empty($violinist_config->one_pull_request_per_package)) {
-            $one_pr_per_dependency = (bool) $violinist_config->one_pull_request_per_package;
-        }
+        $one_pr_per_dependency = $config->shouldUseOnePullRequestPerPackage();
         foreach ($data as $delta => $item) {
             $branch_name = $this->createBranchName($item, $one_pr_per_dependency, $config);
             if (in_array($branch_name, $branches_flattened)) {

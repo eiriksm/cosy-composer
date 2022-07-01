@@ -943,10 +943,6 @@ class CosyComposer
             // Safe to ignore.
             $this->log('Had a runtime exception with the fetching of branches and Prs: ' . $e->getMessage());
         }
-        $violinist_config = (object) [];
-        if (!empty($composer_json_data->extra) && !empty($composer_json_data->extra->violinist)) {
-            $violinist_config = $composer_json_data->extra->violinist;
-        }
         $one_pr_per_dependency = $config->shouldUseOnePullRequestPerPackage();
         foreach ($data as $delta => $item) {
             $branch_name = $this->createBranchName($item, $one_pr_per_dependency, $config);

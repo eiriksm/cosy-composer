@@ -17,18 +17,19 @@ use Violinist\Slug\Slug;
 /**
  * Test that we are closing PRs not the latest and greatest.
  */
-class CloseOutdatedSkipExistingTest extends CloseOutdatedBase
+class CloseOutdatedSkipExistingUnexpectedBranchTest extends CloseOutdatedBase
 {
     protected $packageForUpdateOutput = 'psr/log';
     protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
+    protected $packageVersionForToUpdateOutput = '1.1.5';
     protected $composerAssetFiles = 'composer.close.outdated';
     protected $expectedClosedPrs = [123, 124, 125];
 
     public function testOutdatedClosed()
     {
         parent::testOutdatedClosed();
-        self::assertNotEmpty($this->findMessage('No updates that have not already been pushed.', $this->cosy));
+        self::assertNotEmpty($this->findMessage('Changing branch because of an unexpected update result. We expected the branch name to be psrlog100115 but instead we are now switching to psrlog100114.', $this->cosy));
+        self::assertNotEmpty($this->findMessage('Skipping psr/log because a pull request already exists', $this->cosy));
     }
 
     public function testOutdatedNoDefaultBase()
@@ -53,6 +54,10 @@ class CloseOutdatedSkipExistingTest extends CloseOutdatedBase
             ],
             'psrlog100112' => [
                 'number' => 124,
+                'title' => 'Test update',
+            ],
+            'psrcache100112' => [
+                'number' => 224,
                 'title' => 'Test update',
             ],
             'psrlog100111' => [

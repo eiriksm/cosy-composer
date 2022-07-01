@@ -1458,7 +1458,7 @@ class CosyComposer
                         $post_update_data->version,
                         $config
                     );
-                    $this->log('Changing branch because of an unexpected update result: ' . $branch_name);
+                    $this->log(sprintf('Changing branch because of an unexpected update result. We expected the branch name to be %s but instead we are now switching to %s.', $branch_name, $new_branch_name));
                     $this->execCommand('git checkout -b ' . $new_branch_name, false);
                     $branch_name = $new_branch_name;
                     // Check if this new branch name has a pr up-to-date.

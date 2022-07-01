@@ -67,6 +67,7 @@ abstract class ComposerUpdateIntegrationBase extends Base
     {
         $this->prParams = $params;
         return [
+            'number' => 456,
             'html_url' => $this->fakePrUrl,
         ];
     }

@@ -12,6 +12,7 @@ use eiriksm\CosyComposer\Providers\Github;
 use eiriksm\CosyComposerTest\integration\Base;
 use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
 use Github\Exception\ValidationFailedException;
+use Gitlab\Exception\RuntimeException;
 use Violinist\Slug\Slug;
 
 /**
@@ -24,6 +25,7 @@ class CloseOutdatedUpdateBranchTest extends CloseOutdatedBase
     protected $packageVersionForToUpdateOutput = '1.1.4';
     protected $composerAssetFiles = 'composer.close.outdated';
     protected $expectedClosedPrs = [123, 124, 125];
+    private $exceptionClass = ValidationFailedException::class;
 
     public function setUp()
     {
@@ -34,9 +36,15 @@ class CloseOutdatedUpdateBranchTest extends CloseOutdatedBase
             });
     }
 
+    public function testGitlabUpdateBranch()
+    {
+        $this->exceptionClass = RuntimeException::class;
+        $this->testOutdatedClosed();
+    }
+
     protected function createPullRequest(Slug $slug, array $params)
     {
-        throw new ValidationFailedException('for real');
+        throw new $this->exceptionClass('for real');
     }
 
     protected function getPrsNamed()

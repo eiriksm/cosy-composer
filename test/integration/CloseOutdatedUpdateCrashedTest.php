@@ -19,6 +19,7 @@ use Violinist\Slug\Slug;
  */
 class CloseOutdatedUpdateCrashedTest extends CloseOutdatedTest
 {
+    protected $checkPrUrl = false;
     protected $expectedClosedPrs = [];
 
     protected function placeUpdatedComposerLock()

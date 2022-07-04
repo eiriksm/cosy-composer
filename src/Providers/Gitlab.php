@@ -136,6 +136,9 @@ class Gitlab implements ProviderInterface
         if (!empty($data['web_url'])) {
             $data['html_url'] = $data['web_url'];
         }
+        if (!empty($data['iid'])) {
+            $data['number'] = $data['iid'];
+        }
         // Try to update with assignees.
         if (!empty($params['assignees'])) {
             $new_data = [

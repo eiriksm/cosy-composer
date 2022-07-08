@@ -8,7 +8,7 @@ class IndirectWithDirectFilterListItem
     private $reason = [];
     private $latestVersion = '';
 
-    public function __construct($package_name, $indirect_list, $latest_version) 
+    public function __construct($package_name, $indirect_list, $latest_version)
     {
         $this->name = $package_name;
         $this->reason = $indirect_list;

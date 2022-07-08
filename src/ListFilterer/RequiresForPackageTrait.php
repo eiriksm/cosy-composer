@@ -6,9 +6,16 @@ trait RequiresForPackageTrait
 {
     private $scannedCache = [];
 
-    protected function findRequiresForPackage($package_obj)
+    protected function findRequiresForPackage($package_obj, $initial_package = null)
     {
         $package_name = mb_strtolower($package_obj->name);
+        $key = $package_name;
+        if (!empty($initial_package)) {
+            $key = $initial_package;
+        }
+        if (empty($this->scannedCache[$key])) {
+            $this->scannedCache[$key] = [];
+        }
         // Loop over all packages, and see if any of the hits actually are required as top level require or require-dev.
         $types = [
             'packages',
@@ -37,17 +44,17 @@ trait RequiresForPackageTrait
                         }
                         // Now see if this is in fact a direct dependency itself.
                         $candidate = mb_strtolower($package->name);
-                        if (in_array($candidate, $this->scannedCache)) {
+                        if (in_array($candidate, $this->scannedCache[$key])) {
                             continue;
                         }
-                        $this->scannedCache[] = $candidate;
+                        $this->scannedCache[$key][] = $candidate;
 
                         if ($this->isInComposerJson($candidate)) {
                             $requires[] = (object) [
                                 'name' => $candidate,
                             ];
                         } else {
-                            $requires = array_merge($requires, $this->findRequiresForPackage($package));
+                            $requires = array_merge($requires, $this->findRequiresForPackage($package, $initial_package));
                         }
                     }
                 }

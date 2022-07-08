@@ -39,7 +39,7 @@ class IndirectWithDirectFilterer implements FilterInterface
         $new_list = [];
         foreach ($list as $value) {
             // Find the reason we have this.
-            $list_additions = $this->findRequiresForPackage($value);
+            $list_additions = $this->findRequiresForPackage($value, $value->name);
             $item = new IndirectWithDirectFilterListItem($value->name, $list_additions, $value->latest);
             $new_list[] = $item;
         }

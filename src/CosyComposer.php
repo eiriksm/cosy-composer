@@ -1500,9 +1500,14 @@ class CosyComposer
                 // restriction itself.
                 $why_not_name = $item->name;
                 $why_not_version = $item->latest;
+                $not_updated_context = [
+                    'package' => $why_not_name,
+                ];
                 if (!empty($item->child_latest) && !empty($item->child_with_update)) {
                     $why_not_name = $item->child_with_update;
                     $why_not_version = $item->child_latest;
+                    $not_updated_context['package'] = $why_not_name;
+                    $not_updated_context['parent_package'] = $item->name;
                 }
                 $command = sprintf('composer why-not %s "%s"', $why_not_name, $why_not_version);
                 $this->execCommand(sprintf('%s', $command), false);
@@ -1516,9 +1521,7 @@ class CosyComposer
                     'package' => $why_not_name,
                     'type' => 'stdout',
                 ]);
-                $this->log("$package_name was not updated running composer update", Message::NOT_UPDATED, [
-                    'package' => $why_not_name,
-                ]);
+                $this->log("$package_name was not updated running composer update", Message::NOT_UPDATED, $not_updated_context);
             } catch (ValidationFailedException $e) {
                 // @todo: Do some better checking. Could be several things, this.
                 $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);

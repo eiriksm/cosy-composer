@@ -130,6 +130,6 @@ class UpdateIndirectActualProjectTest extends ComposerUpdateIntegrationBase
                 }
             }
         }
-        self::assertEquals(50, $total_found);
+        self::assertEquals(22, $total_found);
     }
 }

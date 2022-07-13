@@ -1393,6 +1393,10 @@ class CosyComposer
                 $updater->setRunScripts($config->shouldRunScripts());
                 if ($config->shouldUpdateIndirectWithDirect()) {
                     $updater->setShouldThrowOnUnupdated(false);
+                    if (!empty($item->child_with_update)) {
+                        $updater->setShouldThrowOnUnupdated(true);
+                        $updater->setPackageToCheckHasUpdated($item->child_with_update);
+                    }
                 }
                 if (!$lock_file_contents || ($should_update_beyond && $can_update_beyond)) {
                     $updater->executeRequire($version_to);
@@ -1494,21 +1498,30 @@ class CosyComposer
             } catch (NotUpdatedException $e) {
                 // Not updated because of the composer command, not the
                 // restriction itself.
-                $command = sprintf('composer why-not %s "%s"', $item->name, $item->latest);
+                $why_not_name = $original_name = $item->name;
+                $why_not_version = $item->latest;
+                $not_updated_context = [
+                    'package' => $why_not_name,
+                ];
+                if (!empty($item->child_latest) && !empty($item->child_with_update)) {
+                    $why_not_name = $item->child_with_update;
+                    $why_not_version = $item->child_latest;
+                    $not_updated_context['package'] = $why_not_name;
+                    $not_updated_context['parent_package'] = $original_name;
+                }
+                $command = sprintf('composer why-not %s "%s"', $why_not_name, $why_not_version);
                 $this->execCommand(sprintf('%s', $command), false);
                 $this->log($this->getLastStdErr(), Message::COMMAND, [
                     'command' => $command,
-                    'package' => $item->name,
+                    'package' => $why_not_name,
                     'type' => 'stderr',
                 ]);
                 $this->log($this->getLastStdOut(), Message::COMMAND, [
                     'command' => $command,
-                    'package' => $item->name,
+                    'package' => $why_not_name,
                     'type' => 'stdout',
                 ]);
-                $this->log("$package_name was not updated running composer update", Message::NOT_UPDATED, [
-                    'package' => $package_name,
-                ]);
+                $this->log("$package_name was not updated running composer update", Message::NOT_UPDATED, $not_updated_context);
             } catch (ValidationFailedException $e) {
                 // @todo: Do some better checking. Could be several things, this.
                 $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);

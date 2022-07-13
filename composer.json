@@ -36,7 +36,6 @@
         "psr-4": {"eiriksm\\CosyComposer\\": "src"}
     },
     "config": {
-        "php": "7.0",
         "sort-packages": true,
         "allow-plugins": {
             "cweagans/composer-patches": true

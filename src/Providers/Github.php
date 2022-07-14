@@ -45,12 +45,12 @@ class Github implements ProviderInterface
 
     public function authenticate($user, $token)
     {
-        $this->client->authenticate($user, null, Client::AUTH_HTTP_TOKEN);
+        $this->client->authenticate($user, null, Client::AUTH_ACCESS_TOKEN);
     }
 
     public function authenticatePrivate($user, $token)
     {
-        $this->client->authenticate($user, null, Client::AUTH_HTTP_TOKEN);
+        $this->client->authenticate($user, null, Client::AUTH_ACCESS_TOKEN);
     }
 
     public function repoIsPrivate(Slug $slug)

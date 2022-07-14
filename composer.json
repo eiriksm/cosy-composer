@@ -13,7 +13,7 @@
         "ext-json": "*",
         "composer/composer": "^1||^2",
         "violinist-dev/symfony-cloud-security-checker": "^1",
-        "knplabs/github-api": "^2.0 || ^3.0",
+        "knplabs/github-api": "^3.0",
         "guzzlehttp/guzzle": "^7.4",
         "http-interop/http-factory-guzzle": "^1.2",
         "php-http/guzzle7-adapter": "^1",

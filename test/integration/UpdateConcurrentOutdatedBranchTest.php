@@ -9,7 +9,7 @@ class UpdateConcurrentOutdatedBranchTest extends ComposerUpdateIntegrationBase
     protected $composerAssetFiles = 'composer.concurrent.update_branch';
     private $sha;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->sha = 123;

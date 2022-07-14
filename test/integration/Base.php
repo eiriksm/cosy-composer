@@ -17,6 +17,8 @@ abstract class Base extends TestCase
 {
     protected $usesDirect = true;
 
+    protected $defaultSha = 123;
+
     /**
      * @var CosyComposer
      */
@@ -68,15 +70,21 @@ abstract class Base extends TestCase
             ->willReturn('master');
         $mock_provider->method('getBranchesFlattened')
             ->willReturn([]);
-        $default_sha = 123;
         $mock_provider->method('getDefaultBase')
-            ->willReturn($default_sha);
+            ->willReturnCallback(function () {
+                return $this->getDefaultSha();
+            });
         $mock_provider->method('getPrsNamed')
             ->willReturn([]);
         $mock_provider_factory->method('createFromHost')
             ->willReturn($mock_provider);
         /** @var CosyComposer $c */
         $c->setProviderFactory($mock_provider_factory);
+    }
+
+    protected function getDefaultSha()
+    {
+        return $this->defaultSha;
     }
 
     protected function assertOutputContainsMessage($message, $c)
@@ -184,9 +192,10 @@ abstract class Base extends TestCase
             ->willReturnCallback(function () {
                 return $this->getBranchesFlattened();
             });
-        $default_sha = 123;
         $mock_provider->method('getDefaultBase')
-            ->willReturn($default_sha);
+            ->willReturnCallback(function () {
+                return $this->getDefaultSha();
+            });
         $mock_provider->method('getPrsNamed')
             ->willReturnCallback(function () {
                 return $this->getPrsNamed();

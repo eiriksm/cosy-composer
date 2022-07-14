@@ -112,6 +112,7 @@ class UpdatesTest extends Base
                     'base' => [
                         'sha' => $default_sha,
                     ],
+                    'number' => 123,
                     'title' => 'Update eiriksm/fake-package from 1.0.0 to 1.0.1',
                 ],
             ]);
@@ -894,6 +895,7 @@ a custom message
         $mock_provider->expects($this->once())
             ->method('createPullRequest')
             ->willReturn([
+                'number' => 123,
                 'html_url' => $fake_pr_url,
             ]);
         $mock_provider->method('repoIsPrivate')

@@ -103,6 +103,7 @@ class Bitbucket implements ProviderInterface
                 'base' => [
                     'sha' => $pr["destination"]["commit"]["hash"],
                 ],
+                'html_url' => $pr["links"]["html"]["href"],
                 'number' => $pr["id"],
                 'title' => $pr["title"],
             ];
@@ -160,6 +161,9 @@ class Bitbucket implements ProviderInterface
         if (!empty($data["links"]["html"]["href"])) {
             $data['html_url'] = $data["links"]["html"]["href"];
         }
+        if (!empty($data['id'])) {
+            $data['number'] = $data['id'];
+        }
         return $data;
     }
 
@@ -174,5 +178,15 @@ class Bitbucket implements ProviderInterface
     {
         // @todo: Not implemented yet.
         return false;
+    }
+
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment)
+    {
+        $this->client->repositories()->users($slug->getUserName())->pullRequests($slug->getUserRepo())->comments($pr_id)->create([
+            'content' => [
+                'raw' => $comment,
+            ]
+        ]);
+        $this->client->repositories()->users($slug->getUserName())->pullRequests($slug->getUserRepo())->decline($pr_id);
     }
 }

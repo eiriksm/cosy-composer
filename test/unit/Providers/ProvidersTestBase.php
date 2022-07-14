@@ -106,8 +106,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                 $mock_history = $this->createMock(History::class);
                 $mock_history->method('getLastResponse')
                     ->willReturn($mock_response);
-                $mock_client->expects($this->once())
-                    ->method('getResponseHistory')
+                $mock_client->method('getResponseHistory')
                     ->willReturn($mock_history);
                 break;
 
@@ -190,11 +189,9 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
             case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:
                 $mock_history = $this->createMock(History::class);
-                $mock_history->expects($this->once())
-                    ->method('getLastResponse')
+                $mock_history->method('getLastResponse')
                     ->willReturn($mock_response);
-                $mock_client->expects($this->once())
-                    ->method('getResponseHistory')
+                $mock_client->method('getResponseHistory')
                     ->willReturn($mock_history);
                 break;
 

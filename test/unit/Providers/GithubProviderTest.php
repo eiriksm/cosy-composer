@@ -15,11 +15,11 @@ class GithubProviderTest extends ProvidersTestBase
     protected $repoClass = Repo::class;
 
     protected $authenticateArguments = [
-        'testUser', null, Client::AUTH_HTTP_TOKEN,
+        'testUser', null, Client::AUTH_ACCESS_TOKEN,
     ];
 
     protected $authenticatePrivateArguments = [
-        'testUser', null, Client::AUTH_HTTP_TOKEN
+        'testUser', null, Client::AUTH_ACCESS_TOKEN
     ];
 
     public function testRepoIsPrivate()

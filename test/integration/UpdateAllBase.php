@@ -16,7 +16,7 @@ abstract class UpdateAllBase extends Base
     protected $branchName = 'violinistall';
     protected $usesDirect = false;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->createComposerFileFromFixtures($this->dir, $this->composerJson);

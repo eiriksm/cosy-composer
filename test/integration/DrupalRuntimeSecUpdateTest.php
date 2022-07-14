@@ -9,7 +9,7 @@ use Violinist\Slug\Slug;
 class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
 {
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->cosy->setHttpClient(new Client());

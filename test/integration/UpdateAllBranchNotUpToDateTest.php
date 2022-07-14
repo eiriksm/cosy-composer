@@ -12,11 +12,6 @@ class UpdateAllBranchNotUpToDateTest extends UpdateAllBase
     protected $changeBody = false;
     protected $changeSha = false;
 
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
     public function testUpdateAllNotUpToDateTitle()
     {
         $this->changeTitle = true;

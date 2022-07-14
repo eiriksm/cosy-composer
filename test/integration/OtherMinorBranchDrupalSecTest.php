@@ -8,7 +8,7 @@ use Http\Client\HttpClient;
 class OtherMinorBranchDrupalSecTest extends DrupalRuntimeSecUpdateTest
 {
 
-    public function setUp()
+    public function setUp() : void
     {
         // We want to switch the http client so we can return the cached XML we know from a specific date.
         parent::setUp();

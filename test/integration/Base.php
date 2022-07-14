@@ -35,7 +35,7 @@ abstract class Base extends TestCase
 
     protected $automergeEnabled = false;
 
-    public function setUp()
+    public function setUp() : void
     {
         $c = $this->getMockCosy();
         $dir = '/tmp/' . uniqid();

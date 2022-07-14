@@ -20,7 +20,7 @@ class AutomergeSecurityUpdateTest extends AutoMergeBase
     protected $hasAutoMerge = true;
     protected $checkPrUrl = true;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $checker = $this->createMock(SecurityChecker::class);

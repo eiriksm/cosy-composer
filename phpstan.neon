@@ -3,5 +3,5 @@ parameters:
     excludePaths:
         - %rootDir%/../../../src/ProviderFactory.php
         - %rootDir%/../../../src/Providers/Bitbucket.php
-    includes:
+includes:
     - vendor/phpstan/phpstan-phpunit/extension.neon

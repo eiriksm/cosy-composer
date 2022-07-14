@@ -23,7 +23,7 @@ class ConfigBranchTest extends ComposerUpdateIntegrationBase
     protected $packageVersionForToUpdateOutput = '1.1.4';
     protected $composerAssetFiles = 'empty';
 
-    public function tearDown()
+    public function tearDown() : void
     {
         parent::tearDown();
         putenv('config_branch');

@@ -1310,6 +1310,7 @@ class CosyComposer
     protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $total_prs)
     {
         $config = Config::createFromComposerData($cdata);
+        $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
         foreach ($data as $item) {
             if ($max_number_of_prs && $total_prs >= $max_number_of_prs) {
@@ -1352,18 +1353,12 @@ class CosyComposer
                         $req_item = $cdata->{'require'}->{$package_name_in_composer_json};
                     }
                 }
-                $can_update_beyond = true;
                 $should_update_beyond = false;
                 // See if the new version seems to satisfy the constraint. Unless the constraint is dev related somehow.
                 try {
                     if (strpos((string) $req_item, 'dev') === false && !Semver::satisfies($version_to, (string)$req_item)) {
                         // Well, unless we have actually disallowed this through config.
-                        // @todo: Move to somewhere more central (and certainly outside a loop), and probably together
-                        // with other config.
                         $should_update_beyond = true;
-                        if (!empty($cdata->extra) && !empty($cdata->extra->violinist) && isset($cdata->extra->violinist->allow_updates_beyond_constraint)) {
-                            $can_update_beyond = (bool) $cdata->extra->violinist->allow_updates_beyond_constraint;
-                        }
                         if (!$can_update_beyond) {
                             throw new CanNotUpdateException(sprintf('Package %s with the constraint %s can not be updated to %s.', $package_name, $req_item, $version_to));
                         }

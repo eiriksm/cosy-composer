@@ -3,6 +3,7 @@
 namespace eiriksm\CosyComposer;
 
 use Composer\Console\Application;
+use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
 use eiriksm\ArrayOutput\ArrayOutput;
 use eiriksm\CosyComposer\Exceptions\CanNotUpdateException;
@@ -1463,6 +1464,10 @@ class CosyComposer
                         $post_update_data->version,
                         $config
                     );
+                    $is_an_actual_upgrade = Comparator::greaterThan($post_update_data->version, $item->version);
+                    if (!$is_an_actual_upgrade) {
+                        throw new NotUpdatedException('The new version is lower than the installed version');
+                    }
                     $this->log(sprintf('Changing branch because of an unexpected update result. We expected the branch name to be %s but instead we are now switching to %s.', $branch_name, $new_branch_name));
                     $this->execCommand('git checkout -b ' . $new_branch_name, false);
                     $branch_name = $new_branch_name;

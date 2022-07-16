@@ -1465,7 +1465,9 @@ class CosyComposer
                         $config
                     );
                     $is_an_actual_upgrade = Comparator::greaterThan($post_update_data->version, $item->version);
-                    if (!$is_an_actual_upgrade) {
+                    $old_item_is_branch = strpos($item->version, 'dev-') === 0;
+                    $new_item_is_branch = strpos($post_update_data->version, 'dev-') === 0;
+                    if (!$old_item_is_branch && !$new_item_is_branch && !$is_an_actual_upgrade) {
                         throw new NotUpdatedException('The new version is lower than the installed version');
                     }
                     $this->log(sprintf('Changing branch because of an unexpected update result. We expected the branch name to be %s but instead we are now switching to %s.', $branch_name, $new_branch_name));

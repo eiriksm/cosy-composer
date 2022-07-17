@@ -32,7 +32,7 @@ class Gitlab implements ProviderInterface
 
     public function authenticatePersonalAccessToken($user, $token)
     {
-        $this->client->authenticate($user, Client::AUTH_URL_TOKEN);
+        $this->client->authenticate($user, Client::AUTH_OAUTH_TOKEN);
     }
 
     public function repoIsPrivate(Slug $slug)
@@ -131,8 +131,9 @@ class Gitlab implements ProviderInterface
     {
         /** @var MergeRequests $mr */
         $mr = $this->client->mergeRequests();
-        $assignee = null;
-        $data = $mr->create(self::getProjectId($slug->getUrl()), $params['head'], $params['base'], $params['title'], $assignee, null, $params['body']);
+        $data = $mr->create(self::getProjectId($slug->getUrl()), $params['head'], $params['base'], $params['title'], [
+            'description' => $params['body']
+        ]);
         if (!empty($data['web_url'])) {
             $data['html_url'] = $data['web_url'];
         }

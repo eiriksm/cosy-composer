@@ -131,7 +131,7 @@ class Bitbucket implements ProviderInterface
 
     public function createFork($user, $repo, $fork_user)
     {
-        throw new \Exception('Gitlab integration only support creating PRs as the authenticated user.');
+        throw new \Exception('Bitbucket integration only support creating PRs as the authenticated user.');
     }
 
     public function createPullRequest(Slug $slug, $params)
@@ -178,7 +178,7 @@ class Bitbucket implements ProviderInterface
     {
         $user_name = $slug->getUserName();
         $user_repo = $slug->getUserRepo();
-        return $this->client->repositories()->users($user_name)->pullRequests($user_repo)->update($id, $params);
+        return $this->client->repositories()->workspaces($user_name)->pullRequests($user_repo)->update($id, $params);
     }
 
     public function enableAutomerge(array $pr_data, Slug $slug) : bool
@@ -189,11 +189,11 @@ class Bitbucket implements ProviderInterface
 
     public function closePullRequestWithComment(Slug $slug, $pr_id, $comment)
     {
-        $this->client->repositories()->users($slug->getUserName())->pullRequests($slug->getUserRepo())->comments($pr_id)->create([
+        $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->comments($pr_id)->create([
             'content' => [
                 'raw' => $comment,
             ]
         ]);
-        $this->client->repositories()->users($slug->getUserName())->pullRequests($slug->getUserRepo())->decline($pr_id);
+        $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->decline($pr_id);
     }
 }

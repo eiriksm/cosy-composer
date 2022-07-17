@@ -285,7 +285,7 @@ class CosyComposer
     public function getHttpClient()
     {
         if (!$this->httpClient) {
-            $this->httpClient = new \Http\Adapter\Guzzle6\Client();
+            $this->httpClient = new \Http\Adapter\Guzzle7\Client();
         }
         return $this->httpClient;
     }

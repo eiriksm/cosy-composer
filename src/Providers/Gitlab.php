@@ -161,7 +161,7 @@ class Gitlab implements ProviderInterface
             'target_project_id' => null,
             'description' => $params['body'],
         ];
-        return $this->client->api('mr')->update(self::getProjectId($slug->getUrl()), $id, $gitlab_params);
+        return $this->client->mergeRequests()->update(self::getProjectId($slug->getUrl()), $id, $gitlab_params);
     }
 
     public static function getProjectId($url)

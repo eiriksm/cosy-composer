@@ -6,7 +6,7 @@ use Github\Exception\ValidationFailedException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\ServerRequest;
 use Violinist\Slug\Slug;
-use function GuzzleHttp\Psr7\stream_for;
+use GuzzleHttp\Psr7\Utils;
 use Http\Adapter\Guzzle7\Client;
 use Http\Client\Common\Plugin\CookiePlugin;
 use Http\Client\Common\PluginClient;
@@ -145,7 +145,7 @@ class PublicGithubWrapper extends Github
             'Content-type' => 'application/json',
             'Accept' => 'application/json',
         ]);
-        $request = $request->withBody(stream_for(json_encode($data)));
+        $request = $request->withBody(Utils::streamFor(json_encode($data)));
         return $request;
     }
 
@@ -186,7 +186,7 @@ class PublicGithubWrapper extends Github
             'Content-type' => 'application/json',
             'Accept' => 'application/json',
         ]);
-        $request = $request->withBody(stream_for(json_encode($data)));
+        $request = $request->withBody(Utils::streamFor(json_encode($data)));
         $client->sendRequest($request);
     }
 

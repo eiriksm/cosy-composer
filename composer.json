@@ -29,7 +29,7 @@
         "violinist-dev/composer-updater": "dev-master",
         "violinist-dev/process-factory": "^1.0",
         "symfony/process": "^3",
-        "bitbucket/client": "^2||^3",
+        "bitbucket/client": "^3",
         "violinist-dev/composer-changelog-fetcher": "^1.0",
         "violinist-dev/violinist-config": "^1.3",
         "violinist-dev/commit-message-creator": "^1.2",

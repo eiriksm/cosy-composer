@@ -37,9 +37,14 @@ class Bitbucket implements ProviderInterface
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
         if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->client->repositories()->users($user)->show($repo);
+            $this->cache['repo'] = $this->getRepo($user, $repo);
         }
         return (bool) $this->cache["repo"]["is_private"];
+    }
+
+    protected function getRepo($user, $repo)
+    {
+        return $this->client->repositories()->workspaces($user)->show($repo);
     }
 
     public function getDefaultBranch(Slug $slug)
@@ -47,7 +52,7 @@ class Bitbucket implements ProviderInterface
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
         if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->client->repositories()->users($user)->show($repo);
+            $this->cache['repo'] = $this->getRepo($user, $repo);
         }
         if (empty($this->cache["repo"]["mainbranch"]["name"])) {
             throw new \Exception('No default branch found');
@@ -59,8 +64,7 @@ class Bitbucket implements ProviderInterface
     {
         if (!isset($this->cache['branches'])) {
             $paginator = new ResultPager($this->client);
-            $repo_users = $this->client->repositories()->users($user);
-            $repo_users->setPerPage(1000);
+            $repo_users = $this->client->repositories()->workspaces($user);
             $branch_client = $repo_users->refs($repo)->branches();
 
             $this->cache['branches'] = [
@@ -87,9 +91,8 @@ class Bitbucket implements ProviderInterface
     {
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
-        $repo_users = $this->client->repositories()->users($user);
-        $repo_users->setPerPage(1000);
-        $prs_client = $repo_users->pullRequests($repo);
+        $api_repo = $this->client->repositories();
+        $prs_client = $api_repo->workspaces($user)->pullRequests($repo);
         $paginator = new ResultPager($this->client);
         $prs = [
             'values' => $paginator->fetchAll($prs_client, 'list'),
@@ -157,7 +160,11 @@ class Bitbucket implements ProviderInterface
                 ];
             }
         }
-        $data = $this->client->repositories()->users($user_name)->pullRequests($user_repo)->create($bitbucket_params);
+        $data = $this->client
+            ->repositories()
+            ->workspaces($user_name)
+            ->pullRequests($user_repo)
+            ->create($bitbucket_params);
         if (!empty($data["links"]["html"]["href"])) {
             $data['html_url'] = $data["links"]["html"]["href"];
         }

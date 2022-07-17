@@ -87,6 +87,8 @@ class GithubProviderTest extends ProvidersTestBase
             ->with('repo')
             ->willReturn($mock_repo_api);
         $mock_response = $this->createMock(ResponseInterface::class);
+        $mock_response->method('getHeader')
+            ->willReturn([]);
         $mock_client->expects($this->once())
             ->method('getLastResponse')
             ->willReturn($mock_response);

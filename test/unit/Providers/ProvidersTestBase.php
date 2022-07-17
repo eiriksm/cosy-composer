@@ -110,6 +110,8 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
             ]);
 
         $mock_response = $this->createMock(ResponseInterface::class);
+        $mock_response->method('getHeader')
+            ->willReturn([]);
         switch (static::class) {
             case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:
@@ -199,6 +201,8 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                 break;
         }
         $mock_response = $this->createMock(ResponseInterface::class);
+        $mock_response->method('getHeader')
+            ->willReturn([]);
         switch (static::class) {
             case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:

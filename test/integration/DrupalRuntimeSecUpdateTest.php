@@ -3,7 +3,7 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 use eiriksm\ArrayOutput\ArrayOutput;
-use Http\Adapter\Guzzle6\Client;
+use Http\Adapter\Guzzle7\Client;
 use Violinist\Slug\Slug;
 
 class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase

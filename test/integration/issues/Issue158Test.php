@@ -8,7 +8,6 @@ use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\Providers\Bitbucket;
-use eiriksm\CosyComposer\Providers\Github;
 use eiriksm\CosyComposerTest\integration\Base;
 
 /**
@@ -19,7 +18,7 @@ use eiriksm\CosyComposerTest\integration\Base;
  */
 class Issue158Test extends Base
 {
-    public function testIssue98()
+    public function testIssue158()
     {
         if (version_compare(phpversion(), "7.1.0", "<=")) {
             $this->assertTrue(true, 'Skipping bitbucket test for version ' . phpversion());
@@ -45,13 +44,12 @@ class Issue158Test extends Base
         $mock_client = $this->createMock(Client::class);
         $provider = new Bitbucket($mock_client);
         $mock_repo = $this->createMock(Repositories::class);
-        $mock_users = $this->createMock(Repositories\Users::class);
-        $mock_prs = $this->createMock(Repositories\Users\PullRequests::class);
-        $mock_users->method('pullRequests')
-            ->willReturn($mock_prs);
-        $mock_refs = $this->createMock(Repositories\Users\Refs::class);
-        $mock_branches = $this->createMock(Repositories\Users\Refs\Branches::class);
+        $mock_prs = $this->createMock(Repositories\Workspaces\PullRequests::class);
+        $mock_refs = $this->createMock(Repositories\Workspaces\Refs::class);
+        $mock_branches = $this->createMock(Repositories\Workspaces\Refs\Branches::class);
         $mock_refs->method('branches')
+            ->willReturn($mock_branches);
+        $mock_branches->method('perPage')
             ->willReturn($mock_branches);
         $mock_branches->method('list')
             ->willReturn([
@@ -64,9 +62,16 @@ class Issue158Test extends Base
                     ],
                 ],
             ]);
-        $mock_users->method('refs')
+        $mock_workspaces = $this->createMock(Repositories\Workspaces::class);
+        $mock_workspaces->method('pullRequests')
+            ->willReturn($mock_prs);
+        $mock_prs->method('perPage')
+            ->willReturn($mock_prs);
+        $mock_repo->method('workspaces')
+            ->willReturn($mock_workspaces);
+        $mock_workspaces->method('refs')
             ->willReturn($mock_refs);
-        $mock_users->method('show')
+        $mock_workspaces->method('show')
             ->willReturn([
                 'is_private' => true,
                 'mainbranch' => [
@@ -84,8 +89,6 @@ class Issue158Test extends Base
                     $correct_params = true;
                 }
             });
-        $mock_repo->method('users')
-            ->willReturn($mock_users);
         $mock_client->method('repositories')
             ->willReturn($mock_repo);
         $mock_provider_factory->method('createFromHost')

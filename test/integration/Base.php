@@ -102,7 +102,7 @@ abstract class Base extends TestCase
     {
         foreach ($c->getOutput() as $output_message) {
             try {
-                $this->assertContains($message, $output_message->getMessage());
+                $this->assertStringContainsString($message, $output_message->getMessage());
                 return $output_message;
             } catch (\Exception $e) {
                 continue;

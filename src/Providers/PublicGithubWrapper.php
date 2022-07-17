@@ -7,7 +7,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\ServerRequest;
 use Violinist\Slug\Slug;
 use function GuzzleHttp\Psr7\stream_for;
-use Http\Adapter\Guzzle6\Client;
+use Http\Adapter\Guzzle7\Client;
 use Http\Client\Common\Plugin\CookiePlugin;
 use Http\Client\Common\PluginClient;
 use Http\Discovery\HttpClientDiscovery;

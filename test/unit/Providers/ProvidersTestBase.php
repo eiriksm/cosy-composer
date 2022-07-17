@@ -116,6 +116,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
             case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:
                 $mock_history = (new class {
+                    private $response;
                     public function getLastResponse()
                     {
                         return $this->response;
@@ -207,6 +208,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
             case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:
                 $mock_history = (new class {
+                    private $response;
                     public function getLastResponse()
                     {
                         return $this->response;

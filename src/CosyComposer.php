@@ -3,6 +3,7 @@
 namespace eiriksm\CosyComposer;
 
 use Composer\Console\Application;
+use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
 use eiriksm\ArrayOutput\ArrayOutput;
 use eiriksm\CosyComposer\Exceptions\CanNotUpdateException;
@@ -1310,6 +1311,7 @@ class CosyComposer
     protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $total_prs)
     {
         $config = Config::createFromComposerData($cdata);
+        $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
         foreach ($data as $item) {
             if ($max_number_of_prs && $total_prs >= $max_number_of_prs) {
@@ -1352,18 +1354,12 @@ class CosyComposer
                         $req_item = $cdata->{'require'}->{$package_name_in_composer_json};
                     }
                 }
-                $can_update_beyond = true;
                 $should_update_beyond = false;
                 // See if the new version seems to satisfy the constraint. Unless the constraint is dev related somehow.
                 try {
                     if (strpos((string) $req_item, 'dev') === false && !Semver::satisfies($version_to, (string)$req_item)) {
                         // Well, unless we have actually disallowed this through config.
-                        // @todo: Move to somewhere more central (and certainly outside a loop), and probably together
-                        // with other config.
                         $should_update_beyond = true;
-                        if (!empty($cdata->extra) && !empty($cdata->extra->violinist) && isset($cdata->extra->violinist->allow_updates_beyond_constraint)) {
-                            $can_update_beyond = (bool) $cdata->extra->violinist->allow_updates_beyond_constraint;
-                        }
                         if (!$can_update_beyond) {
                             throw new CanNotUpdateException(sprintf('Package %s with the constraint %s can not be updated to %s.', $package_name, $req_item, $version_to));
                         }
@@ -1463,6 +1459,12 @@ class CosyComposer
                         $post_update_data->version,
                         $config
                     );
+                    $is_an_actual_upgrade = Comparator::greaterThan($post_update_data->version, $item->version);
+                    $old_item_is_branch = strpos($item->version, 'dev-') === 0;
+                    $new_item_is_branch = strpos($post_update_data->version, 'dev-') === 0;
+                    if (!$old_item_is_branch && !$new_item_is_branch && !$is_an_actual_upgrade) {
+                        throw new NotUpdatedException('The new version is lower than the installed version');
+                    }
                     $this->log(sprintf('Changing branch because of an unexpected update result. We expected the branch name to be %s but instead we are now switching to %s.', $branch_name, $new_branch_name));
                     $this->execCommand('git checkout -b ' . $new_branch_name, false);
                     $branch_name = $new_branch_name;

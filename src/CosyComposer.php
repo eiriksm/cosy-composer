@@ -172,7 +172,7 @@ class CosyComposer
     protected $project;
 
     /**
-     * @var \Http\Adapter\Guzzle6\Client
+     * @var \Http\Adapter\Guzzle7\Client
      */
     protected $httpClient;
 

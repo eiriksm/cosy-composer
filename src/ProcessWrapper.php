@@ -21,7 +21,7 @@ class ProcessWrapper extends Process
         $this->executor = $executor;
     }
 
-    public function run($callback = null/*, array $env = array()*/)
+    public function run(?callable $callback = NULL, array $env = []) : int
     {
         $env = 1 < \func_num_args() ? func_get_arg(1) : null;
         if (empty($env)) {

@@ -38,7 +38,7 @@ class ProcessFactoryWrapper implements ProcessFactoryInterface
      */
     public function getProcess($commandline, $cwd = null, array $env = null, $input = null, $timeout = 60, array $options = null)
     {
-        $execute_wrapper = new ProcessWrapper($commandline, $cwd, $env, $input, $timeout, $options);
+        $execute_wrapper = new ProcessWrapper($commandline, $cwd, $env, $input, $timeout);
         $execute_wrapper->setExecutor($this->executor);
         return $execute_wrapper;
     }

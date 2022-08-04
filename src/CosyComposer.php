@@ -641,8 +641,23 @@ class CosyComposer
                 $url = sprintf('%s://oauth2:%s@%s:%d/%s', $this->urlArray['scheme'], $this->userToken, $hostname, $this->urlArray['port'], $this->slug->getSlug());
                 break;
         }
+        $urls = [
+            $url,
+        ];
+        // We also want to check what happens if we append .git to the URL. This can be a problem in newer
+        // versions of git, that git does not accept redirects.
+        $length = strlen('.git');
+        $ends_with_git = $length > 0 ? substr($url, -$length) === '.git' : true;
+        if (!$ends_with_git) {
+            $urls[] = "$url.git";
+        }
         $this->log('Cloning repository');
-        $clone_result = $this->execCommand('git clone --depth=1 ' . $url . ' ' . $this->tmpDir, false, 120);
+        foreach ($urls as $url) {
+            $clone_result = $this->execCommand('git clone --depth=1 ' . $url . ' ' . $this->tmpDir, false, 120);
+            if (!$clone_result) {
+                break;
+            }
+        }
         if ($clone_result) {
             // We had a problem.
             $this->log($this->getLastStdOut());

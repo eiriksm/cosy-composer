@@ -14,7 +14,7 @@ class TimeFrameTest extends ComposerUpdateIntegrationBase
 
     public function testTimeFrame()
     {
-        self::expectException(eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException::class);
+        self::expectException(\eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException::class);
         $this->runtestExpectedOutput();
     }
 }

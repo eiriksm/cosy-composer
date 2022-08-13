@@ -1,0 +1,10 @@
+{
+    "require": {
+        "psr/log": "~1.0.0"
+    },
+    "extra": {
+        "violinist": {
+            "timeframe_disallowed": "00:00-23:59"
+        }
+    }
+}

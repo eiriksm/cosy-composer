@@ -28,7 +28,7 @@
         "peterpostmann/parse_uri": "^1.0",
         "violinist-dev/composer-updater": "dev-master",
         "violinist-dev/process-factory": "^1.0",
-        "symfony/process": "^4",
+        "symfony/process": "^4||^5",
         "bitbucket/client": "^3",
         "violinist-dev/composer-changelog-fetcher": "^1.0",
         "violinist-dev/violinist-config": "^1.3",

@@ -1468,21 +1468,23 @@ class CosyComposer
                 // the version of the package will of course be an actual version instead of the version called
                 // "latest".
                 if ('dependencies' !== $item->latest && $post_update_data->version != $item->latest) {
-                    $new_branch_name = $this->createBranchNameFromVersions(
-                        $item->name,
-                        $item->version,
-                        $post_update_data->version,
-                        $config
-                    );
+                    $new_item = (object) [
+                        'name' => $item->name,
+                        'version' => $item->version,
+                        'latest' => $post_update_data->version,
+                    ];
+                    $new_branch_name = $this->createBranchName($new_item, $config->shouldUseOnePullRequestPerPackage(), $config);
                     $is_an_actual_upgrade = Comparator::greaterThan($post_update_data->version, $item->version);
                     $old_item_is_branch = strpos($item->version, 'dev-') === 0;
                     $new_item_is_branch = strpos($post_update_data->version, 'dev-') === 0;
                     if (!$old_item_is_branch && !$new_item_is_branch && !$is_an_actual_upgrade) {
                         throw new NotUpdatedException('The new version is lower than the installed version');
                     }
-                    $this->log(sprintf('Changing branch because of an unexpected update result. We expected the branch name to be %s but instead we are now switching to %s.', $branch_name, $new_branch_name));
-                    $this->execCommand('git checkout -b ' . $new_branch_name, false);
-                    $branch_name = $new_branch_name;
+                    if ($branch_name !== $new_branch_name) {
+                        $this->log(sprintf('Changing branch because of an unexpected update result. We expected the branch name to be %s but instead we are now switching to %s.', $branch_name, $new_branch_name));
+                        $this->execCommand('git checkout -b ' . $new_branch_name, false);
+                        $branch_name = $new_branch_name;
+                    }
                     // Check if this new branch name has a pr up-to-date.
                     if (array_key_exists($branch_name, $prs_named)) {
                         if (!$default_base) {

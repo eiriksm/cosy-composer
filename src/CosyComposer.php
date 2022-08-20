@@ -1480,7 +1480,7 @@ class CosyComposer
                     }
                     if ($branch_name !== $new_branch_name) {
                         $this->log(sprintf('Changing branch because of an unexpected update result. We expected the branch name to be %s but instead we are now switching to %s.', $branch_name, $new_branch_name));
-                        $this->execCommand('git checkout -b ' . $new_branch_name, false);
+                        $this->execCommand(['git', 'checkout', '-b', $new_branch_name], false);
                         $branch_name = $new_branch_name;
                     }
                     // Check if this new branch name has a pr up-to-date.
@@ -1561,8 +1561,8 @@ class CosyComposer
                     $not_updated_context['package'] = $why_not_name;
                     $not_updated_context['parent_package'] = $original_name;
                 }
-                $command = sprintf('composer why-not %s "%s"', $why_not_name, $why_not_version);
-                $this->execCommand(sprintf('%s', $command), false);
+                $command = ['composer', 'why-not', $why_not_name, '"' . $why_not_version . '"'];
+                $this->execCommand($command, false);
                 $this->log($this->getLastStdErr(), Message::COMMAND, [
                     'command' => $command,
                     'package' => $why_not_name,
@@ -1600,17 +1600,17 @@ class CosyComposer
                 ]);
             }
             $this->log('Checking out default branch - ' . $default_branch);
-            $checkout_default_exit_code = $this->execCommand('git checkout ' . $default_branch, false);
+            $checkout_default_exit_code = $this->execCommand(['git', 'checkout', $default_branch], false);
             if ($checkout_default_exit_code) {
                 $this->log($this->getLastStdErr());
                 throw new \Exception('There was an error trying to check out the default branch. The process ended with exit code ' . $checkout_default_exit_code);
             }
             // Also do a git checkout of the files, since we want them in the state they were on the default branch
-            $this->execCommand('git checkout .', false);
+            $this->execCommand(['git', 'checkout', '.'], false);
             // Re-do composer install to make output better, and to make the lock file actually be there for
             // consecutive updates, if it is a project without it.
             if (!$lock_file_contents) {
-                $this->execCommand('rm composer.lock');
+                $this->execCommand(['rm', 'composer.lock']);
             }
             try {
                 $this->doComposerInstall($config);
@@ -1704,10 +1704,10 @@ class CosyComposer
     private function cleanUp()
     {
         // Run composer install again, so we can get rid of newly installed updates for next run.
-        $this->execCommand('composer install --no-ansi -n', false, 1200);
+        $this->execCommand(['composer, 'install', '--no-ansi', '-n'], false, 1200);
         $this->chdir('/tmp');
         $this->log('Cleaning up after update check.');
-        $this->execCommand('rm -rf ' . $this->tmpDir, false, 300);
+        $this->execCommand(['rm', '-rf', $this->tmpDir], false, 300);
     }
 
     /**

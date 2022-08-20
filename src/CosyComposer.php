@@ -1705,7 +1705,7 @@ class CosyComposer
     private function cleanUp()
     {
         // Run composer install again, so we can get rid of newly installed updates for next run.
-        $this->execCommand(['composer, 'install', '--no-ansi', '-n'], false, 1200);
+        $this->execCommand(['composer', 'install', '--no-ansi', '-n'], false, 1200);
         $this->chdir('/tmp');
         $this->log('Cleaning up after update check.');
         $this->execCommand(['rm', '-rf', $this->tmpDir], false, 300);

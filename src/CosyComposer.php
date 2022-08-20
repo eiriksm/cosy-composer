@@ -475,7 +475,7 @@ class CosyComposer
         }
         $symfony_dir = sprintf('%s/.symfony/cache/security-advisories/drupal', getenv('HOME'));
         if (!file_exists($symfony_dir)) {
-            $mkdir = $this->execCommand('mkdir -p %s', $symfony_dir);
+            $mkdir = $this->execCommand(['mkdir', '-p', $symfony_dir]);
             if ($mkdir) {
                 return;
             }

@@ -1030,7 +1030,7 @@ class CosyComposer
         }
 
         // Unshallow the repo, for syncing it.
-        $this->execCommand(['git', 'pull' '--unshallow'], false, 300);
+        $this->execCommand(['git', 'pull', '--unshallow'], false, 300);
         // If the repo is private, we need to push directly to the repo.
         if (!$this->isPrivate) {
             $this->preparePrClient();

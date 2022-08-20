@@ -1793,7 +1793,7 @@ class CosyComposer
     /**
      * Executes a command.
      */
-    protected function execCommand($command, $log = true, $timeout = 120)
+    protected function execCommand(array $command, $log = true, $timeout = 120)
     {
         $this->executer->setCwd($this->getCwd());
         return $this->executer->executeCommand($command, $log, $timeout);
@@ -1917,11 +1917,11 @@ class CosyComposer
     {
         // @todo: Should probably use composer install command programmatically.
         $this->log('Running composer install');
-        $run_scripts_suffix = '';
+        $install_command = ['composer', 'install', '--no-ansi', '-n'];
         if (!$config->shouldRunScripts()) {
-            $run_scripts_suffix = ' --no-scripts';
+            $install_command[] = '--no-scripts';
         }
-        if ($code = $this->execCommand('composer install --no-ansi -n' . $run_scripts_suffix, false, 1200)) {
+        if ($code = $this->execCommand($install_command, false, 1200)) {
             // Other status code than 0.
             $this->log($this->getLastStdOut(), Message::COMMAND);
             $this->log($this->getLastStdErr());

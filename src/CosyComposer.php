@@ -1199,7 +1199,7 @@ class CosyComposer
             sprintf('GIT_AUTHOR_EMAIL="%s"', $this->githubEmail),
             sprintf('GIT_COMMITTER_NAME="%s"', $this->githubUserName),
             sprintf('GIT_COMMITTER_EMAIL="%s"', $this->githubEmail),
-            'git', "commit", 
+            'git', "commit",
             $this->lockFileContents ? 'composer.json composer.lock' : 'composer.json',
             '-m', '"' . $msg . '"'];
         if ($this->execCommand($command, false)) {

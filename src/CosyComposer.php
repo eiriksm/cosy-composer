@@ -1217,15 +1217,14 @@ class CosyComposer
         }
         switch ($hostname) {
             case 'github.com':
-                $this->execCommand(
-                    sprintf('composer config --auth github-oauth.github.com %s', $token),
+                $this->execCommand(['composer', 'config', '--auth', 'github-oauth.github.com', $token]),
                     false
                 );
                 break;
 
             case 'gitlab.com':
                 $this->execCommand(
-                    sprintf('composer config --auth gitlab-oauth.gitlab.com %s', $token),
+                    ['composer', 'config', '--auth', 'gitlab-oauth.gitlab.com', $token],
                     false
                 );
                 break;

@@ -1238,7 +1238,7 @@ class CosyComposer
 
             default:
                 $this->execCommand(
-                    sprintf('composer config --auth gitlab-oauth.%s %s', $token, $hostname),
+                    ['composer', 'config', '--auth', sprintf('gitlab-oauth.%s', $token), $hostname],
                     false
                 );
                 break;
@@ -1297,7 +1297,7 @@ class CosyComposer
     {
         if ($this->isPrivate) {
             $origin = 'origin';
-            if ($this->execCommand("git push $origin $branch_name --force")) {
+            if ($this->execCommand(["git", 'push', $origin, $branch_name '--force'])) {
                 throw new GitPushException('Could not push to ' . $branch_name);
             }
         } else {

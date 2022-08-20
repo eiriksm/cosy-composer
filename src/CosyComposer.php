@@ -1217,7 +1217,7 @@ class CosyComposer
         }
         switch ($hostname) {
             case 'github.com':
-                $this->execCommand(['composer', 'config', '--auth', 'github-oauth.github.com', $token]),
+                $this->execCommand(['composer', 'config', '--auth', 'github-oauth.github.com', $token],
                     false
                 );
                 break;

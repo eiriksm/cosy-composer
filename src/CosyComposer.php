@@ -1231,7 +1231,7 @@ class CosyComposer
 
             case 'bitbucket.org':
                 $this->execCommand(
-                    sprintf('composer config --auth http-basic.bitbucket.org x-token-auth %s', $token),
+                    ['composer', 'config', '--auth', 'http-basic.bitbucket.org', 'x-token-auth', $token],
                     false
                 );
                 break;

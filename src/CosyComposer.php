@@ -724,10 +724,10 @@ class CosyComposer
         if ($this->execCommand(['git', 'remote', 'set-branches', 'origin', "*"])) {
             throw new \Exception('There was an error trying to configure default branch');
         }
-        if ($this->execCommand('git fetch origin ' . $default_branch)) {
+        if ($this->execCommand(['git', 'fetch', 'origin', $default_branch])) {
             throw new \Exception('There was an error trying to fetch default branch');
         }
-        if ($this->execCommand('git checkout ' . $default_branch)) {
+        if ($this->execCommand(['git', 'checkout', $default_branch])) {
             throw new \Exception('There was an error trying to switch to default branch');
         }
         // Re-read the composer.json file, since it can be different on the default branch,
@@ -1030,7 +1030,7 @@ class CosyComposer
         }
 
         // Unshallow the repo, for syncing it.
-        $this->execCommand('git pull --unshallow', false, 300);
+        $this->execCommand(['git', 'pull' '--unshallow'], false, 300);
         // If the repo is private, we need to push directly to the repo.
         if (!$this->isPrivate) {
             $this->preparePrClient();
@@ -1075,7 +1075,7 @@ class CosyComposer
         $security_update = false;
         try {
             $this->switchBranch($branch_name);
-            $status = $this->execCommand('composer update');
+            $status = $this->execCommand(['composer update']);
             if ($status) {
                 throw new \Exception('Composer update command existed with status code ' . $status);
             }
@@ -1153,19 +1153,19 @@ class CosyComposer
     protected function switchBranch($branch_name)
     {
         $this->log('Checking out new branch: ' . $branch_name);
-        $result = $this->execCommand('git checkout -b ' . $branch_name, false);
+        $result = $this->execCommand(['git', 'checkout', '-b', $branch_name], false);
         if ($result) {
             $this->log($this->getLastStdErr());
             throw new \Exception(sprintf('There was an error checking out branch %s. Exit code was %d', $branch_name, $result));
         }
         // Make sure we do not have any uncommitted changes.
-        $this->execCommand('git checkout .', false);
+        $this->execCommand(['git', 'checkout', '.'], false);
     }
 
     protected function cleanRepoForCommit()
     {
         // Clean up the composer.lock file if it was not part of the repo.
-        $this->execCommand('git clean -f composer.*');
+        $this->execCommand(['git', 'clean', '-f', 'composer.*']);
     }
 
     protected function getCommitCreator(Config $config) : Creator
@@ -1194,15 +1194,14 @@ class CosyComposer
     protected function commitFiles($msg)
     {
 
-        $command = sprintf(
-            'GIT_AUTHOR_NAME="%s" GIT_AUTHOR_EMAIL="%s" GIT_COMMITTER_NAME="%s" GIT_COMMITTER_EMAIL="%s" git commit %s -m "%s"',
-            $this->githubUserName,
-            $this->githubEmail,
-            $this->githubUserName,
-            $this->githubEmail,
+        $command = [
+            sprintf('GIT_AUTHOR_NAME="%s"', $this->githubUserName),
+            sprintf('GIT_AUTHOR_EMAIL="%s"', $this->githubEmail),
+            sprintf('GIT_COMMITTER_NAME="%s"', $this->githubUserName),
+            sprintf('GIT_COMMITTER_EMAIL="%s"', $this->githubEmail),
+            'git', "commit", 
             $this->lockFileContents ? 'composer.json composer.lock' : 'composer.json',
-            $msg
-        );
+            '-m', '"' . $msg . '"'];
         if ($this->execCommand($command, false)) {
             $this->log($this->getLastStdOut(), Message::COMMAND);
             $this->log($this->getLastStdErr(), Message::COMMAND);

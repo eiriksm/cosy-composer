@@ -489,7 +489,7 @@ class CosyComposer
                 continue;
             }
             if ($repository->url === 'https://packages.drupal.org/8') {
-                $this->execCommand(sprintf('rsync -aq %s/sa_yaml/8/drupal/* %s/', $contrib_sa_dir, $symfony_dir));
+                $this->execCommand(['rsync', '-aq', sprintf('%s/sa_yaml/8/drupal/*', $contrib_sa_dir), "$symfony_dir/"]);
             }
             if ($repository->url === 'https://packages.drupal.org/7') {
                 $this->execCommand(['rsync', '-aq', sprintf('%s/sa_yaml/7/drupal/*', $contrib_sa_dir), "$symfony_dir/"]);
@@ -598,10 +598,10 @@ class CosyComposer
             $this->log(sprintf('Queue runner revision %s', $_SERVER['queue_runner_revision']));
         }
         // Try to get the php version as well.
-        $this->execCommand('php --version');
+        $this->execCommand(['php', '--version']);
         $this->log($this->getLastStdOut());
         // Try to get the composer version as well.
-        $this->execCommand('composer --version');
+        $this->execCommand(['composer', '--version']);
         $this->log($this->getLastStdOut());
         $this->log(sprintf('Starting update check for %s', $this->slug->getSlug()));
         $user_name = $this->slug->getUserName();

@@ -614,14 +614,14 @@ class CosyComposer
         $hostname = $this->slug->getProvider();
         $url = null;
         // Make sure we accept the fingerprint of whatever we are cloning.
-        $this->execCommand(sprintf('ssh-keyscan -t rsa,dsa %s >> ~/.ssh/known_hosts', $hostname));
+        $this->execCommand(['ssh-keyscan', '-t', 'rsa,dsa', $hostname, '>>', '~/.ssh/known_hosts']);
         if (!empty($_SERVER['private_key'])) {
             $this->log('Checking for existing private key');
             $filename = "$directory/id_rsa";
             if (!file_exists($filename)) {
                 $this->log('Installing private key');
                 file_put_contents($filename, $_SERVER['private_key']);
-                $this->execCommand(sprintf('chmod 600 %s', $filename), false);
+                $this->execCommand(['chmod', '600', $filename], false);
             }
         }
         switch ($hostname) {
@@ -653,7 +653,7 @@ class CosyComposer
         }
         $this->log('Cloning repository');
         foreach ($urls as $url) {
-            $clone_result = $this->execCommand('git clone --depth=1 ' . $url . ' ' . $this->tmpDir, false, 120);
+            $clone_result = $this->execCommand(['git', 'clone', '--depth=1', $url, $this->tmpDir], false, 120);
             if (!$clone_result) {
                 break;
             }
@@ -678,7 +678,7 @@ class CosyComposer
             $config_branch = $_ENV['config_branch'];
             $this->log('Changing to config branch: ' . $config_branch);
             $tmpdir = sprintf('/tmp/%s', uniqid('', true));
-            $clone_result = $this->execCommand('git clone --depth=1 ' . $url . ' ' . $tmpdir . ' -b ' . $config_branch, false, 120);
+            $clone_result = $this->execCommand(['git', 'clone', '--depth=1', $url, $tmpdir, '-b', $config_branch], false, 120);
             if (!$clone_result) {
                 $local_adapter = new Local($tmpdir);
             }
@@ -721,7 +721,7 @@ class CosyComposer
             $default_branch = $config->getDefaultBranch();
         }
         // Now make sure we are actually on that branch.
-        if ($this->execCommand('git remote set-branches origin "*"')) {
+        if ($this->execCommand(['git', 'remote', 'set-branches', 'origin', "*"])) {
             throw new \Exception('There was an error trying to configure default branch');
         }
         if ($this->execCommand('git fetch origin ' . $default_branch)) {

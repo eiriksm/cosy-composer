@@ -30,7 +30,7 @@
         "violinist-dev/process-factory": "^2.0",
         "symfony/process": "^5.4",
         "bitbucket/client": "^3",
-        "violinist-dev/composer-changelog-fetcher": "^1.0",
+        "violinist-dev/composer-changelog-fetcher": "^2.0",
         "violinist-dev/violinist-config": "^1.3",
         "violinist-dev/commit-message-creator": "^1.2",
         "violinist-dev/allow-list-handler": "^1.0"

@@ -492,7 +492,7 @@ class CosyComposer
                 $this->execCommand(sprintf('rsync -aq %s/sa_yaml/8/drupal/* %s/', $contrib_sa_dir, $symfony_dir));
             }
             if ($repository->url === 'https://packages.drupal.org/7') {
-                $this->execCommand(sprintf('rsync -aq %s/sa_yaml/7/drupal/* %s/', $contrib_sa_dir, $symfony_dir));
+                $this->execCommand(['rsync', '-aq', sprintf('%s/sa_yaml/7/drupal/*', $contrib_sa_dir), "$symfony_dir/"]);
             }
         }
     }

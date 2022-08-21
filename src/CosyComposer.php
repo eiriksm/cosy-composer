@@ -1194,14 +1194,15 @@ class CosyComposer
     protected function commitFiles($msg)
     {
 
-        $command = [
+        $command = array_filter([
             sprintf('GIT_AUTHOR_NAME="%s"', $this->githubUserName),
             sprintf('GIT_AUTHOR_EMAIL="%s"', $this->githubEmail),
             sprintf('GIT_COMMITTER_NAME="%s"', $this->githubUserName),
             sprintf('GIT_COMMITTER_EMAIL="%s"', $this->githubEmail),
             'git', "commit",
-            $this->lockFileContents ? 'composer.json composer.lock' : 'composer.json',
-            '-m', '"' . $msg . '"'];
+            'composer.json',
+            $this->lockFileContents ? 'composer.lock' : '',
+            '-m', '"' . $msg . '"']);
         if ($this->execCommand($command, false)) {
             $this->log($this->getLastStdOut(), Message::COMMAND);
             $this->log($this->getLastStdErr(), Message::COMMAND);

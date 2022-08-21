@@ -20,6 +20,6 @@ class UpdateIndirectSecondLevelTest extends ComposerUpdateIntegrationBase
     protected function createExpectedCommandForPackage($package)
     {
         // We are actually updating the required package which depends on this one.
-        return 'composer update -n --no-ansi psy/psysh --with-dependencies ';
+        return ['composer', 'update', '-n', '--no-ansi', 'psy/psysh', '--with-dependencies'];
     }
 }

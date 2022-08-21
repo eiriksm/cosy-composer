@@ -24,7 +24,6 @@ class Issue98Test extends Base
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
                 function ($cmd) use ($dir, &$called_dependency_clone_correctly) {
-                    var_dump($cmd);
                     if ($cmd == $this->createExpectedCommandForPackage('eirik/private-pack')) {
                         $this->placeComposerLockContentsFromFixture('composer-lock-private.updated', $dir);
                     }
@@ -39,7 +38,6 @@ class Issue98Test extends Base
         $this->registerProviderFactory($c);
         $this->placeComposerLockContentsFromFixture('composer-lock-private.lock', $dir);
         $c->run();
-        var_dump($c->getOutput());
         $this->assertEquals(true, $called_dependency_clone_correctly);
     }
 }

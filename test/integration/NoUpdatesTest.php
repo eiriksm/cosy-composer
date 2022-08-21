@@ -39,7 +39,8 @@ class NoUpdatesTest extends Base
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
                 function ($cmd) use (&$called) {
-                    if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
                     }
                     return 0;
@@ -86,7 +87,8 @@ class NoUpdatesTest extends Base
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
                 function ($cmd) use (&$called) {
-                    if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
                     }
                     return 0;
@@ -134,7 +136,8 @@ class NoUpdatesTest extends Base
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
                 function ($cmd) use (&$called) {
-                    if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
                     }
                     return 0;

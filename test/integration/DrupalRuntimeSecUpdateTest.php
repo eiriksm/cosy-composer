@@ -57,7 +57,7 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
 
     protected function createExpectedCommandForRequiredPackage($package, $new_version)
     {
-        return "composer require -n --no-ansi $package:$new_version --update-with-dependencies ";
+        return ["composer", "require", '-n', '--no-ansi', "$package:$new_version", '--update-with-dependencies'];
     }
 
     public function placeUpdatedLockFile($version, $package)

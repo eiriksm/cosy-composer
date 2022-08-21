@@ -48,6 +48,8 @@ jobs:
       - name: Install dependencies
         run: composer --verbose install
 
+      - run: composer why-not composer/composer 2.4.0
+
       - name: Run tests
         run: composer test
 

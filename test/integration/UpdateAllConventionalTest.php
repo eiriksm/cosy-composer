@@ -14,11 +14,12 @@ class UpdateAllConventionalTest extends UpdateAllBase
     {
         $executor = $this->getMockExecuterWithReturnCallback(function ($command) {
             // We are looking for the very blindly calling of composer update.
-            if ($command === 'composer update') {
+            if ($command === ['composer', 'update']) {
                 // We also want to place the updated lock file there.
                 $this->placeComposerLockContentsFromFixture('composer.allow_all.lock.updated', $this->dir);
             }
-            if (mb_strpos($command, 'build(deps): Update all dependencies')) {
+            $cmd = implode(' ', $command);
+            if (mb_strpos($cmd, 'build(deps): Update all dependencies')) {
                 $this->foundCommit = true;
             }
         });

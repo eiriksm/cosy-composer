@@ -23,13 +23,13 @@ class Issue211Test extends ComposerUpdateIntegrationBase
 
     protected function createExpectedCommandForPackage($package)
     {
-        return "composer require --dev -n --no-ansi $package:1.1.3 --update-with-dependencies ";
+        return ['composer', 'require', '--dev', '-n', '--no-ansi', "$package:1.1.3", '--update-with-dependencies'];
     }
 
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
 
-        if ($cmd === 'composer install --no-ansi -n') {
+        if ($cmd === ['composer', 'install', '--no-ansi', '-n']) {
             $this->placeComposerLockContentsFromFixture('composer164.lock', $this->dir);
         }
     }

@@ -157,6 +157,7 @@ abstract class Base extends TestCase
         $mock_app->method('run')
             ->willReturnCallback(function ($input) {
                 self::assertEquals($this->usesDirect, $input->getParameterOption('--direct'));
+                return 0;
             });
         return $mock_app;
     }

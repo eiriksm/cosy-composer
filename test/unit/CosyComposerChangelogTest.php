@@ -37,7 +37,7 @@ class CosyComposerChangelogTest extends TestCase
         $c = $this->getMockCosy();
         $called = false;
         $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command) use (&$called) {
-            if (strpos($command, 'git clone http://example.com/vendor/package /tmp/') === 0) {
+            if (strpos($command, ['git', 'clone', 'http://example.com/vendor/package', '/tmp/']) === 0) {
                 $called = true;
             }
             return 0;
@@ -61,7 +61,8 @@ class CosyComposerChangelogTest extends TestCase
     {
         $c = $this->getMockCosy();
         $called = false;
-        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command) use (&$called) {
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) use (&$called) {
+            $command = implode(' ', $command_array);
             if (strpos($command, 'log 1..2 --oneline') > 0) {
                 $called = true;
             }
@@ -92,7 +93,8 @@ class CosyComposerChangelogTest extends TestCase
     {
         $c = $this->getMockCosy();
         $called = false;
-        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command) use (&$called) {
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) use (&$called) {
+            $command = implode(' ', $command_array);
             if (strpos($command, 'log 1..2 --oneline') > 0) {
                 $called = true;
             }

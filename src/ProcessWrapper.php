@@ -13,6 +13,14 @@ class ProcessWrapper extends Process
      */
     protected $executor;
 
+    protected $line;
+
+    public function __construct(array $command, string $cwd = null, array $env = null, $input = null, ?float $timeout = 60)
+    {
+        parent::__construct($command, $cwd, $env, $input, $timeout);
+        $this->line = $command;
+    }
+
     /**
      * @param CommandExecuter $executor
      */
@@ -30,7 +38,7 @@ class ProcessWrapper extends Process
         $env = array_merge($this->getEnv() ? $this->getEnv() : [], [
             'PATH' => __DIR__ . '/../../../../vendor/bin' . ':' . getenv('PATH'),
         ]);
-        $this->ourExitCode = $this->executor->executeCommand($this->commandline, false, $this->getTimeout(), $env);
+        $this->ourExitCode = $this->executor->executeCommand($this->line, false, $this->getTimeout(), $env);
         return $this->ourExitCode;
     }
 

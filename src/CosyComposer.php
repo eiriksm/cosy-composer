@@ -1566,12 +1566,12 @@ class CosyComposer
                 $command = ['composer', 'why-not', $why_not_name, '"' . $why_not_version . '"'];
                 $this->execCommand($command, false);
                 $this->log($this->getLastStdErr(), Message::COMMAND, [
-                    'command' => $command,
+                    'command' => implode(' ', $command),
                     'package' => $why_not_name,
                     'type' => 'stderr',
                 ]);
                 $this->log($this->getLastStdOut(), Message::COMMAND, [
-                    'command' => $command,
+                    'command' => implode(' ', $command),
                     'package' => $why_not_name,
                     'type' => 'stdout',
                 ]);

@@ -47,9 +47,8 @@ abstract class AutoMergeBase extends ComposerUpdateIntegrationBase
     public function testAutomerge($should_have_updated)
     {
         $this->isUpdate = $should_have_updated;
-        $this->checkPrUrl = false;
+        $this->checkPrUrl = !$should_have_updated;
         $this->runtestExpectedOutput();
-        var_dump($this->cosy->getOutput());
     }
 
     public function getUpdateVariations()

@@ -38,13 +38,13 @@ class UpdateIndirectTwoAncestorsTest extends ComposerUpdateIntegrationBase
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
         // Always place intial composer.lock when we check out master.
-        if ($cmd === 'git checkout master') {
+        if ($cmd === ['git', 'checkout', 'master']) {
             $this->placeInitialComposerLock();
         }
         // We actually want to place the update lock file here I think.
         $commands_we_need = [
-            'composer update -n --no-ansi psy/psysh --with-dependencies ',
-            'composer update -n --no-ansi symfony/var-dumper --with-dependencies ',
+            ['composer', 'update', '-n', '--no-ansi', 'psy/psysh', '--with-dependencies'],
+            ['composer', 'update', '-n', '--no-ansi', 'symfony/var-dumper', '--with-dependencies'],
         ];
         if (!in_array($cmd, $commands_we_need)) {
             return;

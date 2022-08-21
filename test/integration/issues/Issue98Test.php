@@ -39,6 +39,7 @@ class Issue98Test extends Base
         $this->registerProviderFactory($c);
         $this->placeComposerLockContentsFromFixture('composer-lock-private.lock', $dir);
         $c->run();
+        var_dump($c->getOutput());
         $this->assertEquals(true, $called_dependency_clone_correctly);
     }
 }

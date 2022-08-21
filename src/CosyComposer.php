@@ -1075,9 +1075,9 @@ class CosyComposer
         $security_update = false;
         try {
             $this->switchBranch($branch_name);
-            $status = $this->execCommand(['composer update']);
+            $status = $this->execCommand(['composer', 'update']);
             if ($status) {
-                throw new \Exception('Composer update command existed with status code ' . $status);
+                throw new \Exception('Composer update command exited with status code ' . $status);
             }
             // Now let's find out what has actually been updated.
             $new_lock_contents = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));

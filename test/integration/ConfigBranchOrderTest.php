@@ -29,7 +29,7 @@ class ConfigBranchOrderTest extends ComposerUpdateIntegrationBase
 
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
-        if ($cmd === 'git checkout develop') {
+        if ($cmd === ['git', 'checkout', 'develop']) {
             $this->createComposerFileFromFixtures($this->dir, 'composer-develop.json');
             $this->placeComposerLockContentsFromFixture('composer-develop.lock', $this->dir);
         }

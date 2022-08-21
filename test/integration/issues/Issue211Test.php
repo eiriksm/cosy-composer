@@ -18,6 +18,7 @@ class Issue211Test extends ComposerUpdateIntegrationBase
     public function testLockDataNotFailed()
     {
         $this->runtestExpectedOutput();
+        var_dump($this->cosy->getOutput());
         self::assertEquals('psrlog100113', $this->prParams["head"]);
     }
 
@@ -28,7 +29,7 @@ class Issue211Test extends ComposerUpdateIntegrationBase
 
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
-
+        var_dump($cmd);
         if ($cmd === ['composer', 'install', '--no-ansi', '-n']) {
             $this->placeComposerLockContentsFromFixture('composer164.lock', $this->dir);
         }

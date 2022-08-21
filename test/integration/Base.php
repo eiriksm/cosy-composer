@@ -52,7 +52,7 @@ abstract class Base extends TestCase
 
     protected function createExpectedCommandForPackage($package)
     {
-        return "composer update -n --no-ansi $package --with-dependencies ";
+        return ["composer", 'update', '-n', '--no-ansi', $package, '--with-dependencies'];
     }
 
     protected function createUpdateJsonFromData($package, $version, $new_version)

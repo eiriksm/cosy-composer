@@ -45,9 +45,6 @@ class CommandExecuter
         ];
         $process = $this->processFactory->getProcess($command, $this->getCwd(), $env);
         $process->setTimeout($timeout);
-        if (method_exists($this, 'inheritEnvironmentVariables')) {
-            $process->inheritEnvironmentVariables(true);
-        }
         $process->run();
         $this->output[] = [
             'stdout' => $process->getOutput(),

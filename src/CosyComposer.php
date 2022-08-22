@@ -751,8 +751,12 @@ class CosyComposer
         }
         $app = $this->app;
         $d = $app->getDefinition();
+        /** @var InputOption[] $opts */
         $opts = $d->getOptions();
-        $opts['no-ansi'] = new InputOption('no-ansi', null, 4, true, 'Disable ANSI output');
+        try {
+            $opts['ansi']->setDefault('--no-ansi');
+        } catch (\Throwable $e) {
+        }
         $d->setOptions($opts);
         $app->setDefinition($d);
         $app->setAutoExit(false);

@@ -26,11 +26,11 @@ class AllowListTest extends ComposerUpdateIntegrationBase
 
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
-
-        if (strpos($cmd, 'psr/log') !== false) {
+        $cmd_string = implode(' ', $cmd);
+        if (strpos($cmd_string, 'psr/log') !== false) {
             $this->hasUpdatedPsrLog = true;
         }
-        if (strpos($cmd, 'psr/cache') !== false) {
+        if (strpos($cmd_string, 'psr/cache') !== false) {
             $this->hasUpdatedPsrCache = true;
         }
     }

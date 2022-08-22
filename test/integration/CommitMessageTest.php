@@ -21,13 +21,14 @@ class CommitMessageTest extends ComposerUpdateIntegrationBase
 
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
-        if (strpos($cmd, $this->getCorrectCommit())) {
+        $cmd_string = implode(' ', $cmd);
+        if (strpos($cmd_string, $this->getCorrectCommit())) {
             $this->hasCorrectCommit = true;
         }
     }
 
     protected function getCorrectCommit()
     {
-        return ['git', 'commit', 'composer.json', 'composer.lock', '-m', '"Update psr/log"'];
+        return 'git commit composer.json composer.lock -m "Update psr/log"';
     }
 }

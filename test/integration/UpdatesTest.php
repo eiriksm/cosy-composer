@@ -422,7 +422,6 @@ class UpdatesTest extends Base
                     if ($cmd == $command) {
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                     }
-                    var_dump($cmd);
                     if ($cmd == ['GIT_AUTHOR_NAME=""', 'GIT_AUTHOR_EMAIL=""', 'GIT_COMMITTER_NAME=""', 'GIT_COMMITTER_EMAIL=""', 'git', 'commit', 'composer.json', 'composer.lock', '-m', '"Update psr/log"']) {
                         $return = 1;
                     }

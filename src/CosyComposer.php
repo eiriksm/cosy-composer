@@ -1199,15 +1199,16 @@ class CosyComposer
     {
 
         $command = array_filter([
-            sprintf('GIT_AUTHOR_NAME="%s"', $this->githubUserName),
-            sprintf('GIT_AUTHOR_EMAIL="%s"', $this->githubEmail),
-            sprintf('GIT_COMMITTER_NAME="%s"', $this->githubUserName),
-            sprintf('GIT_COMMITTER_EMAIL="%s"', $this->githubEmail),
             'git', "commit",
             'composer.json',
             $this->lockFileContents ? 'composer.lock' : '',
             '-m', '"' . $msg . '"']);
-        if ($this->execCommand($command, false)) {
+        if ($this->execCommand($command, false, 120, [
+            'GIT_AUTHOR_NAME' => $this->githubUserName,
+            'GIT_AUTHOR_EMAIL' => $this->githubEmail,
+            'GIT_COMMITTER_NAME' => $this->githubUserName,
+            'GIT_COMMITTER_EMAIL' => $this->githubEmail,
+        ])) {
             $this->log($this->getLastStdOut(), Message::COMMAND);
             $this->log($this->getLastStdErr(), Message::COMMAND);
             throw new \Exception('Error committing the composer files. They are probably not changed.');
@@ -1797,10 +1798,10 @@ class CosyComposer
     /**
      * Executes a command.
      */
-    protected function execCommand(array $command, $log = true, $timeout = 120)
+    protected function execCommand(array $command, $log = true, $timeout = 120, $env = [])
     {
         $this->executer->setCwd($this->getCwd());
-        return $this->executer->executeCommand($command, $log, $timeout);
+        return $this->executer->executeCommand($command, $log, $timeout, $env);
     }
 
     /**

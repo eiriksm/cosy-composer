@@ -1558,17 +1558,17 @@ class CosyComposer
                 // Not updated because of the composer command, not the
                 // restriction itself.
                 $why_not_name = $original_name = $item->name;
-                $why_not_version = $item->latest;
+                $why_not_version = trim($item->latest);
                 $not_updated_context = [
                     'package' => $why_not_name,
                 ];
                 if (!empty($item->child_latest) && !empty($item->child_with_update)) {
                     $why_not_name = $item->child_with_update;
-                    $why_not_version = $item->child_latest;
+                    $why_not_version = trim($item->child_latest);
                     $not_updated_context['package'] = $why_not_name;
                     $not_updated_context['parent_package'] = $original_name;
                 }
-                $command = ['composer', 'why-not', $why_not_name, '"' . $why_not_version . '"'];
+                $command = ['composer', 'why-not', $why_not_name, $why_not_version];
                 $this->execCommand($command, false);
                 $this->log($this->getLastStdErr(), Message::COMMAND, [
                     'command' => implode(' ', $command),

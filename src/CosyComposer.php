@@ -18,6 +18,7 @@ use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\ViolinistMessages\UpdateListItem;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\HttpClient;
+use Symfony\Component\Process\Process;
 use Violinist\AllowListHandler\AllowListHandler;
 use Violinist\ChangelogFetcher\ChangelogRetriever;
 use Violinist\ChangelogFetcher\DependencyRepoRetriever;
@@ -489,10 +490,12 @@ class CosyComposer
                 continue;
             }
             if ($repository->url === 'https://packages.drupal.org/8') {
-                $this->execCommand(['rsync', '-aq', sprintf('%s/sa_yaml/8/drupal/*', $contrib_sa_dir), "$symfony_dir/"]);
+                $process = Process::fromShellCommandline('rsync -aq ' . sprintf('%s/sa_yaml/8/drupal/*', $contrib_sa_dir) .  " $symfony_dir/");
+                $process->run();
             }
             if ($repository->url === 'https://packages.drupal.org/7') {
-                $this->execCommand(['rsync', '-aq', sprintf('%s/sa_yaml/7/drupal/*', $contrib_sa_dir), "$symfony_dir/"]);
+                $process = Process::fromShellCommandline('rsync -aq ' . sprintf('%s/sa_yaml/7/drupal/*', $contrib_sa_dir) .  " $symfony_dir/");
+                $process->run();
             }
         }
     }

@@ -1690,6 +1690,9 @@ class CosyComposer
         foreach ($my_logger->get() as $message) {
             /** @var Message $msg */
             $msg = $message['message'];
+            if (is_string($msg)) {
+                $msg = new Message($msg);
+            }
             $msg->setContext($message['context']);
             if (isset($message['context']['command'])) {
                 $msg = new Message($msg->getMessage(), Message::COMMAND);

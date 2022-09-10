@@ -32,6 +32,23 @@ class UpdateIndirectTwoAncestorsTest extends ComposerUpdateIntegrationBase
     protected function createExpectedCommandForPackage($package)
     {
         // We are actually updating the required package which depends on this one.
-        return 'composer update -n --no-ansi psy/psysh --with-dependencies ';
+        return 'bogus flippin bogus';
+    }
+
+    protected function handleExecutorReturnCallback($cmd, &$return)
+    {
+        // Always place intial composer.lock when we check out master.
+        if ($cmd === ['git', 'checkout', 'master']) {
+            $this->placeInitialComposerLock();
+        }
+        // We actually want to place the update lock file here I think.
+        $commands_we_need = [
+            ['composer', 'update', '-n', '--no-ansi', 'psy/psysh', '--with-dependencies'],
+            ['composer', 'update', '-n', '--no-ansi', 'symfony/var-dumper', '--with-dependencies'],
+        ];
+        if (!in_array($cmd, $commands_we_need)) {
+            return;
+        }
+        $this->placeUpdatedComposerLock();
     }
 }

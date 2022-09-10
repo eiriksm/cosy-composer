@@ -16,7 +16,7 @@ abstract class UpdateAllBase extends Base
     protected $branchName = 'violinistall';
     protected $usesDirect = false;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->createComposerFileFromFixtures($this->dir, $this->composerJson);
@@ -31,15 +31,16 @@ abstract class UpdateAllBase extends Base
     {
         $executor = $this->getMockExecuterWithReturnCallback(function ($command) {
             // We are looking for the very blindly calling of composer update.
-            if ($command === 'composer update') {
+            if ($command === ['composer', 'update']) {
                 $this->foundCommand = true;
                 // We also want to place the updated lock file there.
                 $this->placeComposerLockContentsFromFixture($this->composerLock . '.updated', $this->dir);
             }
-            if (mb_strpos($command, '"Update all dependencies"')) {
+            $cmd = implode(' ', $command);
+            if (mb_strpos($cmd, '"Update all dependencies"')) {
                 $this->foundCommit = true;
             }
-            $branch_command = sprintf('git checkout -b %s', $this->branchName);
+            $branch_command = ['git', 'checkout', '-b', $this->branchName];
             if ($command === $branch_command) {
                 $this->foundBranch = true;
             }

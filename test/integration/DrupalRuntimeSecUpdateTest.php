@@ -3,13 +3,13 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 use eiriksm\ArrayOutput\ArrayOutput;
-use Http\Adapter\Guzzle6\Client;
+use Http\Adapter\Guzzle7\Client;
 use Violinist\Slug\Slug;
 
 class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
 {
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->cosy->setHttpClient(new Client());
@@ -57,7 +57,7 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
 
     protected function createExpectedCommandForRequiredPackage($package, $new_version)
     {
-        return "composer require -n --no-ansi $package:$new_version --update-with-dependencies ";
+        return ["composer", "require", '-n', '--no-ansi', "$package:$new_version", '--update-with-dependencies'];
     }
 
     public function placeUpdatedLockFile($version, $package)

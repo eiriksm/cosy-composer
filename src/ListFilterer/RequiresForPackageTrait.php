@@ -6,9 +6,16 @@ trait RequiresForPackageTrait
 {
     private $scannedCache = [];
 
-    protected function findRequiresForPackage($package_obj)
+    protected function findRequiresForPackage($package_obj, $initial_package = null)
     {
         $package_name = mb_strtolower($package_obj->name);
+        $key = $package_name;
+        if (!empty($initial_package)) {
+            $key = $initial_package;
+        }
+        if (empty($this->scannedCache[$key])) {
+            $this->scannedCache[$key] = [];
+        }
         // Loop over all packages, and see if any of the hits actually are required as top level require or require-dev.
         $types = [
             'packages',
@@ -47,7 +54,7 @@ trait RequiresForPackageTrait
                                 'name' => $candidate,
                             ];
                         } else {
-                            $requires = array_merge($requires, $this->findRequiresForPackage($package));
+                            $requires = array_merge($requires, $this->findRequiresForPackage($package, $initial_package));
                         }
                     }
                 }

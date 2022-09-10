@@ -35,17 +35,16 @@ class CommandExecuter
         $this->processFactory = $factory;
     }
 
-    public function executeCommand($command, $log = true, $timeout = 120, array $env = [])
+    public function executeCommand(array $command, $log = true, $timeout = 120, array $env = [])
     {
         if ($log) {
-            $this->logger->log('info', new Message('Creating command ' . $command, Message::COMMAND));
+            $this->logger->log('info', new Message('Creating command ' . implode(' ', $command), Message::COMMAND));
         }
         $env = $this->getEnv() + $env + [
             'PATH' => __DIR__ . '/../../../../vendor/bin' . ':' . getenv('PATH'),
         ];
         $process = $this->processFactory->getProcess($command, $this->getCwd(), $env);
         $process->setTimeout($timeout);
-        $process->inheritEnvironmentVariables(true);
         $process->run();
         $this->output[] = [
             'stdout' => $process->getOutput(),

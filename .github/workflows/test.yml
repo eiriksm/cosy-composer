@@ -14,11 +14,12 @@ jobs:
       fail-fast: false
       matrix:
         php-version:
-          - "7.0"
-          - "7.1"
           - "7.2"
           - "7.3"
           - "7.4"
+          - "8.0"
+          - "8.1"
+          - "8.2"
         composer-version:
           - "1"
           - "2"
@@ -47,13 +48,6 @@ jobs:
 
       - name: Install dependencies
         run: composer --verbose install
-
-      - name: Install some different dependencies if version is not php 7.0
-        if: matrix.php-version != 7.0
-        run: |
-          composer require --dev phpstan/phpstan bitbucket/client:^2 cweagans/composer-patches
-          rm -rf vendor/phpunit
-          composer install
 
       - name: Run tests
         run: composer test

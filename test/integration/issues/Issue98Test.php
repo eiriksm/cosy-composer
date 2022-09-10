@@ -27,7 +27,7 @@ class Issue98Test extends Base
                     if ($cmd == $this->createExpectedCommandForPackage('eirik/private-pack')) {
                         $this->placeComposerLockContentsFromFixture('composer-lock-private.updated', $dir);
                     }
-                    if ($cmd === "git clone https://user-token:x-oauth-basic@github.com/eiriksm/private-pack.git /tmp/9f7527992e178cafad06d558b8f32ce8") {
+                    if ($cmd === ["git", "clone", 'https://user-token:x-oauth-basic@github.com/eiriksm/private-pack.git', '/tmp/9f7527992e178cafad06d558b8f32ce8']) {
                         $called_dependency_clone_correctly = true;
                     }
                     return 0;

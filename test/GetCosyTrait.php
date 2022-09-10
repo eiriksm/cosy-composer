@@ -9,7 +9,9 @@ use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\ProviderInterface;
 use GuzzleHttp\Psr7\Response;
-use Http\Adapter\Guzzle6\Client;
+use GuzzleHttp\Psr7\Utils;
+use Http\Adapter\Guzzle7\Client;
+use Http\Client\HttpClient;
 use Violinist\ProjectData\ProjectData;
 use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
@@ -33,10 +35,11 @@ trait GetCosyTrait
         $c->getCheckerFactory()->setChecker($mock_checker);
         $c->setUserToken('user-token');
         $response = $this->createMock(Response::class);
-        $response->method('getBody')
-            ->willReturn('<?xml version="1.0" encoding="utf-8"?>
+        $stream = Utils::streamFor('<?xml version="1.0" encoding="utf-8"?>
 <project xmlns:dc="http://purl.org/dc/elements/1.1/"><releases></releases></project>');
-        $client = $this->createMock(Client::class);
+        $response->method('getBody')
+            ->willReturn($stream);
+        $client = $this->createMock(HttpClient::class);
         $client->method('sendRequest')
             ->willReturn($response);
         $c->setHttpClient($client);

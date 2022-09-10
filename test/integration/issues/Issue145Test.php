@@ -28,19 +28,19 @@ class Issue145Test extends ComposerUpdateIntegrationBase
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
         switch ($cmd) {
-            case 'composer require -n --no-ansi psr/simple-cache:1.0.1 --update-with-dependencies ':
+            case ['composer', 'require', '-n', '--no-ansi', 'psr/simple-cache:1.0.1', '--update-with-dependencies']:
                 $this->placeUpdatedComposerLock();
                 break;
 
-            case 'composer require -n --no-ansi psr/log:1.1.3 --update-with-dependencies ':
+            case ['composer', 'require', '-n', '--no-ansi', 'psr/log:1.1.3', '--update-with-dependencies']:
                 $this->placeUpdatedComposerLock();
                 break;
 
-            case 'git checkout .':
+            case ['git', 'checkout', '.']:
                 $this->placeInitialComposerLock();
                 break;
 
-            case 'composer install --no-ansi -n':
+            case ['composer', 'install', '--no-ansi', '-n']:
                 $this->numberOfIstalls++;
                 if ($this->numberOfIstalls === 3) {
                     $return = 1;

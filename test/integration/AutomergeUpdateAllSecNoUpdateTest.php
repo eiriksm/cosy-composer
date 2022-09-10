@@ -39,6 +39,6 @@ class AutomergeUpdateAllSecNoUpdateTest extends AutoMergeBase
 
     protected function createExpectedCommandForPackage($package)
     {
-        return 'composer update';
+        return ['composer', 'update'];
     }
 }

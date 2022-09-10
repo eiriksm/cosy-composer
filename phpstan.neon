@@ -1,5 +1,4 @@
 parameters:
     level: 3
-    excludePaths:
-        - %rootDir%/../../../src/ProviderFactory.php
-        - %rootDir%/../../../src/Providers/Bitbucket.php
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon

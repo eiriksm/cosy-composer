@@ -36,9 +36,9 @@ class ProcessFactoryWrapper implements ProcessFactoryInterface
      *
      * @return \Symfony\Component\Process\Process
      */
-    public function getProcess($commandline, $cwd = null, array $env = null, $input = null, $timeout = 60, array $options = null)
+    public function getProcess(array $commandline, $cwd = null, array $env = null, $input = null, $timeout = 60, array $options = null)
     {
-        $execute_wrapper = new ProcessWrapper($commandline, $cwd, $env, $input, $timeout, $options);
+        $execute_wrapper = new ProcessWrapper($commandline, $cwd, $env, $input, $timeout);
         $execute_wrapper->setExecutor($this->executor);
         return $execute_wrapper;
     }

@@ -15,11 +15,11 @@ class GithubProviderTest extends ProvidersTestBase
     protected $repoClass = Repo::class;
 
     protected $authenticateArguments = [
-        'testUser', null, Client::AUTH_HTTP_TOKEN,
+        'testUser', null, Client::AUTH_ACCESS_TOKEN,
     ];
 
     protected $authenticatePrivateArguments = [
-        'testUser', null, Client::AUTH_HTTP_TOKEN
+        'testUser', null, Client::AUTH_ACCESS_TOKEN
     ];
 
     public function testRepoIsPrivate()
@@ -87,6 +87,8 @@ class GithubProviderTest extends ProvidersTestBase
             ->with('repo')
             ->willReturn($mock_repo_api);
         $mock_response = $this->createMock(ResponseInterface::class);
+        $mock_response->method('getHeader')
+            ->willReturn([]);
         $mock_client->expects($this->once())
             ->method('getLastResponse')
             ->willReturn($mock_response);

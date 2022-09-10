@@ -9,7 +9,7 @@ class UpdateConcurrentOutdatedBranchTest extends ComposerUpdateIntegrationBase
     protected $composerAssetFiles = 'composer.concurrent.update_branch';
     private $sha;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->sha = 123;
@@ -63,6 +63,7 @@ class UpdateConcurrentOutdatedBranchTest extends ComposerUpdateIntegrationBase
                 'base' => [
                     'sha' => $this->sha,
                 ],
+                'number' => 123,
                 'title' => 'Update psr/cache from 1.0.0 to 1.0.1',
             ],
         ];

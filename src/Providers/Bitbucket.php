@@ -37,9 +37,14 @@ class Bitbucket implements ProviderInterface
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
         if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->client->repositories()->users($user)->show($repo);
+            $this->cache['repo'] = $this->getRepo($user, $repo);
         }
         return (bool) $this->cache["repo"]["is_private"];
+    }
+
+    protected function getRepo($user, $repo)
+    {
+        return $this->client->repositories()->workspaces($user)->show($repo);
     }
 
     public function getDefaultBranch(Slug $slug)
@@ -47,7 +52,7 @@ class Bitbucket implements ProviderInterface
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
         if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->client->repositories()->users($user)->show($repo);
+            $this->cache['repo'] = $this->getRepo($user, $repo);
         }
         if (empty($this->cache["repo"]["mainbranch"]["name"])) {
             throw new \Exception('No default branch found');
@@ -59,8 +64,7 @@ class Bitbucket implements ProviderInterface
     {
         if (!isset($this->cache['branches'])) {
             $paginator = new ResultPager($this->client);
-            $repo_users = $this->client->repositories()->users($user);
-            $repo_users->setPerPage(1000);
+            $repo_users = $this->client->repositories()->workspaces($user);
             $branch_client = $repo_users->refs($repo)->branches();
 
             $this->cache['branches'] = [
@@ -87,9 +91,8 @@ class Bitbucket implements ProviderInterface
     {
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
-        $repo_users = $this->client->repositories()->users($user);
-        $repo_users->setPerPage(1000);
-        $prs_client = $repo_users->pullRequests($repo);
+        $api_repo = $this->client->repositories();
+        $prs_client = $api_repo->workspaces($user)->pullRequests($repo);
         $paginator = new ResultPager($this->client);
         $prs = [
             'values' => $paginator->fetchAll($prs_client, 'list'),
@@ -102,7 +105,9 @@ class Bitbucket implements ProviderInterface
             $prs_named[$pr["source"]["branch"]["name"]] = [
                 'base' => [
                     'sha' => $pr["destination"]["commit"]["hash"],
+                    'ref' => $pr["destination"]["branch"]["name"],
                 ],
+                'html_url' => $pr["links"]["html"]["href"],
                 'number' => $pr["id"],
                 'title' => $pr["title"],
             ];
@@ -127,7 +132,7 @@ class Bitbucket implements ProviderInterface
 
     public function createFork($user, $repo, $fork_user)
     {
-        throw new \Exception('Gitlab integration only support creating PRs as the authenticated user.');
+        throw new \Exception('Bitbucket integration only support creating PRs as the authenticated user.');
     }
 
     public function createPullRequest(Slug $slug, $params)
@@ -156,9 +161,16 @@ class Bitbucket implements ProviderInterface
                 ];
             }
         }
-        $data = $this->client->repositories()->users($user_name)->pullRequests($user_repo)->create($bitbucket_params);
+        $data = $this->client
+            ->repositories()
+            ->workspaces($user_name)
+            ->pullRequests($user_repo)
+            ->create($bitbucket_params);
         if (!empty($data["links"]["html"]["href"])) {
             $data['html_url'] = $data["links"]["html"]["href"];
+        }
+        if (!empty($data['id'])) {
+            $data['number'] = $data['id'];
         }
         return $data;
     }
@@ -167,12 +179,22 @@ class Bitbucket implements ProviderInterface
     {
         $user_name = $slug->getUserName();
         $user_repo = $slug->getUserRepo();
-        return $this->client->repositories()->users($user_name)->pullRequests($user_repo)->update($id, $params);
+        return $this->client->repositories()->workspaces($user_name)->pullRequests($user_repo)->update($id, $params);
     }
 
     public function enableAutomerge(array $pr_data, Slug $slug) : bool
     {
         // @todo: Not implemented yet.
         return false;
+    }
+
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment)
+    {
+        $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->comments($pr_id)->create([
+            'content' => [
+                'raw' => $comment,
+            ]
+        ]);
+        $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->decline($pr_id);
     }
 }

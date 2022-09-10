@@ -2,6 +2,8 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
+
 /**
  * Test for branch prefix with one_per option set.
  */
@@ -14,7 +16,23 @@ class TimeFrameTest extends ComposerUpdateIntegrationBase
 
     public function testTimeFrame()
     {
-        self::expectException(\eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException::class);
+        $this->expectException(OutsideProcessingHoursException::class);
+        $this->runtestExpectedOutput();
+    }
+
+    public function testTimeFrameWrongFormat()
+    {
+        $this->composerAssetFiles = 'composer.timeframe_wrong';
+        $this->createComposerFileFromFixtures($this->dir, sprintf('%s.json', $this->composerAssetFiles));
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Timeframe disallowed is in the wrong format');
+        $this->runtestExpectedOutput();
+    }
+
+    public function testTimeFrameNotOutside()
+    {
+        $this->composerAssetFiles = 'composer.timeframe_allowed';
+        $this->createComposerFileFromFixtures($this->dir, sprintf('%s.json', $this->composerAssetFiles));
         $this->runtestExpectedOutput();
     }
 }

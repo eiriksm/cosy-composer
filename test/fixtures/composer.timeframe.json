@@ -4,6 +4,7 @@
     },
     "extra": {
         "violinist": {
+            "timezone": "invalid_totally_invalid",
             "timeframe_disallowed": "00:00-23:59"
         }
     }

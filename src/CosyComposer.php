@@ -539,7 +539,7 @@ class CosyComposer
         }
     }
 
-    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, $prs_named)
+    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, $prs_named, $default_branch)
     {
         $fake_item = (object) [
             'name' => $package_name,
@@ -548,6 +548,12 @@ class CosyComposer
         ];
         $branch_name_prefix = $this->createBranchName($fake_item, false, $config);
         foreach ($prs_named as $branch_name => $pr) {
+            if (!empty($pr["base"]["ref"])) {
+                // The base ref should be what we are actually using for merge requests.
+                if ($pr["base"]["ref"] != $default_branch) {
+                    continue;
+                }
+            }
             if ($pr["number"] == $pr_id) {
                 // We really don't want to close the one we are considering as the latest one, do we?
                 continue;
@@ -978,7 +984,7 @@ class CosyComposer
                             'package' => $item->name,
                         ]);
                         unset($data[$delta]);
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                         $total_prs++;
                     }
                     // Is the pr up to date?
@@ -1019,7 +1025,7 @@ class CosyComposer
                             $context['url'] = $prs_named[$branch_name]['html_url'];
                         }
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, $context);
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                         unset($data[$delta]);
                         $total_prs++;
                     }
@@ -1500,7 +1506,7 @@ class CosyComposer
                                 'package' => $item->name,
                             ]);
                             $total_prs++;
-                            $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                            $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                             continue;
                         }
                         // Is the pr up to date?
@@ -1509,7 +1515,7 @@ class CosyComposer
                                 'package' => $item->name,
                             ]);
                             $total_prs++;
-                            $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                            $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                             continue;
                         }
                     }
@@ -1549,7 +1555,7 @@ class CosyComposer
                     ]);
                     $this->handleAutomerge($config, $pullRequest, $security_update);
                     if (!empty($pullRequest['number'])) {
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named);
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named, $default_branch);
                     }
                 }
                 $total_prs++;
@@ -1590,12 +1596,12 @@ class CosyComposer
                 // If it failed validation because it already exists, we also want to make sure all outdated PRs are
                 // closed.
                 if (!empty($prs_named[$branch_name]['number'])) {
-                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                 }
             } catch (\Gitlab\Exception\RuntimeException $e) {
                 $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
                 if (!empty($prs_named[$branch_name]['number'])) {
-                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                 }
             } catch (ComposerUpdateProcessFailedException $e) {
                 $this->log('Caught an exception: ' . $e->getMessage(), 'error');

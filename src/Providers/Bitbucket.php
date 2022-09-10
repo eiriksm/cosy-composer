@@ -105,6 +105,7 @@ class Bitbucket implements ProviderInterface
             $prs_named[$pr["source"]["branch"]["name"]] = [
                 'base' => [
                     'sha' => $pr["destination"]["commit"]["hash"],
+                    'ref' => $pr["destination"]["branch"]["name"],
                 ],
                 'html_url' => $pr["links"]["html"]["href"],
                 'number' => $pr["id"],

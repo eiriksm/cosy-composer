@@ -96,6 +96,7 @@ class Gitlab implements ProviderInterface
                 'number' => $pr["iid"],
                 'base' => [
                     'sha' => !empty($commits[1]["id"]) ? $commits[1]["id"] : $pr['sha'],
+                    'ref' => $pr["target_branch"],
                 ],
             ];
         }

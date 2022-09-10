@@ -17,6 +17,7 @@ use eiriksm\CosyComposer\ListFilterer\IndirectWithDirectFilterer;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\ViolinistMessages\UpdateListItem;
 use GuzzleHttp\Psr7\Request;
+use Http\Adapter\Guzzle7\Client as GuzzleClient;
 use Http\Client\HttpClient;
 use Symfony\Component\Process\Process;
 use Violinist\AllowListHandler\AllowListHandler;
@@ -173,7 +174,7 @@ class CosyComposer
     protected $project;
 
     /**
-     * @var \Http\Adapter\Guzzle7\Client
+     * @var HttpClient
      */
     protected $httpClient;
 
@@ -249,7 +250,7 @@ class CosyComposer
      */
     public function getLogger()
     {
-        if (!$this->logger) {
+        if (!$this->logger instanceof LoggerInterface) {
             $this->logger = new ArrayLogger();
         }
         return $this->logger;
@@ -285,8 +286,8 @@ class CosyComposer
      */
     public function getHttpClient()
     {
-        if (!$this->httpClient) {
-            $this->httpClient = new \Http\Adapter\Guzzle7\Client();
+        if (!$this->httpClient instanceof HttpClient) {
+            $this->httpClient = new GuzzleClient();
         }
         return $this->httpClient;
     }
@@ -369,7 +370,7 @@ class CosyComposer
     /**
      * CosyComposer constructor.
      */
-    public function __construct($slug, Application $app, OutputInterface $output, CommandExecuter $executer)
+    public function __construct($slug, Application $app, ArrayOutput $output, CommandExecuter $executer)
     {
         if ($slug) {
             // @todo: Move to create from URL.
@@ -656,7 +657,7 @@ class CosyComposer
         // We also want to check what happens if we append .git to the URL. This can be a problem in newer
         // versions of git, that git does not accept redirects.
         $length = strlen('.git');
-        $ends_with_git = $length > 0 ? substr($url, -$length) === '.git' : true;
+        $ends_with_git = substr($url, -$length) === '.git';
         if (!$ends_with_git) {
             $urls[] = "$url.git";
         }
@@ -1187,9 +1188,7 @@ class CosyComposer
         $type = Type::NONE;
         $creator->setType($type);
         try {
-            if ($config) {
-                $creator->setType($config->getCommitMessageConvention());
-            }
+            $creator->setType($config->getCommitMessageConvention());
         } catch (\InvalidArgumentException $e) {
             // Fall back to using none.
         }
@@ -1694,9 +1693,8 @@ class CosyComposer
         /** @var ArrayLogger $my_logger */
         $my_logger = $this->logger;
         foreach ($my_logger->get() as $message) {
-            /** @var Message $msg */
             $msg = $message['message'];
-            if (is_string($msg)) {
+            if (!$msg instanceof Message && is_string($msg)) {
                 $msg = new Message($msg);
             }
             $msg->setContext($message['context']);
@@ -1710,9 +1708,9 @@ class CosyComposer
     }
 
     /**
-     * @param OutputInterface $output
+     * @param ArrayOutput $output
      */
-    public function setOutput(OutputInterface $output)
+    public function setOutput(ArrayOutput $output)
     {
         $this->output = $output;
     }
@@ -1994,14 +1992,13 @@ class CosyComposer
 
     protected function getFetcher() : ChangelogRetriever
     {
-        if ($this->fetcher) {
-            return $this->fetcher;
+        if (!$this->fetcher instanceof ChangelogRetriever) {
+            $cosy_factory_wrapper = new ProcessFactoryWrapper();
+            $cosy_factory_wrapper->setExecutor($this->executer);
+            $retriever = new DependencyRepoRetriever($cosy_factory_wrapper);
+            $retriever->setAuthToken($this->userToken);
+            $this->fetcher = new ChangelogRetriever($retriever, $cosy_factory_wrapper);
         }
-        $cosy_factory_wrapper = new ProcessFactoryWrapper();
-        $cosy_factory_wrapper->setExecutor($this->executer);
-        $retriever = new DependencyRepoRetriever($cosy_factory_wrapper);
-        $retriever->setAuthToken($this->userToken);
-        $this->fetcher = new ChangelogRetriever($retriever, $cosy_factory_wrapper);
         return $this->fetcher;
     }
 
@@ -2137,7 +2134,7 @@ class CosyComposer
      */
     private function getClient(Slug $slug)
     {
-        if (!$this->providerFactory) {
+        if (!$this->providerFactory instanceof ProviderFactory) {
             $this->setProviderFactory(new ProviderFactory());
         }
         return $this->providerFactory->createFromHost($slug, $this->urlArray);

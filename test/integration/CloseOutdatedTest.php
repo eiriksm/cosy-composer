@@ -31,18 +31,30 @@ class CloseOutdatedTest extends CloseOutdatedBase
             'psrlog100114' => [
                 'number' => 456,
                 'title' => 'Test update',
+                'base' => [
+                    'ref' => 'master',
+                ]
             ],
             'psrlog100113' => [
                 'number' => 123,
                 'title' => 'Test update',
+                'base' => [
+                    'ref' => 'notmaster',
+                ]
             ],
             'psrlog100112' => [
                 'number' => 124,
                 'title' => 'Test update',
+                'base' => [
+                    'ref' => 'master',
+                ]
             ],
             'psrlog100111' => [
                 'number' => 125,
                 'title' => 'Test update',
+                'base' => [
+                    'ref' => 'master',
+                ]
             ]
         ];
     }

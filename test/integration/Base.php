@@ -232,7 +232,7 @@ abstract class Base extends TestCase
                     $this->createUpdateJsonFromData($package, $version_from, $version_to),
                 ]
             ]);
-        if ($this->cosy) {
+        if ($this->cosy instanceof CosyComposer) {
             $this->cosy->setOutput($mock_output);
         }
         return $mock_output;

@@ -195,6 +195,5 @@ class Gitlab implements ProviderInterface
             }
             usleep($retries * 100);
         }
-        return true;
     }
 }

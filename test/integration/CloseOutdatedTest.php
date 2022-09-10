@@ -23,7 +23,7 @@ class CloseOutdatedTest extends CloseOutdatedBase
     protected $packageVersionForToUpdateOutput = '1.1.4';
     protected $composerAssetFiles = 'composer.close.outdated';
     protected $checkPrUrl = true;
-    protected $expectedClosedPrs = [123, 124, 125];
+    protected $expectedClosedPrs = [124, 125];
 
     protected function getPrsNamed()
     {

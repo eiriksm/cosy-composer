@@ -29,7 +29,7 @@ abstract class ComposerUpdateIntegrationBase extends Base
      */
     protected $mockProvider;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         if ($this->packageForUpdateOutput) {

@@ -35,7 +35,7 @@ abstract class Base extends TestCase
 
     protected $automergeEnabled = false;
 
-    public function setUp()
+    public function setUp() : void
     {
         $c = $this->getMockCosy();
         $dir = '/tmp/' . uniqid();
@@ -52,7 +52,7 @@ abstract class Base extends TestCase
 
     protected function createExpectedCommandForPackage($package)
     {
-        return "composer update -n --no-ansi $package --with-dependencies ";
+        return ["composer", 'update', '-n', '--no-ansi', $package, '--with-dependencies'];
     }
 
     protected function createUpdateJsonFromData($package, $version, $new_version)
@@ -102,7 +102,7 @@ abstract class Base extends TestCase
     {
         foreach ($c->getOutput() as $output_message) {
             try {
-                $this->assertContains($message, $output_message->getMessage());
+                $this->assertStringContainsString($message, $output_message->getMessage());
                 return $output_message;
             } catch (\Exception $e) {
                 continue;
@@ -157,6 +157,7 @@ abstract class Base extends TestCase
         $mock_app->method('run')
             ->willReturnCallback(function ($input) {
                 self::assertEquals($this->usesDirect, $input->getParameterOption('--direct'));
+                return 0;
             });
         return $mock_app;
     }

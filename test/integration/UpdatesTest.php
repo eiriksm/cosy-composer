@@ -83,7 +83,8 @@ class UpdatesTest extends Base
         $called = false;
         $mock_executer = $this->getMockExecuterWithReturnCallback(
             function ($cmd) use (&$called) {
-                if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                $cmd_string = implode(' ', $cmd);
+                if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                     $called = true;
                 }
                 return 0;
@@ -157,7 +158,8 @@ class UpdatesTest extends Base
         $called = false;
         $mock_executer = $mock_executer = $this->getMockExecuterWithReturnCallback(
             function ($cmd) use (&$called) {
-                if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                $cmd_string = implode(' ', $cmd);
+                if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                     $called = true;
                 }
                 return 0;
@@ -222,7 +224,8 @@ class UpdatesTest extends Base
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
                 function ($cmd) use (&$called) {
-                    if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
                     }
                     return 0;
@@ -293,7 +296,8 @@ class UpdatesTest extends Base
                         $composer_update_called = true;
                         $return = 1;
                     }
-                    if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
                     }
                     return $return;
@@ -347,7 +351,8 @@ class UpdatesTest extends Base
             ->will($this->returnCallback(
                 function ($cmd) use (&$called) {
                     $return = 0;
-                    if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
                     }
                     return $return;
@@ -417,10 +422,11 @@ class UpdatesTest extends Base
                     if ($cmd == $command) {
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                     }
-                    if ($cmd == 'GIT_AUTHOR_NAME="" GIT_AUTHOR_EMAIL="" GIT_COMMITTER_NAME="" GIT_COMMITTER_EMAIL="" git commit composer.json composer.lock -m "Update psr/log"') {
+                    if ($cmd == ['git', 'commit', 'composer.json', 'composer.lock', '-m', '"Update psr/log"']) {
                         $return = 1;
                     }
-                    if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
                     }
                     return $return;
@@ -489,10 +495,11 @@ class UpdatesTest extends Base
                     if ($cmd == $this->createExpectedCommandForPackage('psr/log')) {
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                     }
-                    if ($cmd == 'git push origin psrlog100102 --force') {
+                    if ($cmd == ['git', 'push', 'origin', 'psrlog100102', '--force']) {
                         $return = 1;
                     }
-                    if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
                     }
                     return $return;
@@ -561,7 +568,8 @@ class UpdatesTest extends Base
                     if ($cmd == $this->createExpectedCommandForPackage('psr/log')) {
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                     }
-                    if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
                     }
                     return $return;
@@ -702,7 +710,8 @@ a custom message
                     if ($cmd == $this->createExpectedCommandForPackage('psr/log')) {
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                     }
-                    if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
                     }
                     return $return;
@@ -757,11 +766,12 @@ a custom message
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
                 function ($cmd) use (&$called, &$install_called, $dir) {
-                    if ($cmd == 'composer require -n --no-ansi psr/log:^2.0.1 --update-with-dependencies ') {
+                    if ($cmd == ['composer', 'require', '-n', '--no-ansi', 'psr/log:^2.0.1', '--update-with-dependencies']) {
                         $install_called = true;
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                     }
-                    if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
                     }
                     return 0;
@@ -805,10 +815,11 @@ a custom message
         $mock_executer = $this->getMockExecuterWithReturnCallback(
             function ($cmd) use (&$called, $dir) {
                 $return = 0;
-                if ($cmd == 'composer update -n --no-ansi psr/log  ') {
+                if ($cmd == ['composer', 'update', '-n', '--no-ansi', 'psr/log']) {
                     file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                 }
-                if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                $cmd_string = implode(' ', $cmd);
+                if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                     $called = true;
                 }
                 return $return;
@@ -944,7 +955,8 @@ a custom message
                 if ($cmd == $expected_command) {
                     file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-drupal-847-updated.lock'));
                 }
-                if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                $cmd_string = implode(' ', $cmd);
+                if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                     $called = true;
                 }
                 return $return;
@@ -1036,7 +1048,8 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
                 if ($cmd == $expected_command) {
                     file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-drupal88.lock.updated'));
                 }
-                if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                $cmd_string = implode(' ', $cmd);
+                if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                     $called = true;
                 }
                 return $return;

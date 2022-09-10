@@ -21,7 +21,7 @@ abstract class CloseOutdatedBase extends ComposerUpdateIntegrationBase
     protected $closedPrs = [];
     protected $expectedClosedPrs = [];
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->getMockProvider()

@@ -27,7 +27,7 @@ class CloseOutdatedUpdateBranchTest extends CloseOutdatedBase
     protected $expectedClosedPrs = [123, 124, 125];
     private $exceptionClass = ValidationFailedException::class;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->mockProvider->method('createPullRequest')

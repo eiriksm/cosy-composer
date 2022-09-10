@@ -11,7 +11,7 @@ class ConfigBranchOrderTest extends ComposerUpdateIntegrationBase
     protected $packageVersionForFromUpdateOutput = '1.0.0';
     protected $packageVersionForToUpdateOutput = '1.0.2';
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $this->createComposerFileFromFixtures($this->dir, 'composer-master.json');
@@ -29,7 +29,7 @@ class ConfigBranchOrderTest extends ComposerUpdateIntegrationBase
 
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
-        if ($cmd === 'git checkout develop') {
+        if ($cmd === ['git', 'checkout', 'develop']) {
             $this->createComposerFileFromFixtures($this->dir, 'composer-develop.json');
             $this->placeComposerLockContentsFromFixture('composer-develop.lock', $this->dir);
         }

@@ -16,7 +16,7 @@ class CommandExecuterTest extends TestCase
     {
         $process_mock = $this->createMock(ProcessFactory::class);
         $logger_mock = $this->createMock(LoggerInterface::class);
-        $command = 'echo eirik';
+        $command = ['echo', 'eirik'];
         $called_correctly = false;
         $logger_mock->expects($this->once())
             ->method('log')

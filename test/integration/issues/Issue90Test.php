@@ -38,7 +38,7 @@ class Issue90Test extends Base
                     if ($cmd == $this->createExpectedCommandForPackage('psr/log')) {
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../../fixtures/composer-psr-log.lock-updated'));
                     }
-                    if ($cmd === "git -C /tmp/e9a8b66d7a4bac57a08b8f0f2664c50f log 4ebe3a8bf773a19edfe0a84b6585ba3d401b724d..changed --oneline") {
+                    if ($cmd === ["git", '-C', '/tmp/e9a8b66d7a4bac57a08b8f0f2664c50f', 'log', '4ebe3a8bf773a19edfe0a84b6585ba3d401b724d..changed', "--oneline"]) {
                         $called_one_line_correctly = true;
                     }
                     return 0;

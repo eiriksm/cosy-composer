@@ -26,7 +26,7 @@ class Issue164Test extends ComposerUpdateIntegrationBase
     {
         $this->runtestExpectedOutput();
         $this->assertOutputContainsMessage(
-            'Creating command composer require --dev -n --no-ansi psr/log:1.1.3 --update-with-dependencies ',
+            'Creating command composer require --dev -n --no-ansi psr/log:1.1.3 --update-with-dependencies',
             $this->cosy
         );
     }

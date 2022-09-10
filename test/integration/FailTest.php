@@ -27,8 +27,8 @@ class FailTest extends Base
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
                 function ($cmd, $log = true, $timeout = 120) {
-
-                    if (strpos($cmd, 'git clone --depth=1 https://user-token:@github.com/a/b') === 0) {
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'git clone --depth=1 https://user-token:@github.com/a/b') === 0) {
                         return 42;
                     }
                     return 0;

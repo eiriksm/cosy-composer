@@ -23,7 +23,7 @@ class CloseOutdatedTest extends CloseOutdatedBase
     protected $packageVersionForToUpdateOutput = '1.1.4';
     protected $composerAssetFiles = 'composer.close.outdated';
     protected $checkPrUrl = true;
-    protected $expectedClosedPrs = [123, 124, 125];
+    protected $expectedClosedPrs = [124, 125];
 
     protected function getPrsNamed()
     {
@@ -31,18 +31,30 @@ class CloseOutdatedTest extends CloseOutdatedBase
             'psrlog100114' => [
                 'number' => 456,
                 'title' => 'Test update',
+                'base' => [
+                    'ref' => 'master',
+                ]
             ],
             'psrlog100113' => [
                 'number' => 123,
                 'title' => 'Test update',
+                'base' => [
+                    'ref' => 'notmaster',
+                ]
             ],
             'psrlog100112' => [
                 'number' => 124,
                 'title' => 'Test update',
+                'base' => [
+                    'ref' => 'master',
+                ]
             ],
             'psrlog100111' => [
                 'number' => 125,
                 'title' => 'Test update',
+                'base' => [
+                    'ref' => 'master',
+                ]
             ]
         ];
     }

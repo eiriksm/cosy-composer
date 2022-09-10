@@ -11,7 +11,7 @@ class ProcessFactoryTest extends TestCase
     {
         $p = new ProcessFactory();
         $cwd = getcwd();
-        $proc = $p->getProcess('echo');
+        $proc = $p->getProcess(['echo']);
         $this->assertEquals($cwd, $proc->getWorkingDirectory());
     }
 
@@ -19,7 +19,7 @@ class ProcessFactoryTest extends TestCase
     {
         $p = new ProcessFactory();
         $cwd = '/tmp/test';
-        $proc = $p->getProcess('echo', $cwd);
+        $proc = $p->getProcess(['echo'], $cwd);
         $this->assertEquals($cwd, $proc->getWorkingDirectory());
     }
 }

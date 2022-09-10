@@ -36,7 +36,8 @@ class Issue92Test extends Base
                         $current_error_output = "Trying to update\nFailed to update";
                     }
                     $return = 0;
-                    if (strpos($cmd, 'rm -rf /tmp/') === 0) {
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
                     }
                     return $return;

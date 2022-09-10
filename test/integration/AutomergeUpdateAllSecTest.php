@@ -21,7 +21,7 @@ class AutomergeUpdateAllSecTest extends AutoMergeBase
     protected $checkPrUrl = true;
     protected $usesDirect = false;
 
-    public function setUp()
+    public function setUp() : void
     {
         parent::setUp();
         $checker = $this->createMock(SecurityChecker::class);
@@ -50,6 +50,6 @@ class AutomergeUpdateAllSecTest extends AutoMergeBase
 
     protected function createExpectedCommandForPackage($package)
     {
-        return 'composer update';
+        return ['composer', 'update'];
     }
 }

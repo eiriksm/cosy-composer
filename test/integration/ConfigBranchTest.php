@@ -23,7 +23,7 @@ class ConfigBranchTest extends ComposerUpdateIntegrationBase
     protected $packageVersionForToUpdateOutput = '1.1.4';
     protected $composerAssetFiles = 'empty';
 
-    public function tearDown()
+    public function tearDown() : void
     {
         parent::tearDown();
         putenv('config_branch');
@@ -58,11 +58,12 @@ config_branch=config'],
 
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
-        if (!preg_match('/git clone --depth=1 https:\/\/user-token:@github.com\/a\/b .* config/', $cmd, $output_array)) {
+        $cmd_string = implode(' ', $cmd);
+        if (!preg_match('/git clone --depth=1 https:\/\/user-token:@github.com\/a\/b .* config/', $cmd_string, $output_array)) {
             return;
         }
         // Now retrieve the dir.
-        $dir = str_replace(' -b config', '', str_replace('git clone --depth=1 https://user-token:@github.com/a/b ', '', $cmd));
+        $dir = str_replace(' -b config', '', str_replace('git clone --depth=1 https://user-token:@github.com/a/b ', '', $cmd_string));
         mkdir($dir);
         $this->placeComposerContentsFromFixture('empty.json', $dir);
     }

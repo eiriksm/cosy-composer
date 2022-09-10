@@ -18,6 +18,7 @@ use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\ViolinistMessages\UpdateListItem;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\HttpClient;
+use Symfony\Component\Process\Process;
 use Violinist\AllowListHandler\AllowListHandler;
 use Violinist\ChangelogFetcher\ChangelogRetriever;
 use Violinist\ChangelogFetcher\DependencyRepoRetriever;
@@ -172,7 +173,7 @@ class CosyComposer
     protected $project;
 
     /**
-     * @var \Http\Adapter\Guzzle6\Client
+     * @var \Http\Adapter\Guzzle7\Client
      */
     protected $httpClient;
 
@@ -285,7 +286,7 @@ class CosyComposer
     public function getHttpClient()
     {
         if (!$this->httpClient) {
-            $this->httpClient = new \Http\Adapter\Guzzle6\Client();
+            $this->httpClient = new \Http\Adapter\Guzzle7\Client();
         }
         return $this->httpClient;
     }
@@ -475,7 +476,7 @@ class CosyComposer
         }
         $symfony_dir = sprintf('%s/.symfony/cache/security-advisories/drupal', getenv('HOME'));
         if (!file_exists($symfony_dir)) {
-            $mkdir = $this->execCommand('mkdir -p %s', $symfony_dir);
+            $mkdir = $this->execCommand(['mkdir', '-p', $symfony_dir]);
             if ($mkdir) {
                 return;
             }
@@ -489,10 +490,12 @@ class CosyComposer
                 continue;
             }
             if ($repository->url === 'https://packages.drupal.org/8') {
-                $this->execCommand(sprintf('rsync -aq %s/sa_yaml/8/drupal/* %s/', $contrib_sa_dir, $symfony_dir));
+                $process = Process::fromShellCommandline('rsync -aq ' . sprintf('%s/sa_yaml/8/drupal/*', $contrib_sa_dir) .  " $symfony_dir/");
+                $process->run();
             }
             if ($repository->url === 'https://packages.drupal.org/7') {
-                $this->execCommand(sprintf('rsync -aq %s/sa_yaml/7/drupal/* %s/', $contrib_sa_dir, $symfony_dir));
+                $process = Process::fromShellCommandline('rsync -aq ' . sprintf('%s/sa_yaml/7/drupal/*', $contrib_sa_dir) .  " $symfony_dir/");
+                $process->run();
             }
         }
     }
@@ -536,7 +539,7 @@ class CosyComposer
         }
     }
 
-    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, $prs_named)
+    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, $prs_named, $default_branch)
     {
         $fake_item = (object) [
             'name' => $package_name,
@@ -545,6 +548,12 @@ class CosyComposer
         ];
         $branch_name_prefix = $this->createBranchName($fake_item, false, $config);
         foreach ($prs_named as $branch_name => $pr) {
+            if (!empty($pr["base"]["ref"])) {
+                // The base ref should be what we are actually using for merge requests.
+                if ($pr["base"]["ref"] != $default_branch) {
+                    continue;
+                }
+            }
             if ($pr["number"] == $pr_id) {
                 // We really don't want to close the one we are considering as the latest one, do we?
                 continue;
@@ -598,10 +607,10 @@ class CosyComposer
             $this->log(sprintf('Queue runner revision %s', $_SERVER['queue_runner_revision']));
         }
         // Try to get the php version as well.
-        $this->execCommand('php --version');
+        $this->execCommand(['php', '--version']);
         $this->log($this->getLastStdOut());
         // Try to get the composer version as well.
-        $this->execCommand('composer --version');
+        $this->execCommand(['composer', '--version']);
         $this->log($this->getLastStdOut());
         $this->log(sprintf('Starting update check for %s', $this->slug->getSlug()));
         $user_name = $this->slug->getUserName();
@@ -614,14 +623,14 @@ class CosyComposer
         $hostname = $this->slug->getProvider();
         $url = null;
         // Make sure we accept the fingerprint of whatever we are cloning.
-        $this->execCommand(sprintf('ssh-keyscan -t rsa,dsa %s >> ~/.ssh/known_hosts', $hostname));
+        $this->execCommand(['ssh-keyscan', '-t', 'rsa,dsa', $hostname, '>>', '~/.ssh/known_hosts']);
         if (!empty($_SERVER['private_key'])) {
             $this->log('Checking for existing private key');
             $filename = "$directory/id_rsa";
             if (!file_exists($filename)) {
                 $this->log('Installing private key');
                 file_put_contents($filename, $_SERVER['private_key']);
-                $this->execCommand(sprintf('chmod 600 %s', $filename), false);
+                $this->execCommand(['chmod', '600', $filename], false);
             }
         }
         switch ($hostname) {
@@ -653,7 +662,7 @@ class CosyComposer
         }
         $this->log('Cloning repository');
         foreach ($urls as $url) {
-            $clone_result = $this->execCommand('git clone --depth=1 ' . $url . ' ' . $this->tmpDir, false, 120);
+            $clone_result = $this->execCommand(['git', 'clone', '--depth=1', $url, $this->tmpDir], false, 120);
             if (!$clone_result) {
                 break;
             }
@@ -678,7 +687,7 @@ class CosyComposer
             $config_branch = $_ENV['config_branch'];
             $this->log('Changing to config branch: ' . $config_branch);
             $tmpdir = sprintf('/tmp/%s', uniqid('', true));
-            $clone_result = $this->execCommand('git clone --depth=1 ' . $url . ' ' . $tmpdir . ' -b ' . $config_branch, false, 120);
+            $clone_result = $this->execCommand(['git', 'clone', '--depth=1', $url, $tmpdir, '-b', $config_branch], false, 120);
             if (!$clone_result) {
                 $local_adapter = new Local($tmpdir);
             }
@@ -721,13 +730,13 @@ class CosyComposer
             $default_branch = $config->getDefaultBranch();
         }
         // Now make sure we are actually on that branch.
-        if ($this->execCommand('git remote set-branches origin "*"')) {
+        if ($this->execCommand(['git', 'remote', 'set-branches', 'origin', "*"])) {
             throw new \Exception('There was an error trying to configure default branch');
         }
-        if ($this->execCommand('git fetch origin ' . $default_branch)) {
+        if ($this->execCommand(['git', 'fetch', 'origin', $default_branch])) {
             throw new \Exception('There was an error trying to fetch default branch');
         }
-        if ($this->execCommand('git checkout ' . $default_branch)) {
+        if ($this->execCommand(['git', 'checkout', $default_branch])) {
             throw new \Exception('There was an error trying to switch to default branch');
         }
         // Re-read the composer.json file, since it can be different on the default branch,
@@ -751,8 +760,12 @@ class CosyComposer
         }
         $app = $this->app;
         $d = $app->getDefinition();
+        /** @var InputOption[] $opts */
         $opts = $d->getOptions();
-        $opts['no-ansi'] = new InputOption('no-ansi', null, 4, true, 'Disable ANSI output');
+        try {
+            $opts['ansi']->setDefault('--no-ansi');
+        } catch (\Throwable $e) {
+        }
         $d->setOptions($opts);
         $app->setDefinition($d);
         $app->setAutoExit(false);
@@ -971,7 +984,7 @@ class CosyComposer
                             'package' => $item->name,
                         ]);
                         unset($data[$delta]);
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                         $total_prs++;
                     }
                     // Is the pr up to date?
@@ -1012,7 +1025,7 @@ class CosyComposer
                             $context['url'] = $prs_named[$branch_name]['html_url'];
                         }
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, $context);
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                         unset($data[$delta]);
                         $total_prs++;
                     }
@@ -1030,7 +1043,7 @@ class CosyComposer
         }
 
         // Unshallow the repo, for syncing it.
-        $this->execCommand('git pull --unshallow', false, 300);
+        $this->execCommand(['git', 'pull', '--unshallow'], false, 300);
         // If the repo is private, we need to push directly to the repo.
         if (!$this->isPrivate) {
             $this->preparePrClient();
@@ -1075,9 +1088,9 @@ class CosyComposer
         $security_update = false;
         try {
             $this->switchBranch($branch_name);
-            $status = $this->execCommand('composer update');
+            $status = $this->execCommand(['composer', 'update']);
             if ($status) {
-                throw new \Exception('Composer update command existed with status code ' . $status);
+                throw new \Exception('Composer update command exited with status code ' . $status);
             }
             // Now let's find out what has actually been updated.
             $new_lock_contents = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
@@ -1153,19 +1166,19 @@ class CosyComposer
     protected function switchBranch($branch_name)
     {
         $this->log('Checking out new branch: ' . $branch_name);
-        $result = $this->execCommand('git checkout -b ' . $branch_name, false);
+        $result = $this->execCommand(['git', 'checkout', '-b', $branch_name], false);
         if ($result) {
             $this->log($this->getLastStdErr());
             throw new \Exception(sprintf('There was an error checking out branch %s. Exit code was %d', $branch_name, $result));
         }
         // Make sure we do not have any uncommitted changes.
-        $this->execCommand('git checkout .', false);
+        $this->execCommand(['git', 'checkout', '.'], false);
     }
 
     protected function cleanRepoForCommit()
     {
         // Clean up the composer.lock file if it was not part of the repo.
-        $this->execCommand('git clean -f composer.*');
+        $this->execCommand(['git', 'clean', '-f', 'composer.*']);
     }
 
     protected function getCommitCreator(Config $config) : Creator
@@ -1194,16 +1207,17 @@ class CosyComposer
     protected function commitFiles($msg)
     {
 
-        $command = sprintf(
-            'GIT_AUTHOR_NAME="%s" GIT_AUTHOR_EMAIL="%s" GIT_COMMITTER_NAME="%s" GIT_COMMITTER_EMAIL="%s" git commit %s -m "%s"',
-            $this->githubUserName,
-            $this->githubEmail,
-            $this->githubUserName,
-            $this->githubEmail,
-            $this->lockFileContents ? 'composer.json composer.lock' : 'composer.json',
-            $msg
-        );
-        if ($this->execCommand($command, false)) {
+        $command = array_filter([
+            'git', "commit",
+            'composer.json',
+            $this->lockFileContents ? 'composer.lock' : '',
+            '-m', '"' . $msg . '"']);
+        if ($this->execCommand($command, false, 120, [
+            'GIT_AUTHOR_NAME' => $this->githubUserName,
+            'GIT_AUTHOR_EMAIL' => $this->githubEmail,
+            'GIT_COMMITTER_NAME' => $this->githubUserName,
+            'GIT_COMMITTER_EMAIL' => $this->githubEmail,
+        ])) {
             $this->log($this->getLastStdOut(), Message::COMMAND);
             $this->log($this->getLastStdErr(), Message::COMMAND);
             throw new \Exception('Error committing the composer files. They are probably not changed.');
@@ -1219,28 +1233,28 @@ class CosyComposer
         switch ($hostname) {
             case 'github.com':
                 $this->execCommand(
-                    sprintf('composer config --auth github-oauth.github.com %s', $token),
+                    ['composer', 'config', '--auth', 'github-oauth.github.com', $token],
                     false
                 );
                 break;
 
             case 'gitlab.com':
                 $this->execCommand(
-                    sprintf('composer config --auth gitlab-oauth.gitlab.com %s', $token),
+                    ['composer', 'config', '--auth', 'gitlab-oauth.gitlab.com', $token],
                     false
                 );
                 break;
 
             case 'bitbucket.org':
                 $this->execCommand(
-                    sprintf('composer config --auth http-basic.bitbucket.org x-token-auth %s', $token),
+                    ['composer', 'config', '--auth', 'http-basic.bitbucket.org', 'x-token-auth', $token],
                     false
                 );
                 break;
 
             default:
                 $this->execCommand(
-                    sprintf('composer config --auth gitlab-oauth.%s %s', $token, $hostname),
+                    ['composer', 'config', '--auth', sprintf('gitlab-oauth.%s', $token), $hostname],
                     false
                 );
                 break;
@@ -1299,7 +1313,7 @@ class CosyComposer
     {
         if ($this->isPrivate) {
             $origin = 'origin';
-            if ($this->execCommand("git push $origin $branch_name --force")) {
+            if ($this->execCommand(["git", 'push', $origin, $branch_name, '--force'])) {
                 throw new GitPushException('Could not push to ' . $branch_name);
             }
         } else {
@@ -1482,7 +1496,7 @@ class CosyComposer
                     }
                     if ($branch_name !== $new_branch_name) {
                         $this->log(sprintf('Changing branch because of an unexpected update result. We expected the branch name to be %s but instead we are now switching to %s.', $branch_name, $new_branch_name));
-                        $this->execCommand('git checkout -b ' . $new_branch_name, false);
+                        $this->execCommand(['git', 'checkout', '-b', $new_branch_name], false);
                         $branch_name = $new_branch_name;
                     }
                     // Check if this new branch name has a pr up-to-date.
@@ -1492,7 +1506,7 @@ class CosyComposer
                                 'package' => $item->name,
                             ]);
                             $total_prs++;
-                            $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                            $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                             continue;
                         }
                         // Is the pr up to date?
@@ -1501,7 +1515,7 @@ class CosyComposer
                                 'package' => $item->name,
                             ]);
                             $total_prs++;
-                            $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                            $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                             continue;
                         }
                     }
@@ -1541,7 +1555,7 @@ class CosyComposer
                     ]);
                     $this->handleAutomerge($config, $pullRequest, $security_update);
                     if (!empty($pullRequest['number'])) {
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named);
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named, $default_branch);
                     }
                 }
                 $total_prs++;
@@ -1553,25 +1567,25 @@ class CosyComposer
                 // Not updated because of the composer command, not the
                 // restriction itself.
                 $why_not_name = $original_name = $item->name;
-                $why_not_version = $item->latest;
+                $why_not_version = trim($item->latest);
                 $not_updated_context = [
                     'package' => $why_not_name,
                 ];
                 if (!empty($item->child_latest) && !empty($item->child_with_update)) {
                     $why_not_name = $item->child_with_update;
-                    $why_not_version = $item->child_latest;
+                    $why_not_version = trim($item->child_latest);
                     $not_updated_context['package'] = $why_not_name;
                     $not_updated_context['parent_package'] = $original_name;
                 }
-                $command = sprintf('composer why-not %s "%s"', $why_not_name, $why_not_version);
-                $this->execCommand(sprintf('%s', $command), false);
+                $command = ['composer', 'why-not', $why_not_name, $why_not_version];
+                $this->execCommand($command, false);
                 $this->log($this->getLastStdErr(), Message::COMMAND, [
-                    'command' => $command,
+                    'command' => implode(' ', $command),
                     'package' => $why_not_name,
                     'type' => 'stderr',
                 ]);
                 $this->log($this->getLastStdOut(), Message::COMMAND, [
-                    'command' => $command,
+                    'command' => implode(' ', $command),
                     'package' => $why_not_name,
                     'type' => 'stdout',
                 ]);
@@ -1582,12 +1596,12 @@ class CosyComposer
                 // If it failed validation because it already exists, we also want to make sure all outdated PRs are
                 // closed.
                 if (!empty($prs_named[$branch_name]['number'])) {
-                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                 }
             } catch (\Gitlab\Exception\RuntimeException $e) {
                 $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
                 if (!empty($prs_named[$branch_name]['number'])) {
-                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named);
+                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                 }
             } catch (ComposerUpdateProcessFailedException $e) {
                 $this->log('Caught an exception: ' . $e->getMessage(), 'error');
@@ -1602,17 +1616,17 @@ class CosyComposer
                 ]);
             }
             $this->log('Checking out default branch - ' . $default_branch);
-            $checkout_default_exit_code = $this->execCommand('git checkout ' . $default_branch, false);
+            $checkout_default_exit_code = $this->execCommand(['git', 'checkout', $default_branch], false);
             if ($checkout_default_exit_code) {
                 $this->log($this->getLastStdErr());
                 throw new \Exception('There was an error trying to check out the default branch. The process ended with exit code ' . $checkout_default_exit_code);
             }
             // Also do a git checkout of the files, since we want them in the state they were on the default branch
-            $this->execCommand('git checkout .', false);
+            $this->execCommand(['git', 'checkout', '.'], false);
             // Re-do composer install to make output better, and to make the lock file actually be there for
             // consecutive updates, if it is a project without it.
             if (!$lock_file_contents) {
-                $this->execCommand('rm composer.lock');
+                $this->execCommand(['rm', 'composer.lock']);
             }
             try {
                 $this->doComposerInstall($config);
@@ -1682,6 +1696,9 @@ class CosyComposer
         foreach ($my_logger->get() as $message) {
             /** @var Message $msg */
             $msg = $message['message'];
+            if (is_string($msg)) {
+                $msg = new Message($msg);
+            }
             $msg->setContext($message['context']);
             if (isset($message['context']['command'])) {
                 $msg = new Message($msg->getMessage(), Message::COMMAND);
@@ -1706,10 +1723,10 @@ class CosyComposer
     private function cleanUp()
     {
         // Run composer install again, so we can get rid of newly installed updates for next run.
-        $this->execCommand('composer install --no-ansi -n', false, 1200);
+        $this->execCommand(['composer', 'install', '--no-ansi', '-n'], false, 1200);
         $this->chdir('/tmp');
         $this->log('Cleaning up after update check.');
-        $this->execCommand('rm -rf ' . $this->tmpDir, false, 300);
+        $this->execCommand(['rm', '-rf', $this->tmpDir], false, 300);
     }
 
     /**
@@ -1793,10 +1810,10 @@ class CosyComposer
     /**
      * Executes a command.
      */
-    protected function execCommand($command, $log = true, $timeout = 120)
+    protected function execCommand(array $command, $log = true, $timeout = 120, $env = [])
     {
         $this->executer->setCwd($this->getCwd());
-        return $this->executer->executeCommand($command, $log, $timeout);
+        return $this->executer->executeCommand($command, $log, $timeout, $env);
     }
 
     /**
@@ -1917,11 +1934,11 @@ class CosyComposer
     {
         // @todo: Should probably use composer install command programmatically.
         $this->log('Running composer install');
-        $run_scripts_suffix = '';
+        $install_command = ['composer', 'install', '--no-ansi', '-n'];
         if (!$config->shouldRunScripts()) {
-            $run_scripts_suffix = ' --no-scripts';
+            $install_command[] = '--no-scripts';
         }
-        if ($code = $this->execCommand('composer install --no-ansi -n' . $run_scripts_suffix, false, 1200)) {
+        if ($code = $this->execCommand($install_command, false, 1200)) {
             // Other status code than 0.
             $this->log($this->getLastStdOut(), Message::COMMAND);
             $this->log($this->getLastStdErr());

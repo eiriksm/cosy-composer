@@ -21,7 +21,8 @@ class CommitMessageTest extends ComposerUpdateIntegrationBase
 
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
-        if (strpos($cmd, $this->getCorrectCommit())) {
+        $cmd_string = implode(' ', $cmd);
+        if (strpos($cmd_string, $this->getCorrectCommit()) !== false) {
             $this->hasCorrectCommit = true;
         }
     }

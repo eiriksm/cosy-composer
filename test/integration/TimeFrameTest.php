@@ -25,7 +25,7 @@ class TimeFrameTest extends ComposerUpdateIntegrationBase
         $this->composerAssetFiles = 'composer.timeframe_wrong';
         $this->createComposerFileFromFixtures($this->dir, sprintf('%s.json', $this->composerAssetFiles));
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Timeframe disallowed is in the wrong format');
+        $this->expectExceptionMessage('The timeframe should consist of two 24 hour format times separated by a dash ("-")');
         $this->runtestExpectedOutput();
     }
 

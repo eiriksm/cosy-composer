@@ -42,6 +42,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Violinist\ProjectData\ProjectData;
 use Violinist\Slug\Slug;
+use Violinist\TimeFrameHandler\Handler;
 use Wa72\SimpleLogger\ArrayLogger;
 use function peterpostmann\uri\parse_uri;
 
@@ -440,33 +441,11 @@ class CosyComposer
 
     protected function handleTimeIntervalSetting($composer_json)
     {
-        if (empty($composer_json->extra) ||
-            empty($composer_json->extra->violinist)) {
+        $config = Config::createFromComposerData($composer_json);
+        if (Handler::isAllowed($config)) {
             return;
         }
-        // Default timezone is UTC.
-        $timezone = new \DateTimeZone('+0000');
-        if (!empty($composer_json->extra->violinist->timezone)) {
-            try {
-                $new_tz = new \DateTimeZone($composer_json->extra->violinist->timezone);
-                $timezone = $new_tz;
-            } catch (\Exception $e) {
-                // Well then the default is used.
-            }
-        }
-        if (!empty($composer_json->extra->violinist->timeframe_disallowed)) {
-            // See if it is disallowed then.
-            $date = new \DateTime('now', $timezone);
-            $hour_parts = explode('-', $composer_json->extra->violinist->timeframe_disallowed);
-            if (count($hour_parts) != 2) {
-                throw new \Exception('Timeframe disallowed is in the wrong format');
-            }
-            $low_time_object = new \DateTime($hour_parts[0], $timezone);
-            $high_time_object = new \DateTime($hour_parts[1], $timezone);
-            if ($date->format('U') > $low_time_object->format('U') && $date->format('U') < $high_time_object->format('U')) {
-                throw new OutsideProcessingHoursException('Current hour is inside timeframe disallowed');
-            }
-        }
+        throw new OutsideProcessingHoursException('Current hour is inside timeframe disallowed');
     }
 
     public function handleDrupalContribSa($cdata)

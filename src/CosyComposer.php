@@ -173,7 +173,7 @@ class CosyComposer
     protected $project;
 
     /**
-     * @var \Http\Adapter\Guzzle7\Client
+     * @var HttpClient
      */
     protected $httpClient;
 
@@ -369,7 +369,7 @@ class CosyComposer
     /**
      * CosyComposer constructor.
      */
-    public function __construct($slug, Application $app, OutputInterface $output, CommandExecuter $executer)
+    public function __construct($slug, Application $app, ArrayOutput $output, CommandExecuter $executer)
     {
         if ($slug) {
             // @todo: Move to create from URL.
@@ -1710,9 +1710,9 @@ class CosyComposer
     }
 
     /**
-     * @param OutputInterface $output
+     * @param ArrayOutput $output
      */
-    public function setOutput(OutputInterface $output)
+    public function setOutput(ArrayOutput $output)
     {
         $this->output = $output;
     }

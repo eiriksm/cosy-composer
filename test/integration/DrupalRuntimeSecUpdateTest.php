@@ -3,6 +3,7 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 use eiriksm\ArrayOutput\ArrayOutput;
+use eiriksm\CosyComposer\CosyComposer;
 use Http\Adapter\Guzzle7\Client;
 use Violinist\Slug\Slug;
 
@@ -108,7 +109,7 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
                     $this->createUpdateJsonFromData($package, $version, $new_version),
                 ]
             ]);
-        if ($this->cosy) {
+        if ($this->cosy instanceof CosyComposer) {
             $this->cosy->setOutput($mock_output);
         }
         return $mock_output;

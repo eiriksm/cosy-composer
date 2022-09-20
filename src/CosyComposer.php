@@ -17,6 +17,7 @@ use eiriksm\CosyComposer\ListFilterer\IndirectWithDirectFilterer;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\ViolinistMessages\UpdateListItem;
 use GuzzleHttp\Psr7\Request;
+use Http\Adapter\Guzzle7\Client as GuzzleClient;
 use Http\Client\HttpClient;
 use Symfony\Component\Process\Process;
 use Violinist\AllowListHandler\AllowListHandler;
@@ -42,6 +43,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Violinist\ProjectData\ProjectData;
 use Violinist\Slug\Slug;
+use Violinist\TimeFrameHandler\Handler;
 use Wa72\SimpleLogger\ArrayLogger;
 use function peterpostmann\uri\parse_uri;
 
@@ -173,7 +175,7 @@ class CosyComposer
     protected $project;
 
     /**
-     * @var \Http\Adapter\Guzzle7\Client
+     * @var HttpClient
      */
     protected $httpClient;
 
@@ -249,7 +251,7 @@ class CosyComposer
      */
     public function getLogger()
     {
-        if (!$this->logger) {
+        if (!$this->logger instanceof LoggerInterface) {
             $this->logger = new ArrayLogger();
         }
         return $this->logger;
@@ -285,8 +287,8 @@ class CosyComposer
      */
     public function getHttpClient()
     {
-        if (!$this->httpClient) {
-            $this->httpClient = new \Http\Adapter\Guzzle7\Client();
+        if (!$this->httpClient instanceof HttpClient) {
+            $this->httpClient = new GuzzleClient();
         }
         return $this->httpClient;
     }
@@ -369,7 +371,7 @@ class CosyComposer
     /**
      * CosyComposer constructor.
      */
-    public function __construct($slug, Application $app, OutputInterface $output, CommandExecuter $executer)
+    public function __construct($slug, Application $app, ArrayOutput $output, CommandExecuter $executer)
     {
         if ($slug) {
             // @todo: Move to create from URL.
@@ -440,33 +442,11 @@ class CosyComposer
 
     protected function handleTimeIntervalSetting($composer_json)
     {
-        if (empty($composer_json->extra) ||
-            empty($composer_json->extra->violinist)) {
+        $config = Config::createFromComposerData($composer_json);
+        if (Handler::isAllowed($config)) {
             return;
         }
-        // Default timezone is UTC.
-        $timezone = new \DateTimeZone('+0000');
-        if (!empty($composer_json->extra->violinist->timezone)) {
-            try {
-                $new_tz = new \DateTimeZone($composer_json->extra->violinist->timezone);
-                $timezone = $new_tz;
-            } catch (\Exception $e) {
-                // Well then the default is used.
-            }
-        }
-        if (!empty($composer_json->extra->violinist->timeframe_disallowed)) {
-            // See if it is disallowed then.
-            $date = new \DateTime('now', $timezone);
-            $hour_parts = explode('-', $composer_json->extra->violinist->timeframe_disallowed);
-            if (count($hour_parts) != 2) {
-                throw new \Exception('Timeframe disallowed is in the wrong format');
-            }
-            $low_time_object = new \DateTime($hour_parts[0], $timezone);
-            $high_time_object = new \DateTime($hour_parts[1], $timezone);
-            if ($date->format('U') > $low_time_object->format('U') && $date->format('U') < $high_time_object->format('U')) {
-                throw new OutsideProcessingHoursException('Current hour is inside timeframe disallowed');
-            }
-        }
+        throw new OutsideProcessingHoursException('Current hour is inside timeframe disallowed');
     }
 
     public function handleDrupalContribSa($cdata)
@@ -656,7 +636,7 @@ class CosyComposer
         // We also want to check what happens if we append .git to the URL. This can be a problem in newer
         // versions of git, that git does not accept redirects.
         $length = strlen('.git');
-        $ends_with_git = $length > 0 ? substr($url, -$length) === '.git' : true;
+        $ends_with_git = substr($url, -$length) === '.git';
         if (!$ends_with_git) {
             $urls[] = "$url.git";
         }
@@ -1187,9 +1167,7 @@ class CosyComposer
         $type = Type::NONE;
         $creator->setType($type);
         try {
-            if ($config) {
-                $creator->setType($config->getCommitMessageConvention());
-            }
+            $creator->setType($config->getCommitMessageConvention());
         } catch (\InvalidArgumentException $e) {
             // Fall back to using none.
         }
@@ -1694,9 +1672,8 @@ class CosyComposer
         /** @var ArrayLogger $my_logger */
         $my_logger = $this->logger;
         foreach ($my_logger->get() as $message) {
-            /** @var Message $msg */
             $msg = $message['message'];
-            if (is_string($msg)) {
+            if (!$msg instanceof Message && is_string($msg)) {
                 $msg = new Message($msg);
             }
             $msg->setContext($message['context']);
@@ -1710,9 +1687,9 @@ class CosyComposer
     }
 
     /**
-     * @param OutputInterface $output
+     * @param ArrayOutput $output
      */
-    public function setOutput(OutputInterface $output)
+    public function setOutput(ArrayOutput $output)
     {
         $this->output = $output;
     }
@@ -1993,14 +1970,13 @@ class CosyComposer
 
     protected function getFetcher() : ChangelogRetriever
     {
-        if ($this->fetcher) {
-            return $this->fetcher;
+        if (!$this->fetcher instanceof ChangelogRetriever) {
+            $cosy_factory_wrapper = new ProcessFactoryWrapper();
+            $cosy_factory_wrapper->setExecutor($this->executer);
+            $retriever = new DependencyRepoRetriever($cosy_factory_wrapper);
+            $retriever->setAuthToken($this->userToken);
+            $this->fetcher = new ChangelogRetriever($retriever, $cosy_factory_wrapper);
         }
-        $cosy_factory_wrapper = new ProcessFactoryWrapper();
-        $cosy_factory_wrapper->setExecutor($this->executer);
-        $retriever = new DependencyRepoRetriever($cosy_factory_wrapper);
-        $retriever->setAuthToken($this->userToken);
-        $this->fetcher = new ChangelogRetriever($retriever, $cosy_factory_wrapper);
         return $this->fetcher;
     }
 
@@ -2136,7 +2112,7 @@ class CosyComposer
      */
     private function getClient(Slug $slug)
     {
-        if (!$this->providerFactory) {
+        if (!$this->providerFactory instanceof ProviderFactory) {
             $this->setProviderFactory(new ProviderFactory());
         }
         return $this->providerFactory->createFromHost($slug, $this->urlArray);

@@ -18,7 +18,7 @@ class SecurityCheckerFactory
 
     public function getChecker()
     {
-        if (!isset($this->checker)) {
+        if (!$this->checker instanceof SecurityChecker) {
             $this->checker = new SecurityChecker();
         }
         return $this->checker;

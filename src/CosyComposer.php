@@ -1930,9 +1930,8 @@ class CosyComposer
    *
    * @throws \eiriksm\CosyComposer\Exceptions\ComposerInstallException
    */
-    protected function doComposerInstall(Config $config)
+    protected function doComposerInstall(Config $config) : void
     {
-        // @todo: Should probably use composer install command programmatically.
         $this->log('Running composer install');
         $install_command = ['composer', 'install', '--no-ansi', '-n'];
         if (!$config->shouldRunScripts()) {

@@ -1477,33 +1477,10 @@ class CosyComposer
                         $this->execCommand(['git', 'checkout', '-b', $new_branch_name], false);
                         $branch_name = $new_branch_name;
                     }
-                    // Check if this new branch name has a pr up-to-date.
-                    if (array_key_exists($branch_name, $prs_named)) {
-                        if (!$default_base) {
-                            $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
-                                'package' => $item->name,
-                            ]);
-                            $total_prs++;
-                            $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
-                            continue;
-                        }
-                        // Is the pr up to date?
-                        if ($prs_named[$branch_name]['base']['sha'] == $default_base) {
-                            $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
-                                'package' => $item->name,
-                            ]);
-                            $total_prs++;
-                            $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
-                            continue;
-                        }
-                    }
                 }
                 $this->log('Successfully ran command composer update for package ' . $package_name);
                 $new_lock_data = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
                 $list_item = new UpdateListItem($package_name, $post_update_data->version, $item->version);
-                $this->commitFilesForPackage($list_item, $config, $is_require_dev);
-                $this->runAuthExport($hostname);
-                $this->pushCode($branch_name, $default_base, $lock_file_contents);
                 $this->log('Trying to retrieve changelog for ' . $package_name);
                 $changelog = null;
                 $changed_files = [];
@@ -1526,6 +1503,29 @@ class CosyComposer
                 $body = $this->createBody($item, $post_update_data, $changelog, $security_update, $update_list, $changed_files);
                 $title = $this->createTitle($item, $post_update_data, $security_update);
                 $pr_params = $this->getPrParams($branch_name, $body, $title, $default_branch, $config);
+                // Check if this new branch name has a pr up-to-date.
+                if (!$this->shouldUpdatePr($branch_name, $pr_params, $prs_named) && array_key_exists($branch_name, $prs_named)) {
+                    if (!$default_base) {
+                        $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
+                            'package' => $item->name,
+                        ]);
+                        $total_prs++;
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
+                        continue;
+                    }
+                    // Is the pr up to date?
+                    if ($prs_named[$branch_name]['base']['sha'] == $default_base) {
+                        $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
+                            'package' => $item->name,
+                        ]);
+                        $total_prs++;
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
+                        continue;
+                    }
+                }
+                $this->commitFilesForPackage($list_item, $config, $is_require_dev);
+                $this->runAuthExport($hostname);
+                $this->pushCode($branch_name, $default_base, $lock_file_contents);
                 $pullRequest = $this->createPullrequest($pr_params);
                 if (!empty($pullRequest['html_url'])) {
                     $this->log($pullRequest['html_url'], Message::PR_URL, [

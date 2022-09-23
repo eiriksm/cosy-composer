@@ -5,6 +5,9 @@ namespace eiriksm\CosyComposer\Providers;
 use Github\Exception\ValidationFailedException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\ServerRequest;
+use Http\Client\Common\Plugin;
+use Http\Client\HttpClient;
+use Psr\Http\Message\ResponseInterface;
 use Violinist\Slug\Slug;
 use GuzzleHttp\Psr7\Utils;
 use Http\Adapter\Guzzle7\Client;
@@ -61,35 +64,34 @@ class PublicGithubWrapper extends Github
     public function forceUpdateBranch($branch, $sha)
     {
         $jar = new CookieJar();
-        $jar->addCookie(new Cookie('XDEBUG_SESSION', 'XDEBUG_ECLIPSE', null, 'violinist.localhost'));
         $plugin = new CookiePlugin($jar);
-        $client = new PluginClient(HttpClientDiscovery::find(), [$plugin]);
+        $client = $this->getPluginClient($plugin);
         $url = sprintf('%s/api/github/update_branch?nid=%d&token=%s&branch=%s&new_sha=%s', $this->baseUrl, $this->project->getNid(), $this->userToken, $branch, $sha);
         $request = new Request('GET', $url);
         $resp = $client->sendRequest($request);
-        if ($resp->getStatusCode() != 200) {
-            throw new \Exception('Wrong status code on update branch request (' . $resp->getStatusCode() . ').');
-        }
-        if (!$json = @json_decode((string) $resp->getBody())) {
-            throw new \Exception('No json parsed in update branch response');
-        }
+        $this->handleStatusCodeAndJsonResponse($resp, 'update branch');
     }
 
     public function createFork($user, $repo, $fork_user)
     {
         // Send all this data to the website endpoint.
         $jar = new CookieJar();
-        $jar->addCookie(new Cookie('XDEBUG_SESSION', 'XDEBUG_ECLIPSE', null, 'violinist.localhost'));
         $plugin = new CookiePlugin($jar);
-        $client = new PluginClient(HttpClientDiscovery::find(), [$plugin]);
+        $client = $this->getPluginClient($plugin);
         $request = new Request('GET', $this->baseUrl . '/api/github/create_fork?nid=' . $this->project->getNid() . '&token=' . $this->userToken);
         $resp = $client->sendRequest($request);
-        if ($resp->getStatusCode() != 200) {
-            throw new \Exception('Wrong status code on create fork request (' . $resp->getStatusCode() . ').');
+        $this->handleStatusCodeAndJsonResponse($resp, 'create fork');
+    }
+
+    protected function handleStatusCodeAndJsonResponse(ResponseInterface $response, string $response_name)
+    {
+        if ($response->getStatusCode() != 200) {
+            throw new \Exception(sprintf('Wrong status code on %s request (%d)', $response_name, $response->getStatusCode()));
         }
-        if (!$json = @json_decode((string) $resp->getBody())) {
-            throw new \Exception('No json parsed in the create fork response');
+        if (!$json = @json_decode((string) $response->getBody())) {
+            throw new \Exception(sprintf('No json parsed in the %s response', $response_name));
         }
+        return $json;
     }
 
     public function createPullRequest(Slug $slug, $params)
@@ -98,19 +100,19 @@ class PublicGithubWrapper extends Github
         $user_repo = $slug->getUserRepo();
         $request = $this->createPullRequestRequest($user_name, $user_repo, $params);
         $jar = new CookieJar();
-        $jar->addCookie(new Cookie('XDEBUG_SESSION', 'XDEBUG_ECLIPSE', null, 'violinist.localhost'));
         $plugin = new CookiePlugin($jar);
-        $client = new PluginClient(HttpClientDiscovery::find(), [$plugin]);
+        $client = $this->getPluginClient($plugin);
         $resp = $client->sendRequest($request);
         if ($resp->getStatusCode() == 422) {
-            throw new ValidationFailedException();
+            $msg = 'Remote create PR request failed';
+            if ($json = @json_decode($resp->getBody())) {
+                if (!empty($json->error) && is_string($json->error)) {
+                    $msg = $json->error;
+                }
+            }
+            throw new ValidationFailedException($msg);
         }
-        if ($resp->getStatusCode() != 200) {
-            throw new \Exception('Wrong status code on create PR request (' . $resp->getStatusCode() . ').');
-        }
-        if (!$json = @json_decode((string) $resp->getBody())) {
-            throw new \Exception('No json parsed in the create PR response');
-        }
+        $json = $this->handleStatusCodeAndJsonResponse($resp, 'create PR');
         return (array) $json;
     }
 
@@ -119,18 +121,12 @@ class PublicGithubWrapper extends Github
         $user_name = $slug->getUserName();
         $user_repo = $slug->getUserRepo();
         $jar = new CookieJar();
-        $jar->addCookie(new Cookie('XDEBUG_SESSION', 'XDEBUG_ECLIPSE', null, 'violinist.localhost'));
         $plugin = new CookiePlugin($jar);
-        $client = new PluginClient(HttpClientDiscovery::find(), [$plugin]);
+        $client = $this->getPluginClient($plugin);
         $params['id'] = $id;
         $request = $this->createPullRequestRequest($user_name, $user_repo, $params, 'update_pr');
         $resp = $client->sendRequest($request);
-        if ($resp->getStatusCode() != 200) {
-            throw new \Exception('Wrong status code on create PR request (' . $resp->getStatusCode() . ').');
-        }
-        if (!$json = @json_decode((string) $resp->getBody())) {
-            throw new \Exception('No json parsed in the create PR response');
-        }
+        $this->handleStatusCodeAndJsonResponse($resp, 'update PR');
     }
 
     protected function createPullRequestRequest($user_name, $user_repo, $params, $path = 'create_pr')
@@ -179,21 +175,31 @@ class PublicGithubWrapper extends Github
             'message' => $message,
         ];
         $jar = new CookieJar();
-        $jar->addCookie(new Cookie('XDEBUG_SESSION', 'XDEBUG_ECLIPSE', null, 'violinist.localhost'));
         $plugin = new CookiePlugin($jar);
-        $client = new PluginClient(HttpClientDiscovery::find(), [$plugin]);
+        $client = $this->getPluginClient($plugin);
         $request = new Request('POST', $this->baseUrl . '/api/github/create_commit', [
             'Content-type' => 'application/json',
             'Accept' => 'application/json',
         ]);
         $request = $request->withBody(Utils::streamFor(json_encode($data)));
-        $client->sendRequest($request);
+        $response = $client->sendRequest($request);
+        $this->handleStatusCodeAndJsonResponse($response, 'commit files');
+    }
+
+    protected function getPluginClient(Plugin $plugin)
+    {
+        return new PluginClient($this->getHttpClient(), [$plugin]);
+    }
+
+    public function setHttpClient(HttpClient $client)
+    {
+        $this->httpClient = $client;
     }
 
     protected function getHttpClient()
     {
         if (!$this->httpClient) {
-            $this->httpClient = new Client();
+            $this->httpClient = HttpClientDiscovery::find();
         }
         return $this->httpClient;
     }

@@ -30,7 +30,7 @@ class PublicGithubWrapperTest extends TestCase
      *
      * @var int
      */
-    protected int $nid;
+    protected $nid;
 
     /**
      * @var HttpClient

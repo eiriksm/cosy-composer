@@ -11,6 +11,7 @@ use Github\Client;
 use Github\Exception\ValidationFailedException;
 use GuzzleHttp\Psr7\Utils;
 use Http\Client\HttpClient;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Violinist\ProjectData\ProjectData;
@@ -33,9 +34,9 @@ class PublicGithubWrapperTest extends TestCase
     protected $nid;
 
     /**
-     * @var HttpClient
+     * @var HttpClient|MockObject
      */
-    protected HttpClient $mockHttpClient;
+    protected $mockHttpClient;
 
     /**
      * Slug to use.
@@ -54,7 +55,6 @@ class PublicGithubWrapperTest extends TestCase
     public function setUp(): void
     {
         $mock_client = $this->createMock(Client::class);
-        $this->mockClient = $mock_client;
         $this->provider = new PublicGithubWrapper($mock_client);
         $project = new ProjectData();
         $this->nid = random_int(100, 999);

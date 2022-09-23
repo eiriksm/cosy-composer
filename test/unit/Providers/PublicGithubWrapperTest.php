@@ -43,14 +43,14 @@ class PublicGithubWrapperTest extends TestCase
      *
      * @var Slug
      */
-    protected Slug $slug;
+    protected $slug;
 
     /**
      * A temp dir.
      *
      * @var string
      */
-    protected string $tempDir;
+    protected $tempDir;
 
     public function setUp(): void
     {

@@ -326,5 +326,4 @@ class PublicGithubWrapperTest extends TestCase
         $mock_response->method('getBody')
             ->willReturn($stream);
     }
-
 }

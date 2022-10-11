@@ -1574,11 +1574,13 @@ class CosyComposer
                 // If it failed validation because it already exists, we also want to make sure all outdated PRs are
                 // closed.
                 if (!empty($prs_named[$branch_name]['number'])) {
+                    $total_prs++;
                     $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                 }
             } catch (\Gitlab\Exception\RuntimeException $e) {
                 $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
                 if (!empty($prs_named[$branch_name]['number'])) {
+                    $total_prs++;
                     $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                 }
             } catch (ComposerUpdateProcessFailedException $e) {

@@ -3,6 +3,9 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 use eiriksm\ArrayOutput\ArrayOutput;
+use Github\Exception\ValidationFailedException;
+use Gitlab\Exception\RuntimeException;
+use Violinist\Slug\Slug;
 
 class UpdateConcurrentOutdatedBranchTest extends ComposerUpdateIntegrationBase
 {
@@ -26,13 +29,38 @@ class UpdateConcurrentOutdatedBranchTest extends ComposerUpdateIntegrationBase
 
     public function testUpdateConcurrentWithOutdatedBranch()
     {
-        $this->sha = '456';
+        $this->sha = 456;
         $this->runtestExpectedOutput();
         // This means we expect the first package (psr/cache) to be updated, since the PR is out of date. This should
         // show in the messages then.
         $this->assertOutputContainsMessage('Creating pull request from psrcache100101', $this->cosy);
         $msg = $this->findMessage('Running composer update for package psr/log', $this->cosy);
         self::assertFalse($msg);
+    }
+
+    public function testUpdateConcurrentWithOutdatedBranchGitlabException()
+    {
+        $this->sha = 567;
+        $this->runtestExpectedOutput();
+        // This means we expect the first package (psr/cache) to be updated, since the PR is out of date. This should
+        // show in the messages then.
+        $this->assertOutputContainsMessage('Creating pull request from psrcache100101', $this->cosy);
+        $msg = $this->findMessage('Running composer update for package psr/log', $this->cosy);
+        self::assertFalse($msg);
+    }
+
+    protected function createPullRequest(Slug $slug, array $params)
+    {
+        if ($this->sha == 123) {
+            return parent::createPullRequest($slug, $params);
+        }
+        if ($this->sha == 567) {
+            // Throw the gitlab one.
+            throw new RuntimeException('Totally already exists');
+        }
+        if ($this->sha == 456) {
+            throw new ValidationFailedException('I want you to update please');
+        }
     }
 
     public function testUpdateConcurrentWithUpToDateBranch()

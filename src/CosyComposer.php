@@ -936,7 +936,6 @@ class CosyComposer
         $branches_flattened = [];
         $prs_named = [];
         $default_base = null;
-        $total_prs = 0;
         try {
             if ($default_base_upstream = $this->privateClient->getDefaultBase($this->slug, $default_branch)) {
                 $default_base = $default_base_upstream;
@@ -953,19 +952,21 @@ class CosyComposer
             // Safe to ignore.
             $this->log('Had a runtime exception with the fetching of branches and Prs: ' . $e->getMessage());
         }
+        $total_prs = 0;
+        $is_allowed_out_of_date_pr = [];
         $one_pr_per_dependency = $config->shouldUseOnePullRequestPerPackage();
         foreach ($data as $delta => $item) {
             $branch_name = $this->createBranchName($item, $one_pr_per_dependency, $config);
             if (in_array($branch_name, $branches_flattened)) {
                 // Is there a PR for this?
                 if (array_key_exists($branch_name, $prs_named)) {
+                    $total_prs++;
                     if (!$default_base && !$one_pr_per_dependency) {
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
                             'package' => $item->name,
                         ]);
                         unset($data[$delta]);
                         $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
-                        $total_prs++;
                     }
                     // Is the pr up to date?
                     if ($prs_named[$branch_name]['base']['sha'] == $default_base) {
@@ -1009,6 +1010,9 @@ class CosyComposer
                         unset($data[$delta]);
                         $total_prs++;
                     }
+                    else {
+                        $is_allowed_out_of_date_pr[] = $item->name;
+                    }
                 }
             }
         }
@@ -1044,7 +1048,7 @@ class CosyComposer
         }
         switch ($update_type) {
             case self::UPDATE_INDIVIDUAL:
-                $this->handleIndividualUpdates($data, $composer_lock_after_installing, $composer_json_data, $one_pr_per_dependency, $initial_composer_lock_data, $prs_named, $default_base, $hostname, $default_branch, $security_alerts, $total_prs);
+                $this->handleIndividualUpdates($data, $composer_lock_after_installing, $composer_json_data, $one_pr_per_dependency, $initial_composer_lock_data, $prs_named, $default_base, $hostname, $default_branch, $security_alerts, $total_prs, $is_allowed_out_of_date_pr);
                 break;
 
             case self::UPDATE_ALL:
@@ -1315,17 +1319,19 @@ class CosyComposer
         $this->runAuthExportToken($hostname, $this->userToken);
     }
 
-    protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $total_prs)
+    protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $total_prs, $is_allowed_out_of_date_pr)
     {
         $config = Config::createFromComposerData($cdata);
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
         foreach ($data as $item) {
             if ($max_number_of_prs && $total_prs >= $max_number_of_prs) {
-                $this->log(sprintf('Skipping %s because the number of max concurrent PRs (%d) seems to have been reached', $item->name, $max_number_of_prs), Message::PR_EXISTS, [
-                    'package' => $item->name,
-                ]);
-                continue;
+                if (!in_array($item->name, $is_allowed_out_of_date_pr)) {
+                    $this->log(sprintf('Skipping %s because the number of max concurrent PRs (%d) seems to have been reached', $item->name, $max_number_of_prs), Message::PR_EXISTS, [
+                        'package' => $item->name,
+                    ]);
+                    continue;
+                }
             }
             $security_update = false;
             $package_name = $item->name;

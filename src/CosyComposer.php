@@ -1009,8 +1009,7 @@ class CosyComposer
                         $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                         unset($data[$delta]);
                         $total_prs++;
-                    }
-                    else {
+                    } else {
                         $is_allowed_out_of_date_pr[] = $item->name;
                     }
                 }

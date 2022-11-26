@@ -1134,10 +1134,10 @@ class CosyComposer
         } catch (\Gitlab\Exception\RuntimeException $e) {
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
         } catch (NotUpdatedException $e) {
-          $not_updated_context = [
-            'package' => sprintf('all:%s', $default_base),
-          ];
-          $this->log("Could not update all dependencies with composer update", Message::NOT_UPDATED, $not_updated_context);
+            $not_updated_context = [
+                'package' => sprintf('all:%s', $default_base),
+            ];
+            $this->log("Could not update all dependencies with composer update", Message::NOT_UPDATED, $not_updated_context);
         } catch (\Throwable $e) {
             $this->log('Caught exception while running update all: ' . $e->getMessage());
         }

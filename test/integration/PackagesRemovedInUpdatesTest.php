@@ -18,10 +18,7 @@ class PackagesRemovedInUpdatesTest extends ComposerUpdateIntegrationBase
 
 ### Updated packages
 
-Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
-
-<details>
-<summary>List of updated packages</summary>
+Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here:
 
 - symfony/debug v4.4.18 (package was removed)
 - symfony/polyfill-php72 v1.20.0 (package was removed)
@@ -47,7 +44,6 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - symfony/var-dumper: v5.2.1 (updated from v4.4.18)
 - symfony/yaml: v4.4.18 (updated from v3.4.47)
 
-</details>
 
 
 ***

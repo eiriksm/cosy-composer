@@ -33,14 +33,10 @@ class UpdateAllBranchUpToDateTest extends UpdateAllBase
 
 ### Updated packages
 
-Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
-
-<details>
-<summary>List of updated packages</summary>
+Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here:
 
 - psr/log: 1.1.4 (updated from 1.0.0)
 
-</details>
 
 
 ***

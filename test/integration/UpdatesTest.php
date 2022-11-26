@@ -644,15 +644,11 @@ class UpdatesTest extends Base
 
 ### Updated packages
 
-Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
-
-<details>
-<summary>List of updated packages</summary>
+Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here:
 
 - eirik/private-pack dev-master (package was removed)
 - psr/log: 1.0.2 (updated from 1.1.0)
 
-</details>
 
 
 ***
@@ -982,14 +978,10 @@ a custom message
 
 ### Updated packages
 
-Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
-
-<details>
-<summary>List of updated packages</summary>
+Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here:
 
 - drupal/core: 8.4.8 (updated from 8.4.7)
 
-</details>
 
 
 ***
@@ -1075,10 +1067,7 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
 
 ### Updated packages
 
-Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
-
-<details>
-<summary>List of updated packages</summary>
+Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here:
 
 - zendframework/zend-diactoros 1.8.7 (package was removed)
 - zendframework/zend-escaper 2.6.1 (package was removed)
@@ -1091,7 +1080,6 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - laminas/laminas-stdlib: 3.3.0 (new package, previously not installed)
 - laminas/laminas-zendframework-bridge: 1.1.0 (new package, previously not installed)
 
-</details>
 
 
 ***

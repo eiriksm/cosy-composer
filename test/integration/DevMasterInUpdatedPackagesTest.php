@@ -30,14 +30,10 @@ class DevMasterInUpdatedPackagesTest extends ComposerUpdateIntegrationBase
 
 ### Updated packages
 
-Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here.
-
-<details>
-<summary>List of updated packages</summary>
+Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here:
 
 - psr/log: dev-master#dd738d0b4491f32725492cf345f6b501f5922fec (updated from dev-master#2b71ffbefcc3a1ccb610294835bcfde8f594f8e7)
 
-</details>
 
 
 ***

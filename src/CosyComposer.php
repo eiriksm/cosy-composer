@@ -1073,7 +1073,7 @@ class CosyComposer
             $this->switchBranch($branch_name);
             $status = $this->execCommand(['composer', 'update']);
             if ($status) {
-                throw new \Exception('Composer update command exited with status code ' . $status);
+                throw new NotUpdatedException('Composer update command exited with status code ' . $status);
             }
             // Now let's find out what has actually been updated.
             $new_lock_contents = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
@@ -1081,7 +1081,7 @@ class CosyComposer
             $list = $comparer->getUpdateList();
             if (empty($list)) {
                 // That's too bad. Let's throw an exception for this.
-                throw new \UnexpectedValueException('No updates detected after running composer update');
+                throw new NotUpdatedException('No updates detected after running composer update');
             }
             // Now see if any of the packages updated was in the alerts.
             foreach ($list as $value) {
@@ -1133,6 +1133,11 @@ class CosyComposer
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
         } catch (\Gitlab\Exception\RuntimeException $e) {
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
+        } catch (NotUpdatedException $e) {
+          $not_updated_context = [
+            'package' => sprintf('all:%s', $default_base),
+          ];
+          $this->log("Could not update all dependencies with composer update", Message::NOT_UPDATED, $not_updated_context);
         } catch (\Throwable $e) {
             $this->log('Caught exception while running update all: ' . $e->getMessage());
         }

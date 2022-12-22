@@ -1446,8 +1446,7 @@ class CosyComposer
                 } else {
                     if (!empty($item->child_with_update)) {
                         $this->log(sprintf('Running composer update for package %s to update the indirect dependency %s', $package_name, $item->child_with_update));
-                    }
-                    else {
+                    } else {
                         $this->log('Running composer update for package ' . $package_name);
                     }
                     $updater->executeUpdate();
@@ -1584,8 +1583,7 @@ class CosyComposer
                 ]);
                 if (!empty($item->child_with_update)) {
                     $this->log(sprintf("%s was not updated running composer update for direct dependency %s", $item->child_with_update, $package_name), Message::NOT_UPDATED, $not_updated_context);
-                }
-                else {
+                } else {
                     $this->log("$package_name was not updated running composer update", Message::NOT_UPDATED, $not_updated_context);
                 }
             } catch (ValidationFailedException $e) {

@@ -703,11 +703,15 @@ class CosyComposer
                 throw $e;
             }
         }
+        if ($default_branch) {
+            $this->log('Default branch set in project is ' . $default_branch);
+        }
         // We also allow the project to override this for violinist.
         if ($config->getDefaultBranch()) {
             // @todo: Would be better to make sure this can actually be set, based on the branches available. Either
             // way, if a person configures this wrong, several parts will fail spectacularly anyway.
             $default_branch = $config->getDefaultBranch();
+            $this->log('Default branch overridden by config and set to ' . $default_branch);
         }
         // Now make sure we are actually on that branch.
         if ($this->execCommand(['git', 'remote', 'set-branches', 'origin', "*"])) {
@@ -787,16 +791,19 @@ class CosyComposer
             '--direct' => false,
         ];
         if ($config->shouldCheckDirectOnly()) {
+            $this->log('Checking only direct dependencies since config option check_only_direct_dependencies is enabled');
             $array_input_array['--direct'] = true;
         }
         // If we should always update all, then of course we should not only check direct dependencies outdated.
         // Regardless of the option above actually.
         if ($config->shouldAlwaysUpdateAll()) {
+            $this->log('Checking all (not only direct dependencies) since config option always_update_all is enabled');
             $array_input_array['--direct'] = false;
         }
         // If we should allow indirect packages to updated via running composer update my/direct, then we need to
         // uncover which indirect are actually out of date. Meaning direct is required to be false.
         if ($config->shouldUpdateIndirectWithDirect()) {
+            $this->log('Checking all (not only direct dependencies) since config option allow_update_indirect_with_direct is enabled');
             $array_input_array['--direct'] = false;
         }
         $i = new ArrayInput($array_input_array);
@@ -884,6 +891,7 @@ class CosyComposer
         }
         // Remove dev dependencies, if indicated.
         if (!$config->shouldUpdateDevDependencies()) {
+            $this->log('Removing dev dependencies from updates since the option update_dev_dependencies is disabled');
             $filterer = DevDepsOnlyFilterer::create($composer_lock_after_installing, $composer_json_data);
             $data = $filterer->filter($data);
         }
@@ -952,6 +960,9 @@ class CosyComposer
             // Safe to ignore.
             $this->log('Had a runtime exception with the fetching of branches and Prs: ' . $e->getMessage());
         }
+        if ($default_base && $default_branch) {
+            $this->log(sprintf('Current commit SHA for %s is %s', $default_branch, $default_base));
+        }
         $total_prs = 0;
         $is_allowed_out_of_date_pr = [];
         $one_pr_per_dependency = $config->shouldUseOnePullRequestPerPackage();
@@ -1016,6 +1027,7 @@ class CosyComposer
             }
         }
         if ($config->shouldUpdateIndirectWithDirect()) {
+            $this->log('Config suggested with should update indirect with direct. Altering the update data based on this');
             $filterer = IndirectWithDirectFilterer::create($composer_lock_after_installing, $composer_json_data);
             $data = $filterer->filter($data);
         }

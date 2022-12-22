@@ -1444,7 +1444,12 @@ class CosyComposer
                 if (!$lock_file_contents || ($should_update_beyond && $can_update_beyond)) {
                     $updater->executeRequire($version_to);
                 } else {
-                    $this->log('Running composer update for package ' . $package_name);
+                    if (!empty($item->child_with_update)) {
+                        $this->log(sprintf('Running composer update for package %s to update the indirect dependency %s', $package_name, $item->child_with_update));
+                    }
+                    else {
+                        $this->log('Running composer update for package ' . $package_name);
+                    }
                     $updater->executeUpdate();
                 }
                 $post_update_data = $updater->getPostUpdateData();
@@ -1577,7 +1582,12 @@ class CosyComposer
                     'package' => $why_not_name,
                     'type' => 'stdout',
                 ]);
-                $this->log("$package_name was not updated running composer update", Message::NOT_UPDATED, $not_updated_context);
+                if (!empty($item->child_with_update)) {
+                    $this->log(sprintf("%s was not updated running composer update for direct dependency %s", $item->child_with_update, $package_name), Message::NOT_UPDATED, $not_updated_context);
+                }
+                else {
+                    $this->log("$package_name was not updated running composer update", Message::NOT_UPDATED, $not_updated_context);
+                }
             } catch (ValidationFailedException $e) {
                 // @todo: Do some better checking. Could be several things, this.
                 $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);

@@ -65,9 +65,29 @@ class IndirectWithDirectFilterer implements FilterInterface
             return $return;
         }, $new_list);
         $return = [];
+        $already_added_register = [];
         foreach ($list_of_lists as $list_list) {
             foreach ($list_list as $item) {
+                if (empty($item->child_with_update)) {
+                    continue;
+                }
+                if (empty($item->name)) {
+                    continue;
+                }
+                if ($item->child_with_update !== $item->name) {
+                    continue;
+                }
+                $already_added_register[$item->name] = true;
                 $return[] = $item;
+            }
+        }
+        foreach ($list_of_lists as $list_list) {
+            foreach ($list_list as $item) {
+                  if (!empty($already_added_register[$item->name])) {
+                      continue;
+                  }
+                  $already_added_register[$item->name] = true;
+                  $return[] = $item;
             }
         }
         return $return;

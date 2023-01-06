@@ -182,6 +182,13 @@ class Bitbucket implements ProviderInterface
         return $this->client->repositories()->workspaces($user_name)->pullRequests($user_repo)->update($id, $params);
     }
 
+    public function addTags(array $pr_data, Slug $slug, array $tags): bool
+    {
+        // @todo: Not implemented yet. It's also not supported on bitbucket, so.
+        // https://jira.atlassian.com/browse/BCLOUD-11976
+        return false;
+    }
+
     public function enableAutomerge(array $pr_data, Slug $slug) : bool
     {
         // @todo: Not implemented yet.

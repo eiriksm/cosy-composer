@@ -1558,6 +1558,7 @@ class CosyComposer
                         'package' => $package_name,
                     ]);
                     $this->handleAutomerge($config, $pullRequest, $security_update);
+                    $this->handleTags($config, $pullRequest, $security_update);
                     if (!empty($pullRequest['number'])) {
                         $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named, $default_branch);
                     }
@@ -1652,8 +1653,21 @@ class CosyComposer
         if ($this->shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
             $this->log('Will try to update the PR based on settings.');
             $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
-            $this->handleAutoMerge($config, $prs_named[$branch_name], $security_update);
         }
+        $this->handleAutoMerge($config, $prs_named[$branch_name], $security_update);
+        $this->handleTags($config, $prs_named[$branch_name], $security_update);
+    }
+
+    protected function handleTags(Config $config, $pullRequest, $security_update = false)
+    {
+        $tags = $config->getTags();
+        if ($security_update) {
+            $tags = array_merge($tags, $config->getTagsSecurity());
+        }
+        if (empty($tags)) {
+            return;
+        }
+        $result = $this->getPrClient()->addTags($pullRequest, $this->slug, $tags);
     }
 
     protected function handleAutoMerge(Config $config, $pullRequest, $security_update = false)

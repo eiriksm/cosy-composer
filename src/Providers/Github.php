@@ -21,6 +21,22 @@ class Github implements ProviderInterface
         $this->client = $client;
     }
 
+    public function addTags(array $pr_data, Slug $slug, array $tags) : bool
+    {
+        if (!isset($pr_data["number"])) {
+            return false;
+        }
+        try {
+            $data = $this->client->issue()->labels()->add($slug->getUserName(), $slug->getUserRepo(), $pr_data['number'], $tags);
+            if (empty($data[0]["id"])) {
+                return false;
+            }
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
     public function enableAutomerge(array $pr_data, Slug $slug) : bool
     {
         if (!isset($pr_data["node_id"])) {

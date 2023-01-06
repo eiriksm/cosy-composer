@@ -171,6 +171,20 @@ class Gitlab implements ProviderInterface
         return ltrim($url['path'], '/');
     }
 
+    public function addTags(array $pr_data, Slug $slug, array $tags): bool
+    {
+        $gitlab_params = [
+            'labels' => implode(',', $tags),
+        ];
+        $id = $pr_data['number'];
+        try {
+            $data = $this->client->mergeRequests()->update(self::getProjectId($slug->getUrl()), $id, $gitlab_params);
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
     public function enableAutomerge(array $pr_data, Slug $slug) : bool
     {
         if (empty($pr_data['number']) && !empty($pr_data["iid"])) {

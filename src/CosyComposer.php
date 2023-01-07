@@ -1558,7 +1558,7 @@ class CosyComposer
                         'package' => $package_name,
                     ]);
                     $this->handleAutomerge($config, $pullRequest, $security_update);
-                    $this->handleTags($config, $pullRequest, $security_update);
+                    $this->handleLabels($config, $pullRequest, $security_update);
                     if (!empty($pullRequest['number'])) {
                         $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named, $default_branch);
                     }
@@ -1655,19 +1655,19 @@ class CosyComposer
             $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
         }
         $this->handleAutoMerge($config, $prs_named[$branch_name], $security_update);
-        $this->handleTags($config, $prs_named[$branch_name], $security_update);
+        $this->handleLabels($config, $prs_named[$branch_name], $security_update);
     }
 
-    protected function handleTags(Config $config, $pullRequest, $security_update = false)
+    protected function handleLabels(Config $config, $pullRequest, $security_update = false)
     {
-        $tags = $config->getTags();
+        $labels = $config->getLabels();
         if ($security_update) {
-            $tags = array_merge($tags, $config->getTagsSecurity());
+            $labels = array_merge($labels, $config->getLabelsSecurity());
         }
-        if (empty($tags)) {
+        if (empty($labels)) {
             return;
         }
-        $result = $this->getPrClient()->addTags($pullRequest, $this->slug, $tags);
+        $result = $this->getPrClient()->addLabels($pullRequest, $this->slug, $labels);
     }
 
     protected function handleAutoMerge(Config $config, $pullRequest, $security_update = false)

@@ -21,13 +21,13 @@ class Github implements ProviderInterface
         $this->client = $client;
     }
 
-    public function addTags(array $pr_data, Slug $slug, array $tags) : bool
+    public function addLabels(array $pr_data, Slug $slug, array $labels) : bool
     {
         if (!isset($pr_data["number"])) {
             return false;
         }
         try {
-            $data = $this->client->issue()->labels()->add($slug->getUserName(), $slug->getUserRepo(), $pr_data['number'], $tags);
+            $data = $this->client->issue()->labels()->add($slug->getUserName(), $slug->getUserRepo(), $pr_data['number'], $labels);
             if (empty($data[0]["id"])) {
                 return false;
             }

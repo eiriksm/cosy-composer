@@ -182,7 +182,7 @@ class Bitbucket implements ProviderInterface
         return $this->client->repositories()->workspaces($user_name)->pullRequests($user_repo)->update($id, $params);
     }
 
-    public function addTags(array $pr_data, Slug $slug, array $tags): bool
+    public function addLabels(array $pr_data, Slug $slug, array $labels): bool
     {
         // @todo: Not implemented yet. It's also not supported on bitbucket, so.
         // https://jira.atlassian.com/browse/BCLOUD-11976

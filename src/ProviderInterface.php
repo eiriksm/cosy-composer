@@ -6,7 +6,7 @@ use Violinist\Slug\Slug;
 
 interface ProviderInterface
 {
-    public function addTags(array $pr_data, Slug $slug, array $tags) : bool;
+    public function addLabels(array $pr_data, Slug $slug, array $labels) : bool;
 
     public function enableAutomerge(array $pr_data, Slug $slug) : bool;
 

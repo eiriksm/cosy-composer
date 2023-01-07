@@ -171,10 +171,10 @@ class Gitlab implements ProviderInterface
         return ltrim($url['path'], '/');
     }
 
-    public function addTags(array $pr_data, Slug $slug, array $tags): bool
+    public function addLabels(array $pr_data, Slug $slug, array $labels): bool
     {
         $gitlab_params = [
-            'labels' => implode(',', $tags),
+            'labels' => implode(',', $labels),
         ];
         $id = $pr_data['number'];
         try {

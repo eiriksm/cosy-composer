@@ -1216,8 +1216,8 @@ class CosyComposer
             'GIT_COMMITTER_NAME' => $this->githubUserName,
             'GIT_COMMITTER_EMAIL' => $this->githubEmail,
         ])) {
-            $this->log($this->getLastStdOut(), Message::COMMAND);
-            $this->log($this->getLastStdErr(), Message::COMMAND);
+            $this->log($this->getLastStdOut());
+            $this->log($this->getLastStdErr());
             throw new \Exception('Error committing the composer files. They are probably not changed.');
         }
         $this->commitMessage = $msg;

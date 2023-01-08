@@ -28,5 +28,4 @@ class LabelsTest extends LabelTestBase
         parent::testLabels($should_have_updated);
         self::assertEquals(['my label over here'], $this->labelsAdded);
     }
-
 }

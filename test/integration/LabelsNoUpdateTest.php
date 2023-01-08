@@ -17,5 +17,4 @@ class LabelsNoUpdateTest extends LabelTestBase
     protected $packageVersionForFromUpdateOutput = '1.1.3';
     protected $packageVersionForToUpdateOutput = '1.1.4';
     protected $checkPrUrl = true;
-
 }

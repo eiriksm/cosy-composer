@@ -2,17 +2,20 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use Github\Exception\ValidationFailedException;
+use Violinist\Slug\Slug;
+
 /**
- * Test for automerge being enabled.
+ * Test for labels on sec only, but no sec updates.
  */
-class AutomergeTest extends AutoMergeBase
+class LabelsNoUpdateTest extends LabelTestBase
 {
-    protected $composerAssetFiles = 'composer.automerge';
+    protected $composerAssetFiles = 'composer.labels_no_sec_updates';
     protected $hasUpdatedPsrLog = false;
     protected $hasUpdatedPsrCache = false;
     protected $packageForUpdateOutput = 'psr/log';
     protected $packageVersionForFromUpdateOutput = '1.1.3';
     protected $packageVersionForToUpdateOutput = '1.1.4';
-    protected $hasAutoMerge = true;
     protected $checkPrUrl = true;
+
 }

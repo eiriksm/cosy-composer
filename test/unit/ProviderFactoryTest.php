@@ -17,10 +17,6 @@ class ProviderFactoryTest extends TestCase
      */
     public function testCreateFromHost($url, $class)
     {
-        if ($url === 'https://bitbucket.org/eiriksm/cosy-composer' && version_compare(phpversion(), "7.1.0", "<=")) {
-            $this->assertTrue(true, 'Skipping bitbucket test for version ' . phpversion());
-            return;
-        }
         $pf = new ProviderFactory();
         $slug = Slug::createFromUrl($url);
         $url_array = parse_url($url);

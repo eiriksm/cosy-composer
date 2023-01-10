@@ -1667,7 +1667,13 @@ class CosyComposer
         if (empty($labels)) {
             return;
         }
+        $this->log("Trying to add labels to PR");
         $result = $this->getPrClient()->addLabels($pullRequest, $this->slug, $labels);
+        if (!$result) {
+            $this->log("Error adding labels");
+        } else {
+            $this->log("Labels added successfully");
+        }
     }
 
     protected function handleAutoMerge(Config $config, $pullRequest, $security_update = false)

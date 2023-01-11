@@ -1146,6 +1146,8 @@ class CosyComposer
         } catch (\Gitlab\Exception\RuntimeException $e) {
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
         } catch (NotUpdatedException $e) {
+            $this->log($this->getLastStdErr());
+            $this->log($this->getLastStdOut());
             $not_updated_context = [
                 'package' => sprintf('all:%s', $default_base),
             ];

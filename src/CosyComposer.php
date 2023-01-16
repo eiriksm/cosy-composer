@@ -1656,8 +1656,10 @@ class CosyComposer
             $this->log('Will try to update the PR based on settings.');
             $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
         }
-        $this->handleAutoMerge($config, $prs_named[$branch_name], $security_update);
-        $this->handleLabels($config, $prs_named[$branch_name], $security_update);
+        if (!empty($prs_named[$branch_name])) {
+            $this->handleAutoMerge($config, $prs_named[$branch_name], $security_update);
+            $this->handleLabels($config, $prs_named[$branch_name], $security_update);
+        }
     }
 
     protected function handleLabels(Config $config, $pullRequest, $security_update = false)

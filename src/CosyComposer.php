@@ -1990,6 +1990,12 @@ class CosyComposer
                 if (!$is_sec) {
                     continue;
                 }
+                if (strpos($release->version, $major_version) !== 0) {
+                    // You know what. We must be checking version 10.x against
+                    // version 9.x. Not ideal, is it? Makes for some false
+                    // positives (or rather negatives, I guess).
+                    continue;
+                }
                 $this->log('Found a security update in the update XML. Will populate advisories from this, if not already set.');
                 foreach ($known_names as $known_name) {
                     if (!empty($alerts[$known_name])) {

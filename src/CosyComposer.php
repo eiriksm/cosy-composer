@@ -1526,9 +1526,17 @@ class CosyComposer
                     // If the changed files can not be retrieved, we can live with that.
                     $this->log('Exception for retrieving changed files: ' . $e->getMessage());
                 }
+                // Let's try to find all of the tags between those commit shas.
+                $release_links = null;
+                try {
+                    $release_links = $this->getReleaseLinks($lockdata, $package_name, $pre_update_data, $post_update_data);
+                }
+                catch (\Throwable $e) {
+                    $this->log('Retrieving links to releases failed');
+                }
                 $comparer = new LockDataComparer($lockdata, $new_lock_data);
                 $update_list = $comparer->getUpdateList();
-                $body = $this->createBody($item, $post_update_data, $changelog, $security_update, $update_list, $changed_files);
+                $body = $this->createBody($item, $post_update_data, $changelog, $security_update, $update_list, $changed_files, $release_links);
                 $title = $this->createTitle($item, $post_update_data, $security_update);
                 $pr_params = $this->getPrParams($branch_name, $body, $title, $default_branch, $config);
                 // Check if this new branch name has a pr up-to-date.
@@ -1785,10 +1793,49 @@ class CosyComposer
         return trim($this->messageFactory->getPullRequestTitle($update));
     }
 
-  /**
-   * Helper to create body.
-   */
-    public function createBody($item, $post_update_data, $changelog = null, $security_update = false, array $update_list = [], $changed_files = [])
+    /**
+     * @param $lockdata
+     * @param $package_name
+     * @param $pre_update_data
+     * @param $post_update_data
+     * @return string
+     * @throws \Exception
+     */
+    public function getReleaseLinks($lockdata, $package_name, $pre_update_data, $post_update_data) : string
+    {
+        $extra_info = '';
+        $data = $this->getFetcher()->retrieveTagsBetweenShas($lockdata, $package_name, $pre_update_data->source->reference, $post_update_data->source->reference);
+        $url = $post_update_data->source->url;
+        $url = preg_replace('/.git$/', '', $url);
+        $url_parsed = parse_url($url);
+        $link_pattern = null;
+        $links = [];
+        switch ($url_parsed['host']) {
+            case 'github.com':
+                $link_pattern = "$url/releases/tag/%s";
+                break;
+
+            case 'git.drupalcode.org':
+            case 'git.drupal.org':
+                $project_name = str_replace('/project/', '', $url_parsed['path']);
+                $link_pattern = "https://www.drupal.org/project/$project_name/releases/%s";
+                break;
+
+            default:
+                throw new \Exception('Git URL host not supported.');
+        }
+        foreach ($data as $item) {
+            $link = sprintf($link_pattern, $item);
+            $links[] = sprintf('- [Release notes for tag %s](%s)
+', $item, $link);
+        }
+        return $links;
+    }
+
+    /**
+     * Helper to create body.
+     */
+    public function createBody($item, $post_update_data, $changelog = null, $security_update = false, array $update_list = [], $changed_files = [], $release_notes_for_package = [])
     {
         $update = new ViolinistUpdate();
         $update->setName($item->name);
@@ -1805,6 +1852,9 @@ class CosyComposer
         $update->setUpdatedList($update_list);
         if ($changed_files) {
             $update->setChangedFiles($changed_files);
+        }
+        if ($release_notes_for_package) {
+            $update->setPackageReleaseNotes($release_notes_for_package);
         }
         return $this->messageFactory->getPullRequestBody($update);
     }

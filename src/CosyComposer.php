@@ -1530,8 +1530,7 @@ class CosyComposer
                 $release_links = null;
                 try {
                     $release_links = $this->getReleaseLinks($lockdata, $package_name, $pre_update_data, $post_update_data);
-                }
-                catch (\Throwable $e) {
+                } catch (\Throwable $e) {
                     $this->log('Retrieving links to releases failed');
                 }
                 $comparer = new LockDataComparer($lockdata, $new_lock_data);
@@ -1798,10 +1797,10 @@ class CosyComposer
      * @param $package_name
      * @param $pre_update_data
      * @param $post_update_data
-     * @return string
+     * @return array
      * @throws \Exception
      */
-    public function getReleaseLinks($lockdata, $package_name, $pre_update_data, $post_update_data) : string
+    public function getReleaseLinks($lockdata, $package_name, $pre_update_data, $post_update_data) : array
     {
         $extra_info = '';
         $data = $this->getFetcher()->retrieveTagsBetweenShas($lockdata, $package_name, $pre_update_data->source->reference, $post_update_data->source->reference);
@@ -1826,8 +1825,7 @@ class CosyComposer
         }
         foreach ($data as $item) {
             $link = sprintf($link_pattern, $item);
-            $links[] = sprintf('- [Release notes for tag %s](%s)
-', $item, $link);
+            $links[] = sprintf('- [Release notes for tag %s](%s)', $item, $link);
         }
         return $links;
     }

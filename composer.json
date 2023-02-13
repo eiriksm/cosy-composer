@@ -44,7 +44,8 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "cweagans/composer-patches": true
+            "cweagans/composer-patches": true,
+            "php-http/discovery": true
         }
     },
     "autoload-dev": {

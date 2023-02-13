@@ -1807,6 +1807,9 @@ class CosyComposer
         $url = $post_update_data->source->url;
         $url = preg_replace('/.git$/', '', $url);
         $url_parsed = parse_url($url);
+        if (empty($url_parsed['host'])) {
+            throw new \Exception('No URL to parse in post update data source');
+        }
         $link_pattern = null;
         $links = [];
         switch ($url_parsed['host']) {

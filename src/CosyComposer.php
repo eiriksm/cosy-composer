@@ -843,6 +843,16 @@ class CosyComposer
         }
         // Only update the ones in the allow list, if indicated.
         $handler = AllowListHandler::createFromConfig($config);
+        if ($config->shouldAlwaysAllowDirect()) {
+            $require_list = [];
+            if (!empty($composer_json_data->require)) {
+                $require_list = array_keys(get_object_vars($composer_json_data->require));
+            }
+            if (!empty($composer_json_data->{'require-dev'})) {
+                $require_list = array_merge($require_list, array_keys(get_object_vars($composer_json_data->require)));
+            }
+            $handler = AllowListHandler::createFromArray(array_merge($require_list, $config->getAllowList()));
+        }
         $handler->setLogger($this->getLogger());
         $data = $handler->applyToItems($data);
         // Remove non-security packages, if indicated.

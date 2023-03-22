@@ -1,0 +1,14 @@
+{
+    "require-dev": {
+        "symfony/console": "v5.4.19"
+    },
+    "extra": {
+        "violinist": {
+            "always_allow_direct_dependencies": 1,
+            "check_only_direct_dependencies": 0,
+            "allow_list": [
+                "psr/cache"
+            ]
+        }
+    }
+}

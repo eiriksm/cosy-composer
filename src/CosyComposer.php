@@ -849,7 +849,7 @@ class CosyComposer
                 $require_list = array_keys(get_object_vars($composer_json_data->require));
             }
             if (!empty($composer_json_data->{'require-dev'})) {
-                $require_list = array_merge($require_list, array_keys(get_object_vars($composer_json_data->require)));
+                $require_list = array_merge($require_list, array_keys(get_object_vars($composer_json_data->{'require-dev'})));
             }
             $handler = AllowListHandler::createFromArray(array_merge($require_list, $config->getAllowList()));
         }

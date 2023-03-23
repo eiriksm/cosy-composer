@@ -843,7 +843,9 @@ class CosyComposer
         }
         // Only update the ones in the allow list, if indicated.
         $handler = AllowListHandler::createFromConfig($config);
-        if ($config->shouldAlwaysAllowDirect()) {
+        // If we have an allow list, we should also make sure to include the
+        // direct ones in it, if indicated.
+        if ($config->getAllowList() && $config->shouldAlwaysAllowDirect()) {
             $require_list = [];
             if (!empty($composer_json_data->require)) {
                 $require_list = array_keys(get_object_vars($composer_json_data->require));

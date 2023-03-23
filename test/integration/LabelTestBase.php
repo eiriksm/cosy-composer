@@ -52,6 +52,9 @@ abstract class LabelTestBase extends ComposerUpdateIntegrationBase
      */
     public function testLabels($should_have_updated)
     {
+        $project = new ProjectData();
+        $project->setRoles(['agency']);
+        $this->cosy->setProject($project);
         $this->getMockProvider()
             ->method('addLabels')
             ->willReturnCallback(function (array $pr_data, Slug $slug, array $labels) {

@@ -1687,6 +1687,21 @@ class CosyComposer
         if ($security_update) {
             $labels = array_merge($labels, $config->getLabelsSecurity());
         }
+        $labels_allowed_roles = [
+            'agency',
+            'enterprise',
+        ];
+        $labels_allowed = false;
+        if ($this->project && $this->project->getRoles()) {
+            foreach ($this->project->getRoles() as $role) {
+                if (in_array($role, $labels_allowed_roles)) {
+                    $labels_allowed = true;
+                }
+            }
+        }
+        if (!$labels_allowed) {
+            $labels = [];
+        }
         if (empty($labels)) {
             return;
         }

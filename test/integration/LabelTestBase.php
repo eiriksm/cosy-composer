@@ -4,6 +4,7 @@ namespace eiriksm\CosyComposerTest\integration;
 
 use Github\Exception\ValidationFailedException;
 use Violinist\Slug\Slug;
+use Violinist\ProjectData\ProjectData;
 
 /**
  * Test for labels being enabled.

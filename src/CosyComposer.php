@@ -1818,6 +1818,9 @@ class CosyComposer
         if (empty($pre_update_data->source->reference) || empty($post_update_data->source->reference)) {
             throw new \Exception('No SHAs to use to compare and retrieve tags for release links');
         }
+        if (empty($post_update_data->source->url)) {
+            throw new \Exception('No source URL to attempt to parse in post update data source');
+        }
         $data = $this->getFetcher()->retrieveTagsBetweenShas($lockdata, $package_name, $pre_update_data->source->reference, $post_update_data->source->reference);
         $url = $post_update_data->source->url;
         $url = preg_replace('/.git$/', '', $url);

@@ -2045,11 +2045,16 @@ class CosyComposer
         if (!$config->shouldRunScripts()) {
             $install_command[] = '--no-scripts';
         }
-        if ($code = $this->execCommand($install_command, false, 1200)) {
-            // Other status code than 0.
+        try {
+            if ($code = $this->execCommand($install_command, false, 1200)) {
+                // Other status code than 0.
+                $this->log($this->getLastStdOut(), Message::COMMAND);
+                $this->log($this->getLastStdErr());
+                throw new ComposerInstallException('Composer install failed with exit code ' . $code);
+        } catch (\Thowable $e) {
             $this->log($this->getLastStdOut(), Message::COMMAND);
             $this->log($this->getLastStdErr());
-            throw new ComposerInstallException('Composer install failed with exit code ' . $code);
+            throw new ComposerInstallException($e->getMessage());
         }
 
         $command_output = $this->executer->getLastOutput();

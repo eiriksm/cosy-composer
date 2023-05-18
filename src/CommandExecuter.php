@@ -3,6 +3,7 @@
 namespace eiriksm\CosyComposer;
 
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
 
 class CommandExecuter
 {
@@ -45,12 +46,22 @@ class CommandExecuter
         ];
         $process = $this->processFactory->getProcess($command, $this->getCwd(), $env);
         $process->setTimeout($timeout);
-        $process->run();
-        $this->output[] = [
-            'stdout' => $process->getOutput(),
-            'stderr' => $process->getErrorOutput(),
-        ];
-        return $process->getExitCode();
+        try {
+            $process->run();
+            $this->output[] = [
+                'stdout' => $process->getOutput(),
+                'stderr' => $process->getErrorOutput(),
+            ];
+            return $process->getExitCode();
+        }
+        catch (ProcessTimedOutException $e) {
+            $process->stop();
+            $this->output[] = [
+                'stdout' => $process->getOutput(),
+                'stderr' => $process->getErrorOutput(),
+            ];
+            return 1;
+        }
     }
 
     public function getLastOutput()

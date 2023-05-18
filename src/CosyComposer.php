@@ -2052,7 +2052,7 @@ class CosyComposer
                 $this->log($this->getLastStdErr());
                 throw new ComposerInstallException('Composer install failed with exit code ' . $code);
             }
-        } catch (ComposerInstallEcxeption $e) {
+        } catch (ComposerInstallException $e) {
             throw $e;
         } catch (\Thowable $e) {
             $this->log($this->getLastStdOut(), Message::COMMAND);

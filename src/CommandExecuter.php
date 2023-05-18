@@ -53,8 +53,7 @@ class CommandExecuter
                 'stderr' => $process->getErrorOutput(),
             ];
             return $process->getExitCode();
-        }
-        catch (ProcessTimedOutException $e) {
+        } catch (ProcessTimedOutException $e) {
             $process->stop();
             $this->output[] = [
                 'stdout' => $process->getOutput(),

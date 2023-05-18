@@ -2054,7 +2054,7 @@ class CosyComposer
             }
         } catch (ComposerInstallException $e) {
             throw $e;
-        } catch (\Thowable $e) {
+        } catch (\Throwable $e) {
             $this->log($this->getLastStdOut(), Message::COMMAND);
             $this->log($this->getLastStdErr());
             throw new ComposerInstallException($e->getMessage());

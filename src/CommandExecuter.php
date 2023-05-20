@@ -59,7 +59,7 @@ class CommandExecuter
                 'stdout' => $process->getOutput(),
                 'stderr' => $process->getErrorOutput(),
             ];
-            return 1;
+            throw $e;
         }
     }
 

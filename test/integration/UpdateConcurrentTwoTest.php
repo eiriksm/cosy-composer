@@ -9,6 +9,7 @@ use Violinist\Slug\Slug;
 
 class UpdateConcurrentTwoTest extends ComposerUpdateIntegrationBase
 {
+    private $sha;
     protected $composerAssetFiles = 'composer.concurrent.two';
 
     public function setUp() : void

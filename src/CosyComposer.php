@@ -55,6 +55,8 @@ class CosyComposer
 
     private $urlArray;
 
+    private $openRelevantPrs = [];
+
     /**
      * @var ChangelogRetriever
      */
@@ -975,7 +977,6 @@ class CosyComposer
         if ($default_base && $default_branch) {
             $this->log(sprintf('Current commit SHA for %s is %s', $default_branch, $default_base));
         }
-        $total_prs = 0;
         $is_allowed_out_of_date_pr = [];
         $one_pr_per_dependency = $config->shouldUseOnePullRequestPerPackage();
         foreach ($data as $delta => $item) {
@@ -983,7 +984,7 @@ class CosyComposer
             if (in_array($branch_name, $branches_flattened)) {
                 // Is there a PR for this?
                 if (array_key_exists($branch_name, $prs_named)) {
-                    $total_prs++;
+                    $this->countPR($item->name);
                     if (!$default_base && !$one_pr_per_dependency) {
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
                             'package' => $item->name,
@@ -1031,7 +1032,6 @@ class CosyComposer
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, $context);
                         $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                         unset($data[$delta]);
-                        $total_prs++;
                     } else {
                         $is_allowed_out_of_date_pr[] = $item->name;
                     }
@@ -1071,7 +1071,7 @@ class CosyComposer
         }
         switch ($update_type) {
             case self::UPDATE_INDIVIDUAL:
-                $this->handleIndividualUpdates($data, $composer_lock_after_installing, $composer_json_data, $one_pr_per_dependency, $initial_composer_lock_data, $prs_named, $default_base, $hostname, $default_branch, $security_alerts, $total_prs, $is_allowed_out_of_date_pr);
+                $this->handleIndividualUpdates($data, $composer_lock_after_installing, $composer_json_data, $one_pr_per_dependency, $initial_composer_lock_data, $prs_named, $default_base, $hostname, $default_branch, $security_alerts, $is_allowed_out_of_date_pr);
                 break;
 
             case self::UPDATE_ALL:
@@ -1080,6 +1080,17 @@ class CosyComposer
         }
         // Clean up.
         $this->cleanUp();
+    }
+
+    protected function getPrCount() : int
+    {
+        return (int) count($this->openRelevantPrs);
+    }
+
+    protected function countPR($item)
+    {
+        $package_lower = strtolower($item);
+        $this->openRelevantPrs[$package_lower] = true;
     }
 
     protected function handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $alerts, Config $config, $default_base, $default_branch, $prs_named)
@@ -1349,13 +1360,13 @@ class CosyComposer
         $this->runAuthExportToken($hostname, $this->userToken);
     }
 
-    protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $total_prs, $is_allowed_out_of_date_pr)
+    protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $is_allowed_out_of_date_pr)
     {
         $config = Config::createFromComposerData($cdata);
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
         foreach ($data as $item) {
-            if ($max_number_of_prs && $total_prs >= $max_number_of_prs) {
+            if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
                 if (!in_array($item->name, $is_allowed_out_of_date_pr)) {
                     $this->log(sprintf('Skipping %s because the number of max concurrent PRs (%d) seems to have been reached', $item->name, $max_number_of_prs), Message::PR_EXISTS, [
                         'package' => $item->name,
@@ -1556,7 +1567,7 @@ class CosyComposer
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
                             'package' => $item->name,
                         ]);
-                        $total_prs++;
+                        $this->countPR($item->name);
                         $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                         continue;
                     }
@@ -1565,7 +1576,7 @@ class CosyComposer
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
                             'package' => $item->name,
                         ]);
-                        $total_prs++;
+                        $this->countPR($item->name);
                         $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                         continue;
                     }
@@ -1584,7 +1595,7 @@ class CosyComposer
                         $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named, $default_branch);
                     }
                 }
-                $total_prs++;
+                $this->countPR($item->name);
             } catch (CanNotUpdateException $e) {
                 $this->log($e->getMessage(), Message::UNUPDATEABLE, [
                     'package' => $package_name,
@@ -1626,13 +1637,13 @@ class CosyComposer
                 // If it failed validation because it already exists, we also want to make sure all outdated PRs are
                 // closed.
                 if (!empty($prs_named[$branch_name]['number'])) {
-                    $total_prs++;
+                    $this->countPR($item->name);
                     $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                 }
             } catch (\Gitlab\Exception\RuntimeException $e) {
                 $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
                 if (!empty($prs_named[$branch_name]['number'])) {
-                    $total_prs++;
+                    $this->countPR($item->name);
                     $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
                 }
             } catch (ComposerUpdateProcessFailedException $e) {

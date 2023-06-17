@@ -1368,7 +1368,7 @@ class CosyComposer
         foreach ($data as $item) {
             if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
                 if (!in_array($item->name, $is_allowed_out_of_date_pr)) {
-                    $this->log(sprintf('Skipping %s because the number of max concurrent PRs (%d) seems to have been reached', $item->name, $max_number_of_prs), Message::PR_EXISTS, [
+                    $this->log(sprintf('Skipping %s because the number of max concurrent PRs (%d) seems to have been reached', $item->name, $max_number_of_prs), Message::CONCURRENT_THROTTLED, [
                         'package' => $item->name,
                     ]);
                     continue;

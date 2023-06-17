@@ -45,6 +45,7 @@ class Message
     const UPDATE = 'update';
     const ERROR = 'error';
     const PR_URL = 'pr_url';
+    const CONCURRENT_THROTTLED = 'concurrent_throttled';
     const BLACKLISTED = 'blacklisted';
     const PR_EXISTS = 'pr_exists';
     const UNUPDATEABLE = 'unupdate';

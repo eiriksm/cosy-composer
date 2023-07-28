@@ -11,7 +11,7 @@ class UpdateGitlabAssigneesTest extends UpdateExistingWithAssigneesTest
     public function setUp(): void
     {
         parent::setUp();
-     }
+    }
 
     protected function getMockProvider()
     {

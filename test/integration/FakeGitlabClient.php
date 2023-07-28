@@ -15,7 +15,8 @@ class FakeGitlabClient extends Client
         $this->calls[] = $call;
     }
 
-    public function getCalls() {
+    public function getCalls()
+    {
         return $this->calls;
     }
 

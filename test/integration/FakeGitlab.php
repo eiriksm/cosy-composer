@@ -40,5 +40,4 @@ class FakeGitlab extends Gitlab
     {
         return ['drushdrush9721036'];
     }
-
 }

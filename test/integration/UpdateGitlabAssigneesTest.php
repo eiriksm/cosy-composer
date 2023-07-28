@@ -8,6 +8,11 @@ use Violinist\ProjectData\ProjectData;
 class UpdateGitlabAssigneesTest extends UpdateExistingWithAssigneesTest
 {
 
+    /**
+     * @var FakeGitlab
+     */
+    protected $myProvider;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -15,10 +20,10 @@ class UpdateGitlabAssigneesTest extends UpdateExistingWithAssigneesTest
 
     protected function getMockProvider()
     {
-        if (!$this->mockProvider) {
-            $this->mockProvider = new FakeGitlab(new FakeGitlabClient());
+        if (!$this->myProvider instanceof FakeGitlab) {
+            $this->myProvider = new FakeGitlab(new FakeGitlabClient());
         }
-        return $this->mockProvider;
+        return $this->myProvider;
     }
 
     protected function setDummyGithubProvider()
@@ -40,7 +45,7 @@ class UpdateGitlabAssigneesTest extends UpdateExistingWithAssigneesTest
         $this->cosy->setProject($project);
         $this->cosy->setUrl('https://gitlab.com/a/b');
         $this->runtestExpectedOutput();
-        $calls = $this->mockProvider->getClient()->getCalls();
+        $calls = $this->myProvider->getClient()->getCalls();
         foreach ($calls as $call) {
             if ($call[0] !== 'MergeRequests' || $call[1] !== 'update') {
                 continue;

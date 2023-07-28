@@ -11,10 +11,12 @@ use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputDefinition;
-use Violinist\Slug\Slug;
 
 abstract class Base extends TestCase
 {
+    use GetCosyTrait;
+    use GetExecuterTrait;
+
     protected $usesDirect = true;
 
     protected $defaultSha = 123;
@@ -46,9 +48,6 @@ abstract class Base extends TestCase
         $this->dir = $dir;
         $this->cosy = $c;
     }
-
-    use GetCosyTrait;
-    use GetExecuterTrait;
 
     protected function createExpectedCommandForPackage($package)
     {
@@ -182,9 +181,6 @@ abstract class Base extends TestCase
     protected function setDummyGithubProvider()
     {
         $mock_provider = $this->getMockProvider();
-        $slug = new Slug();
-        $slug->setProvider('github.com');
-        $slug->setSlug('a/b');
         $mock_provider->method('repoIsPrivate')
             ->willReturn(true);
         $mock_provider->method('getDefaultBranch')

@@ -55,10 +55,12 @@ abstract class ComposerUpdateIntegrationBase extends Base
         $this->setDummyGithubProvider();
         $this->placeInitialComposerLock();
         $this->mockProvider = $mock_provider;
-        $this->mockProvider->method('createPullRequest')
-            ->willReturnCallback(function (Slug $slug, array $params) {
-                return $this->createPullRequest($slug, $params);
-            });
+        if (method_exists($this->mockProvider, 'method')) {
+            $this->mockProvider->method('createPullRequest')
+                ->willReturnCallback(function (Slug $slug, array $params) {
+                    return $this->createPullRequest($slug, $params);
+                });
+        }
     }
 
     protected function createPullRequest(Slug $slug, array $params)

@@ -1365,6 +1365,7 @@ class CosyComposer
         $config = Config::createFromComposerData($cdata);
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
+        $should_indicate_can_not_update_if_unupdated = false;
         foreach ($data as $item) {
             if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
                 if (!in_array($item->name, $is_allowed_out_of_date_pr)) {
@@ -1417,6 +1418,7 @@ class CosyComposer
                         if (!$can_update_beyond) {
                             // Let's instead try to update within the constraint.
                             $should_update_beyond = false;
+                            $should_indicate_can_not_update_if_unupdated = true;
                         }
                     }
                 } catch (CanNotUpdateException $e) {
@@ -1597,40 +1599,43 @@ class CosyComposer
                     }
                 }
                 $this->countPR($item->name);
-            } catch (CanNotUpdateException $e) {
-                $this->log($e->getMessage(), Message::UNUPDATEABLE, [
-                    'package' => $package_name,
-                ]);
             } catch (NotUpdatedException $e) {
                 // Not updated because of the composer command, not the
                 // restriction itself.
-                $why_not_name = $original_name = $item->name;
-                $why_not_version = trim($item->latest);
-                $not_updated_context = [
-                    'package' => $why_not_name,
-                ];
-                if (!empty($item->child_latest) && !empty($item->child_with_update)) {
-                    $why_not_name = $item->child_with_update;
-                    $why_not_version = trim($item->child_latest);
-                    $not_updated_context['package'] = $why_not_name;
-                    $not_updated_context['parent_package'] = $original_name;
-                }
-                $command = ['composer', 'why-not', $why_not_name, $why_not_version];
-                $this->execCommand($command, false);
-                $this->log($this->getLastStdErr(), Message::COMMAND, [
-                    'command' => implode(' ', $command),
-                    'package' => $why_not_name,
-                    'type' => 'stderr',
-                ]);
-                $this->log($this->getLastStdOut(), Message::COMMAND, [
-                    'command' => implode(' ', $command),
-                    'package' => $why_not_name,
-                    'type' => 'stdout',
-                ]);
-                if (!empty($item->child_with_update)) {
-                    $this->log(sprintf("%s was not updated running composer update for direct dependency %s", $item->child_with_update, $package_name), Message::NOT_UPDATED, $not_updated_context);
+                if ($should_indicate_can_not_update_if_unupdated && isset($package_name) && isset($req_item) && isset($version_to)) {
+                    $message = sprintf('Package %s with the constraint %s can not be updated to %s.', $package_name, $req_item, $version_to);
+                    $this->log($message, Message::UNUPDATEABLE, [
+                        'package' => $package_name,
+                    ]);
                 } else {
-                    $this->log("$package_name was not updated running composer update", Message::NOT_UPDATED, $not_updated_context);
+                    $why_not_name = $original_name = $item->name;
+                    $why_not_version = trim($item->latest);
+                    $not_updated_context = [
+                        'package' => $why_not_name,
+                    ];
+                    if (!empty($item->child_latest) && !empty($item->child_with_update)) {
+                        $why_not_name = $item->child_with_update;
+                        $why_not_version = trim($item->child_latest);
+                        $not_updated_context['package'] = $why_not_name;
+                        $not_updated_context['parent_package'] = $original_name;
+                    }
+                    $command = ['composer', 'why-not', $why_not_name, $why_not_version];
+                    $this->execCommand($command, false);
+                    $this->log($this->getLastStdErr(), Message::COMMAND, [
+                        'command' => implode(' ', $command),
+                        'package' => $why_not_name,
+                        'type' => 'stderr',
+                    ]);
+                    $this->log($this->getLastStdOut(), Message::COMMAND, [
+                        'command' => implode(' ', $command),
+                        'package' => $why_not_name,
+                        'type' => 'stdout',
+                    ]);
+                    if (!empty($item->child_with_update)) {
+                        $this->log(sprintf("%s was not updated running composer update for direct dependency %s", $item->child_with_update, $package_name), Message::NOT_UPDATED, $not_updated_context);
+                    } else {
+                        $this->log("$package_name was not updated running composer update", Message::NOT_UPDATED, $not_updated_context);
+                    }
                 }
             } catch (ValidationFailedException $e) {
                 // @todo: Do some better checking. Could be several things, this.

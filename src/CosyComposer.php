@@ -1415,7 +1415,8 @@ class CosyComposer
                         // Well, unless we have actually disallowed this through config.
                         $should_update_beyond = true;
                         if (!$can_update_beyond) {
-                            throw new CanNotUpdateException(sprintf('Package %s with the constraint %s can not be updated to %s.', $package_name, $req_item, $version_to));
+                            // Let's instead try to update within the constraint.
+                            $should_update_beyond = false;
                         }
                     }
                 } catch (CanNotUpdateException $e) {

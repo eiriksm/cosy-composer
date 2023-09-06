@@ -6,7 +6,6 @@ use Composer\Console\Application;
 use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
 use eiriksm\ArrayOutput\ArrayOutput;
-use eiriksm\CosyComposer\Exceptions\CanNotUpdateException;
 use eiriksm\CosyComposer\Exceptions\ChdirException;
 use eiriksm\CosyComposer\Exceptions\ComposerInstallException;
 use eiriksm\CosyComposer\Exceptions\GitCloneException;
@@ -1421,9 +1420,6 @@ class CosyComposer
                             $should_indicate_can_not_update_if_unupdated = true;
                         }
                     }
-                } catch (CanNotUpdateException $e) {
-                    // Re-throw.
-                    throw $e;
                 } catch (\Exception $e) {
                     // Could be, some times, that we try to check a constraint that semver does not recognize. That is
                     // totally fine.

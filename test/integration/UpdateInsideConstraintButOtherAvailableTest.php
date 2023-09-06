@@ -16,5 +16,4 @@ class UpdateInsideConstraintButOtherAvailableTest extends ComposerUpdateIntegrat
         $output = $this->cosy->getOutput();
         $this->assertOutputContainsMessage('Creating pull request from drupalcorerecommended100910010', $this->cosy);
     }
-
 }

@@ -61,7 +61,7 @@ class PublicGithubWrapper extends Github
 
     public function forceUpdateBranch($branch, $sha)
     {
-        $client = $this->getPluginClient($plugin);
+        $client = $this->getHttpClient();
         $url = sprintf('%s/api/github/update_branch?nid=%d&token=%s&branch=%s&new_sha=%s', $this->baseUrl, $this->project->getNid(), $this->userToken, $branch, $sha);
         $request = new Request('GET', $url);
         $resp = $client->sendRequest($request);
@@ -71,7 +71,7 @@ class PublicGithubWrapper extends Github
     public function createFork($user, $repo, $fork_user)
     {
         // Send all this data to the website endpoint.
-        $client = $this->getPluginClient($plugin);
+        $client = $this->getHttpClient();
         $request = new Request('GET', $this->baseUrl . '/api/github/create_fork?nid=' . $this->project->getNid() . '&token=' . $this->userToken);
         $resp = $client->sendRequest($request);
         $this->handleStatusCodeAndJsonResponse($resp, 'create fork');
@@ -93,7 +93,7 @@ class PublicGithubWrapper extends Github
         $user_name = $slug->getUserName();
         $user_repo = $slug->getUserRepo();
         $request = $this->createPullRequestRequest($user_name, $user_repo, $params);
-        $client = $this->getPluginClient($plugin);
+        $client = $this->getHttpClient();
         $resp = $client->sendRequest($request);
         if ($resp->getStatusCode() == 422) {
             $msg = 'Remote create PR request failed';
@@ -112,7 +112,7 @@ class PublicGithubWrapper extends Github
     {
         $user_name = $slug->getUserName();
         $user_repo = $slug->getUserRepo();
-        $client = $this->getPluginClient($plugin);
+        $client = $this->getHttpClient();
         $params['id'] = $id;
         $request = $this->createPullRequestRequest($user_name, $user_repo, $params, 'update_pr');
         $resp = $client->sendRequest($request);
@@ -164,7 +164,7 @@ class PublicGithubWrapper extends Github
             'branch' => $branch,
             'message' => $message,
         ];
-        $client = $this->getPluginClient($plugin);
+        $client = $this->getHttpClient();
         $request = new Request('POST', $this->baseUrl . '/api/github/create_commit', [
             'Content-type' => 'application/json',
             'Accept' => 'application/json',
@@ -172,11 +172,6 @@ class PublicGithubWrapper extends Github
         $request = $request->withBody(Utils::streamFor(json_encode($data)));
         $response = $client->sendRequest($request);
         $this->handleStatusCodeAndJsonResponse($response, 'commit files');
-    }
-
-    protected function getPluginClient(Plugin $plugin)
-    {
-        return $this->getHttpClient();
     }
 
     public function setHttpClient(HttpClient $client)

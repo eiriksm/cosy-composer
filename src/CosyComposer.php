@@ -1317,12 +1317,12 @@ class CosyComposer
             // Log a message so it's possible to understand why.
             if (!empty($assignees)) {
                 if ($this->isPrivate) {
+                    $assignees = [];
                     $this->log('Assignees on private projects are only allowed on the agency and enterprise plan. Configuration was detected for assignees, but will be ignored');
                 } else {
                     $this->log('Assignees on private projects are only allowed on the agency and enterprise plan. This project was detected to be public, so assignees will still apply even though a sufficient plan is not active');
                 }
             }
-            $assignees = [];
         }
         return [
             'base'  => $default_branch,

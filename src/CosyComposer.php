@@ -1038,7 +1038,7 @@ class CosyComposer
             }
         }
         if ($config->shouldUpdateIndirectWithDirect()) {
-            $this->log('Config suggested with should update indirect with direct. Altering the update data based on this');
+            $this->log('Config suggested we should update indirect with direct. Altering the update data based on this');
             $filterer = IndirectWithDirectFilterer::create($composer_lock_after_installing, $composer_json_data);
             $data = $filterer->filter($data);
         }

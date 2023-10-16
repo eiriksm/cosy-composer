@@ -44,5 +44,4 @@ class UpdateIndirectWithDirectTest extends ComposerUpdateIntegrationBase
     {
         return '{"installed": [{"name": "doctrine/annotations", "version": "1.13.3", "latest": "2.0.5", "latest-status": "semver-safe-update"}, {"name": "drupal/captcha", "version": "2.0.4", "latest": "2.0.5", "latest-status": "semver-safe-update"}]}';
     }
-
 }

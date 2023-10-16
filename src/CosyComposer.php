@@ -1038,7 +1038,7 @@ class CosyComposer
             }
         }
         if ($config->shouldUpdateIndirectWithDirect()) {
-            $this->log('Config suggested with should update indirect with direct. Altering the update data based on this');
+            $this->log('Config suggested we should update indirect with direct. Altering the update data based on this');
             $filterer = IndirectWithDirectFilterer::create($composer_lock_after_installing, $composer_json_data);
             $data = $filterer->filter($data);
         }
@@ -1314,7 +1314,15 @@ class CosyComposer
             }
         }
         if (!$assignees_allowed) {
-            $assignees = [];
+            // Log a message so it's possible to understand why.
+            if (!empty($assignees)) {
+                if ($this->isPrivate) {
+                    $assignees = [];
+                    $this->log('Assignees on private projects are only allowed on the agency and enterprise plan. Configuration was detected for assignees, but will be ignored');
+                } else {
+                    $this->log('Assignees on private projects are only allowed on the agency and enterprise plan. This project was detected to be public, so assignees will still apply even though a sufficient plan is not active');
+                }
+            }
         }
         return [
             'base'  => $default_branch,

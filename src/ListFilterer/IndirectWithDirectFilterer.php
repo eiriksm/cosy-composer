@@ -65,7 +65,12 @@ class IndirectWithDirectFilterer implements FilterInterface
             return $return;
         }, $new_list);
         $return = [];
+        // Now let's merge this info so that the things can have all of the
+        // packages that has updates in them, before we filter them.
+        $list_of_lists = $this->mergeChildrenWithUpdates($list_of_lists);
         $already_added_register = [];
+        // First we add the actual direct dependencies. That's at least what I
+        // think is the plan behind this loop here.
         foreach ($list_of_lists as $list_list) {
             foreach ($list_list as $item) {
                 if (empty($item->child_with_update)) {
@@ -81,6 +86,7 @@ class IndirectWithDirectFilterer implements FilterInterface
                 $return[] = $item;
             }
         }
+        // Then we add the rest.
         foreach ($list_of_lists as $list_list) {
             foreach ($list_list as $item) {
                 if (!empty($already_added_register[$item->name])) {
@@ -91,5 +97,31 @@ class IndirectWithDirectFilterer implements FilterInterface
             }
         }
         return $return;
+    }
+
+    protected function mergeChildrenWithUpdates(array $list_of_lists) : array
+    {
+        $new_list_of_lists = [];
+        foreach ($list_of_lists as $list_item) {
+            $new_inner_list = [];
+            foreach ($list_item as $item) {
+                $new_item = clone $item;
+                $new_item->children_with_update = [];
+                foreach ($list_of_lists as $inner_duplicated_item) {
+                    foreach ($inner_duplicated_item as $item_from_inner) {
+                        if ($item_from_inner->name != $item->name) {
+                            continue;
+                        }
+                        if (in_array($item_from_inner->child_with_update, $new_item->children_with_update)) {
+                            continue;
+                        }
+                        $new_item->children_with_update[] = $item_from_inner->child_with_update;
+                    }
+                }
+                $new_inner_list[] = $new_item;
+            }
+            $new_list_of_lists[] = $new_inner_list;
+        }
+        return $new_list_of_lists;
     }
 }

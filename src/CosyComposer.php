@@ -1482,7 +1482,12 @@ class CosyComposer
                     $updater->setShouldThrowOnUnupdated(false);
                     if (!empty($item->child_with_update)) {
                         $updater->setShouldThrowOnUnupdated(true);
-                        $updater->setPackageToCheckHasUpdated($item->child_with_update);
+                        $updater->setPackagesToCheckHasUpdated([$item->child_with_update]);
+                    }
+                    // But really, we should now have an array, shouldn't we?
+                    if (!empty($item->children_with_update) && is_array($item->children_with_update)) {
+                        $updater->setShouldThrowOnUnupdated(true);
+                        $updater->setPackagesToCheckHasUpdated($item->children_with_update);
                     }
                 }
                 if (!$lock_file_contents || ($should_update_beyond && $can_update_beyond)) {

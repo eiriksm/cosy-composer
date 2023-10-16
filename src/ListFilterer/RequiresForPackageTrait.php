@@ -44,10 +44,10 @@ trait RequiresForPackageTrait
                         }
                         // Now see if this is in fact a direct dependency itself.
                         $candidate = mb_strtolower($package->name);
-                        if (in_array($candidate, $this->scannedCache)) {
+                        if (in_array($candidate, $this->scannedCache[$key])) {
                             continue;
                         }
-                        $this->scannedCache[] = $candidate;
+                        $this->scannedCache[$key][] = $candidate;
 
                         if ($this->isInComposerJson($candidate)) {
                             $requires[] = (object) [

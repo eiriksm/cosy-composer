@@ -20,6 +20,9 @@ class IndirectWithDirectTest extends TestCase
                 'latest-status' => "semver-safe-update",
                 'child_with_update' => 'psr/log',
                 'child_latest' => '3.0.0',
+                'children_with_update' => [
+                    'psr/log',
+                ]
             ],
         ];
         $filterer = IndirectWithDirectFilterer::create($lock, $json);

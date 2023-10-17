@@ -43,4 +43,12 @@ class NativeComposerChecker extends SecurityChecker
         }
         return $bc_result;
     }
+
+    protected function getProcess(array $command)
+    {
+        $env = [
+            'PATH' => __DIR__ . '/../../../../vendor/bin' . ':' . getenv('PATH'),
+        ];
+        return $this->getProcessFactory()->getProcess($command, null, $env);
+    }
 }

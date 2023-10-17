@@ -20,6 +20,12 @@ class NativeComposerChecker extends SecurityChecker
         // Don't really check the exit code, since it will be non-zero when we
         // have CVEs or whatever.
         $string = $process->getOutput();
+        // If the process is saying we do not know the command "audit" then that
+        // means we are using composer 1, which is not great. In those cases we
+        // try to just use the "old" checker I guess.
+        if (strpos($process->getErrorOutput(), 'Command "audit" is not defined') !== false) {
+            return parent::checkDirectory($dir);
+        }
         if (empty($string)) {
             throw new \Exception('No output received from symfony command. This could mean you do not have the symfony command available. This is the stderr: ' . $process->getErrorOutput());
         }

@@ -25,7 +25,7 @@
         "violinist-dev/allow-list-handler": "^1.0",
         "violinist-dev/commit-message-creator": "^1.2",
         "violinist-dev/composer-changelog-fetcher": "^2.1",
-        "violinist-dev/composer-updater": "dev-main",
+        "violinist-dev/composer-updater": "dev-feat/multi-check-pack",
         "violinist-dev/git-log-format": "^1.1.2",
         "violinist-dev/process-factory": "^2.0",
         "violinist-dev/project-data": "^1.1.1",

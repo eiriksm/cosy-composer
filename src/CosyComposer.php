@@ -1233,7 +1233,9 @@ class CosyComposer
             'git', "commit",
             'composer.json',
             $this->lockFileContents ? 'composer.lock' : '',
-            '-m', '"' . $msg . '"']);
+            '-m',
+            $msg,
+        ]);
         if ($this->execCommand($command, false, 120, [
             'GIT_AUTHOR_NAME' => $this->githubUserName,
             'GIT_AUTHOR_EMAIL' => $this->githubEmail,

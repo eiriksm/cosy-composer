@@ -27,7 +27,7 @@ class NativeComposerChecker extends SecurityChecker
             return parent::checkDirectory($dir);
         }
         if (empty($string)) {
-            throw new \Exception('No output received from symfony command. This could mean you do not have the symfony command available. This is the stderr: ' . $process->getErrorOutput());
+            throw new \Exception('No output composer audit command. This is the stderr: ' . $process->getErrorOutput());
         }
         $json = @json_decode($string, true);
         if (!is_array($json)) {

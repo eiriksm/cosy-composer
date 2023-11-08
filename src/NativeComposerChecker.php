@@ -27,7 +27,7 @@ class NativeComposerChecker extends SecurityChecker
             return parent::checkDirectory($dir);
         }
         if (empty($string)) {
-            throw new \Exception('No output composer audit command. This is the stderr: ' . $process->getErrorOutput());
+            throw new \Exception('No output from the composer audit command. This is the stderr: ' . $process->getErrorOutput());
         }
         $json = @json_decode($string, true);
         if (!is_array($json)) {

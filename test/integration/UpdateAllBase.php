@@ -37,7 +37,7 @@ abstract class UpdateAllBase extends Base
                 $this->placeComposerLockContentsFromFixture($this->composerLock . '.updated', $this->dir);
             }
             $cmd = implode(' ', $command);
-            if (mb_strpos($cmd, '"Update all dependencies"')) {
+            if (mb_strpos($cmd, 'Update all dependencies')) {
                 $this->foundCommit = true;
             }
             $branch_command = ['git', 'checkout', '-b', $this->branchName];

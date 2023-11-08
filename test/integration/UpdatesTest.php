@@ -422,7 +422,7 @@ class UpdatesTest extends Base
                     if ($cmd == $command) {
                         file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
                     }
-                    if ($cmd == ['git', 'commit', 'composer.json', 'composer.lock', '-m', '"Update psr/log"']) {
+                    if ($cmd == ['git', 'commit', 'composer.json', 'composer.lock', '-m', 'Update psr/log']) {
                         $return = 1;
                     }
                     $cmd_string = implode(' ', $cmd);

@@ -36,6 +36,13 @@ class NativeComposerChecker extends SecurityChecker
         $bc_result = [];
         foreach ($json as $type => $packages) {
             foreach ($packages as $package => $items) {
+                // If the type is "abandoned" the items will be a string. like so:
+                // "abandoned": {
+                //   "php-http/message-factory": "psr/http-factory"
+                // }
+                if (is_string($items)) {
+                    continue;
+                }
                 if (empty($bc_result[$package])) {
                     $bc_result[$package] = [];
                 }

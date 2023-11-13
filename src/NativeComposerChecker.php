@@ -43,6 +43,9 @@ class NativeComposerChecker extends SecurityChecker
                 if (is_string($items)) {
                     continue;
                 }
+                if (empty($items)) {
+                    continue;
+                }
                 if (empty($bc_result[$package])) {
                     $bc_result[$package] = [];
                 }

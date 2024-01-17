@@ -1969,6 +1969,24 @@ class CosyComposer
 
     protected function attachDrupalAdvisories(array &$alerts)
     {
+        // Also though. If the only alert we have is for the package with
+        // literally "drupal/core" we need to make sure it's attached to the
+        // other names as well.
+        $known_names = [
+            'drupal/core-recommended',
+            'drupal/core-composer-scaffold',
+            'drupal/core-project-message',
+            'drupal/core',
+            'drupal/drupal',
+        ];
+        if (!empty($alerts['drupal/core'])) {
+            foreach ($known_names as $known_name) {
+                if (!empty($alerts[$known_name])) {
+                    continue;
+                }
+                $alerts[$known_name] = $alerts['drupal/core'];
+            }
+        }
         if (!$this->lockFileContents) {
             return;
         }

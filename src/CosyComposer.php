@@ -1977,7 +1977,8 @@ class CosyComposer
             $drupal = $data->getPackageData('drupal/core');
             // Now see if a newer version is available, and if it is a security update.
             $endpoint = 'current';
-            $major_version = mb_substr($drupal->version, 0, 1);
+            $version_parts = explode('.', $drupal->version);
+            $major_version = $version_parts[0];
             switch ($major_version) {
                 case '8':
                     $endpoint = '8.x';
@@ -1987,9 +1988,11 @@ class CosyComposer
                     $endpoint = '7.x';
                     break;
 
+                case '10':
                 case '9':
                     // Using current.
                     break;
+
                 default:
                     throw new \Exception('No idea what endpoint to use to check for drupal security release');
             }

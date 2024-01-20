@@ -1997,40 +1997,22 @@ class CosyComposer
             $endpoint = 'current';
             $version_parts = explode('.', $drupal->version);
             $major_version = $version_parts[0];
-            switch ($major_version) {
-                case '8':
-                    $endpoint = '8.x';
-                    break;
-
-                case '7':
-                    $endpoint = '7.x';
-                    break;
-
-                case '10':
-                case '9':
-                    // Using current.
-                    break;
-
-                default:
-                    throw new \Exception('No idea what endpoint to use to check for drupal security release');
+            // Only 7.x and 8.x use their own endpoint,
+            if (in_array($major_version, ['7', '8'])) {
+                $endpoint = $major_version . '.x';
             }
-
+            if ((int) $major_version < 7) {
+                throw new \Exception(sprintf('Drupal version %s is too old to check for security updates using drupal.org endpoint', $major_version));
+            }
             $client = $this->getHttpClient();
             $url = sprintf('https://updates.drupal.org/release-history/drupal/%s', $endpoint);
             $request = new Request('GET', $url);
             $response = $client->sendRequest($request);
-            $data = $response->getBody();
+            $data = $response->getBody()->getContents();
             $xml = @simplexml_load_string($data);
             if (!$xml) {
                 return;
             }
-            $known_names = [
-                'drupal/core-recommended',
-                'drupal/core-composer-scaffold',
-                'drupal/core-project-message',
-                'drupal/core',
-                'drupal/drupal',
-            ];
             if (empty($xml->releases->release)) {
                 return;
             }

@@ -57,11 +57,18 @@ abstract class ComposerUpdateIntegrationBase extends Base
         $mock_executer->method('getLastOutput')
             ->willReturnCallback(function () {
                 $last_command_string = implode(' ', $this->lastCommand);
+                $output = [
+                    'stdout' => '',
+                    'stderr' => '',
+                ];
                 if (mb_strpos($last_command_string, 'composer outdated') === 0) {
-                    return [
+                    $output = [
+                        'stderr' => '',
                         'stdout' => $this->updateJson,
                     ];
                 }
+                $this->processLastOutput($output);
+                return $output;
             });
         $this->cosy->setExecuter($mock_executer);
         $this->setDummyGithubProvider();
@@ -73,6 +80,10 @@ abstract class ComposerUpdateIntegrationBase extends Base
                     return $this->createPullRequest($slug, $params);
                 });
         }
+    }
+
+    protected function processLastOutput(array &$output)
+    {
     }
 
     protected function createPullRequest(Slug $slug, array $params)

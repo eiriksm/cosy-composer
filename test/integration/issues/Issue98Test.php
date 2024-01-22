@@ -11,13 +11,13 @@ use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
  * Issue 98 was that after we switched the change log fetcher, we forgot to set the auth on the fetcher, so private
  * repos were not fetched with auth tokens set.
  */
-class Issue98Test extends ComposerUpdateIntegrationBase {
+class Issue98Test extends ComposerUpdateIntegrationBase
+{
 
     protected $calledCorrectly = false;
-{
+
     public function testIssue98()
     {
-        $c = $this->cosy;
         $dir = $this->dir;
         $this->getMockOutputWithUpdate('eirik/private-pack', '1.0.0', '1.0.2');
         $this->placeComposerContentsFromFixture('composer-json-private.json', $dir);
@@ -39,8 +39,7 @@ class Issue98Test extends ComposerUpdateIntegrationBase {
         $this->assertEquals(false, $called_dependency_clone_correctly);
         $this->registerProviderFactory($c);
         $this->placeComposerLockContentsFromFixture('composer-lock-private.lock', $dir);
-        $c->run();
-        $this->assertEquals(true, $called_dependency_clone_correctly);
+        $this->assertEquals($this->calledCorrectly, $called_dependency_clone_correctly);
     }
 
     protected function handleExecutorReturnCallback($cmd, &$return)

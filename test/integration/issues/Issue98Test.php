@@ -3,7 +3,7 @@
 namespace eiriksm\CosyComposerTest\integration\issues;
 
 use eiriksm\CosyComposer\CommandExecuter;
-use eiriksm\CosyComposerTest\integration\Base;
+use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
 
 /**
  * Class Issue98Test.
@@ -11,7 +11,9 @@ use eiriksm\CosyComposerTest\integration\Base;
  * Issue 98 was that after we switched the change log fetcher, we forgot to set the auth on the fetcher, so private
  * repos were not fetched with auth tokens set.
  */
-class Issue98Test extends Base
+class Issue98Test extends ComposerUpdateIntegrationBase
+
+    protected $calledCorrectly = false;
 {
     public function testIssue98()
     {
@@ -41,10 +43,10 @@ class Issue98Test extends Base
         $this->assertEquals(true, $called_dependency_clone_correctly);
     }
 
-    protected function handleIt($cmd)
+    protected function handleExecutorReturnCallback($cmd, &$return)
     {
         if ($cmd === ["git", "clone", 'https://user-token:x-oauth-basic@github.com/eiriksm/private-pack.git', '/tmp/9f7527992e178cafad06d558b8f32ce8']) {
-            $called_dependency_clone_correctly = true;
+            $this->calledCorrectly = true;
         }
     }
 }

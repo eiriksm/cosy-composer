@@ -40,4 +40,11 @@ class Issue98Test extends Base
         $c->run();
         $this->assertEquals(true, $called_dependency_clone_correctly);
     }
+
+    protected function handleIt($cmd)
+    {
+        if ($cmd === ["git", "clone", 'https://user-token:x-oauth-basic@github.com/eiriksm/private-pack.git', '/tmp/9f7527992e178cafad06d558b8f32ce8']) {
+            $called_dependency_clone_correctly = true;
+        }
+    }
 }

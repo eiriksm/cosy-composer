@@ -21,6 +21,8 @@ abstract class Base extends TestCase
 
     protected $defaultSha = 123;
 
+    protected $updateJson;
+
     /**
      * @var CosyComposer
      */
@@ -42,9 +44,6 @@ abstract class Base extends TestCase
         $c = $this->getMockCosy();
         $dir = '/tmp/' . uniqid();
         $this->setupDirectory($c, $dir);
-        $definition = $this->getMockDefinition();
-        $mock_app = $this->getMockApp($definition);
-        $c->setApp($mock_app);
         $this->dir = $dir;
         $this->cosy = $c;
     }
@@ -221,16 +220,6 @@ abstract class Base extends TestCase
 
     protected function getMockOutputWithUpdate($package, $version_from, $version_to)
     {
-        $mock_output = $this->createMock(ArrayOutput::class);
-        $mock_output->method('fetch')
-            ->willReturn([
-                [
-                    $this->createUpdateJsonFromData($package, $version_from, $version_to),
-                ]
-            ]);
-        if ($this->cosy instanceof CosyComposer) {
-            $this->cosy->setOutput($mock_output);
-        }
-        return $mock_output;
+        $this->updateJson = $this->createUpdateJsonFromData($package, $version_from, $version_to);
     }
 }

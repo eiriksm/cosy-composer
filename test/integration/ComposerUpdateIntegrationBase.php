@@ -24,6 +24,8 @@ abstract class ComposerUpdateIntegrationBase extends Base
 
     protected $hasAutoMerge = false;
 
+    protected $lastCommand = [];
+
     /**
      * @var MockObject
      */
@@ -48,9 +50,19 @@ abstract class ComposerUpdateIntegrationBase extends Base
                     $this->placeUpdatedComposerLock();
                 }
                 $this->handleExecutorReturnCallback($cmd, $return);
+                $this->lastCommand = $cmd;
                 return $return;
             }
         );
+        $mock_executer->method('getLastOutput')
+            ->willReturnCallback(function () {
+                $last_command_string = implode(' ', $this->lastCommand);
+                if (mb_strpos($last_command_string, 'composer outdated') === 0) {
+                    return [
+                        'stdout' => $this->updateJson,
+                    ];
+                }
+            });
         $this->cosy->setExecuter($mock_executer);
         $this->setDummyGithubProvider();
         $this->placeInitialComposerLock();

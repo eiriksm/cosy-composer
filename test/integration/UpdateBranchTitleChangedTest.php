@@ -4,7 +4,6 @@ namespace eiriksm\CosyComposerTest\integration;
 
 use GuzzleHttp\Psr7\Response;
 use Http\Client\HttpClient;
-use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 class UpdateBranchTitleChangedTest extends ComposerUpdateIntegrationBase
 {

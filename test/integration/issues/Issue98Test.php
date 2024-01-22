@@ -11,7 +11,7 @@ use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
  * Issue 98 was that after we switched the change log fetcher, we forgot to set the auth on the fetcher, so private
  * repos were not fetched with auth tokens set.
  */
-class Issue98Test extends ComposerUpdateIntegrationBase
+class Issue98Test extends ComposerUpdateIntegrationBase {
 
     protected $calledCorrectly = false;
 {

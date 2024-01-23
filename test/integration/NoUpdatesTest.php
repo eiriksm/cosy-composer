@@ -24,6 +24,7 @@ class NoUpdatesTest extends Base
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
                 function ($cmd) use (&$called) {
+                    $this->lastCommand = $cmd;
                     $cmd_string = implode(' ', $cmd);
                     if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
@@ -52,6 +53,7 @@ class NoUpdatesTest extends Base
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
                 function ($cmd) use (&$called) {
+                    $this->lastCommand = $cmd;
                     $cmd_string = implode(' ', $cmd);
                     if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;

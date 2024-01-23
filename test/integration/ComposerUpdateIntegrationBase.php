@@ -54,6 +54,21 @@ abstract class ComposerUpdateIntegrationBase extends Base
                 return $return;
             }
         );
+        $this->ensureMockExecuterProvidesLastOutput($mock_executer);
+        $this->cosy->setExecuter($mock_executer);
+        $this->setDummyGithubProvider();
+        $this->placeInitialComposerLock();
+        $this->mockProvider = $mock_provider;
+        if (method_exists($this->mockProvider, 'method')) {
+            $this->mockProvider->method('createPullRequest')
+                ->willReturnCallback(function (Slug $slug, array $params) {
+                    return $this->createPullRequest($slug, $params);
+                });
+        }
+    }
+
+    protected function ensureMockExecuterProvidesLastOutput($mock_executer)
+    {
         $mock_executer->method('getLastOutput')
             ->willReturnCallback(function () {
                 $last_command_string = implode(' ', $this->lastCommand);
@@ -70,16 +85,6 @@ abstract class ComposerUpdateIntegrationBase extends Base
                 $this->processLastOutput($output);
                 return $output;
             });
-        $this->cosy->setExecuter($mock_executer);
-        $this->setDummyGithubProvider();
-        $this->placeInitialComposerLock();
-        $this->mockProvider = $mock_provider;
-        if (method_exists($this->mockProvider, 'method')) {
-            $this->mockProvider->method('createPullRequest')
-                ->willReturnCallback(function (Slug $slug, array $params) {
-                    return $this->createPullRequest($slug, $params);
-                });
-        }
     }
 
     protected function processLastOutput(array &$output)

@@ -40,9 +40,11 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
                     $this->placeUpdatedLockFile($version, $package);
                 }
                 $this->handleExecutorReturnCallback($cmd, $return);
+                $this->lastCommand = $cmd;
                 return $return;
             }
         );
+        $this->ensureMockExecuterProvidesLastOutput($mock_executer);
         $this->cosy->setExecuter($mock_executer);
         $this->mockProvider->method('createPullRequest')
             ->willReturnCallback(function (Slug $slug, array $params) {
@@ -101,18 +103,8 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
 
     protected function getMockOutputWithUpdates($package, $version)
     {
-        $mock_output = $this->createMock(ArrayOutput::class);
         $new_version = $this->incrementVersion($version);
-        $mock_output->method('fetch')
-            ->willReturn([
-                [
-                    $this->createUpdateJsonFromData($package, $version, $new_version),
-                ]
-            ]);
-        if ($this->cosy instanceof CosyComposer) {
-            $this->cosy->setOutput($mock_output);
-        }
-        return $mock_output;
+        $this->getMockOutputWithUpdate($package, $version, $new_version);
     }
 
     protected function placeInitialComposerLock()

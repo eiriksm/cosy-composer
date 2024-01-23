@@ -100,14 +100,6 @@ class FailTest extends Base
         $dir = '/tmp/' . uniqid();
         mkdir($dir);
         $c->setTmpDir($dir);
-        // Create a mock app, that can respond to things.
-        $mock_definition = $this->createMock('Symfony\Component\Console\Input\InputDefinition');
-        $mock_definition->method('getOptions')
-            ->willReturn([]);
-        $mock_app = $this->createMock('Composer\Console\Application');
-        $mock_app->method('getDefinition')
-            ->willReturn($mock_definition);
-        $c->setApp($mock_app);
         $mock_output = $this->createMock(ArrayOutput::class);
         $mock_output->method('fetch')
             ->willReturn([

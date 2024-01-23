@@ -22,7 +22,9 @@ class UpdateAllConventionalTest extends UpdateAllBase
             if (mb_strpos($cmd, 'build(deps): Update all dependencies')) {
                 $this->foundCommit = true;
             }
+            $this->lastCommand = $command;
         });
+        $this->ensureMockExecuterProvidesLastOutput($executor);
         $this->cosy->setExecuter($executor);
         $this->cosy->run();
         self::assertEquals($this->foundCommit, true);

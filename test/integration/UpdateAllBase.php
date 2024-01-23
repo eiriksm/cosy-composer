@@ -20,9 +20,8 @@ abstract class UpdateAllBase extends Base
     {
         parent::setUp();
         $this->createComposerFileFromFixtures($this->dir, $this->composerJson);
-        $mock_output = $this->getMockOutputWithUpdate('psr/log', '1.0.0', '1.1.4');
+        $this->getMockOutputWithUpdate('psr/log', '1.0.0', '1.1.4');
         $this->placeComposerLockContentsFromFixture($this->composerLock, $this->dir);
-        $this->cosy->setOutput($mock_output);
         $this->setDummyGithubProvider();
         $this->setupMockExecuter();
     }

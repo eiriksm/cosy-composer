@@ -44,7 +44,9 @@ abstract class UpdateAllBase extends Base
             if ($command === $branch_command) {
                 $this->foundBranch = true;
             }
+            $this->lastCommand = $command;
         });
+        $this->ensureMockExecuterProvidesLastOutput($executor);
         $this->cosy->setExecuter($executor);
     }
 }

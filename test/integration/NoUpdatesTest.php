@@ -32,6 +32,7 @@ class NoUpdatesTest extends Base
                     return 0;
                 }
             ));
+        $this->ensureMockExecuterProvidesLastOutput($mock_executer);
         $c->setExecuter($mock_executer);
         $this->assertEquals(false, $called);
         $c->run();
@@ -61,6 +62,7 @@ class NoUpdatesTest extends Base
                     return 0;
                 }
             ));
+        $this->ensureMockExecuterProvidesLastOutput($mock_executer);
         $c->setExecuter($mock_executer);
         $this->assertEquals(false, $called);
         $c->run();

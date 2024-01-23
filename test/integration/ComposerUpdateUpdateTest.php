@@ -2,9 +2,52 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Message;
+use eiriksm\CosyComposer\ProviderFactory;
+use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
+
 class ComposerUpdateUpdateTest extends ComposerUpdateIntegrationBase
 {
     protected $commandWeAreLookingForCalled = false;
+
+    public function testEndToEndNotPrivate()
+    {
+        $this->packageForUpdateOutput = 'psr/log';
+        $this->packageVersionForFromUpdateOutput = '1.0.0';
+        $this->packageVersionForToUpdateOutput = '1.0.2';
+        $this->composerAssetFiles = 'composer-psr-log';
+        $this->checkPrUrl = true;
+        $this->setUp();
+
+        // Then we are going to mock the provider factory.
+        $mock_provider_factory = $this->createMock(ProviderFactory::class);
+        $mock_provider = $this->createMock(PublicGithubWrapper::class);
+        $fake_pr_url = 'http://example.com/pr';
+        $mock_provider->expects($this->once())
+            ->method('createPullRequest')
+            ->willReturn([
+                'html_url' => $fake_pr_url,
+            ]);
+        $mock_provider->method('repoIsPrivate')
+            ->willReturn(false);
+        $mock_provider->method('getDefaultBranch')
+            ->willReturn('master');
+        $mock_provider->method('getBranchesFlattened')
+            ->willReturn([]);
+        $default_sha = 123;
+        $mock_provider->method('getDefaultBase')
+            ->willReturn($default_sha);
+        $mock_provider->method('getPrsNamed')
+            ->willReturn([]);
+        $mock_provider_factory->method('createFromHost')
+            ->willReturn($mock_provider);
+
+        $this->cosy->setProviderFactory($mock_provider_factory);
+        $this->cosy->setGithubAuth('test', 'pass');
+        $this->runtestExpectedOutput();
+        $this->assertOutputContainsMessage($fake_pr_url, $this->cosy);
+        $this->assertEquals(Message::PR_URL, $this->findMessage($fake_pr_url, $this->cosy)->getType());
+    }
 
     public function testUpdatesFoundButNotSemverValidButStillAllowed()
     {

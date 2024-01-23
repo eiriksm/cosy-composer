@@ -20,6 +20,7 @@ class OutputFromUpdateTest extends Base
         $mock_executer = $this->createMock(CommandExecuter::class);
         $mock_executer->method('executeCommand')
             ->willReturn(0);
+        $this->ensureMockExecuterProvidesLastOutput($mock_executer);
         $c->setExecuter($mock_executer);
         $this->registerProviderFactory($c);
         $this->placeComposerLockContentsFromFixture('composer-lock-private.lock', $dir);

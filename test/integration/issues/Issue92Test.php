@@ -37,6 +37,8 @@ Failed to update', $this->cosy);
         $this->errorOutput = '';
         if ($cmd === $this->createExpectedCommandForPackage($this->packageForUpdateOutput)) {
             $this->errorOutput = "Trying to update\nFailed to update";
+            // Also avoid placing the updated composer lock there.
+            $this->placeInitialComposerLock();
         }
         if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
             $this->called = true;

@@ -100,22 +100,17 @@ class FailTest extends Base
         $dir = '/tmp/' . uniqid();
         mkdir($dir);
         $c->setTmpDir($dir);
-        $mock_output = $this->createMock(ArrayOutput::class);
-        $mock_output->method('fetch')
-            ->willReturn([
-                [
-                    '{"json": 1}'
-                ]
-            ]);
-        $c->setOutput($mock_output);
+        $this->updateJson = '{"json": 1}';
         file_put_contents("$dir/composer.json", '{"require": {"drupal/core": "8.0.0"}}');
         $mock_executer = $this->createMock(CommandExecuter::class);
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
                 function ($cmd) {
+                    $this->lastCommand = $cmd;
                     return 0;
                 }
             ));
+        $this->ensureMockExecuterProvidesLastOutput($mock_executer);
         $this->expectExceptionMessage('JSON output from composer was not looking as expected after checking updates');
         $this->expectException(\Exception::class);
         $c->setExecuter($mock_executer);

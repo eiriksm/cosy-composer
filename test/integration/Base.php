@@ -39,6 +39,8 @@ abstract class Base extends TestCase
 
     protected $automergeEnabled = false;
 
+    protected $lastCommand = [];
+
     public function setUp() : void
     {
         $c = $this->getMockCosy();
@@ -221,5 +223,29 @@ abstract class Base extends TestCase
     protected function getMockOutputWithUpdate($package, $version_from, $version_to)
     {
         $this->updateJson = $this->createUpdateJsonFromData($package, $version_from, $version_to);
+    }
+
+    protected function ensureMockExecuterProvidesLastOutput($mock_executer)
+    {
+        $mock_executer->method('getLastOutput')
+            ->willReturnCallback(function () {
+                $last_command_string = implode(' ', $this->lastCommand);
+                $output = [
+                    'stdout' => '',
+                    'stderr' => '',
+                ];
+                if (mb_strpos($last_command_string, 'composer outdated') === 0) {
+                    $output = [
+                        'stderr' => '',
+                        'stdout' => $this->updateJson,
+                    ];
+                }
+                $this->processLastOutput($output);
+                return $output;
+            });
+    }
+
+    protected function processLastOutput(array &$output)
+    {
     }
 }

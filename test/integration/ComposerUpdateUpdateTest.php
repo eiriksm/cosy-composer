@@ -4,6 +4,21 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class ComposerUpdateUpdateTest extends ComposerUpdateIntegrationBase
 {
+    protected $commandWeAreLookingForCalled = false;
+
+    public function testUpdatesFoundButNotSemverValidButStillAllowed()
+    {
+        $this->packageForUpdateOutput = 'psr/log';
+        $this->packageVersionForFromUpdateOutput = '1.0.0';
+        $this->packageVersionForToUpdateOutput = '2.0.1';
+        $this->composerAssetFiles = 'composer-psr-log';
+        $this->checkPrUrl = true;
+        $this->setUp();
+        $this->runtestExpectedOutput();
+        $this->assertOutputContainsMessage('Creating pull request from psrlog100102', $this->cosy);
+        $this->assertEquals(true, $this->commandWeAreLookingForCalled);
+    }
+
     public function testEndToEndButNotUpdatedWithDependencies()
     {
         $this->packageForUpdateOutput = 'psr/log';
@@ -91,6 +106,10 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
             if ($cmd == ['composer', 'update', '-n', '--no-ansi', 'psr/log']) {
                 $this->placeComposerLockContentsFromFixture('composer-psr-log-with-extra-update-with.lock.updated', $this->dir);
             }
+        }
+        if ($cmd == ['composer', 'require', '-n', '--no-ansi', 'psr/log:^2.0.1', '--update-with-dependencies']) {
+            $this->placeComposerLockContentsFromFixture('composer-psr-log.lock-updated', $this->dir);
+            $this->commandWeAreLookingForCalled = true;
         }
     }
 }

@@ -749,38 +749,4 @@ a custom message
         $this->assertEquals(Message::PR_URL, $this->findMessage($fake_pr_url, $c)->getType());
         $this->assertEquals(true, $called);
     }
-
-    public function testUpdatesFoundButNotSemverValidButStillAllowed()
-    {
-        $c = $this->cosy;
-        $dir = $this->dir;
-        $this->getMockOutputWithUpdate('psr/log', '1.0.0', '2.0.1');
-        $this->placeComposerContentsFromFixture('composer-psr-log.json', $dir);
-        $called = false;
-        $mock_executer = $this->createMock(CommandExecuter::class);
-        $install_called = false;
-        $mock_executer->method('executeCommand')
-            ->will($this->returnCallback(
-                function ($cmd) use (&$called, &$install_called, $dir) {
-                    if ($cmd == ['composer', 'require', '-n', '--no-ansi', 'psr/log:^2.0.1', '--update-with-dependencies']) {
-                        $install_called = true;
-                        file_put_contents("$dir/composer.lock", file_get_contents(__DIR__ . '/../fixtures/composer-psr-log.lock-updated'));
-                    }
-                    $cmd_string = implode(' ', $cmd);
-                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
-                        $called = true;
-                    }
-                    return 0;
-                }
-            ));
-        $c->setExecuter($mock_executer);
-        $this->assertEquals(false, $called);
-        $this->registerProviderFactory($c);
-        $this->assertEquals(false, $install_called);
-        $this->placeComposerLockContentsFromFixture('composer-psr-log.lock', $dir);
-        $c->run();
-        $this->assertOutputContainsMessage('Creating pull request from psrlog100102', $c);
-        $this->assertEquals(true, $called);
-        $this->assertEquals(true, $install_called);
-    }
 }

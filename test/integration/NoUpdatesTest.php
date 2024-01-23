@@ -45,7 +45,7 @@ class NoUpdatesTest extends Base
         $dir = '/tmp/' . uniqid();
         mkdir($dir);
         $c->setTmpDir($dir);
-        $this->updateJson = '{"not_installed_key": []';
+        $this->updateJson = '{"not_installed_key": []}';
         $composer_contents = '{"require": {"drupal/core": "8.0.0"}}';
         $composer_file = "$dir/composer.json";
         file_put_contents($composer_file, $composer_contents);
@@ -65,6 +65,7 @@ class NoUpdatesTest extends Base
         $this->ensureMockExecuterProvidesLastOutput($mock_executer);
         $c->setExecuter($mock_executer);
         $this->assertEquals(false, $called);
+        $this->expectExceptionMessage('JSON output from composer was not looking as expected after checking updates');
         $c->run();
         $this->assertEquals(true, $called);
     }

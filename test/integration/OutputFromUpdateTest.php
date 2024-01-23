@@ -19,7 +19,10 @@ class OutputFromUpdateTest extends Base
         $this->placeComposerContentsFromFixture('composer-json-private.json', $dir);
         $mock_executer = $this->createMock(CommandExecuter::class);
         $mock_executer->method('executeCommand')
-            ->willReturn(0);
+            ->willReturnCallback(function ($cmd) {
+                $this->lastCommand = $cmd;
+                return 0;
+            });
         $this->ensureMockExecuterProvidesLastOutput($mock_executer);
         $c->setExecuter($mock_executer);
         $this->registerProviderFactory($c);

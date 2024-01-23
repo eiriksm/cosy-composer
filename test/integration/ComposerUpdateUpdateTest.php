@@ -2,13 +2,19 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use eiriksm\ArrayOutput\ArrayOutput;
-use eiriksm\CosyComposer\ProviderFactory;
-use eiriksm\CosyComposer\Providers\Github;
-use Violinist\Slug\Slug;
-
 class ComposerUpdateUpdateTest extends ComposerUpdateIntegrationBase
 {
+    public function testEndToEndButNotUpdatedWithDependencies()
+    {
+        $this->packageForUpdateOutput = 'psr/log';
+        $this->packageVersionForFromUpdateOutput = '1.0.0';
+        $this->packageVersionForToUpdateOutput = '1.0.2';
+        $this->composerAssetFiles = 'composer-psr-log-with-extra-update-with';
+        $this->checkPrUrl = true;
+        $this->setUp();
+        $this->runtestExpectedOutput();
+    }
+
     public function testUpdateAvailableButUpdatedToOther()
     {
         $this->packageForUpdateOutput = 'drupal/core';
@@ -77,5 +83,14 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
 ',
             'assignees' => [],
         ], $this->prParams);
+    }
+
+    protected function handleExecutorReturnCallback($cmd, &$return)
+    {
+        if ($this->composerAssetFiles === 'composer-psr-log-with-extra-update-with') {
+            if ($cmd == ['composer', 'update', '-n', '--no-ansi', 'psr/log']) {
+                $this->placeComposerLockContentsFromFixture('composer-psr-log-with-extra-update-with.lock.updated', $this->dir);
+            }
+        }
     }
 }

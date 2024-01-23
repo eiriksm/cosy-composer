@@ -8,38 +8,25 @@ use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\Providers\Bitbucket;
-use eiriksm\CosyComposerTest\integration\Base;
+use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
 
 /**
- * Class Issue98Test.
- *
- * Issue 98 was that after we switched the change log fetcher, we forgot to set the auth on the fetcher, so private
- * repos were not fetched with auth tokens set.
+ * Class Issue158Test.
  */
-class Issue158Test extends Base
+class Issue158Test extends ComposerUpdateIntegrationBase
 {
+    protected $composerAssetFiles = 'composer-default_branch';
+    protected $packageForUpdateOutput = 'psr/log';
+    protected $packageVersionForFromUpdateOutput = '1.0.2';
+    protected $packageVersionForToUpdateOutput = '1.1.3';
+
     public function testIssue158()
     {
         if (version_compare(phpversion(), "7.1.0", "<=")) {
             $this->assertTrue(true, 'Skipping bitbucket test for version ' . phpversion());
             return;
         }
-        $c = $this->cosy;
-        $dir = $this->dir;
         $this->getMockOutputWithUpdate('psr/log', '1.0.2', '1.1.3');
-        $this->placeComposerContentsFromFixture('composer-default_branch.json', $dir);
-        $mock_executer = $this->createMock(CommandExecuter::class);
-        $mock_executer->method('executeCommand')
-            ->will($this->returnCallback(
-                function ($cmd) use ($dir) {
-                    if ($cmd == $this->createExpectedCommandForPackage('psr/log')) {
-                        $this->placeComposerLockContentsFromFixture('composer-default_branch.lock.updated', $dir);
-                    }
-                    return 0;
-                }
-            ));
-        $c->setExecuter($mock_executer);
-        $this->placeComposerLockContentsFromFixture('composer-default_branch.lock', $dir);
         $mock_provider_factory = $this->createMock(ProviderFactory::class);
         $mock_client = $this->createMock(Client::class);
         $provider = new Bitbucket($mock_client);
@@ -94,8 +81,8 @@ class Issue158Test extends Base
         $mock_provider_factory->method('createFromHost')
             ->willReturn($provider);
         /** @var CosyComposer $c */
-        $c->setProviderFactory($mock_provider_factory);
-        $c->run();
+        $this->cosy->setProviderFactory($mock_provider_factory);
+        $this->cosy->run();
         $this->assertTrue($correct_params);
     }
 }

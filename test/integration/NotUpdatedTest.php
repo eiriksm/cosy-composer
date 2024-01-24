@@ -2,7 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-
 class NotUpdatedTest extends ComposerUpdateIntegrationBase
 {
     protected $composerAssetFiles = 'composer-psr-log';

@@ -5,10 +5,45 @@ namespace eiriksm\CosyComposerTest\integration;
 use eiriksm\CosyComposer\Message;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
+use Violinist\ProjectData\ProjectData;
 
 class ComposerUpdateUpdateTest extends ComposerUpdateIntegrationBase
 {
     protected $commandWeAreLookingForCalled = false;
+
+    public function testEndToEndCustomDescription()
+    {
+        $this->composerAssetFiles = 'composer-psr-log';
+        $this->packageForUpdateOutput = 'psr/log';
+        $this->packageVersionForFromUpdateOutput = '1.0.0';
+        $this->packageVersionForToUpdateOutput = '1.0.2';
+        $this->checkPrUrl = true;
+        $this->setUp();
+        $pr_params = [
+            'base' => 'master',
+            'head' => 'psrlog100102',
+            'title' => 'Update psr/log from 1.0.0 to 1.0.2',
+            'body' => 'If you have a high test coverage index, and your tests for this pull request are passing, it should be both safe and recommended to merge this update.
+
+### Updated packages
+
+Some times an update also needs new or updated dependencies to be installed. Even if this branch is for updating one dependency, it might contain other installs or updates. All of the updates in this branch can be found here:
+
+- psr/log: 1.0.2#changed (updated from 1.0.2#4ebe3a8bf773a19edfe0a84b6585ba3d401b724d)
+
+
+
+***
+a custom message
+',
+            'assignees' => [],
+        ];
+        $project = new ProjectData();
+        $project->setCustomPrMessage('a custom message');
+        $this->cosy->setProject($project);
+        $this->runtestExpectedOutput();
+        self::assertEquals($pr_params, $this->prParams);
+    }
 
     public function testEndToEndNotPrivate()
     {

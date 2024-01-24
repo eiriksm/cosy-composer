@@ -4,12 +4,33 @@ namespace eiriksm\CosyComposerTest\integration;
 
 use eiriksm\CosyComposer\Message;
 use eiriksm\CosyComposer\ProviderFactory;
+use eiriksm\CosyComposer\Providers\Github;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
+use Github\Exception\RuntimeException;
 use Violinist\ProjectData\ProjectData;
 
 class ComposerUpdateUpdateTest extends ComposerUpdateIntegrationBase
 {
     protected $commandWeAreLookingForCalled = false;
+
+    public function testUpdatesFoundButProviderDoesNotAuthenticate()
+    {
+        $this->getMockOutputWithUpdate('eiriksm/fake-package', '1.0.0', '1.0.1');
+        $composer_contents = '{"require": {"eiriksm/fake-package": "1.0.0"}}';
+        $composer_file = $this->dir . "/composer.json";
+        file_put_contents($composer_file, $composer_contents);
+        // Then we are going to mock the provider factory.
+        $mock_provider_factory = $this->createMock(ProviderFactory::class);
+        $mock_provider = $this->createMock(Github::class);
+        $mock_provider->method('authenticate')
+            ->willThrowException(new RuntimeException('Bad credentials'));
+        $mock_provider_factory->method('createFromHost')
+            ->willReturn($mock_provider);
+
+        $this->cosy->setProviderFactory($mock_provider_factory);
+        $this->expectException(RuntimeException::class);
+        $this->cosy->run();
+    }
 
     public function testEndToEnd()
     {

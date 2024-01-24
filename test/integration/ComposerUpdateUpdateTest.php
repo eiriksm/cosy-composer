@@ -11,6 +11,17 @@ class ComposerUpdateUpdateTest extends ComposerUpdateIntegrationBase
 {
     protected $commandWeAreLookingForCalled = false;
 
+    public function testEndToEnd()
+    {
+        $this->composerAssetFiles = 'composer-psr-log';
+        $this->packageForUpdateOutput = 'psr/log';
+        $this->packageVersionForFromUpdateOutput = '1.0.0';
+        $this->packageVersionForToUpdateOutput = '1.0.2';
+        $this->checkPrUrl = true;
+        $this->setUp();
+        $this->runtestExpectedOutput();
+    }
+
     public function testEndToEndCustomDescription()
     {
         $this->composerAssetFiles = 'composer-psr-log';

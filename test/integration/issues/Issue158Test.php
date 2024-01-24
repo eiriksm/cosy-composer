@@ -80,7 +80,6 @@ class Issue158Test extends ComposerUpdateIntegrationBase
             ->willReturn($mock_repo);
         $mock_provider_factory->method('createFromHost')
             ->willReturn($provider);
-        /** @var CosyComposer $c */
         $this->cosy->setProviderFactory($mock_provider_factory);
         $this->cosy->run();
         $this->assertTrue($correct_params);

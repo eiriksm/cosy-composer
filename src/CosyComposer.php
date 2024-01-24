@@ -351,7 +351,7 @@ class CosyComposer
     /**
      * CosyComposer constructor.
      */
-    public function __construct($slug, Application $app, ArrayOutput $output, CommandExecuter $executer)
+    public function __construct($slug, CommandExecuter $executer)
     {
         if ($slug) {
             // @todo: Move to create from URL.
@@ -362,8 +362,6 @@ class CosyComposer
         $tmpdir = uniqid();
         $this->tmpDir = sprintf('/tmp/%s', $tmpdir);
         $this->messageFactory = new ViolinistMessages();
-        $this->app = $app;
-        $this->output = $output;
         $this->executer = $executer;
         $this->checkerFactory = new SecurityCheckerFactory();
     }
@@ -751,21 +749,13 @@ class CosyComposer
         // repo is a manual job merging and maintaining. On top of that, it requires the built container to be
         // up to date. So here could be several hours of delay on critical stuff.
         $this->attachDrupalAdvisories($security_alerts);
-        $array_input_array = [
-            'outdated',
-            '-d' => $this->getCwd(),
-            '--minor-only' => true,
-            '--format' => 'json',
-            '--no-interaction' => true,
-            '--direct' => false,
-        ];
+        $direct = null;
         if ($config->shouldCheckDirectOnly()) {
             $this->log('Checking only direct dependencies since config option check_only_direct_dependencies is enabled');
-            $array_input_array['--direct'] = true;
+            $direct = '--direct';
         }
         // If we should always update all, then of course we should not only check direct dependencies outdated.
         // Regardless of the option above actually.
-        $direct = '--direct';
         if ($config->shouldAlwaysUpdateAll()) {
             $this->log('Checking all (not only direct dependencies) since config option always_update_all is enabled');
             $direct = null;

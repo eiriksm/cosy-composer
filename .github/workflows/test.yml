@@ -64,3 +64,12 @@ jobs:
       - name: Run phpstan
         if: matrix.php-version != 7.0
         run: composer phpstan
+        
+  finish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close parallel build
+        uses: coverallsapp/github-action@v1
+        with:
+          parallel-finished: true

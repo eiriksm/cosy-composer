@@ -12,7 +12,6 @@
     "require": {
         "ext-json": "*",
         "bitbucket/client": "^3",
-        "composer/composer": "^1||^2",
         "eiriksm/symfony-console-array-output": "^1.0",
         "guzzlehttp/guzzle": "^7.4",
         "http-interop/http-factory-guzzle": "^1.1",

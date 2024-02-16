@@ -20,9 +20,8 @@ abstract class UpdateAllBase extends Base
     {
         parent::setUp();
         $this->createComposerFileFromFixtures($this->dir, $this->composerJson);
-        $mock_output = $this->getMockOutputWithUpdate('psr/log', '1.0.0', '1.1.4');
+        $this->getMockOutputWithUpdate('psr/log', '1.0.0', '1.1.4');
         $this->placeComposerLockContentsFromFixture($this->composerLock, $this->dir);
-        $this->cosy->setOutput($mock_output);
         $this->setDummyGithubProvider();
         $this->setupMockExecuter();
     }
@@ -37,14 +36,16 @@ abstract class UpdateAllBase extends Base
                 $this->placeComposerLockContentsFromFixture($this->composerLock . '.updated', $this->dir);
             }
             $cmd = implode(' ', $command);
-            if (mb_strpos($cmd, '"Update all dependencies"')) {
+            if (mb_strpos($cmd, 'Update all dependencies')) {
                 $this->foundCommit = true;
             }
             $branch_command = ['git', 'checkout', '-b', $this->branchName];
             if ($command === $branch_command) {
                 $this->foundBranch = true;
             }
+            $this->lastCommand = $command;
         });
+        $this->ensureMockExecuterProvidesLastOutput($executor);
         $this->cosy->setExecuter($executor);
     }
 }

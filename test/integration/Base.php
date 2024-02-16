@@ -21,6 +21,8 @@ abstract class Base extends TestCase
 
     protected $defaultSha = 123;
 
+    protected $updateJson;
+
     /**
      * @var CosyComposer
      */
@@ -37,14 +39,13 @@ abstract class Base extends TestCase
 
     protected $automergeEnabled = false;
 
+    protected $lastCommand = [];
+
     public function setUp() : void
     {
         $c = $this->getMockCosy();
         $dir = '/tmp/' . uniqid();
         $this->setupDirectory($c, $dir);
-        $definition = $this->getMockDefinition();
-        $mock_app = $this->getMockApp($definition);
-        $c->setApp($mock_app);
         $this->dir = $dir;
         $this->cosy = $c;
     }
@@ -221,16 +222,30 @@ abstract class Base extends TestCase
 
     protected function getMockOutputWithUpdate($package, $version_from, $version_to)
     {
-        $mock_output = $this->createMock(ArrayOutput::class);
-        $mock_output->method('fetch')
-            ->willReturn([
-                [
-                    $this->createUpdateJsonFromData($package, $version_from, $version_to),
-                ]
-            ]);
-        if ($this->cosy instanceof CosyComposer) {
-            $this->cosy->setOutput($mock_output);
-        }
-        return $mock_output;
+        $this->updateJson = $this->createUpdateJsonFromData($package, $version_from, $version_to);
+    }
+
+    protected function ensureMockExecuterProvidesLastOutput($mock_executer)
+    {
+        $mock_executer->method('getLastOutput')
+            ->willReturnCallback(function () {
+                $last_command_string = implode(' ', $this->lastCommand);
+                $output = [
+                    'stdout' => '',
+                    'stderr' => '',
+                ];
+                if (mb_strpos($last_command_string, 'composer outdated') === 0) {
+                    $output = [
+                        'stderr' => '',
+                        'stdout' => $this->updateJson,
+                    ];
+                }
+                $this->processLastOutput($output);
+                return $output;
+            });
+    }
+
+    protected function processLastOutput(array &$output)
+    {
     }
 }

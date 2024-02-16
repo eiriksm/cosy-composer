@@ -29,6 +29,6 @@ class CommitMessageTest extends ComposerUpdateIntegrationBase
 
     protected function getCorrectCommit()
     {
-        return 'git commit composer.json composer.lock -m "Update psr/log"';
+        return 'git commit composer.json composer.lock -m Update psr/log';
     }
 }

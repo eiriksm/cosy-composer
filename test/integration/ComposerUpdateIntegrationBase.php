@@ -48,9 +48,11 @@ abstract class ComposerUpdateIntegrationBase extends Base
                     $this->placeUpdatedComposerLock();
                 }
                 $this->handleExecutorReturnCallback($cmd, $return);
+                $this->lastCommand = $cmd;
                 return $return;
             }
         );
+        $this->ensureMockExecuterProvidesLastOutput($mock_executer);
         $this->cosy->setExecuter($mock_executer);
         $this->setDummyGithubProvider();
         $this->placeInitialComposerLock();

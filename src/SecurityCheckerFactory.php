@@ -19,7 +19,7 @@ class SecurityCheckerFactory
     public function getChecker()
     {
         if (!$this->checker instanceof SecurityChecker) {
-            $this->checker = new SecurityChecker();
+            $this->checker = new NativeComposerChecker();
         }
         return $this->checker;
     }

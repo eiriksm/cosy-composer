@@ -12,8 +12,7 @@ class UpdateAllNoDirectTest extends UpdateAllBase
 
     public function testUpdate()
     {
-        $mock_output = $this->getMockOutputWithUpdate('symfony/polyfill-mbstring', 'v1.23.1', 'v1.24.0');
-        $this->cosy->setOutput($mock_output);
+        $this->getMockOutputWithUpdate('symfony/polyfill-mbstring', 'v1.23.1', 'v1.24.0');
         $this->cosy->run();
         self::assertEquals($this->foundCommand, true);
     }

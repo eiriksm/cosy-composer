@@ -15,22 +15,7 @@ class NoUpdatesTest extends Base
         $dir = '/tmp/' . uniqid();
         mkdir($dir);
         $c->setTmpDir($dir);
-        // Create a mock app, that can respond to things.
-        $mock_definition = $this->createMock(InputDefinition::class);
-        $mock_definition->method('getOptions')
-            ->willReturn([]);
-        $mock_app = $this->createMock(Application::class);
-        $mock_app->method('getDefinition')
-            ->willReturn($mock_definition);
-        $c->setApp($mock_app);
-        $mock_output = $this->createMock(ArrayOutput::class);
-        $mock_output->method('fetch')
-            ->willReturn([
-                [
-                    '{"installed": []}'
-                ]
-            ]);
-        $c->setOutput($mock_output);
+        $this->updateJson = '{"installed": []}';
         $composer_contents = '{"require": {"drupal/core": "8.0.0"}}';
         $composer_file = "$dir/composer.json";
         file_put_contents($composer_file, $composer_contents);
@@ -39,6 +24,7 @@ class NoUpdatesTest extends Base
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
                 function ($cmd) use (&$called) {
+                    $this->lastCommand = $cmd;
                     $cmd_string = implode(' ', $cmd);
                     if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
@@ -46,6 +32,7 @@ class NoUpdatesTest extends Base
                     return 0;
                 }
             ));
+        $this->ensureMockExecuterProvidesLastOutput($mock_executer);
         $c->setExecuter($mock_executer);
         $this->assertEquals(false, $called);
         $c->run();
@@ -58,27 +45,7 @@ class NoUpdatesTest extends Base
         $dir = '/tmp/' . uniqid();
         mkdir($dir);
         $c->setTmpDir($dir);
-        // Create a mock app, that can respond to things.
-        $mock_definition = $this->createMock(InputDefinition::class);
-        $mock_definition->method('getOptions')
-            ->willReturn([]);
-        $mock_app = $this->createMock(Application::class);
-        $mock_app->method('getDefinition')
-            ->willReturn($mock_definition);
-        $c->setApp($mock_app);
-        $mock_output = $this->createMock(ArrayOutput::class);
-        $mock_output->method('fetch')
-            ->willReturn([
-                [],
-                'string',
-                [
-                    'not_json:TRUE'
-                ],
-                [
-                    '{"not_installed_key": []'
-                ]
-            ]);
-        $c->setOutput($mock_output);
+        $this->updateJson = '{"not_installed_key": []}';
         $composer_contents = '{"require": {"drupal/core": "8.0.0"}}';
         $composer_file = "$dir/composer.json";
         file_put_contents($composer_file, $composer_contents);
@@ -87,6 +54,7 @@ class NoUpdatesTest extends Base
         $mock_executer->method('executeCommand')
             ->will($this->returnCallback(
                 function ($cmd) use (&$called) {
+                    $this->lastCommand = $cmd;
                     $cmd_string = implode(' ', $cmd);
                     if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
                         $called = true;
@@ -94,9 +62,42 @@ class NoUpdatesTest extends Base
                     return 0;
                 }
             ));
+        $this->ensureMockExecuterProvidesLastOutput($mock_executer);
+        $c->setExecuter($mock_executer);
+        $this->assertEquals(false, $called);
+        $this->expectExceptionMessage('JSON output from composer was not looking as expected after checking updates');
+        $c->run();
+        $this->assertEquals(true, $called);
+    }
+
+    public function testNoUpdatesWorseDataLines()
+    {
+        $c = $this->getMockCosy();
+        $dir = '/tmp/' . uniqid();
+        mkdir($dir);
+        $c->setTmpDir($dir);
+        $this->updateJson = '{"installed": 1}';
+        $composer_contents = '{"require": {"drupal/core": "8.0.0"}}';
+        $composer_file = "$dir/composer.json";
+        file_put_contents($composer_file, $composer_contents);
+        $called = false;
+        $mock_executer = $this->createMock(CommandExecuter::class);
+        $mock_executer->method('executeCommand')
+            ->will($this->returnCallback(
+                function ($cmd) use (&$called) {
+                    $this->lastCommand = $cmd;
+                    $cmd_string = implode(' ', $cmd);
+                    if (strpos($cmd_string, 'rm -rf /tmp/') === 0) {
+                        $called = true;
+                    }
+                    return 0;
+                }
+            ));
+        $this->ensureMockExecuterProvidesLastOutput($mock_executer);
         $c->setExecuter($mock_executer);
         $this->assertEquals(false, $called);
         $c->run();
         $this->assertEquals(true, $called);
+        $this->assertOutputContainsMessage('Update data was in wrong format or missing. This is an error in violinist and should be reported', $c);
     }
 }

@@ -39,7 +39,6 @@ use League\Flysystem\Adapter\Local;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 use Violinist\ProjectData\ProjectData;
 use Violinist\Slug\Slug;
 use Violinist\TimeFrameHandler\Handler;
@@ -134,13 +133,6 @@ class CosyComposer
     private $messageFactory;
 
     /**
-     * The output we use for updates?
-     *
-     * @var ArrayOutput
-     */
-    protected $output;
-
-    /**
      * @var string
      */
     protected $tmpDir;
@@ -159,11 +151,6 @@ class CosyComposer
      * @var string
      */
     protected $tmpParent = '/tmp';
-
-    /**
-     * @var Application
-     */
-    private $app;
 
     /**
      * @var LoggerInterface
@@ -319,14 +306,6 @@ class CosyComposer
     }
 
     /**
-     * @param Application $app
-     */
-    public function setApp(Application $app)
-    {
-        $this->app = $app;
-    }
-
-    /**
      * @return string
      */
     public function getCwd()
@@ -372,7 +351,7 @@ class CosyComposer
     /**
      * CosyComposer constructor.
      */
-    public function __construct($slug, Application $app, ArrayOutput $output, CommandExecuter $executer)
+    public function __construct($slug, CommandExecuter $executer)
     {
         if ($slug) {
             // @todo: Move to create from URL.
@@ -383,8 +362,6 @@ class CosyComposer
         $tmpdir = uniqid();
         $this->tmpDir = sprintf('/tmp/%s', $tmpdir);
         $this->messageFactory = new ViolinistMessages();
-        $this->app = $app;
-        $this->output = $output;
         $this->executer = $executer;
         $this->checkerFactory = new SecurityCheckerFactory();
     }
@@ -743,17 +720,6 @@ class CosyComposer
             $this->cleanUp();
             return;
         }
-        $app = $this->app;
-        $d = $app->getDefinition();
-        /** @var InputOption[] $opts */
-        $opts = $d->getOptions();
-        try {
-            $opts['ansi']->setDefault('--no-ansi');
-        } catch (\Throwable $e) {
-        }
-        $d->setOptions($opts);
-        $app->setDefinition($d);
-        $app->setAutoExit(false);
         $this->doComposerInstall($config);
         // Now read the lockfile.
         $composer_lock_after_installing = json_decode(@file_get_contents($this->compserJsonDir . '/composer.lock'));
@@ -783,56 +749,45 @@ class CosyComposer
         // repo is a manual job merging and maintaining. On top of that, it requires the built container to be
         // up to date. So here could be several hours of delay on critical stuff.
         $this->attachDrupalAdvisories($security_alerts);
-        $array_input_array = [
-            'outdated',
-            '-d' => $this->getCwd(),
-            '--minor-only' => true,
-            '--format' => 'json',
-            '--no-interaction' => true,
-            '--direct' => false,
-        ];
+        $direct = null;
         if ($config->shouldCheckDirectOnly()) {
             $this->log('Checking only direct dependencies since config option check_only_direct_dependencies is enabled');
-            $array_input_array['--direct'] = true;
+            $direct = '--direct';
         }
         // If we should always update all, then of course we should not only check direct dependencies outdated.
         // Regardless of the option above actually.
         if ($config->shouldAlwaysUpdateAll()) {
             $this->log('Checking all (not only direct dependencies) since config option always_update_all is enabled');
-            $array_input_array['--direct'] = false;
+            $direct = null;
         }
         // If we should allow indirect packages to updated via running composer update my/direct, then we need to
         // uncover which indirect are actually out of date. Meaning direct is required to be false.
         if ($config->shouldUpdateIndirectWithDirect()) {
             $this->log('Checking all (not only direct dependencies) since config option allow_update_indirect_with_direct is enabled');
-            $array_input_array['--direct'] = false;
+            $direct = null;
         }
-        $i = new ArrayInput($array_input_array);
-        $app->run($i, $this->output);
-        $raw_data = $this->output->fetch();
-        $data = null;
-        foreach ($raw_data as $delta => $item) {
-            if (empty($item) || empty($item[0])) {
-                continue;
-            }
-            if (!is_array($item)) {
-                // Can't be it.
-                continue;
-            }
-            foreach ($item as $value) {
-                if (!$json_update = @json_decode($value)) {
-                    // Not interesting.
-                    continue;
-                }
-                if (!isset($json_update->installed)) {
-                    throw new \Exception(
-                        'JSON output from composer was not looking as expected after checking updates'
-                    );
-                }
-                $data = $json_update->installed;
-                break;
-            }
+        $composer_outdated_command = [
+            'composer',
+            'outdated',
+            '--minor-only',
+            '--format=json',
+            '--no-interaction',
+        ];
+        if ($direct) {
+            $composer_outdated_command[] = $direct;
         }
+        $this->execCommand($composer_outdated_command);
+        $raw_data = $this->getLastStdOut();
+        $json_update = @json_decode($raw_data);
+        if (!$json_update) {
+            throw new \Exception('The output for available updates could not be parsed as JSON');
+        }
+        if (!isset($json_update->installed)) {
+            throw new \Exception(
+                'JSON output from composer was not looking as expected after checking updates'
+            );
+        }
+        $data = $json_update->installed;
         if (!is_array($data)) {
             $this->log('Update data was in wrong format or missing. This is an error in violinist and should be reported');
             $this->log(print_r($raw_data, true), Message::COMMAND, [
@@ -1233,7 +1188,9 @@ class CosyComposer
             'git', "commit",
             'composer.json',
             $this->lockFileContents ? 'composer.lock' : '',
-            '-m', '"' . $msg . '"']);
+            '-m',
+            $msg,
+        ]);
         if ($this->execCommand($command, false, 120, [
             'GIT_AUTHOR_NAME' => $this->githubUserName,
             'GIT_AUTHOR_EMAIL' => $this->githubEmail,
@@ -1372,8 +1329,8 @@ class CosyComposer
         $config = Config::createFromComposerData($cdata);
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
-        $should_indicate_can_not_update_if_unupdated = false;
         foreach ($data as $item) {
+            $should_indicate_can_not_update_if_unupdated = false;
             if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
                 if (!in_array($item->name, $is_allowed_out_of_date_pr)) {
                     $this->log(sprintf('Skipping %s because the number of max concurrent PRs (%d) seems to have been reached', $item->name, $max_number_of_prs), Message::CONCURRENT_THROTTLED, [
@@ -1803,14 +1760,6 @@ class CosyComposer
     }
 
     /**
-     * @param ArrayOutput $output
-     */
-    public function setOutput(ArrayOutput $output)
-    {
-        $this->output = $output;
-    }
-
-    /**
      * Cleans up after the run.
      */
     private function cleanUp()
@@ -1972,6 +1921,24 @@ class CosyComposer
 
     protected function attachDrupalAdvisories(array &$alerts)
     {
+        // Also though. If the only alert we have is for the package with
+        // literally "drupal/core" we need to make sure it's attached to the
+        // other names as well.
+        $known_names = [
+            'drupal/core-recommended',
+            'drupal/core-composer-scaffold',
+            'drupal/core-project-message',
+            'drupal/core',
+            'drupal/drupal',
+        ];
+        if (!empty($alerts['drupal/core'])) {
+            foreach ($known_names as $known_name) {
+                if (!empty($alerts[$known_name])) {
+                    continue;
+                }
+                $alerts[$known_name] = $alerts['drupal/core'];
+            }
+        }
         if (!$this->lockFileContents) {
             return;
         }
@@ -1980,39 +1947,24 @@ class CosyComposer
             $drupal = $data->getPackageData('drupal/core');
             // Now see if a newer version is available, and if it is a security update.
             $endpoint = 'current';
-            $major_version = mb_substr($drupal->version, 0, 1);
-            switch ($major_version) {
-                case '8':
-                    $endpoint = '8.x';
-                    break;
-
-                case '7':
-                    $endpoint = '7.x';
-                    break;
-
-                case '9':
-                    // Using current.
-                    break;
-                default:
-                    throw new \Exception('No idea what endpoint to use to check for drupal security release');
+            $version_parts = explode('.', $drupal->version);
+            $major_version = $version_parts[0];
+            // Only 7.x and 8.x use their own endpoint,
+            if (in_array($major_version, ['7', '8'])) {
+                $endpoint = $major_version . '.x';
             }
-
+            if ((int) $major_version < 7) {
+                throw new \Exception(sprintf('Drupal version %s is too old to check for security updates using drupal.org endpoint', $major_version));
+            }
             $client = $this->getHttpClient();
             $url = sprintf('https://updates.drupal.org/release-history/drupal/%s', $endpoint);
             $request = new Request('GET', $url);
             $response = $client->sendRequest($request);
-            $data = $response->getBody();
+            $data = $response->getBody()->getContents();
             $xml = @simplexml_load_string($data);
             if (!$xml) {
                 return;
             }
-            $known_names = [
-                'drupal/core-recommended',
-                'drupal/core-composer-scaffold',
-                'drupal/core-project-message',
-                'drupal/core',
-                'drupal/drupal',
-            ];
             if (empty($xml->releases->release)) {
                 return;
             }

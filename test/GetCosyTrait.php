@@ -19,10 +19,8 @@ trait GetCosyTrait
 {
     protected function getMockCosy($dir = null)
     {
-        $app = $this->createMock(Application::class);
-        $output = $this->createMock(ArrayOutput::class);
         $executer = $this->createMock(CommandExecuter::class);
-        $c = new CosyComposer('a/b', $app, $output, $executer);
+        $c = new CosyComposer('a/b', $executer);
         $p = new ProjectData();
         $p->setNid(123);
         $c->setProject($p);

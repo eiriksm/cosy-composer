@@ -1329,8 +1329,8 @@ class CosyComposer
         $config = Config::createFromComposerData($cdata);
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
-        $should_indicate_can_not_update_if_unupdated = false;
         foreach ($data as $item) {
+            $should_indicate_can_not_update_if_unupdated = false;
             if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
                 if (!in_array($item->name, $is_allowed_out_of_date_pr)) {
                     $this->log(sprintf('Skipping %s because the number of max concurrent PRs (%d) seems to have been reached', $item->name, $max_number_of_prs), Message::CONCURRENT_THROTTLED, [

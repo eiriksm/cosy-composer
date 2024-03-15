@@ -566,7 +566,7 @@ class CosyComposer
         }
         // Support an alternate composer version based on env var.
         if (!empty($_ENV['alternate_composer_path'])) {
-            $this->log('Trying to use composer from ' . $_ENV['alternate_composer_path"]);
+            $this->log('Trying to use composer from ' . $_ENV['alternate_composer_path']);
             copy($_ENV['alternate_composer_path'], __DIR__ . '/../../../../vendor/bin/composer');
         }
         // Try to get the php version as well.

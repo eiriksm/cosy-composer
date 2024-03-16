@@ -9,7 +9,7 @@ interface FilterInterface
 
     const REQUIRE_TYPES = [
         self::REQUIRE_TYPE_REQUIRE,
-        self::REQUIRE_TYPE_REQUIRE_DEV
+        self::REQUIRE_TYPE_REQUIRE_DEV,
     ];
 
     /**

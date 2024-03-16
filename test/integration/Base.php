@@ -3,7 +3,6 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 use Composer\Console\Application;
-use eiriksm\ArrayOutput\ArrayOutput;
 use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\Providers\Github;

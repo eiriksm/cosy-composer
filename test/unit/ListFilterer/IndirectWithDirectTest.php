@@ -22,7 +22,7 @@ class IndirectWithDirectTest extends TestCase
                 'child_latest' => '3.0.0',
                 'children_with_update' => [
                     'psr/log',
-                ]
+                ],
             ],
         ];
         $filterer = IndirectWithDirectFilterer::create($lock, $json);
@@ -47,7 +47,7 @@ class IndirectWithDirectTest extends TestCase
                 'json' => (object) [
                     'require' => (object) [
                         'psr/log' => '1.0.0',
-                    ]
+                    ],
                 ],
             ],
             [
@@ -68,7 +68,7 @@ class IndirectWithDirectTest extends TestCase
                     'require' => (object) [
                         'psr/log' => '~1.0.0',
                         'psr/cache' => '~1.0.0',
-                    ]
+                    ],
                 ],
             ],
         ];

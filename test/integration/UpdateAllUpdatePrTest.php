@@ -6,7 +6,6 @@ use Github\Exception\ValidationFailedException;
 use Gitlab\Exception\RuntimeException;
 use Violinist\ProjectData\ProjectData;
 use Violinist\Slug\Slug;
-use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 class UpdateAllUpdatePrTest extends UpdateAllBase
 {
@@ -57,7 +56,7 @@ class UpdateAllUpdatePrTest extends UpdateAllBase
             ],
             [
                 RuntimeException::class,
-            ]
+            ],
         ];
     }
 

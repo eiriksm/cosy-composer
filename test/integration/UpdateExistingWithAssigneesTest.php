@@ -47,7 +47,7 @@ class UpdateExistingWithAssigneesTest extends ComposerUpdateIntegrationBase
             ],
             [
                 RuntimeException::class,
-            ]
+            ],
         ];
     }
 
@@ -57,7 +57,7 @@ class UpdateExistingWithAssigneesTest extends ComposerUpdateIntegrationBase
             'drushdrush9721036' => [
                 'number' => 123,
                 'title' => 'Not update drush, thats for sure. This will trigger an update of the PR',
-            ]
+            ],
         ];
     }
 }

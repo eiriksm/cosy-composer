@@ -72,7 +72,7 @@ class CosyComposerChangelogTest extends TestCase
         $mock_executer->expects($this->once())
             ->method('getLastOutput')
             ->willReturn([
-                'stdout' => "112233 This is the first line\n445566 This is the second line"
+                'stdout' => "112233 This is the first line\n445566 This is the second line",
                 ]);
         $c->setExecuter($mock_executer);
         $log = $c->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [

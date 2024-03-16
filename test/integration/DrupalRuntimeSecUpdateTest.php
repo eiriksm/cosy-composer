@@ -2,8 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use eiriksm\ArrayOutput\ArrayOutput;
-use eiriksm\CosyComposer\CosyComposer;
 use Http\Adapter\Guzzle7\Client;
 use Violinist\Slug\Slug;
 
@@ -138,12 +136,12 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
             [
                 '7.212',
                 'drupal/core',
-                false
+                false,
             ],
             [
                 '7.0',
                 'drupal/core',
-                true
+                true,
             ],
             [
                 '10.9.8',

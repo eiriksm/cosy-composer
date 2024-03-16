@@ -46,7 +46,7 @@ class CloseOutdatedSkipExistingTest extends CloseOutdatedBase
             'psrlog100111' => [
                 'number' => 125,
                 'title' => 'Test update',
-            ]
+            ],
         ];
     }
 

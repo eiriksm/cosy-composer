@@ -2,12 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
-use eiriksm\CosyComposer\Providers\Gitlab;
 use eiriksm\CosyComposer\Providers\SelfHostedGitlab;
-use Gitlab\Api\MergeRequests;
-use Gitlab\Api\Projects;
-use Gitlab\Api\Repositories;
-use Gitlab\Client;
 
 class SelfHostedGitlabTest extends GitlabProviderTest
 {

@@ -2,11 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use eiriksm\ArrayOutput\ArrayOutput;
-use Github\Exception\ValidationFailedException;
-use Gitlab\Exception\RuntimeException;
-use Violinist\Slug\Slug;
-
 class UpdateConcurrentClosedStillRelevantTest extends ComposerUpdateIntegrationBase
 {
     protected $composerAssetFiles = 'composer.concurrent.update_branch';

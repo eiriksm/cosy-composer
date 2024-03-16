@@ -2,7 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Violinist\ProjectData\ProjectData;
 use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 class UpdateAllSecurityOnlyTest extends UpdateAllBase

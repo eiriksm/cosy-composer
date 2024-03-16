@@ -2,7 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration\issues;
 
-use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
 
 /**

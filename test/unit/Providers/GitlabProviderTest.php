@@ -13,12 +13,12 @@ class GitlabProviderTest extends ProvidersTestBase
 {
     protected $authenticateArguments = [
         'testUser',
-        Client::AUTH_OAUTH_TOKEN
+        Client::AUTH_OAUTH_TOKEN,
     ];
 
     protected $authenticatePrivateArguments = [
         'testUser',
-        Client::AUTH_OAUTH_TOKEN
+        Client::AUTH_OAUTH_TOKEN,
     ];
 
     public function testRepoIsPrivate()

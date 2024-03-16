@@ -3,8 +3,6 @@
 namespace eiriksm\CosyComposer\Providers;
 
 use eiriksm\CosyComposer\ProviderInterface;
-use Github\Api\Issue;
-use Github\Api\PullRequest;
 use Github\Client;
 use Github\ResultPager;
 use Violinist\Slug\Slug;
@@ -50,8 +48,8 @@ class Github implements ProviderInterface
   }
 }', [
         'input' => [
-            'pullRequestId' => $pr_data['node_id']
-        ]
+            'pullRequestId' => $pr_data['node_id'],
+        ],
         ]);
         if (!empty($data["errors"])) {
             return false;

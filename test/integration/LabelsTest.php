@@ -2,9 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Github\Exception\ValidationFailedException;
-use Violinist\Slug\Slug;
-
 /**
  * Test for labels on sec only, but no sec updates.
  */

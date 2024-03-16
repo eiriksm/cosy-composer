@@ -2,8 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Composer\Console\Application;
-
 class UpdateAllNoDirectTest extends UpdateAllBase
 {
 

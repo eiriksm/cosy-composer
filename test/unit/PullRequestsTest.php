@@ -4,7 +4,6 @@ namespace eiriksm\CosyComposerTest\unit;
 
 use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposerTest\GetCosyTrait;
-use eiriksm\ViolinistMessages\ViolinistMessages;
 use PHPUnit\Framework\TestCase;
 
 class PullRequestsTest extends TestCase

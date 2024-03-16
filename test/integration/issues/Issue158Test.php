@@ -4,8 +4,6 @@ namespace eiriksm\CosyComposerTest\integration\issues;
 
 use Bitbucket\Api\Repositories;
 use Bitbucket\Client;
-use eiriksm\CosyComposer\CommandExecuter;
-use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\Providers\Bitbucket;
 use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;

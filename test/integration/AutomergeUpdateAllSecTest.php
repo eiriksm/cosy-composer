@@ -2,8 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Github\Exception\ValidationFailedException;
-use Violinist\Slug\Slug;
 use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 /**

@@ -2,7 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use Violinist\Slug\Slug;
 
 abstract class ComposerUpdateIntegrationBase extends Base

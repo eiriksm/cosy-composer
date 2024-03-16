@@ -2,7 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use eiriksm\ArrayOutput\ArrayOutput;
 use Github\Exception\ValidationFailedException;
 use Gitlab\Exception\RuntimeException;
 use Violinist\Slug\Slug;
@@ -17,7 +16,6 @@ class UpdateConcurrentTwoTest extends ComposerUpdateIntegrationBase
         parent::setUp();
         $this->sha = 123;
 
-        $mock_output = $this->createMock(ArrayOutput::class);
         $this->updateJson = '{"installed": [{"name": "psr/cache", "version": "1.0.0", "latest": "1.0.1", "latest-status": "semver-safe-update"},{"name": "psr/log", "version": "1.1.3", "latest": "1.1.4", "latest-status": "semver-safe-update"}]}';
     }
 

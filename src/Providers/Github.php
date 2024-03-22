@@ -37,10 +37,18 @@ class Github implements ProviderInterface
         }
     }
 
-    public function enableAutomerge(array $pr_data, Slug $slug) : bool
+    public function enableAutomerge(array $pr_data, Slug $slug, $merge_method = self::MERGE_METHOD_MERGE) : bool
     {
         if (!isset($pr_data["node_id"])) {
             return false;
+        }
+        // https://docs.github.com/en/graphql/reference/enums#pullrequestmergemethod
+        $api_merge_method = 'MERGE';
+        if ($merge_method === self::MERGE_METHOD_REBASE) {
+            $api_merge_method = 'REBASE';
+        }
+        if ($merge_method === self::MERGE_METHOD_SQUASH) {
+            $api_merge_method = 'SQUASH';
         }
         $data = $this->client->graphql()->execute('mutation MyMutation ($input: EnablePullRequestAutoMergeInput!) {
   enablePullRequestAutoMerge(input: $input) {
@@ -50,7 +58,8 @@ class Github implements ProviderInterface
   }
 }', [
         'input' => [
-            'pullRequestId' => $pr_data['node_id']
+            'pullRequestId' => $pr_data['node_id'],
+            'mergeMethod' => $api_merge_method,
         ]
         ]);
         if (!empty($data["errors"])) {

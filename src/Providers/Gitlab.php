@@ -185,7 +185,7 @@ class Gitlab implements ProviderInterface
         }
     }
 
-    public function enableAutomerge(array $pr_data, Slug $slug) : bool
+    public function enableAutomerge(array $pr_data, Slug $slug, $merge_method = self::MERGE_METHOD_MERGE) : bool
     {
         if (empty($pr_data['number']) && !empty($pr_data["iid"])) {
             $pr_data['number'] = $pr_data["iid"];

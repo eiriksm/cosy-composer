@@ -1706,7 +1706,7 @@ class CosyComposer
     {
         if ($config->shouldAutoMerge($security_update)) {
             $this->log('Config indicated automerge should be enabled, Trying to enable automerge');
-            $result = $this->getPrClient()->enableAutomerge($pullRequest, $this->slug);
+            $result = $this->getPrClient()->enableAutomerge($pullRequest, $this->slug, $config->getAutomergeMethod($security_update));
             if (!$result) {
                 $this->log('Enabling automerge failed.');
             }

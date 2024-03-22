@@ -5,6 +5,7 @@ namespace eiriksm\CosyComposer\Providers;
 use eiriksm\CosyComposer\ProviderInterface;
 use Github\Api\Issue;
 use Github\Api\PullRequest;
+use Github\AuthMethod;
 use Github\Client;
 use Github\ResultPager;
 use Violinist\Slug\Slug;
@@ -70,12 +71,12 @@ class Github implements ProviderInterface
 
     public function authenticate($user, $token)
     {
-        $this->client->authenticate($user, null, Client::AUTH_ACCESS_TOKEN);
+        $this->client->authenticate($user, null, AuthMethod::ACCESS_TOKEN);
     }
 
     public function authenticatePrivate($user, $token)
     {
-        $this->client->authenticate($user, null, Client::AUTH_ACCESS_TOKEN);
+        $this->client->authenticate($user, null, AuthMethod::ACCESS_TOKEN);
     }
 
     public function repoIsPrivate(Slug $slug)

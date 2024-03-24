@@ -64,6 +64,7 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - psr/log: 1.0.2#changed (updated from 1.0.2#4ebe3a8bf773a19edfe0a84b6585ba3d401b724d)
 
 
+
 ### Working with this branch
 
 If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/#branches).
@@ -163,6 +164,10 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 
 
 
+### Working with this branch
+
+If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/#branches).
+
 ***
 This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).
 ',
@@ -205,6 +210,10 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - laminas/laminas-zendframework-bridge: 1.1.0 (new package, previously not installed)
 
 
+
+### Working with this branch
+
+If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/#branches).
 
 ***
 This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).

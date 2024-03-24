@@ -31,8 +31,8 @@
         "violinist-dev/slug-from-url": "^1",
         "violinist-dev/symfony-cloud-security-checker": "^2",
         "violinist-dev/timeframe-handler": "^1.0",
-        "violinist-dev/violinist-config": "^2.1",
-        "violinist-dev/violinist-messages": "^1.6.0",
+        "violinist-dev/violinist-config": "^2.3",
+        "violinist-dev/violinist-messages": "^1.6.1",
         "wa72/simplelogger": "^1.0"
     },
     "minimum-stability": "dev",

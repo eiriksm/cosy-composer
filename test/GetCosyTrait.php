@@ -21,6 +21,7 @@ trait GetCosyTrait
     {
         $executer = $this->createMock(CommandExecuter::class);
         $c = new CosyComposer($executer);
+        $c->setUrl('https://github.com/a/b');
         $p = new ProjectData();
         $p->setNid(123);
         $c->setProject($p);

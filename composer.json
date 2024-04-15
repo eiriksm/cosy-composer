@@ -20,7 +20,7 @@
         "m4tthumphrey/php-gitlab-api": "^10",
         "peterpostmann/parse_uri": "^1.0",
         "php-http/guzzle7-adapter": "^1",
-        "symfony/process": "^5.4",
+        "symfony/process": "^5.4 || ^6",
         "violinist-dev/allow-list-handler": "^1.0",
         "violinist-dev/commit-message-creator": "^1.2",
         "violinist-dev/composer-changelog-fetcher": "^2.1",

@@ -351,14 +351,8 @@ class CosyComposer
     /**
      * CosyComposer constructor.
      */
-    public function __construct($slug, CommandExecuter $executer)
+    public function __construct(CommandExecuter $executer)
     {
-        if ($slug) {
-            // @todo: Move to create from URL.
-            $this->slug = new Slug();
-            $this->slug->setProvider('github.com');
-            $this->slug->setSlug($slug);
-        }
         $tmpdir = uniqid();
         $this->tmpDir = sprintf('/tmp/%s', $tmpdir);
         $this->messageFactory = new ViolinistMessages();
@@ -563,6 +557,11 @@ class CosyComposer
         }
         if (!empty($_SERVER['queue_runner_revision'])) {
             $this->log(sprintf('Queue runner revision %s', $_SERVER['queue_runner_revision']));
+        }
+        // Support an alternate composer version based on env var.
+        if (!empty($_ENV['ALTERNATE_COMPOSER_PATH'])) {
+            $this->log('Trying to use composer from ' . $_ENV['ALTERNATE_COMPOSER_PATH']);
+            copy($_ENV['ALTERNATE_COMPOSER_PATH'], __DIR__ . '/../../../../vendor/bin/composer');
         }
         // Try to get the php version as well.
         $this->execCommand(['php', '--version']);
@@ -1329,8 +1328,8 @@ class CosyComposer
         $config = Config::createFromComposerData($cdata);
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
-        $should_indicate_can_not_update_if_unupdated = false;
         foreach ($data as $item) {
+            $should_indicate_can_not_update_if_unupdated = false;
             if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
                 if (!in_array($item->name, $is_allowed_out_of_date_pr)) {
                     $this->log(sprintf('Skipping %s because the number of max concurrent PRs (%d) seems to have been reached', $item->name, $max_number_of_prs), Message::CONCURRENT_THROTTLED, [
@@ -1439,7 +1438,12 @@ class CosyComposer
                     $updater->setShouldThrowOnUnupdated(false);
                     if (!empty($item->child_with_update)) {
                         $updater->setShouldThrowOnUnupdated(true);
-                        $updater->setPackageToCheckHasUpdated($item->child_with_update);
+                        $updater->setPackagesToCheckHasUpdated([$item->child_with_update]);
+                    }
+                    // But really, we should now have an array, shouldn't we?
+                    if (!empty($item->children_with_update) && is_array($item->children_with_update)) {
+                        $updater->setShouldThrowOnUnupdated(true);
+                        $updater->setPackagesToCheckHasUpdated($item->children_with_update);
                     }
                 }
                 if (!$lock_file_contents || ($should_update_beyond && $can_update_beyond)) {
@@ -1696,7 +1700,7 @@ class CosyComposer
     {
         if ($config->shouldAutoMerge($security_update)) {
             $this->log('Config indicated automerge should be enabled, Trying to enable automerge');
-            $result = $this->getPrClient()->enableAutomerge($pullRequest, $this->slug);
+            $result = $this->getPrClient()->enableAutomerge($pullRequest, $this->slug, $config->getAutomergeMethod($security_update));
             if (!$result) {
                 $this->log('Enabling automerge failed.');
             }

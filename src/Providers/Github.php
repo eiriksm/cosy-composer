@@ -5,6 +5,7 @@ namespace eiriksm\CosyComposer\Providers;
 use eiriksm\CosyComposer\ProviderInterface;
 use Github\Api\Issue;
 use Github\Api\PullRequest;
+use Github\AuthMethod;
 use Github\Client;
 use Github\ResultPager;
 use Violinist\Slug\Slug;
@@ -37,10 +38,18 @@ class Github implements ProviderInterface
         }
     }
 
-    public function enableAutomerge(array $pr_data, Slug $slug) : bool
+    public function enableAutomerge(array $pr_data, Slug $slug, $merge_method = self::MERGE_METHOD_MERGE) : bool
     {
         if (!isset($pr_data["node_id"])) {
             return false;
+        }
+        // https://docs.github.com/en/graphql/reference/enums#pullrequestmergemethod
+        $api_merge_method = 'MERGE';
+        if ($merge_method === self::MERGE_METHOD_REBASE) {
+            $api_merge_method = 'REBASE';
+        }
+        if ($merge_method === self::MERGE_METHOD_SQUASH) {
+            $api_merge_method = 'SQUASH';
         }
         $data = $this->client->graphql()->execute('mutation MyMutation ($input: EnablePullRequestAutoMergeInput!) {
   enablePullRequestAutoMerge(input: $input) {
@@ -50,7 +59,8 @@ class Github implements ProviderInterface
   }
 }', [
         'input' => [
-            'pullRequestId' => $pr_data['node_id']
+            'pullRequestId' => $pr_data['node_id'],
+            'mergeMethod' => $api_merge_method,
         ]
         ]);
         if (!empty($data["errors"])) {
@@ -61,12 +71,12 @@ class Github implements ProviderInterface
 
     public function authenticate($user, $token)
     {
-        $this->client->authenticate($user, null, Client::AUTH_ACCESS_TOKEN);
+        $this->client->authenticate($user, null, AuthMethod::ACCESS_TOKEN);
     }
 
     public function authenticatePrivate($user, $token)
     {
-        $this->client->authenticate($user, null, Client::AUTH_ACCESS_TOKEN);
+        $this->client->authenticate($user, null, AuthMethod::ACCESS_TOKEN);
     }
 
     public function repoIsPrivate(Slug $slug)

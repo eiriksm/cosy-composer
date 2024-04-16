@@ -189,7 +189,7 @@ class Bitbucket implements ProviderInterface
         return false;
     }
 
-    public function enableAutomerge(array $pr_data, Slug $slug) : bool
+    public function enableAutomerge(array $pr_data, Slug $slug, $merge_method = self::MERGE_METHOD_MERGE) : bool
     {
         // @todo: Not implemented yet.
         return false;

@@ -6,9 +6,13 @@ use Violinist\Slug\Slug;
 
 interface ProviderInterface
 {
+    const MERGE_METHOD_MERGE = 'merge';
+    const MERGE_METHOD_REBASE = 'rebase';
+    const MERGE_METHOD_SQUASH = 'squash';
+
     public function addLabels(array $pr_data, Slug $slug, array $labels) : bool;
 
-    public function enableAutomerge(array $pr_data, Slug $slug) : bool;
+    public function enableAutomerge(array $pr_data, Slug $slug, $merge_method = self::MERGE_METHOD_MERGE) : bool;
 
     public function authenticate($user, $token);
 

@@ -20,7 +20,8 @@ trait GetCosyTrait
     protected function getMockCosy($dir = null)
     {
         $executer = $this->createMock(CommandExecuter::class);
-        $c = new CosyComposer('a/b', $executer);
+        $c = new CosyComposer($executer);
+        $c->setUrl('https://github.com/a/b');
         $p = new ProjectData();
         $p->setNid(123);
         $c->setProject($p);

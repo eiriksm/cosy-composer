@@ -561,7 +561,11 @@ class CosyComposer
         // Support an alternate composer version based on env var.
         if (!empty($_ENV['ALTERNATE_COMPOSER_PATH'])) {
             $this->log('Trying to use composer from ' . $_ENV['ALTERNATE_COMPOSER_PATH']);
-            copy($_ENV['ALTERNATE_COMPOSER_PATH'], __DIR__ . '/../../../../vendor/bin/composer');
+            if (file_exists('/usr/local/bin/composer')) {
+                rename('/usr/local/bin/composer', '/usr/local/bin/composer.bak');
+            }
+            copy($_ENV['ALTERNATE_COMPOSER_PATH'], '/usr/local/bin/composer');
+            chmod('/usr/local/bin/composer', 0755);
         }
         // Try to get the php version as well.
         $this->execCommand(['php', '--version']);
@@ -1768,6 +1772,9 @@ class CosyComposer
         $this->chdir('/tmp');
         $this->log('Cleaning up after update check.');
         $this->execCommand(['rm', '-rf', $this->tmpDir], false, 300);
+        if (file_exists('/usr/local/bin/composer.bak')) {
+            rename('/usr/local/bin/composer.bak', '/usr/local/bin/composer');
+        }
     }
 
     /**

@@ -560,6 +560,12 @@ class CosyComposer
         }
         // Support an alternate composer version based on env var.
         if (!empty($_ENV['ALTERNATE_COMPOSER_PATH'])) {
+            $allow_list = [
+                '/usr/local/bin/composer22',
+            ];
+            if (!in_array($_ENV['ALTERNATE_COMPOSER_PATH'], $allow_list)) {
+                throw new \InvalidArgumentException('The alternate composer path is not allowed');
+            }
             $this->log('Trying to use composer from ' . $_ENV['ALTERNATE_COMPOSER_PATH']);
             if (file_exists('/usr/local/bin/composer')) {
                 rename('/usr/local/bin/composer', '/usr/local/bin/composer.bak');

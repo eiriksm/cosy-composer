@@ -789,9 +789,15 @@ class CosyComposer
         $raw_data = $this->getLastStdOut();
         $json_update = @json_decode($raw_data);
         if (!$json_update) {
+            // We had a problem.
+            $this->log($this->getLastStdOut());
+            $this->log($this->getLastStdErr());
             throw new \Exception('The output for available updates could not be parsed as JSON');
         }
         if (!isset($json_update->installed)) {
+            // We had a problem.
+            $this->log($this->getLastStdOut());
+            $this->log($this->getLastStdErr());
             throw new \Exception(
                 'JSON output from composer was not looking as expected after checking updates'
             );

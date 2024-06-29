@@ -2114,6 +2114,9 @@ class CosyComposer
 
     protected function retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to)
     {
+        if ($package_name === 'drupal/core-recommended') {
+            $package_name = 'drupal/core';
+        }
         return $this->getFetcher()
             ->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
     }
@@ -2136,6 +2139,9 @@ class CosyComposer
     public function retrieveChangeLog($package_name, $lockdata, $version_from, $version_to)
     {
         $fetcher = $this->getFetcher();
+        if ($package_name === 'drupal/core-recommended') {
+            $package_name = 'drupal/core';
+        }
         $log_obj = $fetcher->retrieveChangelog($package_name, $lockdata, $version_from, $version_to);
         $changelog_string = '';
         $json = json_decode($log_obj->getAsJson());

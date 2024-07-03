@@ -702,12 +702,21 @@ class CosyComposer
         }
         // Now make sure we are actually on that branch.
         if ($this->execCommand(['git', 'remote', 'set-branches', 'origin', "*"])) {
+            // We had a problem.
+            $this->log($this->getLastStdOut());
+            $this->log($this->getLastStdErr());
             throw new \Exception('There was an error trying to configure default branch');
         }
         if ($this->execCommand(['git', 'fetch', 'origin', $default_branch])) {
+            // We had a problem.
+            $this->log($this->getLastStdOut());
+            $this->log($this->getLastStdErr());
             throw new \Exception('There was an error trying to fetch default branch');
         }
         if ($this->execCommand(['git', 'checkout', $default_branch])) {
+            // We had a problem.
+            $this->log($this->getLastStdOut());
+            $this->log($this->getLastStdErr());
             throw new \Exception('There was an error trying to switch to default branch');
         }
         // Re-read the composer.json file, since it can be different on the default branch,

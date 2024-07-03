@@ -13,7 +13,7 @@ class CommitMessageTest extends ComposerUpdateIntegrationBase
     protected $composerAssetFiles = 'composer-commit';
     protected $hasCorrectCommit = false;
 
-    public function tearDown()
+    public function tearDown() : void
     {
         putenv('USE_NEW_COMMIT_MSG');
     }

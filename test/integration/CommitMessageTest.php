@@ -15,7 +15,7 @@ class CommitMessageTest extends ComposerUpdateIntegrationBase
 
     public function tearDown()
     {
-        putenv('USE_NEW_COMMIT_MSG=');
+        putenv('USE_NEW_COMMIT_MSG');
     }
     
     public function testCommitMessage()

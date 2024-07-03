@@ -13,8 +13,20 @@ class CommitMessageTest extends ComposerUpdateIntegrationBase
     protected $composerAssetFiles = 'composer-commit';
     protected $hasCorrectCommit = false;
 
+    public function tearDown()
+    {
+        putenv('USE_NEW_COMMIT_MSG=');
+    }
+    
     public function testCommitMessage()
     {
+        $this->runtestExpectedOutput();
+        self::assertEquals($this->hasCorrectCommit, true);
+    }
+
+    public function testNewCommit()
+    {
+        putenv('USE_NEW_COMMIT_MSG=1');
         $this->runtestExpectedOutput();
         self::assertEquals($this->hasCorrectCommit, true);
     }

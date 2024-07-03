@@ -12,6 +12,7 @@ class CommitMessageTest extends ComposerUpdateIntegrationBase
     protected $packageVersionForToUpdateOutput = '1.0.2';
     protected $composerAssetFiles = 'composer-commit';
     protected $hasCorrectCommit = false;
+    protected $commitCommand = '';
 
     public function tearDown() : void
     {
@@ -29,6 +30,7 @@ class CommitMessageTest extends ComposerUpdateIntegrationBase
         putenv('USE_NEW_COMMIT_MSG=1');
         $this->runtestExpectedOutput();
         self::assertEquals($this->hasCorrectCommit, true);
+        var_dump($this->commitCommand);
     }
 
     protected function handleExecutorReturnCallback($cmd, &$return)
@@ -36,6 +38,7 @@ class CommitMessageTest extends ComposerUpdateIntegrationBase
         $cmd_string = implode(' ', $cmd);
         if (strpos($cmd_string, $this->getCorrectCommit()) !== false) {
             $this->hasCorrectCommit = true;
+            $this->commitCommand = $cmd_string;
         }
     }
 

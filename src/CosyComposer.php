@@ -1213,13 +1213,12 @@ class CosyComposer
             'composer.json',
             $this->lockFileContents ? 'composer.lock' : '',
             '-m',
+            $msg,
         ]);
         if (getenv('USE_NEW_COMMIT_MSG')) {
-            $msg = sprintf('%s
-
-%s', $msg, json_encode(['teZt']));
+            $command[] = '-m';
+            $command[] = json_encode(['test']);
         }
-        $command[] = $msg;
         if ($this->execCommand($command, false, 120, [
             'GIT_AUTHOR_NAME' => $this->githubUserName,
             'GIT_AUTHOR_EMAIL' => $this->githubEmail,

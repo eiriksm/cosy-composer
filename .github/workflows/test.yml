@@ -63,8 +63,9 @@ jobs:
           php vendor/bin/php-coveralls -v
 
       - name: Run phpstan
-        if: matrix.php-version != 7.0
-        run: composer phpstan
+        run: |
+          composer require --dev phpstan/phpstan-phpunit
+          composer phpstan
         
   finish:
     needs: test

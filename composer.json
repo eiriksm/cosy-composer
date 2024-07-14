@@ -12,7 +12,7 @@
     "require": {
         "ext-json": "*",
         "bitbucket/client": "^3",
-        "composer/composer": "^1||^2",
+        "composer/semver": "^3.4",
         "guzzlehttp/guzzle": "^7.4",
         "http-interop/http-factory-guzzle": "^1.1",
         "knplabs/github-api": "^3.0",

@@ -2,8 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Composer\Console\Application;
-use eiriksm\ArrayOutput\ArrayOutput;
 use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\Providers\Github;
@@ -147,19 +145,6 @@ abstract class Base extends TestCase
         $mock_definition->method('getOptions')
             ->willReturn([]);
         return $mock_definition;
-    }
-
-    protected function getMockApp($mock_definition)
-    {
-        $mock_app = $this->createMock(Application::class);
-        $mock_app->method('getDefinition')
-            ->willReturn($mock_definition);
-        $mock_app->method('run')
-            ->willReturnCallback(function ($input) {
-                self::assertEquals($this->usesDirect, $input->getParameterOption('--direct'));
-                return 0;
-            });
-        return $mock_app;
     }
 
     protected function getMockProvider()

@@ -560,8 +560,18 @@ class CosyComposer
         }
         // Support an alternate composer version based on env var.
         if (!empty($_ENV['ALTERNATE_COMPOSER_PATH'])) {
+            $allow_list = [
+                '/usr/local/bin/composer22',
+            ];
+            if (!in_array($_ENV['ALTERNATE_COMPOSER_PATH'], $allow_list)) {
+                throw new \InvalidArgumentException('The alternate composer path is not allowed');
+            }
             $this->log('Trying to use composer from ' . $_ENV['ALTERNATE_COMPOSER_PATH']);
-            copy($_ENV['ALTERNATE_COMPOSER_PATH'], __DIR__ . '/../../../../vendor/bin/composer');
+            if (file_exists('/usr/local/bin/composer')) {
+                rename('/usr/local/bin/composer', '/usr/local/bin/composer.bak');
+            }
+            copy($_ENV['ALTERNATE_COMPOSER_PATH'], '/usr/local/bin/composer');
+            chmod('/usr/local/bin/composer', 0755);
         }
         // Try to get the php version as well.
         $this->execCommand(['php', '--version']);
@@ -692,12 +702,21 @@ class CosyComposer
         }
         // Now make sure we are actually on that branch.
         if ($this->execCommand(['git', 'remote', 'set-branches', 'origin', "*"])) {
+            // We had a problem.
+            $this->log($this->getLastStdOut());
+            $this->log($this->getLastStdErr());
             throw new \Exception('There was an error trying to configure default branch');
         }
         if ($this->execCommand(['git', 'fetch', 'origin', $default_branch])) {
+            // We had a problem.
+            $this->log($this->getLastStdOut());
+            $this->log($this->getLastStdErr());
             throw new \Exception('There was an error trying to fetch default branch');
         }
         if ($this->execCommand(['git', 'checkout', $default_branch])) {
+            // We had a problem.
+            $this->log($this->getLastStdOut());
+            $this->log($this->getLastStdErr());
             throw new \Exception('There was an error trying to switch to default branch');
         }
         // Re-read the composer.json file, since it can be different on the default branch,
@@ -779,9 +798,15 @@ class CosyComposer
         $raw_data = $this->getLastStdOut();
         $json_update = @json_decode($raw_data);
         if (!$json_update) {
+            // We had a problem.
+            $this->log($this->getLastStdOut());
+            $this->log($this->getLastStdErr());
             throw new \Exception('The output for available updates could not be parsed as JSON');
         }
         if (!isset($json_update->installed)) {
+            // We had a problem.
+            $this->log($this->getLastStdOut());
+            $this->log($this->getLastStdErr());
             throw new \Exception(
                 'JSON output from composer was not looking as expected after checking updates'
             );
@@ -1768,6 +1793,9 @@ class CosyComposer
         $this->chdir('/tmp');
         $this->log('Cleaning up after update check.');
         $this->execCommand(['rm', '-rf', $this->tmpDir], false, 300);
+        if (file_exists('/usr/local/bin/composer.bak')) {
+            rename('/usr/local/bin/composer.bak', '/usr/local/bin/composer');
+        }
     }
 
     /**

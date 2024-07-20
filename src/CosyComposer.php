@@ -1215,6 +1215,10 @@ class CosyComposer
             '-m',
             $msg,
         ]);
+        if (getenv('USE_NEW_COMMIT_MSG')) {
+            $command[] = '-m';
+            $command[] = json_encode(['test']);
+        }
         if ($this->execCommand($command, false, 120, [
             'GIT_AUTHOR_NAME' => $this->githubUserName,
             'GIT_AUTHOR_EMAIL' => $this->githubEmail,

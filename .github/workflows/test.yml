@@ -64,7 +64,6 @@ jobs:
 
       - name: Run phpstan
         run: |
-          composer require --dev phpstan/phpstan-phpunit
           composer phpstan
         
   finish:

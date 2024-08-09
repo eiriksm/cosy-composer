@@ -6,7 +6,7 @@ on:
 jobs:
   test:
     name: Run tests
-    runs-on: 'ubuntu-20.04'
+    runs-on: ubuntu-latest
     env:
       PRIVATE_REPO_GITHUB: ${{ secrets.PRIVATE_REPO_GITHUB }}
       PRIVATE_USER_TOKEN_GITHUB: ${{ secrets.PRIVATE_USER_TOKEN_GITHUB }}
@@ -21,6 +21,7 @@ jobs:
           - "8.1"
           - "8.2"
           - "8.3"
+          - "8.4"
         composer-version:
           - "1"
           - "2"
@@ -62,8 +63,8 @@ jobs:
           php vendor/bin/php-coveralls -v
 
       - name: Run phpstan
-        if: matrix.php-version != 7.0
-        run: composer phpstan
+        run: |
+          composer phpstan
         
   finish:
     needs: test

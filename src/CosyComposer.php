@@ -52,6 +52,8 @@ class CosyComposer
 
     const UPDATE_INDIVIDUAL = 'update_individual';
 
+    const COMMIT_MESSAGE_SEPARATOR = '------';
+
     private $urlArray;
 
     private $openRelevantPrs = [];
@@ -1217,13 +1219,13 @@ class CosyComposer
         ]);
         if (getenv('USE_NEW_COMMIT_MSG') && $item) {
             $command[] = '-m';
-            $command[] = "------\n" . Yaml::dump([
+            $command[] = sprintf("%s\n%s", self::COMMIT_MESSAGE_SEPARATOR, Yaml::dump([
                 'update_data' => [
                     'package' => $item->getPackageName(),
                     'from' => $item->getOldVersion(),
                     'to' => $item->getNewVersion(),
                 ],
-            ]);
+            ]));
         }
         if ($this->execCommand($command, false, 120, [
             'GIT_AUTHOR_NAME' => $this->githubUserName,

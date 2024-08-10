@@ -22,4 +22,11 @@ class ProcessFactoryTest extends TestCase
         $proc = $p->getProcess(['echo'], $cwd);
         $this->assertEquals($cwd, $proc->getWorkingDirectory());
     }
+
+    public function testGetEnv()
+    {
+        $factory = new ProcessFactory();
+        $process = $factory->getProcess(['echo', 'test'], null, ['TEST' => 1]);
+        self::assertEquals(['TEST' => 1], $factory->getEnv());
+    }
 }

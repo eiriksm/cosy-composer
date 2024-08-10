@@ -36,8 +36,14 @@ class Issue158Test extends ComposerUpdateIntegrationBase
         $mock_branches = $this->createMock(Repositories\Workspaces\Refs\Branches::class);
         $mock_refs->method('branches')
             ->willReturn($mock_branches);
-        $mock_branches->method('perPage')
-            ->willReturn($mock_branches);
+        // If using the v4 of the library, we do not have to mock this method.
+        $reflected_client = new \ReflectionClass(Client::class);
+        $const = $reflected_client->getConstant('USER_AGENT');
+        $is_version_3 = strpos($const, 'bitbucket-php-api-client/3') === 0;
+        if ($is_version_3) {
+            $mock_branches->method('perPage')
+                ->willReturn($mock_branches);
+        }
         $mock_branches->method('list')
             ->willReturn([
                 'values' => [
@@ -52,8 +58,10 @@ class Issue158Test extends ComposerUpdateIntegrationBase
         $mock_workspaces = $this->createMock(Repositories\Workspaces::class);
         $mock_workspaces->method('pullRequests')
             ->willReturn($mock_prs);
-        $mock_prs->method('perPage')
-            ->willReturn($mock_prs);
+        if ($is_version_3) {
+            $mock_prs->method('perPage')
+                ->willReturn($mock_prs);
+        }
         $mock_repo->method('workspaces')
             ->willReturn($mock_workspaces);
         $mock_workspaces->method('refs')

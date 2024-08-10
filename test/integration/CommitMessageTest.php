@@ -39,7 +39,6 @@ class CommitMessageTest extends ComposerUpdateIntegrationBase
         self::assertEquals($data["update_data"]["from"], '1.0.0');
         self::assertEquals($data["update_data"]["to"], '1.0.2');
         self::assertEquals($data["update_data"]["package"], 'psr/log');
-
     }
 
     protected function handleExecutorReturnCallback($cmd, &$return)

@@ -22,10 +22,6 @@ class Issue158Test extends ComposerUpdateIntegrationBase
 
     public function testIssue158()
     {
-        if (version_compare(phpversion(), "7.1.0", "<=")) {
-            $this->assertTrue(true, 'Skipping bitbucket test for version ' . phpversion());
-            return;
-        }
         $this->getMockOutputWithUpdate('psr/log', '1.0.2', '1.1.3');
         $mock_provider_factory = $this->createMock(ProviderFactory::class);
         $mock_client = $this->createMock(Client::class);

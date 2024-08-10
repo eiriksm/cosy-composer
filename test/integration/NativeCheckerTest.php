@@ -23,7 +23,9 @@ class NativeCheckerTest extends ComposerUpdateIntegrationBase
         $mock_process->method('getOutput')
             ->willReturnCallback(function () {
                 return '{
+    "abandoned": {},
     "advisories": {
+        "vendor/super-secure": {},
         "drupal/core": {
             "60": {
                 "advisoryId": "SA-CORE-2024-001",
@@ -48,5 +50,61 @@ class NativeCheckerTest extends ComposerUpdateIntegrationBase
         $this->cosy->getCheckerFactory()->setChecker($native_checker);
         $this->runtestExpectedOutput();
         self::assertEquals('[SECURITY] Update drupal/core-recommended from 10.2.1 to 10.2.2', $this->prParams["title"]);
+    }
+
+    public function testNativeCheckerEmptyOutput()
+    {
+        $native_checker = new NativeComposerChecker();
+        $mock_process_factory = $this->createMock(ProcessFactoryInterface::class);
+        $mock_process = $this->createMock(Process::class);
+        $mock_process_factory->method('getProcess')
+            ->willReturn($mock_process);
+        $mock_process->method('getOutput')
+            ->willReturnCallback(function () {
+                return '';
+            });
+        $native_checker->setProcessFactory($mock_process_factory);
+        $this->cosy->getCheckerFactory()->setChecker($native_checker);
+        $this->runtestExpectedOutput();
+        $this->assertOutputContainsMessage('No output from the composer audit command', $this->cosy);
+    }
+
+    public function testNativeCheckerBadJson()
+    {
+        $native_checker = new NativeComposerChecker();
+        $mock_process_factory = $this->createMock(ProcessFactoryInterface::class);
+        $mock_process = $this->createMock(Process::class);
+        $mock_process_factory->method('getProcess')
+            ->willReturn($mock_process);
+        $mock_process->method('getOutput')
+            ->willReturnCallback(function () {
+                return '{ba"d: json]';
+            });
+        $native_checker->setProcessFactory($mock_process_factory);
+        $this->cosy->getCheckerFactory()->setChecker($native_checker);
+        $this->runtestExpectedOutput();
+        $this->assertOutputContainsMessage('Invalid JSON found from parsing the security check data', $this->cosy);
+    }
+
+    public function testNativeCheckerAbandonedMessage()
+    {
+        $native_checker = new NativeComposerChecker();
+        $mock_process_factory = $this->createMock(ProcessFactoryInterface::class);
+        $mock_process = $this->createMock(Process::class);
+        $mock_process_factory->method('getProcess')
+            ->willReturn($mock_process);
+        $mock_process->method('getOutput')
+            ->willReturnCallback(function () {
+                return '{
+    "abandoned": {
+        "drupal/core": "drupal/new-core"
+    }
+}';
+            });
+        $native_checker->setProcessFactory($mock_process_factory);
+        $this->cosy->getCheckerFactory()->setChecker($native_checker);
+        $this->runtestExpectedOutput();
+        self::assertNotEquals('[SECURITY] Update drupal/core-recommended from 10.2.1 to 10.2.2', $this->prParams["title"]);
+        self::assertEquals('Update drupal/core-recommended from 10.2.1 to 10.2.2', $this->prParams["title"]);
     }
 }

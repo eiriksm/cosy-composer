@@ -19,9 +19,6 @@ class ProcessFactory implements ProcessFactoryInterface
             $cwd = $this->getCwd();
         }
         $this->env = $env;
-        if ($env) {
-            $this->env = $env;
-        }
         return new Process($commandline, $cwd, $env);
     }
 
@@ -30,7 +27,7 @@ class ProcessFactory implements ProcessFactoryInterface
      */
     public function getEnv()
     {
-        return $this->env ? $this->env : [];
+        return $this->env ?: [];
     }
 
     protected function getCwd()

@@ -1217,10 +1217,12 @@ class CosyComposer
         ]);
         if (getenv('USE_NEW_COMMIT_MSG') && $item) {
             $command[] = '-m';
-            $command[] = Yaml::dump([
-                'package' => $item->getPackageName(),
-                'from' => $item->getOldVersion(),
-                'to' => $item->getNewVersion(),
+            $command[] = "------\n" . Yaml::dump([
+                'update_data' => [
+                    'package' => $item->getPackageName(),
+                    'from' => $item->getOldVersion(),
+                    'to' => $item->getNewVersion(),
+                ],
             ]);
         }
         if ($this->execCommand($command, false, 120, [

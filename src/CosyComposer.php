@@ -2302,8 +2302,15 @@ class CosyComposer
         return $this->client;
     }
 
-    private function preparePrClient()
+    private function preparePrClient() : void
     {
+        // We are only allowed to use the public github wrapper if the magic env
+        // for this is set, which it will be in jobs coming from the SaaS
+        // offering, but not for self hosted.
+        if (!$this->shouldEnablePublicGithubWrapper()) {
+            // The client should hopefully be fully prepared.
+            return;
+        }
         if (!$this->isPrivate) {
             if (!$this->client instanceof PublicGithubWrapper) {
                 $this->client = new PublicGithubWrapper(new Client());
@@ -2312,5 +2319,10 @@ class CosyComposer
             $this->client->setUrlFromTokenUrl($this->tokenUrl);
             $this->client->setProject($this->project);
         }
+    }
+
+    private function shouldEnablePublicGithubWrapper() : bool
+    {
+        return !empty(getenv('USE_GITHUB_PUBLIC_WRAPPER'));
     }
 }

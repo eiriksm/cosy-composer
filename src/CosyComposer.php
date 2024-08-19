@@ -365,7 +365,9 @@ class CosyComposer
 
     public function setUrl($url = null)
     {
-        // Make it possible without crashing.
+        if (!empty($url)) {
+            $url = preg_replace('/\.git$/', '', $url);
+        }
         $slug_url_obj = parse_url($url);
         if (empty($slug_url_obj['port'])) {
             // Set it based on scheme.

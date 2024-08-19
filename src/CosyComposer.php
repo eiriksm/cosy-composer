@@ -540,6 +540,7 @@ class CosyComposer
      * @throws \eiriksm\CosyComposer\Exceptions\GitCloneException
      * @throws \InvalidArgumentException
      * @throws \Exception
+     * @throws \Throwable
      */
     public function run()
     {
@@ -674,25 +675,10 @@ class CosyComposer
         $this->client = $this->getClient($this->slug);
         $this->privateClient = $this->getClient($this->slug);
         $this->privateClient->authenticate($this->userToken, null);
-        try {
-            $this->isPrivate = $this->privateClient->repoIsPrivate($this->slug);
-            // Get the default branch of the repo.
-            $default_branch = $this->privateClient->getDefaultBranch($this->slug);
-        } catch (\Throwable $e) {
-            // Could be a personal access token.
-            if (!method_exists($this->privateClient, 'authenticatePersonalAccessToken')) {
-                throw $e;
-            }
-            try {
-                $this->privateClient->authenticatePersonalAccessToken($this->userToken, null);
-                $this->isPrivate = $this->privateClient->repoIsPrivate($this->slug);
-                // Get the default branch of the repo.
-                $default_branch = $this->privateClient->getDefaultBranch($this->slug);
-            } catch (\Throwable $other_exception) {
-                // Throw the first exception, probably.
-                throw $e;
-            }
-        }
+        $this->logger->log('info', new Message('Checking private status of repo', Message::COMMAND));
+        $this->isPrivate = $this->checkPrivateStatus();
+        $this->logger->log('info', new Message('Checking default branch of repo', Message::COMMAND));
+        $default_branch = $this->checkDefaultBranch();
         if ($default_branch) {
             $this->log('Default branch set in project is ' . $default_branch);
         }
@@ -2290,9 +2276,9 @@ class CosyComposer
     }
 
     /**
-     * @return ProviderInterface
+     * Get the client we should use for the PRs we create.
      */
-    private function getPrClient()
+    private function getPrClient() : ProviderInterface
     {
         if ($this->isPrivate) {
             return $this->privateClient;
@@ -2307,11 +2293,14 @@ class CosyComposer
         // We are only allowed to use the public github wrapper if the magic env
         // for this is set, which it will be in jobs coming from the SaaS
         // offering, but not for self hosted.
+        $this->logger->log('info', new Message('Checking if we should enable the public github wrapper', Message::COMMAND));
         if (!$this->shouldEnablePublicGithubWrapper()) {
             // The client should hopefully be fully prepared.
+            $this->logger->log('info', new Message('Public github wrapper not enabled', Message::COMMAND));
             return;
         }
         if (!$this->isPrivate) {
+            $this->logger->log('info', new Message('Public github wrapper enabled', Message::COMMAND));
             if (!$this->client instanceof PublicGithubWrapper) {
                 $this->client = new PublicGithubWrapper(new Client());
             }
@@ -2319,6 +2308,46 @@ class CosyComposer
             $this->client->setUrlFromTokenUrl($this->tokenUrl);
             $this->client->setProject($this->project);
         }
+    }
+
+    private function checkDefaultBranch() : ?string
+    {
+        $default_branch = null;
+        try {
+            $default_branch = $this->privateClient->getDefaultBranch($this->slug);
+        } catch (\Throwable $e) {
+            // Could be a personal access token.
+            if (!method_exists($this->privateClient, 'authenticatePersonalAccessToken')) {
+                throw $e;
+            }
+            try {
+                $this->privateClient->authenticatePersonalAccessToken($this->userToken, null);
+                $default_branch = $this->privateClient->getDefaultBranch($this->slug);
+            } catch (\Throwable $other_exception) {
+                throw $e;
+            }
+        }
+        return $default_branch;
+    }
+
+    private function checkPrivateStatus() : bool
+    {
+        if (!$this->shouldEnablePublicGithubWrapper()) {
+            return true;
+        }
+        try {
+            return $this->privateClient->repoIsPrivate($this->slug);
+        } catch (\Throwable $e) {
+            // Could be a personal access token.
+            if (!method_exists($this->privateClient, 'authenticatePersonalAccessToken')) {
+                return true;
+            }
+            try {
+                $this->privateClient->authenticatePersonalAccessToken($this->userToken, null);
+                return $this->privateClient->repoIsPrivate($this->slug);
+            } catch (\Throwable $other_exception) {}
+        }
+        return true;
     }
 
     private function shouldEnablePublicGithubWrapper() : bool

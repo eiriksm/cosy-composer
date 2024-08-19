@@ -2345,7 +2345,8 @@ class CosyComposer
             try {
                 $this->privateClient->authenticatePersonalAccessToken($this->userToken, null);
                 return $this->privateClient->repoIsPrivate($this->slug);
-            } catch (\Throwable $other_exception) {}
+            } catch (\Throwable $other_exception) {
+            }
         }
         return true;
     }

@@ -121,16 +121,6 @@ class CosyComposer
     private $forkUser;
 
     /**
-     * @var string
-     */
-    private $githubUserName;
-
-    /**
-     * @var string
-     */
-    private $githubEmail;
-
-    /**
      * @var ViolinistMessages
      */
     private $messageFactory;
@@ -399,12 +389,6 @@ class CosyComposer
     public function setUserToken($user_token)
     {
         $this->userToken = $user_token;
-    }
-
-    public function setGithubForkAuth($user, $mail)
-    {
-        $this->githubUserName = $user;
-        $this->githubEmail = $mail;
     }
 
   /**
@@ -1215,12 +1199,7 @@ class CosyComposer
                 ],
             ]));
         }
-        if ($this->execCommand($command, false, 120, [
-            'GIT_AUTHOR_NAME' => $this->githubUserName,
-            'GIT_AUTHOR_EMAIL' => $this->githubEmail,
-            'GIT_COMMITTER_NAME' => $this->githubUserName,
-            'GIT_COMMITTER_EMAIL' => $this->githubEmail,
-        ])) {
+        if ($this->execCommand($command, false, 5)) {
             $this->log($this->getLastStdOut());
             $this->log($this->getLastStdErr());
             throw new \Exception('Error committing the composer files. They are probably not changed.');

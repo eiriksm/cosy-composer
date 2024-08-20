@@ -123,11 +123,6 @@ class CosyComposer
     /**
      * @var string
      */
-    private $githubUserName;
-
-    /**
-     * @var string
-     */
     private $githubEmail;
 
     /**

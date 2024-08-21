@@ -109,13 +109,6 @@ class CosyComposer
     private $userToken;
 
     /**
-     * Github pass.
-     *
-     * @var string
-     */
-    private $githubPass;
-
-    /**
      * @var string
      */
     private $forkUser;
@@ -354,13 +347,12 @@ class CosyComposer
      */
     public function setGithubAuth($user, $pass)
     {
-        $this->setAuthentication($user, $pass);
+        $this->setAuthentication($user);
     }
 
-    public function setAuthentication(string $user, string $pass)
+    public function setAuthentication(string $user_token)
     {
-        $this->userToken = $user;
-        $this->githubPass = $pass;
+        $this->userToken = $user_token;
     }
 
     public function setUserToken($user_token)
@@ -564,7 +556,7 @@ class CosyComposer
         }
         switch ($hostname) {
             case 'github.com':
-                $url = sprintf('https://%s:%s@github.com/%s', $this->userToken, $this->githubPass, $this->slug->getSlug());
+                $url = sprintf('https://%s@github.com/%s', $this->userToken, $this->slug->getSlug());
                 break;
 
             case 'gitlab.com':

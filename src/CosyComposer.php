@@ -133,7 +133,7 @@ class CosyComposer
     /**
      * @var string
      */
-    protected $compserJsonDir;
+    protected $composerJsonDir;
 
     /**
      * @var string
@@ -628,11 +628,11 @@ class CosyComposer
         if ($this->project && $this->project->getComposerJsonDir()) {
             $composer_json_dir = sprintf('%s/%s', $this->tmpDir, $this->project->getComposerJsonDir());
         }
-        $this->compserJsonDir = $composer_json_dir;
-        if (!$this->chdir($this->compserJsonDir)) {
+        $this->composerJsonDir = $composer_json_dir;
+        if (!$this->chdir($this->composerJsonDir)) {
             throw new ChdirException('Problem with changing dir to the clone dir.');
         }
-        $local_adapter = new Local($this->compserJsonDir);
+        $local_adapter = new Local($this->composerJsonDir);
         if (!empty($_ENV['config_branch'])) {
             $config_branch = $_ENV['config_branch'];
             $this->log('Changing to config branch: ' . $config_branch);
@@ -708,7 +708,7 @@ class CosyComposer
         $this->handleDrupalContribSa($composer_json_data);
         $config = Config::createFromComposerData($composer_json_data);
         $this->handleTimeIntervalSetting($composer_json_data);
-        $lock_file = $this->compserJsonDir . '/composer.lock';
+        $lock_file = $this->composerJsonDir . '/composer.lock';
         $initial_composer_lock_data = false;
         $security_alerts = [];
         if (@file_exists($lock_file)) {
@@ -723,12 +723,12 @@ class CosyComposer
         }
         $this->doComposerInstall($config);
         // Now read the lockfile.
-        $composer_lock_after_installing = json_decode(@file_get_contents($this->compserJsonDir . '/composer.lock'));
+        $composer_lock_after_installing = json_decode(@file_get_contents($this->composerJsonDir . '/composer.lock'));
         // And do a quick security check in there as well.
         try {
             $this->log('Checking for security issues in project.');
             $checker = $this->checkerFactory->getChecker();
-            $result = $checker->checkDirectory($this->compserJsonDir);
+            $result = $checker->checkDirectory($this->composerJsonDir);
             // Make sure this is an array now.
             if (!$result) {
                 $result = [];
@@ -825,7 +825,7 @@ class CosyComposer
             $this->log('Project indicated that it should only receive security updates. Removing non-security related updates from queue');
             foreach ($data as $delta => $item) {
                 try {
-                    $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->compserJsonDir);
+                    $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
                     if (isset($security_alerts[$package_name_in_composer_json])) {
                         continue;
                     }
@@ -962,7 +962,7 @@ class CosyComposer
                         $security_update = false;
                         $package_name_in_composer_json = $item->name;
                         try {
-                            $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->compserJsonDir);
+                            $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
                         } catch (\Exception $e) {
                             // If this was a package that we somehow got because we have allowed to update other than direct
                             // dependencies we can avoid re-throwing this.
@@ -1072,7 +1072,7 @@ class CosyComposer
                 throw new NotUpdatedException('Composer update command exited with status code ' . $status);
             }
             // Now let's find out what has actually been updated.
-            $new_lock_contents = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
+            $new_lock_contents = json_decode(file_get_contents($this->composerJsonDir . '/composer.lock'));
             $comparer = new LockDataComparer($composer_lock_after_installing, $new_lock_contents);
             $list = $comparer->getUpdateList();
             if (empty($list)) {
@@ -1360,7 +1360,7 @@ class CosyComposer
                 $version_to = $item->latest;
                 // See where this package is.
                 try {
-                    $package_name_in_composer_json = self::getComposerJsonName($cdata, $package_name, $this->compserJsonDir);
+                    $package_name_in_composer_json = self::getComposerJsonName($cdata, $package_name, $this->composerJsonDir);
                 } catch (\Exception $e) {
                     // If this was a package that we somehow got because we have allowed to update other than direct
                     // dependencies we can avoid re-throwing this.
@@ -1510,7 +1510,7 @@ class CosyComposer
                     }
                 }
                 $this->log('Successfully ran command composer update for package ' . $package_name);
-                $new_lock_data = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
+                $new_lock_data = json_decode(file_get_contents($this->composerJsonDir . '/composer.lock'));
                 $list_item = new UpdateListItem($package_name, $post_update_data->version, $item->version);
                 $this->log('Trying to retrieve changelog for ' . $package_name);
                 $changelog = null;

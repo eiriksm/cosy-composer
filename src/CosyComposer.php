@@ -161,11 +161,6 @@ class CosyComposer
     protected $tokenUrl;
 
     /**
-     * @var null|object
-     */
-    private $tempToken = null;
-
-    /**
      * @var bool
      */
     private $isPrivate = false;

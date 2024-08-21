@@ -24,7 +24,7 @@ class Issue98Test extends ComposerUpdateIntegrationBase
         self::assertEquals(false, $this->calledCorrectly);
         $this->placeComposerLockContentsFromFixture('composer-lock-private.lock', $this->dir);
         $this->runtestExpectedOutput();
-        $this->assertEquals($this->calledCorrectly, $this->calledCorrectly);
+        $this->assertEquals(true, $this->calledCorrectly);
     }
 
     protected function handleExecutorReturnCallback($cmd, &$return)
@@ -32,7 +32,7 @@ class Issue98Test extends ComposerUpdateIntegrationBase
         if ($cmd == $this->createExpectedCommandForPackage('eirik/private-pack')) {
             $this->placeComposerLockContentsFromFixture('composer-lock-private.updated', $this->dir);
         }
-        if ($cmd === ["git", "clone", 'https://user-token@github.com/eiriksm/private-pack.git', '/tmp/9f7527992e178cafad06d558b8f32ce8']) {
+        if ($cmd === ["git", "clone", 'https://x-access-token:user-token@github.com/eiriksm/private-pack.git', '/tmp/9f7527992e178cafad06d558b8f32ce8']) {
             $this->calledCorrectly = true;
         }
     }

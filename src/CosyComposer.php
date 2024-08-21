@@ -556,7 +556,7 @@ class CosyComposer
         }
         switch ($hostname) {
             case 'github.com':
-                $url = sprintf('https://%s@github.com/%s', $this->userToken, $this->slug->getSlug());
+                $url = sprintf('https://x-access-token:%s@github.com/%s', $this->userToken, $this->slug->getSlug());
                 break;
 
             case 'gitlab.com':

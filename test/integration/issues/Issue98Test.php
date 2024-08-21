@@ -32,7 +32,7 @@ class Issue98Test extends ComposerUpdateIntegrationBase
         if ($cmd == $this->createExpectedCommandForPackage('eirik/private-pack')) {
             $this->placeComposerLockContentsFromFixture('composer-lock-private.updated', $this->dir);
         }
-        if ($cmd === ["git", "clone", 'https://x-access-token:user-token@github.com/eiriksm/private-pack.git', '/tmp/9f7527992e178cafad06d558b8f32ce8']) {
+        if ($cmd === ["git", "clone", 'https://user-token:x-oauth-basic@github.com/eiriksm/private-pack.git', '/tmp/9f7527992e178cafad06d558b8f32ce8']) {
             $this->calledCorrectly = true;
         }
     }

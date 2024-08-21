@@ -138,11 +138,6 @@ class CosyComposer
     /**
      * @var string
      */
-    private $cacheDir = '/tmp';
-
-    /**
-     * @var string
-     */
     protected $tmpParent = '/tmp';
 
     /**
@@ -248,19 +243,18 @@ class CosyComposer
 
 
     /**
-     * @param string $cacheDir
+     * @deprecated This method is not used anymore and is a no-op.
      */
-    public function setCacheDir($cacheDir)
+    public function setCacheDir()
     {
-        $this->cacheDir = $cacheDir;
     }
 
     /**
-     * @return string
+     * @deprecated This method will always return an empty string.
      */
     public function getCacheDir()
     {
-        return $this->cacheDir;
+        return '';
     }
 
     /**

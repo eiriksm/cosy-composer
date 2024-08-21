@@ -1290,6 +1290,8 @@ class CosyComposer
         if ($this->isPrivate) {
             $origin = 'origin';
             if ($this->execCommand(["git", 'push', $origin, $branch_name, '--force'])) {
+                $this->log($this->getLastStdOut());
+                $this->log($this->getLastStdErr());
                 throw new GitPushException('Could not push to ' . $branch_name);
             }
         } else {

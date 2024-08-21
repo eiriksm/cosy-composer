@@ -368,10 +368,19 @@ class CosyComposer
         $this->slug = Slug::createFromUrlAndSupportedProviders($url, $providers);
     }
 
+    /**
+     * @deprecated Use ::setAuthentication instead.
+     *
+     * @see CosyComposer::setAuthentication
+     */
     public function setGithubAuth($user, $pass)
     {
+        $this->setAuthentication($user, $pass);
+    }
+
+    public function setAuthentication(string $user, string $pass)
+    {
         $this->userToken = $user;
-        $this->forkUser = $user;
         $this->githubPass = $pass;
     }
 

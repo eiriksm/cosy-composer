@@ -136,11 +136,6 @@ class CosyComposer
     protected $composerJsonDir;
 
     /**
-     * @var string
-     */
-    protected $tmpParent = '/tmp';
-
-    /**
      * @var LoggerInterface
      */
     protected $logger;
@@ -269,22 +264,6 @@ class CosyComposer
     public function setHttpClient(HttpClient $httpClient)
     {
         $this->httpClient = $httpClient;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTmpParent()
-    {
-        return $this->tmpParent;
-    }
-
-    /**
-     * @param string $tmpParent
-     */
-    public function setTmpParent($tmpParent)
-    {
-        $this->tmpParent = $tmpParent;
     }
 
     /**
@@ -569,11 +548,6 @@ class CosyComposer
         $this->log(sprintf('Starting update check for %s', $this->slug->getSlug()));
         $user_name = $this->slug->getUserName();
         $user_repo = $this->slug->getUserRepo();
-        // First set working dir to /tmp (since we might be in the directory of the
-        // last processed item, which may be deleted.
-        if (!$this->chdir($this->getTmpParent())) {
-            throw new ChdirException('Problem with changing dir to ' . $this->getTmpParent());
-        }
         $hostname = $this->slug->getProvider();
         $url = null;
         // Make sure we accept the fingerprint of whatever we are cloning.

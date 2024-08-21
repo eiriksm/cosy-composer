@@ -347,7 +347,7 @@ class CosyComposer
      */
     public function setGithubAuth($user, $pass)
     {
-        $this->setAuthentication($user, $pass);
+        $this->setAuthentication($user);
     }
 
     public function setAuthentication(string $user_token)

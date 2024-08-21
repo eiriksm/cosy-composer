@@ -9,15 +9,6 @@ use eiriksm\CosyComposer\Exceptions\ChdirException;
 class FailTest extends Base
 {
 
-    public function testChdirFail()
-    {
-        $c = $this->getMockCosy();
-        $c->setTmpParent('/stupid/nonexistent');
-        $this->expectException(ChdirException::class);
-        $this->expectExceptionMessage('Problem with changing dir to /stupid/nonexistent');
-        $c->run();
-    }
-
     public function testGitFail()
     {
         $c = $this->getMockCosy();

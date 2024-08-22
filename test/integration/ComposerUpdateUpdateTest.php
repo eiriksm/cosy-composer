@@ -83,6 +83,7 @@ a custom message
 
     public function testEndToEndNotPrivate()
     {
+        putenv('USE_GITHUB_PUBLIC_WRAPPER=true');
         $this->packageForUpdateOutput = 'psr/log';
         $this->packageVersionForFromUpdateOutput = '1.0.0';
         $this->packageVersionForToUpdateOutput = '1.0.2';
@@ -114,7 +115,7 @@ a custom message
             ->willReturn($mock_provider);
 
         $this->cosy->setProviderFactory($mock_provider_factory);
-        $this->cosy->setGithubAuth('test', 'pass');
+        $this->cosy->setAuthentication('pass');
         $this->runtestExpectedOutput();
         $this->assertOutputContainsMessage($fake_pr_url, $this->cosy);
         $this->assertEquals(Message::PR_URL, $this->findMessage($fake_pr_url, $this->cosy)->getType());

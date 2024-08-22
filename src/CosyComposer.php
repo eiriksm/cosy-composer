@@ -553,6 +553,8 @@ class CosyComposer
                 $this->execCommand(['chmod', '600', $filename], false);
             }
         }
+        $is_bitbucket = false;
+        $bitbucket_user = null;
         switch ($hostname) {
             case 'github.com':
                 $url = sprintf('https://x-access-token:%s@github.com/%s', $this->userToken, $this->slug->getSlug());
@@ -564,6 +566,15 @@ class CosyComposer
 
             case 'bitbucket.org':
                 $url = sprintf('https://x-token-auth:%s@bitbucket.org/%s.git', $this->userToken, $this->slug->getSlug());
+                // Except if the thing is less than 50 characters, and also
+                // includes a colon. Then it's probably a user:app password kind
+                // of a thing.
+                if (strlen($this->userToken) < 50 && strpos($this->userToken, ':') !== false) {
+                    $url = sprintf('https://%s@bitbucket.org/%s.git', $this->userToken, $this->slug->getSlug());
+                    $is_bitbucket = true;
+                    // The username will now be the thing before the colon.
+                    [$bitbucket_user, $this->userToken] = explode(':', $this->userToken);
+                }
                 break;
 
             default:
@@ -624,6 +635,9 @@ class CosyComposer
         $this->client = $this->getClient($this->slug);
         $this->privateClient = $this->getClient($this->slug);
         $this->privateClient->authenticate($this->userToken, null);
+        if ($is_bitbucket && $bitbucket_user) {
+            $this->privateClient->authenticate($bitbucket_user, $this->userToken);
+        }
         try {
             $this->isPrivate = $this->privateClient->repoIsPrivate($this->slug);
             // Get the default branch of the repo.

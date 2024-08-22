@@ -9,15 +9,6 @@ use eiriksm\CosyComposer\Exceptions\ChdirException;
 class FailTest extends Base
 {
 
-    public function testChdirFail()
-    {
-        $c = $this->getMockCosy();
-        $c->setTmpParent('/stupid/nonexistent');
-        $this->expectException(ChdirException::class);
-        $this->expectExceptionMessage('Problem with changing dir to /stupid/nonexistent');
-        $c->run();
-    }
-
     public function testGitFail()
     {
         $c = $this->getMockCosy();
@@ -28,7 +19,7 @@ class FailTest extends Base
             ->will($this->returnCallback(
                 function ($cmd, $log = true, $timeout = 120) {
                     $cmd_string = implode(' ', $cmd);
-                    if (strpos($cmd_string, 'git clone --depth=1 https://user-token:@github.com/a/b') === 0) {
+                    if (strpos($cmd_string, 'git clone --depth=1 https://x-access-token:user-token@github.com/a/b') === 0) {
                         return 42;
                     }
                     return 0;

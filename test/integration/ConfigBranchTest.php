@@ -59,11 +59,11 @@ config_branch=config'],
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
         $cmd_string = implode(' ', $cmd);
-        if (!preg_match('/git clone --depth=1 https:\/\/user-token:@github.com\/a\/b .* config/', $cmd_string, $output_array)) {
+        if (!preg_match('/git clone --depth=1 https:\/\/x-access-token:user-token@github.com\/a\/b .* config/', $cmd_string, $output_array)) {
             return;
         }
         // Now retrieve the dir.
-        $dir = str_replace(' -b config', '', str_replace('git clone --depth=1 https://user-token:@github.com/a/b ', '', $cmd_string));
+        $dir = str_replace(' -b config', '', str_replace('git clone --depth=1 https://x-access-token:user-token@github.com/a/b ', '', $cmd_string));
         mkdir($dir);
         $this->placeComposerContentsFromFixture('empty.json', $dir);
     }

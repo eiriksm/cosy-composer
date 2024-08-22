@@ -2298,7 +2298,7 @@ class CosyComposer
         return true;
     }
 
-    private function shouldEnablePublicGithubWrapper() : bool
+    public static function shouldEnablePublicGithubWrapper() : bool
     {
         return !empty(getenv('USE_GITHUB_PUBLIC_WRAPPER'));
     }

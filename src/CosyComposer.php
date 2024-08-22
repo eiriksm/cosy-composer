@@ -2241,7 +2241,7 @@ class CosyComposer
         // for this is set, which it will be in jobs coming from the SaaS
         // offering, but not for self hosted.
         $this->logger->log('info', new Message('Checking if we should enable the public github wrapper', Message::COMMAND));
-        if (!$this->shouldEnablePublicGithubWrapper()) {
+        if (!self::shouldEnablePublicGithubWrapper()) {
             // The client should hopefully be fully prepared.
             $this->logger->log('info', new Message('Public github wrapper not enabled', Message::COMMAND));
             return;
@@ -2279,7 +2279,7 @@ class CosyComposer
 
     private function checkPrivateStatus() : bool
     {
-        if (!$this->shouldEnablePublicGithubWrapper()) {
+        if (!self::shouldEnablePublicGithubWrapper()) {
             return true;
         }
         try {

@@ -32,7 +32,7 @@ trait GetCosyTrait
         }
         $mock_checker = $this->createMock(SecurityChecker::class);
         $c->getCheckerFactory()->setChecker($mock_checker);
-        $c->setUserToken('user-token');
+        $c->setAuthentication('user-token');
         $response = $this->createMock(Response::class);
         $stream = Utils::streamFor('<?xml version="1.0" encoding="utf-8"?>
 <project xmlns:dc="http://purl.org/dc/elements/1.1/"><releases></releases></project>');

@@ -355,9 +355,12 @@ class CosyComposer
         $this->userToken = $user_token;
     }
 
+    /**
+     * @deprecated use ::setAuthentication instead.
+     */
     public function setUserToken($user_token)
     {
-        $this->userToken = $user_token;
+        $this->setAuthentication($user_token);
     }
 
   /**

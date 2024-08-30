@@ -2315,7 +2315,6 @@ class CosyComposer
                 throw $e;
             }
         }
-        return true;
     }
 
     public static function shouldEnablePublicGithubWrapper() : bool

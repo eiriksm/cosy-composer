@@ -25,6 +25,9 @@ class Bitbucket implements ProviderInterface
     public function authenticate($user, $token)
     {
         $this->client->authenticate(Client::AUTH_OAUTH_TOKEN, $user);
+        if ($user && $token) {
+            $this->client->authenticate(Client::AUTH_HTTP_PASSWORD, $user, $token);
+        }
     }
 
     public function authenticatePrivate($user, $token)

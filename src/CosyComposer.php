@@ -19,6 +19,7 @@ use GuzzleHttp\Psr7\Request;
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
 use Http\Client\HttpClient;
 use Symfony\Component\Process\Process;
+use Symfony\Component\Yaml\Yaml;
 use Violinist\AllowListHandler\AllowListHandler;
 use Violinist\ChangelogFetcher\ChangelogRetriever;
 use Violinist\ChangelogFetcher\DependencyRepoRetriever;
@@ -50,6 +51,8 @@ class CosyComposer
     const UPDATE_ALL = 'update_all';
 
     const UPDATE_INDIVIDUAL = 'update_individual';
+
+    const COMMIT_MESSAGE_SEPARATOR = '------';
 
     private $urlArray;
 
@@ -106,26 +109,9 @@ class CosyComposer
     private $userToken;
 
     /**
-     * Github pass.
-     *
-     * @var string
-     */
-    private $githubPass;
-
-    /**
      * @var string
      */
     private $forkUser;
-
-    /**
-     * @var string
-     */
-    private $githubUserName;
-
-    /**
-     * @var string
-     */
-    private $githubEmail;
 
     /**
      * @var ViolinistMessages
@@ -140,17 +126,7 @@ class CosyComposer
     /**
      * @var string
      */
-    protected $compserJsonDir;
-
-    /**
-     * @var string
-     */
-    private $cacheDir = '/tmp';
-
-    /**
-     * @var string
-     */
-    protected $tmpParent = '/tmp';
+    protected $composerJsonDir;
 
     /**
      * @var LoggerInterface
@@ -171,11 +147,6 @@ class CosyComposer
      * @var string
      */
     protected $tokenUrl;
-
-    /**
-     * @var null|object
-     */
-    private $tempToken = null;
 
     /**
      * @var bool
@@ -255,19 +226,18 @@ class CosyComposer
 
 
     /**
-     * @param string $cacheDir
+     * @deprecated This method is not used anymore and is a no-op.
      */
-    public function setCacheDir($cacheDir)
+    public function setCacheDir()
     {
-        $this->cacheDir = $cacheDir;
     }
 
     /**
-     * @return string
+     * @deprecated This method will always return an empty string.
      */
     public function getCacheDir()
     {
-        return $this->cacheDir;
+        return '';
     }
 
     /**
@@ -287,22 +257,6 @@ class CosyComposer
     public function setHttpClient(HttpClient $httpClient)
     {
         $this->httpClient = $httpClient;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTmpParent()
-    {
-        return $this->tmpParent;
-    }
-
-    /**
-     * @param string $tmpParent
-     */
-    public function setTmpParent($tmpParent)
-    {
-        $this->tmpParent = $tmpParent;
     }
 
     /**
@@ -362,7 +316,9 @@ class CosyComposer
 
     public function setUrl($url = null)
     {
-        // Make it possible without crashing.
+        if (!empty($url)) {
+            $url = preg_replace('/\.git$/', '', $url);
+        }
         $slug_url_obj = parse_url($url);
         if (empty($slug_url_obj['port'])) {
             // Set it based on scheme.
@@ -384,22 +340,27 @@ class CosyComposer
         $this->slug = Slug::createFromUrlAndSupportedProviders($url, $providers);
     }
 
+    /**
+     * @deprecated Use ::setAuthentication instead.
+     *
+     * @see CosyComposer::setAuthentication
+     */
     public function setGithubAuth($user, $pass)
     {
-        $this->userToken = $user;
-        $this->forkUser = $user;
-        $this->githubPass = $pass;
+        $this->setAuthentication($user);
     }
 
-    public function setUserToken($user_token)
+    public function setAuthentication(string $user_token)
     {
         $this->userToken = $user_token;
     }
 
-    public function setGithubForkAuth($user, $mail)
+    /**
+     * @deprecated use ::setAuthentication instead.
+     */
+    public function setUserToken($user_token)
     {
-        $this->githubUserName = $user;
-        $this->githubEmail = $mail;
+        $this->setAuthentication($user_token);
     }
 
   /**
@@ -582,11 +543,6 @@ class CosyComposer
         $this->log(sprintf('Starting update check for %s', $this->slug->getSlug()));
         $user_name = $this->slug->getUserName();
         $user_repo = $this->slug->getUserRepo();
-        // First set working dir to /tmp (since we might be in the directory of the
-        // last processed item, which may be deleted.
-        if (!$this->chdir($this->getTmpParent())) {
-            throw new ChdirException('Problem with changing dir to ' . $this->getTmpParent());
-        }
         $hostname = $this->slug->getProvider();
         $url = null;
         // Make sure we accept the fingerprint of whatever we are cloning.
@@ -600,9 +556,11 @@ class CosyComposer
                 $this->execCommand(['chmod', '600', $filename], false);
             }
         }
+        $is_bitbucket = false;
+        $bitbucket_user = null;
         switch ($hostname) {
             case 'github.com':
-                $url = sprintf('https://%s:%s@github.com/%s', $this->userToken, $this->githubPass, $this->slug->getSlug());
+                $url = sprintf('https://x-access-token:%s@github.com/%s', $this->userToken, $this->slug->getSlug());
                 break;
 
             case 'gitlab.com':
@@ -611,6 +569,15 @@ class CosyComposer
 
             case 'bitbucket.org':
                 $url = sprintf('https://x-token-auth:%s@bitbucket.org/%s.git', $this->userToken, $this->slug->getSlug());
+                // Except if the thing is less than 50 characters, and also
+                // includes a colon. Then it's probably a user:app password kind
+                // of a thing.
+                if (strlen($this->userToken) < 50 && strpos($this->userToken, ':') !== false) {
+                    $url = sprintf('https://%s@bitbucket.org/%s.git', $this->userToken, $this->slug->getSlug());
+                    $is_bitbucket = true;
+                    // The username will now be the thing before the colon.
+                    [$bitbucket_user, $this->userToken] = explode(':', $this->userToken);
+                }
                 break;
 
             default:
@@ -645,11 +612,11 @@ class CosyComposer
         if ($this->project && $this->project->getComposerJsonDir()) {
             $composer_json_dir = sprintf('%s/%s', $this->tmpDir, $this->project->getComposerJsonDir());
         }
-        $this->compserJsonDir = $composer_json_dir;
-        if (!$this->chdir($this->compserJsonDir)) {
+        $this->composerJsonDir = $composer_json_dir;
+        if (!$this->chdir($this->composerJsonDir)) {
             throw new ChdirException('Problem with changing dir to the clone dir.');
         }
-        $local_adapter = new Local($this->compserJsonDir);
+        $local_adapter = new Local($this->composerJsonDir);
         if (!empty($_ENV['config_branch'])) {
             $config_branch = $_ENV['config_branch'];
             $this->log('Changing to config branch: ' . $config_branch);
@@ -671,6 +638,9 @@ class CosyComposer
         $this->client = $this->getClient($this->slug);
         $this->privateClient = $this->getClient($this->slug);
         $this->privateClient->authenticate($this->userToken, null);
+        if ($is_bitbucket && $bitbucket_user) {
+            $this->privateClient->authenticate($bitbucket_user, $this->userToken);
+        }
         try {
             $this->isPrivate = $this->privateClient->repoIsPrivate($this->slug);
             // Get the default branch of the repo.
@@ -725,7 +695,7 @@ class CosyComposer
         $this->handleDrupalContribSa($composer_json_data);
         $config = Config::createFromComposerData($composer_json_data);
         $this->handleTimeIntervalSetting($composer_json_data);
-        $lock_file = $this->compserJsonDir . '/composer.lock';
+        $lock_file = $this->composerJsonDir . '/composer.lock';
         $initial_composer_lock_data = false;
         $security_alerts = [];
         if (@file_exists($lock_file)) {
@@ -740,12 +710,12 @@ class CosyComposer
         }
         $this->doComposerInstall($config);
         // Now read the lockfile.
-        $composer_lock_after_installing = json_decode(@file_get_contents($this->compserJsonDir . '/composer.lock'));
+        $composer_lock_after_installing = json_decode(@file_get_contents($this->composerJsonDir . '/composer.lock'));
         // And do a quick security check in there as well.
         try {
             $this->log('Checking for security issues in project.');
             $checker = $this->checkerFactory->getChecker();
-            $result = $checker->checkDirectory($this->compserJsonDir);
+            $result = $checker->checkDirectory($this->composerJsonDir);
             // Make sure this is an array now.
             if (!$result) {
                 $result = [];
@@ -842,7 +812,7 @@ class CosyComposer
             $this->log('Project indicated that it should only receive security updates. Removing non-security related updates from queue');
             foreach ($data as $delta => $item) {
                 try {
-                    $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->compserJsonDir);
+                    $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
                     if (isset($security_alerts[$package_name_in_composer_json])) {
                         continue;
                     }
@@ -979,7 +949,7 @@ class CosyComposer
                         $security_update = false;
                         $package_name_in_composer_json = $item->name;
                         try {
-                            $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->compserJsonDir);
+                            $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
                         } catch (\Exception $e) {
                             // If this was a package that we somehow got because we have allowed to update other than direct
                             // dependencies we can avoid re-throwing this.
@@ -1089,7 +1059,7 @@ class CosyComposer
                 throw new NotUpdatedException('Composer update command exited with status code ' . $status);
             }
             // Now let's find out what has actually been updated.
-            $new_lock_contents = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
+            $new_lock_contents = json_decode(file_get_contents($this->composerJsonDir . '/composer.lock'));
             $comparer = new LockDataComparer($composer_lock_after_installing, $new_lock_contents);
             $list = $comparer->getUpdateList();
             if (empty($list)) {
@@ -1202,12 +1172,11 @@ class CosyComposer
         $this->cleanRepoForCommit();
         $creator = $this->getCommitCreator($config);
         $msg = $creator->generateMessage($item, $is_dev);
-        $this->commitFiles($msg);
+        $this->commitFiles($msg, $item);
     }
 
-    protected function commitFiles($msg)
+    protected function commitFiles($msg, ?UpdateListItem $item = null)
     {
-
         $command = array_filter([
             'git', "commit",
             'composer.json',
@@ -1215,12 +1184,17 @@ class CosyComposer
             '-m',
             $msg,
         ]);
-        if ($this->execCommand($command, false, 120, [
-            'GIT_AUTHOR_NAME' => $this->githubUserName,
-            'GIT_AUTHOR_EMAIL' => $this->githubEmail,
-            'GIT_COMMITTER_NAME' => $this->githubUserName,
-            'GIT_COMMITTER_EMAIL' => $this->githubEmail,
-        ])) {
+        if (getenv('USE_NEW_COMMIT_MSG') && $item) {
+            $command[] = '-m';
+            $command[] = sprintf("%s\n%s", self::COMMIT_MESSAGE_SEPARATOR, Yaml::dump([
+                'update_data' => [
+                    'package' => $item->getPackageName(),
+                    'from' => $item->getOldVersion(),
+                    'to' => $item->getNewVersion(),
+                ],
+            ]));
+        }
+        if ($this->execCommand($command, false, 5)) {
             $this->log($this->getLastStdOut());
             $this->log($this->getLastStdErr());
             throw new \Exception('Error committing the composer files. They are probably not changed.');
@@ -1325,6 +1299,8 @@ class CosyComposer
         if ($this->isPrivate) {
             $origin = 'origin';
             if ($this->execCommand(["git", 'push', $origin, $branch_name, '--force'])) {
+                $this->log($this->getLastStdOut());
+                $this->log($this->getLastStdErr());
                 throw new GitPushException('Could not push to ' . $branch_name);
             }
         } else {
@@ -1373,7 +1349,7 @@ class CosyComposer
                 $version_to = $item->latest;
                 // See where this package is.
                 try {
-                    $package_name_in_composer_json = self::getComposerJsonName($cdata, $package_name, $this->compserJsonDir);
+                    $package_name_in_composer_json = self::getComposerJsonName($cdata, $package_name, $this->composerJsonDir);
                 } catch (\Exception $e) {
                     // If this was a package that we somehow got because we have allowed to update other than direct
                     // dependencies we can avoid re-throwing this.
@@ -1523,7 +1499,7 @@ class CosyComposer
                     }
                 }
                 $this->log('Successfully ran command composer update for package ' . $package_name);
-                $new_lock_data = json_decode(file_get_contents($this->compserJsonDir . '/composer.lock'));
+                $new_lock_data = json_decode(file_get_contents($this->composerJsonDir . '/composer.lock'));
                 $list_item = new UpdateListItem($package_name, $post_update_data->version, $item->version);
                 $this->log('Trying to retrieve changelog for ' . $package_name);
                 $changelog = null;

@@ -25,9 +25,9 @@ abstract class ComposerUpdateIntegrationBase extends Base
     protected $hasAutoMerge = false;
 
     /**
-     * @var MockObject
+     * @var ?MockObject
      */
-    protected $mockProvider;
+    protected $mockProvider = null;
 
     public function setUp() : void
     {

@@ -29,8 +29,9 @@ class CosyComposerUnitTest extends TestCase
     {
         $c = $this->getMockCosy();
         $bogus_dir = uniqid();
+        // This has been deprecated so currently this test makes no sense.
         $c->setCacheDir($bogus_dir);
-        $this->assertEquals($bogus_dir, $c->getCacheDir());
+        $this->assertEquals('', $c->getCacheDir());
     }
 
     public function testLastStdOut()

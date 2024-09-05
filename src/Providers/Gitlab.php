@@ -204,10 +204,16 @@ class Gitlab implements ProviderInterface
             } catch (\Throwable $e) {
             }
             $retries++;
-            if ($retries > 10) {
+            if ($retries > 20) {
                 return false;
             }
-            usleep($retries * 100);
+            // Sleep for 40 ms with a linear backoff. Max sleep time will be 800
+            // ms. We want to keep it under 1 second because as it says in the
+            // PHP documentation:
+            // "Note: Values larger than 1000000 (i.e. sleeping for more than a
+            // second) may not be supported by the operating system. Use sleep()
+            // instead."
+            usleep($retries * (1000 * 40));
         }
     }
 }

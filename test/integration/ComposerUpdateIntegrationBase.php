@@ -65,6 +65,12 @@ abstract class ComposerUpdateIntegrationBase extends Base
         }
     }
 
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        putenv('USE_GITHUB_PUBLIC_WRAPPER');
+    }
+
     protected function createPullRequest(Slug $slug, array $params)
     {
         $this->prParams = $params;

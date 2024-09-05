@@ -17,6 +17,13 @@ class CosyComposerUnitTest extends TestCase
     use GetCosyTrait;
     use GetExecuterTrait;
 
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        // Make sure we clear out the env var USE_GITHUB_PUBLIC_WRAPPER.
+        putenv('USE_GITHUB_PUBLIC_WRAPPER');
+    }
+
     public function testSetLogger()
     {
         $c = $this->getMockCosy();
@@ -127,6 +134,28 @@ class CosyComposerUnitTest extends TestCase
             [$standard_json, 'camelcaseDev/other', 'camelCaseDev/other'],
             [$standard_json, 'regulardev/case', 'regulardev/case'],
             [$standard_json, 'UPPERDEV/case', 'UPPERDEV/CASE'],
+        ];
+    }
+
+    /**
+     * Test that a special flag gives us the correct answer of a method.
+     *
+     * @dataProvider getEnvVariations
+     */
+    public function testshouldEnablePublicGithubWrapper($env_var, $expected)
+    {
+        putenv('USE_GITHUB_PUBLIC_WRAPPER=' . $env_var);
+        $this->assertEquals($expected, CosyComposer::shouldEnablePublicGithubWrapper());
+    }
+
+    public function getEnvVariations()
+    {
+        return [
+            ['true', true],
+            ['TRUE', true],
+            ['1', true],
+            ['0', false],
+            ['derp', true],
         ];
     }
 }

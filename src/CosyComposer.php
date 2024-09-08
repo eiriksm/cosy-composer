@@ -111,6 +111,11 @@ class CosyComposer
     /**
      * @var string
      */
+    private $untouchedUserToken;
+
+    /**
+     * @var string
+     */
     private $forkUser;
 
     /**
@@ -353,6 +358,7 @@ class CosyComposer
     public function setAuthentication(string $user_token)
     {
         $this->userToken = $user_token;
+        $this->untouchedUserToken = $user_token;
     }
 
     /**
@@ -573,7 +579,7 @@ class CosyComposer
                 // Except if the thing is less than 50 characters, and also
                 // includes a colon. Then it's probably a user:app password kind
                 // of a thing.
-                if (strlen($this->userToken) < 50 && strpos($this->userToken, ':') !== false) {
+                if (self::tokenIndicatesUserAppPassword($this->userToken)) {
                     $url = sprintf('https://%s@bitbucket.org/%s.git', $this->userToken, $this->slug->getSlug());
                     $is_bitbucket = true;
                     // The username will now be the thing before the colon.
@@ -1211,10 +1217,18 @@ class CosyComposer
                 break;
 
             case 'bitbucket.org':
-                $this->execCommand(
-                    ['composer', 'config', '--auth', 'http-basic.bitbucket.org', 'x-token-auth', $token],
-                    false
-                );
+                if (self::tokenIndicatesUserAppPassword($this->untouchedUserToken)) {
+                    [$bitbucket_user, $app_password] = explode(':', $this->untouchedUserToken);
+                    $this->execCommand(
+                        ['composer', 'config', '--auth', 'http-basic.bitbucket.org', $bitbucket_user, $app_password],
+                        false
+                    );
+                } else {
+                    $this->execCommand(
+                        ['composer', 'config', '--auth', 'http-basic.bitbucket.org', 'x-token-auth', $token],
+                        false
+                    );
+                }
                 break;
 
             default:
@@ -2162,6 +2176,11 @@ class CosyComposer
             }
         }
         return $lockdata->{$lockfile_key}[$key];
+    }
+
+    public static function tokenIndicatesUserAppPassword($token)
+    {
+        return strlen($token) < 50 && strpos($token, ':') !== false;
     }
 
     public static function getComposerJsonName($cdata, $name, $tmp_dir)

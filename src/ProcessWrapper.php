@@ -15,7 +15,7 @@ class ProcessWrapper extends Process
 
     protected $line;
 
-    public function __construct(array $command, string $cwd = null, array $env = null, $input = null, ?float $timeout = 60)
+    public function __construct(array $command, ?string $cwd = null, ?array $env = null, $input = null, ?float $timeout = 60)
     {
         parent::__construct($command, $cwd, $env, $input, $timeout);
         $this->line = $command;

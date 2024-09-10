@@ -53,7 +53,7 @@ class ProcessWrapper extends Process
         return !empty($output['stderr']) ? $output['stderr'] : '';
     }
 
-    public function getOutput()
+    public function getOutput() : string
     {
         $output = $this->executor->getLastOutput();
         return !empty($output['stdout']) ? $output['stdout'] : '';

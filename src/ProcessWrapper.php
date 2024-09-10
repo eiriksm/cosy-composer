@@ -42,12 +42,12 @@ class ProcessWrapper extends Process
         return $this->ourExitCode;
     }
 
-    public function getExitCode()
+    public function getExitCode() : ?int
     {
         return $this->ourExitCode;
     }
 
-    public function getErrorOutput()
+    public function getErrorOutput() : string
     {
         $output = $this->executor->getLastOutput();
         return !empty($output['stderr']) ? $output['stderr'] : '';

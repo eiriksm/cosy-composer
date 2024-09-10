@@ -26,7 +26,7 @@
         "violinist-dev/composer-changelog-fetcher": "^3.0",
         "violinist-dev/composer-updater": "^1.0",
         "violinist-dev/git-log-format": "^1.1.2",
-        "violinist-dev/process-factory": "^2.0",
+        "violinist-dev/process-factory": "^3.0",
         "violinist-dev/project-data": "^1.1.1",
         "violinist-dev/slug-from-url": "^1",
         "violinist-dev/symfony-cloud-security-checker": "^2",

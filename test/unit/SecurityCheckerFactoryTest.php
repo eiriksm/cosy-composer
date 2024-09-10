@@ -2,10 +2,10 @@
 
 namespace eiriksm\CosyComposerTest\unit;
 
-use eiriksm\CosyComposer\NativeComposerChecker;
+use eiriksm\CosyComposer\SecurityChecker\NativeComposerChecker;
+use eiriksm\CosyComposer\SecurityChecker\SecurityCheckerInterface;
 use eiriksm\CosyComposer\SecurityCheckerFactory;
 use PHPUnit\Framework\TestCase;
-use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 class SecurityCheckerFactoryTest extends TestCase
 {
@@ -31,7 +31,7 @@ class SecurityCheckerFactoryTest extends TestCase
     {
         $checker = $this->createMock(NativeComposerChecker::class);
         $this->checkerFactory->setChecker($checker);
-        self::assertInstanceOf(SecurityChecker::class, $this->checkerFactory->getChecker());
+        self::assertInstanceOf(SecurityCheckerInterface::class, $this->checkerFactory->getChecker());
     }
 
     public function testNoCheckerSet()

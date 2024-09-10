@@ -2,9 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Github\Exception\ValidationFailedException;
-use Violinist\Slug\Slug;
-use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
+use eiriksm\CosyComposer\SecurityChecker\SecurityCheckerInterface;
 
 /**
  * Test for automerge being enabled for security, but no security updates.
@@ -23,7 +21,7 @@ class AutomergeSecurityUpdateTest extends AutoMergeBase
     public function setUp() : void
     {
         parent::setUp();
-        $checker = $this->createMock(SecurityChecker::class);
+        $checker = $this->createMock(SecurityCheckerInterface::class);
         $checker->method('checkDirectory')
             ->willReturn([
                 'psr/log' => true,

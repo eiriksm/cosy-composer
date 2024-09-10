@@ -8,7 +8,7 @@ use eiriksm\CosyComposer\SecurityChecker\SecurityCheckerInterface;
 class SecurityCheckerFactory
 {
     /**
-     * @var SecurityChecker
+     * @var SecurityCheckerInterface
      */
     private $checker;
 

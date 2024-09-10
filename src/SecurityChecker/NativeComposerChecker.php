@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposer\SecurityChecker;
 
+use eiriksm\CosyComposer\ProcessFactory;
 use eiriksm\CosyComposer\SecurityChecker\SecurityCheckerInterface;
 use Violinist\ProcessFactory\ProcessFactoryInterface;
 
@@ -78,8 +79,8 @@ class NativeComposerChecker implements SecurityCheckerInterface
      */
     public function getProcessFactory()
     {
-        if (!isset($this->processFactory)) {
-            $this->processFactory = new \eiriksm\CosyComposer\ProcessFactory();
+        if (!$this->processFactory instanceof ProcessFactoryInterface) {
+            $this->processFactory = new ProcessFactory();
         }
         return $this->processFactory;
     }

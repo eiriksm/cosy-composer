@@ -13,13 +13,13 @@ class ProcessFactory implements ProcessFactoryInterface
      */
     protected $env;
 
-    public function getProcess(array $commandline, ?string $cwd = null, ?array $env = null, $input = null, $timeout = 60, array $options = null)
+    public function getProcess(array $command, ?string $cwd = null, ?array $env = null, $input = null, ?float $timeout = 60)
     {
         if (!$cwd) {
             $cwd = $this->getCwd();
         }
         $this->env = $env;
-        return new Process($commandline, $cwd, $env);
+        return new Process($command, $cwd, $env);
     }
 
     /**

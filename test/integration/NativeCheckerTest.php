@@ -2,7 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use eiriksm\CosyComposer\NativeComposerChecker;
+use eiriksm\CosyComposer\SecurityChecker\NativeComposerChecker;
 use Symfony\Component\Process\Process;
 use Violinist\ProcessFactory\ProcessFactoryInterface;
 

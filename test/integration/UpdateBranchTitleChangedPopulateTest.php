@@ -2,10 +2,10 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\SecurityChecker\SecurityCheckerInterface;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Utils;
 use Http\Client\HttpClient;
-use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 class UpdateBranchTitleChangedPopulateTest extends UpdateBranchTitleChangedTest
 {
@@ -27,7 +27,7 @@ class UpdateBranchTitleChangedPopulateTest extends UpdateBranchTitleChangedTest
         $client->method('sendRequest')
             ->willReturn($response);
         $this->cosy->setHttpClient($client);
-        $checker = $this->createMock(SecurityChecker::class);
+        $checker = $this->createMock(SecurityCheckerInterface::class);
         $checker->method('checkDirectory')
             ->willReturn([
                 'drupal/core' => true,

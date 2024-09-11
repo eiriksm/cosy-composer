@@ -36,7 +36,7 @@ use eiriksm\ViolinistMessages\ViolinistUpdate;
 use Github\Client;
 use Github\Exception\RuntimeException;
 use Github\Exception\ValidationFailedException;
-use League\Flysystem\Adapter\Local;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputOption;
@@ -623,14 +623,14 @@ class CosyComposer
         if (!$this->chdir($this->composerJsonDir)) {
             throw new ChdirException('Problem with changing dir to the clone dir.');
         }
-        $local_adapter = new Local($this->composerJsonDir);
+        $local_adapter = new LocalFilesystemAdapter($this->composerJsonDir);
         if (!empty($_ENV['config_branch'])) {
             $config_branch = $_ENV['config_branch'];
             $this->log('Changing to config branch: ' . $config_branch);
             $tmpdir = sprintf('/tmp/%s', uniqid('', true));
             $clone_result = $this->execCommand(['git', 'clone', '--depth=1', $url, $tmpdir, '-b', $config_branch], false, 120);
             if (!$clone_result) {
-                $local_adapter = new Local($tmpdir);
+                $local_adapter = new LocalFilesystemAdapter($tmpdir);
             }
         }
         $this->composerGetter = new ComposerFileGetter($local_adapter);

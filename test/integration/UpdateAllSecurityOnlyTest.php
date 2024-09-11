@@ -2,8 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Violinist\ProjectData\ProjectData;
-use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
+use eiriksm\CosyComposer\SecurityChecker\SecurityCheckerInterface;
 
 class UpdateAllSecurityOnlyTest extends UpdateAllBase
 {
@@ -18,7 +17,7 @@ class UpdateAllSecurityOnlyTest extends UpdateAllBase
 
     public function testUpdateallAndSecRelease()
     {
-        $checker = $this->createMock(SecurityChecker::class);
+        $checker = $this->createMock(SecurityCheckerInterface::class);
         $checker->method('checkDirectory')
             ->willReturn([
                 'psr/log' => true,

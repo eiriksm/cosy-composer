@@ -15,7 +15,7 @@ class ProcessWrapper extends Process
 
     protected $line;
 
-    public function __construct(array $command, string $cwd = null, array $env = null, $input = null, ?float $timeout = 60)
+    public function __construct(array $command, ?string $cwd = null, ?array $env = null, $input = null, ?float $timeout = 60)
     {
         parent::__construct($command, $cwd, $env, $input, $timeout);
         $this->line = $command;
@@ -42,18 +42,18 @@ class ProcessWrapper extends Process
         return $this->ourExitCode;
     }
 
-    public function getExitCode()
+    public function getExitCode() : ?int
     {
         return $this->ourExitCode;
     }
 
-    public function getErrorOutput()
+    public function getErrorOutput() : string
     {
         $output = $this->executor->getLastOutput();
         return !empty($output['stderr']) ? $output['stderr'] : '';
     }
 
-    public function getOutput()
+    public function getOutput() : string
     {
         $output = $this->executor->getLastOutput();
         return !empty($output['stdout']) ? $output['stdout'] : '';

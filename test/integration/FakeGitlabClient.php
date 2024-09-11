@@ -26,7 +26,7 @@ class FakeGitlabClient extends Client
 
             private $client;
 
-            public function __construct(Client $client, int $perPage = null)
+            public function __construct(Client $client, ?int $perPage = null)
             {
                 parent::__construct($client, $perPage);
                 $this->client = $client;

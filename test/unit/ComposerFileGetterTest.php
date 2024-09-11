@@ -44,7 +44,7 @@ class ComposerFileGetterTest extends TestCase
         $adapter->expects($this->once())
             ->method('read')
             ->with('composer.json')
-            ->willReturn('{"data": "yes"}']);
+            ->willReturn('{"data": "yes"}');
         $getter = new ComposerFileGetter($adapter);
         $this->assertEquals((object) ['data' => 'yes'], $getter->getComposerJsonData());
     }

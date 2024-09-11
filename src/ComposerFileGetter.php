@@ -2,7 +2,7 @@
 
 namespace eiriksm\CosyComposer;
 
-use League\Flysystem\AdapterInterface;
+use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Filesystem;
 
 class ComposerFileGetter
@@ -13,7 +13,7 @@ class ComposerFileGetter
      */
     protected $fs;
 
-    public function __construct(AdapterInterface $adapter)
+    public function __construct(FilesystemAdapter $adapter)
     {
         $this->fs = new Filesystem($adapter);
     }

@@ -20,7 +20,7 @@ class ComposerFileGetter
 
     public function hasComposerFile()
     {
-        return $this->fs->has('composer.json');
+        return $this->fs->fileExists('composer.json');
     }
 
     public function getComposerJsonData()

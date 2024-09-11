@@ -3,14 +3,14 @@
 namespace eiriksm\CosyComposerTest\unit;
 
 use eiriksm\CosyComposer\ComposerFileGetter;
-use League\Flysystem\AdapterInterface;
+use League\Flysystem\FilesystemAdapter;
 use PHPUnit\Framework\TestCase;
 
 class ComposerFileGetterTest extends TestCase
 {
     public function testHasComposerFile()
     {
-        $adapter = $this->createMock(AdapterInterface::class);
+        $adapter = $this->createMock(FilesystemAdapter::class);
         $adapter->expects($this->once())
             ->method('has')
             ->with('composer.json')
@@ -21,7 +21,7 @@ class ComposerFileGetterTest extends TestCase
 
     public function testBadJsonData()
     {
-        $adapter = $this->createMock(AdapterInterface::class);
+        $adapter = $this->createMock(FilesystemAdapter::class);
         $adapter->expects($this->once())
             ->method('has')
             ->with('composer.json')
@@ -36,7 +36,7 @@ class ComposerFileGetterTest extends TestCase
 
     public function testReadComposerJsonContents()
     {
-        $adapter = $this->createMock(AdapterInterface::class);
+        $adapter = $this->createMock(FilesystemAdapter::class);
         $adapter->expects($this->once())
             ->method('has')
             ->with('composer.json')

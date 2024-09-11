@@ -12,7 +12,7 @@ class ComposerFileGetterTest extends TestCase
     {
         $adapter = $this->createMock(FilesystemAdapter::class);
         $adapter->expects($this->once())
-            ->method('has')
+            ->method('fileExists')
             ->with('composer.json')
             ->willReturn(false);
         $getter = new ComposerFileGetter($adapter);
@@ -23,7 +23,7 @@ class ComposerFileGetterTest extends TestCase
     {
         $adapter = $this->createMock(FilesystemAdapter::class);
         $adapter->expects($this->once())
-            ->method('has')
+            ->method('fileExists')
             ->with('composer.json')
             ->willReturn(true);
         $adapter->expects($this->once())
@@ -38,7 +38,7 @@ class ComposerFileGetterTest extends TestCase
     {
         $adapter = $this->createMock(FilesystemAdapter::class);
         $adapter->expects($this->once())
-            ->method('has')
+            ->method('fileExists')
             ->with('composer.json')
             ->willReturn(true);
         $adapter->expects($this->once())

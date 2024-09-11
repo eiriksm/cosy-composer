@@ -633,6 +633,7 @@ class CosyComposer
                 $local_adapter = new LocalFilesystemAdapter($tmpdir);
             }
         }
+        $filesystem = new League\Flysystem\Filesystem($local_adapter);
         $this->composerGetter = new ComposerFileGetter($local_adapter);
         if (!$this->composerGetter->hasComposerFile()) {
             throw new \InvalidArgumentException('No composer.json file found.');

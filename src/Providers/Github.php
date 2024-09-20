@@ -167,7 +167,7 @@ class Github implements ProviderInterface
         if (!empty($params['assignees'])) {
             // Now try to update it with assignees.
             try {
-                /** @var Issue $issues */
+                /** @var \Github\Api\Issue $issues */
                 $issues = $this->client->api('issues');
                 $issues->update($user_name, $user_repo, $data['number'], [
                     'assignees' => $params['assignees'],

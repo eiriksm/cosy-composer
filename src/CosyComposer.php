@@ -36,7 +36,7 @@ use eiriksm\ViolinistMessages\ViolinistUpdate;
 use Github\Client;
 use Github\Exception\RuntimeException;
 use Github\Exception\ValidationFailedException;
-use League\Flysystem\Adapter\Local;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputOption;
@@ -107,6 +107,11 @@ class CosyComposer
      * @var string
      */
     private $userToken;
+
+    /**
+     * @var string
+     */
+    private $untouchedUserToken;
 
     /**
      * @var string
@@ -358,6 +363,7 @@ class CosyComposer
     public function setAuthentication(string $user_token)
     {
         $this->userToken = $user_token;
+        $this->untouchedUserToken = $user_token;
     }
 
     /**
@@ -583,7 +589,7 @@ class CosyComposer
                 // Except if the thing is less than 50 characters, and also
                 // includes a colon. Then it's probably a user:app password kind
                 // of a thing.
-                if (strlen($this->userToken) < 50 && strpos($this->userToken, ':') !== false) {
+                if (self::tokenIndicatesUserAppPassword($this->userToken)) {
                     $url = sprintf('https://%s@bitbucket.org/%s.git', $this->userToken, $this->slug->getSlug());
                     $is_bitbucket = true;
                     // The username will now be the thing before the colon.
@@ -627,14 +633,14 @@ class CosyComposer
         if (!$this->chdir($this->composerJsonDir)) {
             throw new ChdirException('Problem with changing dir to the clone dir.');
         }
-        $local_adapter = new Local($this->composerJsonDir);
+        $local_adapter = new LocalFilesystemAdapter($this->composerJsonDir);
         if (!empty($_ENV['config_branch'])) {
             $config_branch = $_ENV['config_branch'];
             $this->log('Changing to config branch: ' . $config_branch);
             $tmpdir = sprintf('/tmp/%s', uniqid('', true));
             $clone_result = $this->execCommand(['git', 'clone', '--depth=1', $url, $tmpdir, '-b', $config_branch], false, 120);
             if (!$clone_result) {
-                $local_adapter = new Local($tmpdir);
+                $local_adapter = new LocalFilesystemAdapter($tmpdir);
             }
         }
         $this->composerGetter = new ComposerFileGetter($local_adapter);
@@ -1221,10 +1227,18 @@ class CosyComposer
                 break;
 
             case 'bitbucket.org':
-                $this->execCommand(
-                    ['composer', 'config', '--auth', 'http-basic.bitbucket.org', 'x-token-auth', $token],
-                    false
-                );
+                if (self::tokenIndicatesUserAppPassword($this->untouchedUserToken)) {
+                    [$bitbucket_user, $app_password] = explode(':', $this->untouchedUserToken);
+                    $this->execCommand(
+                        ['composer', 'config', '--auth', 'http-basic.bitbucket.org', $bitbucket_user, $app_password],
+                        false
+                    );
+                } else {
+                    $this->execCommand(
+                        ['composer', 'config', '--auth', 'http-basic.bitbucket.org', 'x-token-auth', $token],
+                        false
+                    );
+                }
                 break;
 
             default:
@@ -2172,6 +2186,11 @@ class CosyComposer
             }
         }
         return $lockdata->{$lockfile_key}[$key];
+    }
+
+    public static function tokenIndicatesUserAppPassword($token)
+    {
+        return strlen($token) < 50 && strpos($token, ':') !== false;
     }
 
     public static function getComposerJsonName($cdata, $name, $tmp_dir)

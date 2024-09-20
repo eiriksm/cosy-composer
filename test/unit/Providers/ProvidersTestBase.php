@@ -180,7 +180,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                     'sha' => 'fefe',
                 ],
             ]);
-        /** @var MockObject $mock_client */
+        /** @var \PHPUnit\Framework\MockObject\MockObject $mock_client */
         $mock_client = $this->getMockClient();
         switch (static::class) {
             case SelfHostedGitlabTest::class:

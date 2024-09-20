@@ -129,7 +129,7 @@ class Gitlab implements ProviderInterface
 
     public function createPullRequest(Slug $slug, $params)
     {
-        /** @var MergeRequests $mr */
+        /** @var \Gitlab\Api\MergeRequests $mr */
         $mr = $this->client->mergeRequests();
         $data = $mr->create(self::getProjectId($slug->getUrl()), $params['head'], $params['base'], $params['title'], [
             'description' => $params['body'],

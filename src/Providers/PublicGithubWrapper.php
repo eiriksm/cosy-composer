@@ -44,7 +44,7 @@ class PublicGithubWrapper extends Github
     }
 
     /**
-     * @param ProjectData $project
+     * @param \Violinist\ProjectData\ProjectData $project
      */
     public function setProject($project)
     {

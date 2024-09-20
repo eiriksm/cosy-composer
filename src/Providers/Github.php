@@ -161,7 +161,7 @@ class Github implements ProviderInterface
     {
         $user_name = $slug->getUserName();
         $user_repo = $slug->getUserRepo();
-        /** @var PullRequest $prs */
+        /** @var \Github\Api\PullRequest $prs */
         $prs = $this->client->api('pull_request');
         $data = $prs->create($user_name, $user_repo, $params);
         if (!empty($params['assignees'])) {

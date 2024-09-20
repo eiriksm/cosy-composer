@@ -24,7 +24,7 @@ abstract class ComposerUpdateIntegrationBase extends Base
     protected $hasAutoMerge = false;
 
     /**
-     * @var ?MockObject
+     * @var ?\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockProvider = null;
 

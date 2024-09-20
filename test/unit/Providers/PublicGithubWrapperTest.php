@@ -29,7 +29,7 @@ class PublicGithubWrapperTest extends TestCase
     protected $nid;
 
     /**
-     * @var HttpClient|MockObject
+     * @var HttpClient|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockHttpClient;
 

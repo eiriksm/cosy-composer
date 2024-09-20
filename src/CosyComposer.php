@@ -179,6 +179,11 @@ class CosyComposer
     private $tokens = [];
 
     /**
+     * @var string
+     */
+    private $hostName;
+
+    /**
      * @param array $tokens
      */
     public function setTokens(array $tokens)
@@ -499,6 +504,11 @@ class CosyComposer
         }
     }
 
+    public function setViolinistHostname(string $hostname)
+    {
+        $this->hostName = $hostname;
+    }
+
     /**
      * @throws \eiriksm\CosyComposer\Exceptions\ChdirException
      * @throws \eiriksm\CosyComposer\Exceptions\GitCloneException
@@ -517,8 +527,8 @@ class CosyComposer
         }
         // Export the environment variables if needed.
         $this->exportEnvVars();
-        if (!empty($_SERVER['violinist_hostname'])) {
-            $this->log(sprintf('Running update check on %s', $_SERVER['violinist_hostname']));
+        if ($this->hostName) {
+            $this->log(sprintf('Running update check on %s', $this->hostName));
         }
         if (!empty($_SERVER['violinist_revision'])) {
             $this->log(sprintf('Queue starter revision %s', $_SERVER['violinist_revision']));

@@ -2,16 +2,11 @@
 
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
-use eiriksm\CosyComposer\Providers\Github;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
-use Github\Api\PullRequest;
-use Github\Api\Repo;
-use Github\Api\Repository\Forks;
 use Github\Client;
 use Github\Exception\ValidationFailedException;
 use GuzzleHttp\Psr7\Utils;
 use Http\Client\HttpClient;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Violinist\ProjectData\ProjectData;

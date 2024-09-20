@@ -2,8 +2,6 @@
 
 namespace eiriksm\CosyComposerTest;
 
-use Composer\Console\Application;
-use eiriksm\ArrayOutput\ArrayOutput;
 use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\ProviderFactory;

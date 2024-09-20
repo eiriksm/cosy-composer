@@ -3,8 +3,6 @@
 namespace eiriksm\CosyComposer\Providers;
 
 use eiriksm\CosyComposer\ProviderInterface;
-use Github\Api\Issue;
-use Github\Api\PullRequest;
 use Github\AuthMethod;
 use Github\Client;
 use Github\ResultPager;
@@ -61,7 +59,7 @@ class Github implements ProviderInterface
         'input' => [
             'pullRequestId' => $pr_data['node_id'],
             'mergeMethod' => $api_merge_method,
-        ]
+        ],
         ]);
         if (!empty($data["errors"])) {
             return false;

@@ -4,19 +4,11 @@ namespace eiriksm\CosyComposer\Providers;
 
 use Github\Exception\ValidationFailedException;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\ServerRequest;
-use Http\Client\Common\Plugin;
 use Http\Client\HttpClient;
 use Psr\Http\Message\ResponseInterface;
 use Violinist\Slug\Slug;
 use GuzzleHttp\Psr7\Utils;
-use Http\Adapter\Guzzle7\Client;
-use Http\Client\Common\Plugin\CookiePlugin;
-use Http\Client\Common\PluginClient;
 use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\MessageFactoryDiscovery;
-use Http\Message\MessageFactory;
-use Violinist\ProjectData\ProjectData;
 
 class PublicGithubWrapper extends Github
 {

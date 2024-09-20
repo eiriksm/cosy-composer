@@ -134,7 +134,7 @@ class CosyComposer
     protected $logger;
 
     /**
-     * @var null|ProjectData
+     * @var null|\Violinist\ProjectData\ProjectData
      */
     protected $project;
 

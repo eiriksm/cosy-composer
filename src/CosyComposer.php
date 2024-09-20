@@ -203,7 +203,7 @@ class CosyComposer
     }
 
     /**
-     * @param ProjectData|null $project
+     * @param \Violinist\ProjectData\ProjectData|null $project
      */
     public function setProject($project)
     {

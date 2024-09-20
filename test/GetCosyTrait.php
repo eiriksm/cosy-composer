@@ -46,6 +46,9 @@ trait GetCosyTrait
         $mock_provider_factory->method('createFromHost')
             ->willReturn($mock_client);
         $c->setProviderFactory($mock_provider_factory);
+        // We don't strictly need this, but it's nice for coverage to always
+        // cover this code branch.
+        $c->setViolinistHostname('violinist-test-runner');
         return $c;
     }
 }

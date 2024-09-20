@@ -64,7 +64,7 @@ class CosyComposerUnitTest extends TestCase
         $url_property->setAccessible(true);
         $mock_cosy = $this->getMockCosy();
         $mock_cosy->setUrl($url);
-        /** @var Slug $value */
+        /** @var \Violinist\Slug\Slug $value */
         $value = $property->getValue($mock_cosy);
         $this->assertEquals($user, $value->getUserName());
         $this->assertEquals($repo, $value->getUserRepo());

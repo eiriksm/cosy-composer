@@ -2,7 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use Violinist\Slug\Slug;
 
 abstract class ComposerUpdateIntegrationBase extends Base
@@ -25,7 +24,7 @@ abstract class ComposerUpdateIntegrationBase extends Base
     protected $hasAutoMerge = false;
 
     /**
-     * @var ?MockObject
+     * @var ?\PHPUnit\Framework\MockObject\MockObject
      */
     protected $mockProvider = null;
 

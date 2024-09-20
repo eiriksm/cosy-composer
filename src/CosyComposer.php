@@ -2,10 +2,8 @@
 
 namespace eiriksm\CosyComposer;
 
-use Composer\Console\Application;
 use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
-use eiriksm\ArrayOutput\ArrayOutput;
 use eiriksm\CosyComposer\Exceptions\ChdirException;
 use eiriksm\CosyComposer\Exceptions\ComposerInstallException;
 use eiriksm\CosyComposer\Exceptions\GitCloneException;
@@ -38,9 +36,6 @@ use Github\Exception\RuntimeException;
 use Github\Exception\ValidationFailedException;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputOption;
-use Violinist\ProjectData\ProjectData;
 use Violinist\Slug\Slug;
 use Violinist\TimeFrameHandler\Handler;
 use Wa72\SimpleLogger\ArrayLogger;
@@ -139,7 +134,7 @@ class CosyComposer
     protected $logger;
 
     /**
-     * @var null|ProjectData
+     * @var null|\Violinist\ProjectData\ProjectData
      */
     protected $project;
 
@@ -208,7 +203,7 @@ class CosyComposer
     }
 
     /**
-     * @param ProjectData|null $project
+     * @param \Violinist\ProjectData\ProjectData|null $project
      */
     public function setProject($project)
     {
@@ -2220,7 +2215,7 @@ class CosyComposer
         if (!empty($cdata->extra->{"merge-plugin"})) {
             $keys = [
                 'include',
-                'require'
+                'require',
             ];
             foreach ($keys as $key) {
                 if (isset($cdata->extra->{"merge-plugin"}->{$key})) {

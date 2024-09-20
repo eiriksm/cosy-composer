@@ -32,7 +32,7 @@ class FakeGitlab extends Gitlab
                 ],
                 'number' => 123,
                 'title' => 'Not update drush, thats for sure. This will trigger an update of the PR',
-            ]
+            ],
         ];
     }
 

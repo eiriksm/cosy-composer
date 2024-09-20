@@ -20,7 +20,7 @@ class DevMasterInUpdatedPackagesTest extends ComposerUpdateIntegrationBase
             ->willReturnCallback(function (Slug $slug, array $params) use (&$pr_params, $fake_pr_url) {
                 $pr_params = $params;
                 return [
-                    'html_url' => $fake_pr_url
+                    'html_url' => $fake_pr_url,
                 ];
             });
         $this->runtestExpectedOutput();

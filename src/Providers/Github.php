@@ -3,8 +3,6 @@
 namespace eiriksm\CosyComposer\Providers;
 
 use eiriksm\CosyComposer\ProviderInterface;
-use Github\Api\Issue;
-use Github\Api\PullRequest;
 use Github\AuthMethod;
 use Github\Client;
 use Github\ResultPager;
@@ -61,7 +59,7 @@ class Github implements ProviderInterface
         'input' => [
             'pullRequestId' => $pr_data['node_id'],
             'mergeMethod' => $api_merge_method,
-        ]
+        ],
         ]);
         if (!empty($data["errors"])) {
             return false;
@@ -163,13 +161,13 @@ class Github implements ProviderInterface
     {
         $user_name = $slug->getUserName();
         $user_repo = $slug->getUserRepo();
-        /** @var PullRequest $prs */
+        /** @var \Github\Api\PullRequest $prs */
         $prs = $this->client->api('pull_request');
         $data = $prs->create($user_name, $user_repo, $params);
         if (!empty($params['assignees'])) {
             // Now try to update it with assignees.
             try {
-                /** @var Issue $issues */
+                /** @var \Github\Api\Issue $issues */
                 $issues = $this->client->api('issues');
                 $issues->update($user_name, $user_repo, $data['number'], [
                     'assignees' => $params['assignees'],

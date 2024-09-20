@@ -6,7 +6,6 @@ use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\Message;
 use eiriksm\CosyComposer\ProcessFactory;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 

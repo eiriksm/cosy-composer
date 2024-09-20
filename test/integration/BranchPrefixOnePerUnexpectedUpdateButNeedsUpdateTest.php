@@ -56,7 +56,7 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 ***
 This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).
 ',
-            ]
+            ],
         ];
     }
 }

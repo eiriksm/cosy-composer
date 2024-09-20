@@ -2,9 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Violinist\Slug\Slug;
-use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
-
 abstract class UpdateAllBase extends Base
 {
 

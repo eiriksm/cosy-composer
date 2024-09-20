@@ -2,8 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration\issues;
 
-use eiriksm\CosyComposer\CommandExecuter;
-use eiriksm\CosyComposerTest\integration\Base;
 use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
 
 /**

@@ -2,7 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration\issues;
 
-use eiriksm\ArrayOutput\ArrayOutput;
 use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
 
 class Issue145Test extends ComposerUpdateIntegrationBase

@@ -3,4 +3,6 @@
     <file>./src</file>
     <file>./test</file>
     <rule ref="./vendor/squizlabs/php_codesniffer/src/Standards/PSR2"/>
+    <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma"/>
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses"/>
 </ruleset>

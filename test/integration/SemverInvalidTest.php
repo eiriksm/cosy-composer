@@ -2,13 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Composer\Console\Application;
-use eiriksm\ArrayOutput\ArrayOutput;
-use eiriksm\CosyComposer\CommandExecuter;
-use eiriksm\CosyComposer\ProviderFactory;
-use eiriksm\CosyComposer\Providers\Github;
-use Symfony\Component\Console\Input\InputDefinition;
-
 class SemverInvalidTest extends ComposerUpdateIntegrationBase
 {
     protected $packageVersionForFromUpdateOutput = '1.0.0';

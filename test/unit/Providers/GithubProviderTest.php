@@ -19,7 +19,7 @@ class GithubProviderTest extends ProvidersTestBase
     ];
 
     protected $authenticatePrivateArguments = [
-        'testUser', null, Client::AUTH_ACCESS_TOKEN
+        'testUser', null, Client::AUTH_ACCESS_TOKEN,
     ];
 
     public function testRepoIsPrivate()
@@ -78,7 +78,7 @@ class GithubProviderTest extends ProvidersTestBase
                     'name' => 'develop',
                     'commit' => [
                         'sha' => '1234',
-                    ]
+                    ],
                 ],
             ]);
         $mock_client = $this->getMockClient();

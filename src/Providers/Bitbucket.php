@@ -147,7 +147,7 @@ class Bitbucket implements ProviderInterface
             'source' => [
                 'branch' => [
                     'name' => $params["head"],
-                ]
+                ],
             ],
             'destination' => [
                 'branch' => [
@@ -203,7 +203,7 @@ class Bitbucket implements ProviderInterface
         $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->comments($pr_id)->create([
             'content' => [
                 'raw' => $comment,
-            ]
+            ],
         ]);
         $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->decline($pr_id);
     }

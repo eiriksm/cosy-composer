@@ -2,10 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Github\Exception\ValidationFailedException;
-use Gitlab\Exception\RuntimeException;
-use Violinist\Slug\Slug;
-
 class UpdateConcurrentTwoTest extends ComposerUpdateIntegrationBase
 {
     private $sha;

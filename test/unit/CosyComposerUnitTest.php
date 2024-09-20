@@ -6,11 +6,8 @@ use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
-use GuzzleHttp\Psr7\Response;
-use Http\Adapter\Guzzle6\Client;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Violinist\Slug\Slug;
 
 class CosyComposerUnitTest extends TestCase
 {
@@ -48,7 +45,7 @@ class CosyComposerUnitTest extends TestCase
         $mock_exec->expects($this->once())
             ->method('getLastOutput')
             ->willReturn([
-                'stdout' => 'output'
+                'stdout' => 'output',
             ]);
         $c->setExecuter($mock_exec);
         $this->assertEquals('output', $c->getLastStdOut());
@@ -67,7 +64,7 @@ class CosyComposerUnitTest extends TestCase
         $url_property->setAccessible(true);
         $mock_cosy = $this->getMockCosy();
         $mock_cosy->setUrl($url);
-        /** @var Slug $value */
+        /** @var \Violinist\Slug\Slug $value */
         $value = $property->getValue($mock_cosy);
         $this->assertEquals($user, $value->getUserName());
         $this->assertEquals($repo, $value->getUserRepo());

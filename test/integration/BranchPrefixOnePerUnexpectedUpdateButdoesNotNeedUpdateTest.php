@@ -55,7 +55,7 @@ If you find you need to update the codebase to be able to merge this branch (for
 ***
 This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).
 ',
-            ]
+            ],
         ];
     }
 }

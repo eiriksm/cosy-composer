@@ -3,7 +3,6 @@
 namespace eiriksm\CosyComposer\Providers;
 
 use eiriksm\CosyComposer\ProviderInterface;
-use Gitlab\Api\MergeRequests;
 use Gitlab\Client;
 use Gitlab\ResultPager;
 use Violinist\Slug\Slug;
@@ -130,10 +129,10 @@ class Gitlab implements ProviderInterface
 
     public function createPullRequest(Slug $slug, $params)
     {
-        /** @var MergeRequests $mr */
+        /** @var \Gitlab\Api\MergeRequests $mr */
         $mr = $this->client->mergeRequests();
         $data = $mr->create(self::getProjectId($slug->getUrl()), $params['head'], $params['base'], $params['title'], [
-            'description' => $params['body']
+            'description' => $params['body'],
         ]);
         if (!empty($data['web_url'])) {
             $data['html_url'] = $data['web_url'];

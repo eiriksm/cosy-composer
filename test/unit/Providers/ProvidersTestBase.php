@@ -6,9 +6,7 @@ use eiriksm\CosyComposer\ProviderInterface;
 use Github\Api\PullRequest;
 use Github\Api\Repo;
 use Gitlab\Api\Repositories;
-use Gitlab\HttpClient\Plugin\History;
 use PHPUnit\Framework\MockObject\Builder\InvocationMocker;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Violinist\Slug\Slug;
@@ -182,7 +180,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                     'sha' => 'fefe',
                 ],
             ]);
-        /** @var MockObject $mock_client */
+        /** @var \PHPUnit\Framework\MockObject\MockObject $mock_client */
         $mock_client = $this->getMockClient();
         switch (static::class) {
             case SelfHostedGitlabTest::class:

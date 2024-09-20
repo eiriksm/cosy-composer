@@ -23,7 +23,7 @@ class PublicGithubWrapper extends Github
     private $baseUrl;
 
     /**
-     * @var ProjectData
+     * @var \Violinist\ProjectData\ProjectData
      */
     private $project;
 

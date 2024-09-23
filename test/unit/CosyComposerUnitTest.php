@@ -134,6 +134,19 @@ class CosyComposerUnitTest extends TestCase
         ];
     }
 
+    public function testDeprecatedAuth()
+    {
+        $c = new CosyComposer($this->createMock(CommandExecuter::class));
+        $c->setGithubAuth('token', 'not-relevant');
+        $reflected_cosy = new \ReflectionClass($c);
+        $prop = $reflected_cosy->getProperty('untouchedUserToken');
+        $prop->setAccessible(true);
+        self::assertEquals($prop->getValue($c), 'token');
+        // Now let's do the same with the other thing.
+        $c->setUserToken('another-one-token');
+        self::assertEquals($prop->getValue($c), 'another-one-token');
+    }
+
     /**
      * Test that a special flag gives us the correct answer of a method.
      *

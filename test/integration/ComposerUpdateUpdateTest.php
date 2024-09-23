@@ -96,7 +96,7 @@ a custom message
         $mock_provider_factory = $this->createMock(ProviderFactory::class);
         $mock_provider = $this->createMock(PublicGithubWrapper::class);
         $fake_pr_url = 'http://example.com/pr';
-        $fork_head_used = NULL;
+        $fork_head_used = null;
         $mock_provider->expects($this->once())
             ->method('createPullRequest')
             ->willReturnCallback(function (Slug $slug, $params) use ($fake_pr_url, &$fork_head_used) {

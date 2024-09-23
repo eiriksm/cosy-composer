@@ -8,17 +8,11 @@ class ProcessFactoryWrapper implements ProcessFactoryInterface
 {
 
     /**
+     * The executor.
+     *
      * @var CommandExecuter
      */
     protected $executor;
-
-    /**
-     * @return CommandExecuter
-     */
-    public function getExecutor()
-    {
-        return $this->executor;
-    }
 
     /**
      * @param CommandExecuter $executor

@@ -8,6 +8,7 @@ use eiriksm\CosyComposer\Providers\Github;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use Github\Exception\RuntimeException;
 use Violinist\ProjectData\ProjectData;
+use Violinist\Slug\Slug;
 
 class ComposerUpdateUpdateTest extends ComposerUpdateIntegrationBase
 {
@@ -95,11 +96,15 @@ a custom message
         $mock_provider_factory = $this->createMock(ProviderFactory::class);
         $mock_provider = $this->createMock(PublicGithubWrapper::class);
         $fake_pr_url = 'http://example.com/pr';
+        $fork_head_used = null;
         $mock_provider->expects($this->once())
             ->method('createPullRequest')
-            ->willReturn([
-                'html_url' => $fake_pr_url,
-            ]);
+            ->willReturnCallback(function (Slug $slug, $params) use ($fake_pr_url, &$fork_head_used) {
+                $fork_head_used = $params["head"];
+                return [
+                    'html_url' => $fake_pr_url,
+                ];
+            });
         $mock_provider->method('repoIsPrivate')
             ->willReturn(false);
         $mock_provider->method('getDefaultBranch')
@@ -116,9 +121,11 @@ a custom message
 
         $this->cosy->setProviderFactory($mock_provider_factory);
         $this->cosy->setAuthentication('pass');
+        $this->cosy->setForkUser('fork-user');
         $this->runtestExpectedOutput();
         $this->assertOutputContainsMessage($fake_pr_url, $this->cosy);
         $this->assertEquals(Message::PR_URL, $this->findMessage($fake_pr_url, $this->cosy)->getType());
+        self::assertEquals('fork-user:psrlog100102', $fork_head_used);
     }
 
     public function testUpdatesFoundButNotSemverValidButStillAllowed()

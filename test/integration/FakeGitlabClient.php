@@ -20,15 +20,15 @@ class FakeGitlabClient extends Client
         return $this->calls;
     }
 
-    public function mergeRequests()
+    public function mergeRequests() : MergeRequests
     {
         return (new class($this) extends MergeRequests {
 
             private $client;
 
-            public function __construct(Client $client, ?int $perPage = null)
+            public function __construct(Client $client)
             {
-                parent::__construct($client, $perPage);
+                parent::__construct($client);
                 $this->client = $client;
             }
 

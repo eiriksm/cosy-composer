@@ -86,8 +86,6 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                     ->method('repositories')
                     ->willReturn($mock_repo_api);
                 $expects = $expects->with("$user/$repo");
-                $mock_repo_api->method('perPage')
-                    ->willReturn($mock_repo_api);
                 break;
 
             default:
@@ -186,8 +184,6 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
             case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:
                 $mock_repo = $this->createMock(Repositories::class);
-                $mock_pr->method('perPage')
-                    ->willReturn($mock_pr);
                 $mock_client->method('mergeRequests')
                     ->willReturn($mock_pr);
                 $mock_client->method('repositories')

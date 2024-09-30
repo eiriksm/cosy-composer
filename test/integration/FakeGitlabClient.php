@@ -20,7 +20,7 @@ class FakeGitlabClient extends Client
         return $this->calls;
     }
 
-    public function mergeRequests()
+    public function mergeRequests() : MergeRequests
     {
         return (new class($this) extends MergeRequests {
 

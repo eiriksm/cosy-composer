@@ -37,6 +37,8 @@ abstract class Base extends TestCase
 
     protected $automergeEnabled = false;
 
+    protected $autoMergeParams = [];
+
     protected $lastCommand = [];
 
     public function setUp() : void
@@ -184,8 +186,13 @@ abstract class Base extends TestCase
                 return $this->getPrsNamed();
             });
         $mock_provider->method('enableAutomerge')
-            ->willReturnCallback(function () {
+            ->willReturnCallback(function ($pr_data, $slug, $merge_method) {
                 $this->automergeEnabled = true;
+                $this->autoMergeParams = [
+                    'pr_data' => $pr_data,
+                    'slug' => $slug,
+                    'merge_method' => $merge_method,
+                ];
                 return true;
             });
         $mock_provider_factory = $this->getMockProviderFactory();

@@ -1,19 +1,12 @@
 <?php
 
-namespace eiriksm\CosyComposer\SecurityChecker;
+namespace eiriksm\CosyComposer;
 
-use eiriksm\CosyComposer\ProcessFactory;
-use eiriksm\CosyComposer\SecurityChecker\SecurityCheckerInterface;
-use Violinist\ProcessFactory\ProcessFactoryInterface;
+use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
-class NativeComposerChecker implements SecurityCheckerInterface
+class NativeComposerChecker extends SecurityChecker
 {
-    /**
-     * @var ProcessFactoryInterface
-     */
-    protected $processFactory;
-
-    public function checkDirectory(string $dir) : array
+    public function checkDirectory($dir)
     {
         // Simply run the composer audit command in the directory in here.
         $command = [
@@ -27,6 +20,12 @@ class NativeComposerChecker implements SecurityCheckerInterface
         // Don't really check the exit code, since it will be non-zero when we
         // have CVEs or whatever.
         $string = $process->getOutput();
+        // If the process is saying we do not know the command "audit" then that
+        // means we are using composer 1, which is not great. In those cases we
+        // try to just use the "old" checker I guess.
+        if (strpos($process->getErrorOutput(), 'Command "audit" is not defined') !== false) {
+            return parent::checkDirectory($dir);
+        }
         if (empty($string)) {
             throw new \Exception('No output from the composer audit command. This is the stderr: ' . $process->getErrorOutput());
         }
@@ -72,24 +71,5 @@ class NativeComposerChecker implements SecurityCheckerInterface
             'PATH' => __DIR__ . '/../../../../vendor/bin' . ':' . getenv('PATH'),
         ];
         return $this->getProcessFactory()->getProcess($command, null, $env);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getProcessFactory()
-    {
-        if (!$this->processFactory instanceof ProcessFactoryInterface) {
-            $this->processFactory = new ProcessFactory();
-        }
-        return $this->processFactory;
-    }
-
-    /**
-     * @param mixed $processFactory
-     */
-    public function setProcessFactory($processFactory) : void
-    {
-        $this->processFactory = $processFactory;
     }
 }

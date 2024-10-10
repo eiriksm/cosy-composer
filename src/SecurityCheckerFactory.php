@@ -2,24 +2,23 @@
 
 namespace eiriksm\CosyComposer;
 
-use eiriksm\CosyComposer\SecurityChecker\NativeComposerChecker;
-use eiriksm\CosyComposer\SecurityChecker\SecurityCheckerInterface;
+use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 class SecurityCheckerFactory
 {
     /**
-     * @var SecurityCheckerInterface
+     * @var SecurityChecker
      */
     private $checker;
 
-    public function setChecker(SecurityCheckerInterface $checker)
+    public function setChecker(SecurityChecker $checker)
     {
         $this->checker = $checker;
     }
 
     public function getChecker()
     {
-        if (!$this->checker instanceof SecurityCheckerInterface) {
+        if (!$this->checker instanceof SecurityChecker) {
             $this->checker = new NativeComposerChecker();
         }
         return $this->checker;

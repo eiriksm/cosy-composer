@@ -6,11 +6,11 @@ use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\ProviderInterface;
-use eiriksm\CosyComposer\SecurityChecker\SecurityCheckerInterface;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Utils;
 use Http\Client\HttpClient;
 use Violinist\ProjectData\ProjectData;
+use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 trait GetCosyTrait
 {
@@ -27,7 +27,7 @@ trait GetCosyTrait
             mkdir($dir);
             $c->setTmpDir($dir);
         }
-        $mock_checker = $this->createMock(SecurityCheckerInterface::class);
+        $mock_checker = $this->createMock(SecurityChecker::class);
         $c->getCheckerFactory()->setChecker($mock_checker);
         $c->setAuthentication('user-token');
         $response = $this->createMock(Response::class);

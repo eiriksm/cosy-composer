@@ -30,6 +30,7 @@
         "violinist-dev/process-factory": "^3.0",
         "violinist-dev/project-data": "^1.1.1",
         "violinist-dev/slug-from-url": "^1",
+        "violinist-dev/symfony-cloud-security-checker": "^2",
         "violinist-dev/timeframe-handler": "^1.0",
         "violinist-dev/violinist-config": "^2.3",
         "violinist-dev/violinist-messages": "^2.0",

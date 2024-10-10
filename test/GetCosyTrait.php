@@ -8,7 +8,6 @@ use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\ProviderInterface;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Utils;
-use Http\Adapter\Guzzle7\Client;
 use Http\Client\HttpClient;
 use Violinist\ProjectData\ProjectData;
 use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;

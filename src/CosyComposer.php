@@ -756,12 +756,16 @@ class CosyComposer
         $composer_outdated_command = [
             'composer',
             'outdated',
-            '--minor-only',
             '--format=json',
             '--no-interaction',
         ];
         if ($direct) {
             $composer_outdated_command[] = $direct;
+        }
+        switch ($config->getOutdatedFlag()) {
+            default:
+                $composer_outdated_command[] = '--minor-only';
+                break;
         }
         $this->execCommand($composer_outdated_command);
         $raw_data = $this->getLastStdOut();

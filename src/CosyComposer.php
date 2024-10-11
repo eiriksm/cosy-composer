@@ -762,7 +762,7 @@ class CosyComposer
         if ($direct) {
             $composer_outdated_command[] = $direct;
         }
-        switch ($config->getOutdatedFlag()) {
+        switch ($config->getComposerOutdatedFlag()) {
             default:
                 $composer_outdated_command[] = '--minor-only';
                 break;

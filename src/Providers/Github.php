@@ -49,7 +49,7 @@ class Github implements ProviderInterface
         if ($merge_method === self::MERGE_METHOD_SQUASH) {
             $api_merge_method = 'SQUASH';
         }
-        $data = $this->client->graphql()->execute('mutation MyMutation ($input: EnablePullRequestAutoMergeInput!) {
+        $data = $this->client->api('graphql')->execute('mutation MyMutation ($input: EnablePullRequestAutoMergeInput!) {
   enablePullRequestAutoMerge(input: $input) {
     pullRequest {
       id

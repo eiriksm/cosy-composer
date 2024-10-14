@@ -10,6 +10,7 @@ class AllowListTest extends ComposerUpdateIntegrationBase
     protected $composerAssetFiles = 'composer.allow';
     protected $hasUpdatedPsrLog = false;
     protected $hasUpdatedPsrCache = false;
+    protected $hasPatchOnly = false;
     protected $packageForUpdateOutput = 'psr/cache';
 
     public function testAllowList()
@@ -17,6 +18,7 @@ class AllowListTest extends ComposerUpdateIntegrationBase
         $this->runtestExpectedOutput();
         self::assertEquals($this->hasUpdatedPsrLog, false);
         self::assertEquals($this->hasUpdatedPsrCache, true);
+        self::assertEquals($this->hasPatchOnly, true);
     }
 
     protected function createUpdateJsonFromData($package, $version, $new_version)
@@ -32,6 +34,9 @@ class AllowListTest extends ComposerUpdateIntegrationBase
         }
         if (strpos($cmd_string, 'psr/cache') !== false) {
             $this->hasUpdatedPsrCache = true;
+        }
+        if (strpos($cmd_string, '--patch-only') !== false) {
+            $this->hasPatchOnly = true;
         }
     }
 }

@@ -201,9 +201,10 @@ class Gitlab implements ProviderInterface
         }
         $project_id = self::getProjectId($slug->getUrl());
         $retries = 0;
+        $mr = $this->client->mergeRequests();
         while (true) {
             try {
-                $result = $this->client->mergeRequests()->merge($project_id, $pr_data["number"], $data);
+                $result = $mr->merge($project_id, $pr_data["number"], $data);
                 if (!empty($result["merge_when_pipeline_succeeds"])) {
                     return true;
                 }

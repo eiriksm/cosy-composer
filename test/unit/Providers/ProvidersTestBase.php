@@ -139,8 +139,6 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
     public function testAutomerge()
     {
         $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
-        $user = 'testUser';
-        $repo = 'testRepo';
         $mock_client = $this->getMockClient();
         $mock_pr = $this->createMock($this->getPrClassName());
         $merge_params = [];
@@ -150,8 +148,12 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                 $mock_pr->method('merge')
                     ->willReturnCallback(function ($project_id, $mr_id, $data) use (&$merge_params) {
                         $merge_params = $data;
-                        return true;
+                        return [
+                            'merge_when_pipeline_succeeds' => TRUE,
+                        ];
                     });
+                $mock_client->method('mergeRequests')
+                    ->willReturn($mock_pr);
                 break;
 
             case GithubProviderTest::class:
@@ -177,6 +179,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         $provider = $this->getProvider($mock_client);
         $result = $provider->enableAutomerge([
             'node_id' => 12345,
+            'number' => 12345,
         ], $slug);
         self::assertEquals(true, $result);
     }

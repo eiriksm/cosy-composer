@@ -32,7 +32,7 @@
         "violinist-dev/slug-from-url": "^1",
         "violinist-dev/symfony-cloud-security-checker": "^3",
         "violinist-dev/timeframe-handler": "^1.0",
-        "violinist-dev/violinist-config": "^2.3",
+        "violinist-dev/violinist-config": "^2.4",
         "violinist-dev/violinist-messages": "^2.0",
         "wa72/simplelogger": "^1.0"
     },

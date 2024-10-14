@@ -149,7 +149,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                     ->willReturnCallback(function ($project_id, $mr_id, $data) use (&$merge_params) {
                         $merge_params = $data;
                         return [
-                            'merge_when_pipeline_succeeds' => TRUE,
+                            'merge_when_pipeline_succeeds' => true,
                         ];
                     });
                 $mock_client->method('mergeRequests')

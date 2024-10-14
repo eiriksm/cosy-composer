@@ -189,14 +189,22 @@ class Gitlab implements ProviderInterface
         if (empty($pr_data['number']) && !empty($pr_data["iid"])) {
             $pr_data['number'] = $pr_data["iid"];
         }
+        if ($merge_method === self::MERGE_METHOD_REBASE) {
+            // Not supported on gitlab.
+            return false;
+        }
         $data = [
             'merge_when_pipeline_succeeds' => true,
         ];
+        if ($merge_method === self::MERGE_METHOD_SQUASH) {
+            $data['squash'] = true;
+        }
         $project_id = self::getProjectId($slug->getUrl());
         $retries = 0;
+        $mr = $this->client->mergeRequests();
         while (true) {
             try {
-                $result = $this->client->mergeRequests()->merge($project_id, $pr_data["number"], $data);
+                $result = $mr->merge($project_id, $pr_data["number"], $data);
                 if (!empty($result["merge_when_pipeline_succeeds"])) {
                     return true;
                 }

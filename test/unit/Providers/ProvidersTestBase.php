@@ -3,6 +3,7 @@
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
 use eiriksm\CosyComposer\ProviderInterface;
+use Github\Api\GraphQL;
 use Github\Api\PullRequest;
 use Github\Api\Repo;
 use Gitlab\Api\Repositories;
@@ -133,6 +134,54 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         }
         $provider = $this->getProvider($mock_client);
         $this->assertEquals(['master', 'develop'], $provider->getBranchesFlattened($slug));
+    }
+
+    public function testAutomerge()
+    {
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
+        $mock_client = $this->getMockClient();
+        $mock_pr = $this->createMock($this->getPrClassName());
+        $merge_params = [];
+        switch (static::class) {
+            case SelfHostedGitlabTest::class:
+            case GitlabProviderTest::class:
+                $mock_pr->method('merge')
+                    ->willReturnCallback(function ($project_id, $mr_id, $data) use (&$merge_params) {
+                        $merge_params = $data;
+                        return [
+                            'merge_when_pipeline_succeeds' => true,
+                        ];
+                    });
+                $mock_client->method('mergeRequests')
+                    ->willReturn($mock_pr);
+                break;
+
+            case GithubProviderTest::class:
+                $mock_g = $this->createMock(GraphQL::class);
+                $mock_g->method('execute')
+                    ->willReturn([
+                        'data' => [
+                            'repository' => [
+                                'pullRequest' => [
+                                    'merge' => [
+                                        'pullRequest' => [
+                                            'state' => 'MERGED',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ]);
+                $mock_client->method('api')
+                    ->willReturn($mock_g);
+                break;
+        }
+        $provider = $this->getProvider($mock_client);
+        $result = $provider->enableAutomerge([
+            'node_id' => 12345,
+            'number' => 12345,
+        ], $slug);
+        self::assertEquals(true, $result);
     }
 
     public function testPrsNamed()

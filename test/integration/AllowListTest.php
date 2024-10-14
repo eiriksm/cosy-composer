@@ -35,6 +35,8 @@ class AllowListTest extends ComposerUpdateIntegrationBase
         if (strpos($cmd_string, 'psr/cache') !== false) {
             $this->hasUpdatedPsrCache = true;
         }
+        // This project also just randomly has the composer outdated flag set to
+        // patch, so we should do the assertions for that in here as well.
         if (strpos($cmd_string, '--patch-only') !== false) {
             $this->hasPatchOnly = true;
         }

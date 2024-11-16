@@ -2124,6 +2124,10 @@ class CosyComposer
             $cosy_factory_wrapper->setExecutor($this->executer);
             $retriever = new DependencyRepoRetriever($cosy_factory_wrapper);
             $retriever->setAuthToken($this->userToken);
+            // Check if the user token might be an app password.
+            if (self::tokenIndicatesUserAppPassword($this->untouchedUserToken)) {
+                $retriever->setAuthToken($this->untouchedUserToken);
+            }
             $this->fetcher = new ChangelogRetriever($retriever, $cosy_factory_wrapper);
         }
         return $this->fetcher;

@@ -570,11 +570,8 @@ class CosyComposer
         }
         $is_bitbucket = false;
         $bitbucket_user = null;
+        // $url = ToCloneUrl::fromRepoAndToken($this->slug->getUrl(), $this->userToken);
         switch ($hostname) {
-            case 'github.com':
-                $url = sprintf('https://x-access-token:%s@github.com/%s', $this->userToken, $this->slug->getSlug());
-                break;
-
             case 'gitlab.com':
                 $url = sprintf('https://oauth2:%s@gitlab.com/%s', $this->userToken, $this->slug->getSlug());
                 break;

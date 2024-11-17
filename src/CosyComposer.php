@@ -36,6 +36,7 @@ use Github\Exception\RuntimeException;
 use Github\Exception\ValidationFailedException;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Log\LoggerInterface;
+use Violinist\RepoAndTokenToCloneUrl\ToCloneUrl;
 use Violinist\Slug\Slug;
 use Violinist\TimeFrameHandler\Handler;
 use Wa72\SimpleLogger\ArrayLogger;
@@ -570,7 +571,7 @@ class CosyComposer
         }
         $is_bitbucket = false;
         $bitbucket_user = null;
-        // $url = ToCloneUrl::fromRepoAndToken($this->slug->getUrl(), $this->userToken);
+        $url = ToCloneUrl::fromRepoAndToken($this->slug->getUrl(), $this->userToken);
         switch ($hostname) {
             case 'gitlab.com':
                 $url = sprintf('https://oauth2:%s@gitlab.com/%s', $this->userToken, $this->slug->getSlug());

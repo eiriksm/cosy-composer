@@ -26,7 +26,6 @@ class ChangelogAttemptsTest extends TestCase
 
     public function testClonesForPublicPackage()
     {
-        $c = $this->cosy;
         $called = false;
         $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) use (&$called) {
             $command = implode(' ', $command_array);
@@ -40,8 +39,8 @@ class ChangelogAttemptsTest extends TestCase
             ->willReturn([
                 'stdout' => "112233 This is the first line\n445566 This is the second line",
             ]);
-        $c->setExecuter($mock_executer);
-        $log = $c->retrieveChangeLog('psr/log', json_decode(json_encode(['packages' => [
+        $this->cosy->setExecuter($mock_executer);
+        $log = $this->cosy->retrieveChangeLog('psr/log', json_decode(json_encode(['packages' => [
             [
                 'name' => 'psr/log',
                 'source' => [
@@ -55,7 +54,6 @@ class ChangelogAttemptsTest extends TestCase
 
     public function testClonedPrivate()
     {
-        $c = $this->cosy;
         $called = false;
         $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) use (&$called) {
             $return = 1;
@@ -74,13 +72,46 @@ class ChangelogAttemptsTest extends TestCase
             ->willReturn([
                 'stdout' => "112233 This is the first line\n445566 This is the second line",
             ]);
-        $c->setExecuter($mock_executer);
-        $log = $c->retrieveChangeLog('user/private', json_decode(json_encode(['packages' => [
+        $this->cosy->setExecuter($mock_executer);
+        $log = $this->cosy->retrieveChangeLog('user/private', json_decode(json_encode(['packages' => [
             [
                 'name' => 'user/private',
                 'source' => [
                     'type' => 'git',
                     'url' => 'git@github.com:user/private',
+                ],
+            ],
+        ]])), 1, 2);
+        self::assertEquals(true, $called);
+    }
+
+    public function testClonedPrivateEvenIfProjectGithub()
+    {
+        $called = false;
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) use (&$called) {
+            $return = 1;
+            $command = implode(' ', $command_array);
+            if (strpos($command, 'git clone https://x-token-auth:user-token@bitbucket.org/user/private') === 0) {
+                $called = true;
+                $return = 0;
+            }
+            if (strpos($command, 'log 1..2') > 0) {
+                $return = 0;
+            }
+            return $return;
+        });
+        $mock_executer->expects($this->once())
+            ->method('getLastOutput')
+            ->willReturn([
+                'stdout' => "112233 This is the first line\n445566 This is the second line",
+            ]);
+        $this->cosy->setExecuter($mock_executer);
+        $log = $this->cosy->retrieveChangeLog('user/private', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'user/private',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@bitbucket.org:user/private',
                 ],
             ],
         ]])), 1, 2);

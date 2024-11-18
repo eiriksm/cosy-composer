@@ -1826,7 +1826,7 @@ class CosyComposer
         if (empty($post_update_data->source->url)) {
             throw new \Exception('No source URL to attempt to parse in post update data source');
         }
-        $data = $this->getFetcher()->retrieveTagsBetweenShas($lockdata, $package_name, $pre_update_data->source->reference, $post_update_data->source->reference);
+        $data = $this->getFetcherForUrl($post_update_data->source->url)->retrieveTagsBetweenShas($lockdata, $package_name, $pre_update_data->source->reference, $post_update_data->source->reference);
         $url = $post_update_data->source->url;
         $url = preg_replace('/.git$/', '', $url);
         $url_parsed = parse_url($url);
@@ -2111,8 +2111,19 @@ class CosyComposer
 
     protected function retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to)
     {
+        // @todo: Use for URL.
         return $this->getFetcher()
             ->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
+    }
+
+    protected function getFetcherForUrl(string $url) : ChangelogRetriever
+    {
+        $token_chooser = new TokenChooser($this->slug->getUrl());
+        $token_chooser->setUserToken($this->untouchedUserToken);
+        $token_chooser->addTokens($this->tokens);
+        $fetcher = $this->getFetcher();
+        $fetcher->getRetriever()->setAuthToken($token_chooser->getChosenToken($url));
+        return $fetcher;
     }
 
     protected function getFetcher() : ChangelogRetriever
@@ -2121,11 +2132,6 @@ class CosyComposer
             $cosy_factory_wrapper = new ProcessFactoryWrapper();
             $cosy_factory_wrapper->setExecutor($this->executer);
             $retriever = new DependencyRepoRetriever($cosy_factory_wrapper);
-            $retriever->setAuthToken($this->userToken);
-            // Check if the user token might be an app password.
-            if (self::tokenIndicatesUserAppPassword($this->untouchedUserToken)) {
-                $retriever->setAuthToken($this->untouchedUserToken);
-            }
             $this->fetcher = new ChangelogRetriever($retriever, $cosy_factory_wrapper);
         }
         return $this->fetcher;
@@ -2136,7 +2142,10 @@ class CosyComposer
      */
     public function retrieveChangeLog($package_name, $lockdata, $version_from, $version_to)
     {
-        $fetcher = $this->getFetcher();
+        $lock_data_obj = new ComposerLockData();
+        $lock_data_obj->setData($lockdata);
+        $data = $lock_data_obj->getPackageData($package_name);
+        $fetcher = $this->getFetcherForUrl($data->source->url);
         $log_obj = $fetcher->retrieveChangelog($package_name, $lockdata, $version_from, $version_to);
         $changelog_string = '';
         $json = json_decode($log_obj->getAsJson());
@@ -2155,9 +2164,6 @@ class CosyComposer
             $changelog_string = implode("\n", $lines);
         }
         $log = ChangeLogData::createFromString($changelog_string);
-        $lock_data_obj = new ComposerLockData();
-        $lock_data_obj->setData($lockdata);
-        $data = $lock_data_obj->getPackageData($package_name);
         $git_url = preg_replace('/.git$/', '', $data->source->url);
         $repo_parsed = parse_uri($git_url);
         if (!empty($repo_parsed)) {

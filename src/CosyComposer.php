@@ -573,25 +573,10 @@ class CosyComposer
         $bitbucket_user = null;
         $url = ToCloneUrl::fromRepoAndToken($this->slug->getUrl(), $this->userToken);
         switch ($hostname) {
+            case 'bitbucket.org':
+            case 'gitlab.com':
             case 'github.com':
                 // Use the upstream package for this.
-                break;
-
-            case 'gitlab.com':
-                $url = sprintf('https://oauth2:%s@gitlab.com/%s', $this->userToken, $this->slug->getSlug());
-                break;
-
-            case 'bitbucket.org':
-                $url = sprintf('https://x-token-auth:%s@bitbucket.org/%s.git', $this->userToken, $this->slug->getSlug());
-                // Except if the thing is less than 50 characters, and also
-                // includes a colon. Then it's probably a user:app password kind
-                // of a thing.
-                if (self::tokenIndicatesUserAppPassword($this->userToken)) {
-                    $url = sprintf('https://%s@bitbucket.org/%s.git', $this->userToken, $this->slug->getSlug());
-                    $is_bitbucket = true;
-                    // The username will now be the thing before the colon.
-                    [$bitbucket_user, $this->userToken] = explode(':', $this->userToken);
-                }
                 break;
 
             default:

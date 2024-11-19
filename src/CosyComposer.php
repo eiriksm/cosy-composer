@@ -573,6 +573,10 @@ class CosyComposer
         $bitbucket_user = null;
         $url = ToCloneUrl::fromRepoAndToken($this->slug->getUrl(), $this->userToken);
         switch ($hostname) {
+            case 'github.com':
+                // Use the upstream package for this.
+                break;
+
             case 'gitlab.com':
                 $url = sprintf('https://oauth2:%s@gitlab.com/%s', $this->userToken, $this->slug->getSlug());
                 break;

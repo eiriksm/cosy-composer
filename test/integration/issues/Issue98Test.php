@@ -35,5 +35,11 @@ class Issue98Test extends ComposerUpdateIntegrationBase
         if ($cmd === ["git", "clone", 'https://x-access-token:user-token@github.com/eiriksm/private-pack.git', '/tmp/9f7527992e178cafad06d558b8f32ce8']) {
             $this->calledCorrectly = true;
         }
+        $string = implode(' ', $cmd);
+        if (strpos($string, 'git clone git@github.com:eiriksm/private-pack.git') === 0) {
+            // Attempted to clone without auth. Let's indicate we are not able
+            // to.
+            $return = 1;
+        }
     }
 }

@@ -58,6 +58,4 @@ class TokenChooser
         }
         return $this->token ?? null;
     }
-
-
 }

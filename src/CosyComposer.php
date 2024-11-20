@@ -36,6 +36,7 @@ use Github\Exception\RuntimeException;
 use Github\Exception\ValidationFailedException;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Log\LoggerInterface;
+use Violinist\RepoAndTokenToCloneUrl\ToCloneUrl;
 use Violinist\Slug\Slug;
 use Violinist\TimeFrameHandler\Handler;
 use Wa72\SimpleLogger\ArrayLogger;
@@ -570,30 +571,18 @@ class CosyComposer
         }
         $is_bitbucket = false;
         $bitbucket_user = null;
+        $url = ToCloneUrl::fromRepoAndToken($this->slug->getUrl(), $this->userToken);
         switch ($hostname) {
-            case 'github.com':
-                $url = sprintf('https://x-access-token:%s@github.com/%s', $this->userToken, $this->slug->getSlug());
-                break;
-
-            case 'gitlab.com':
-                $url = sprintf('https://oauth2:%s@gitlab.com/%s', $this->userToken, $this->slug->getSlug());
-                break;
-
             case 'bitbucket.org':
-                $url = sprintf('https://x-token-auth:%s@bitbucket.org/%s.git', $this->userToken, $this->slug->getSlug());
-                // Except if the thing is less than 50 characters, and also
-                // includes a colon. Then it's probably a user:app password kind
-                // of a thing.
+                $is_bitbucket = true;
                 if (self::tokenIndicatesUserAppPassword($this->userToken)) {
-                    $url = sprintf('https://%s@bitbucket.org/%s.git', $this->userToken, $this->slug->getSlug());
-                    $is_bitbucket = true;
                     // The username will now be the thing before the colon.
                     [$bitbucket_user, $this->userToken] = explode(':', $this->userToken);
                 }
                 break;
 
             default:
-                $url = sprintf('%s://oauth2:%s@%s:%d/%s', $this->urlArray['scheme'], $this->userToken, $hostname, $this->urlArray['port'], $this->slug->getSlug());
+                // Use the upstream package for this.
                 break;
         }
         $urls = [
@@ -1828,7 +1817,7 @@ class CosyComposer
         if (empty($post_update_data->source->url)) {
             throw new \Exception('No source URL to attempt to parse in post update data source');
         }
-        $data = $this->getFetcher()->retrieveTagsBetweenShas($lockdata, $package_name, $pre_update_data->source->reference, $post_update_data->source->reference);
+        $data = $this->getFetcherForUrl($post_update_data->source->url)->retrieveTagsBetweenShas($lockdata, $package_name, $pre_update_data->source->reference, $post_update_data->source->reference);
         $url = $post_update_data->source->url;
         $url = preg_replace('/.git$/', '', $url);
         $url_parsed = parse_url($url);
@@ -2113,8 +2102,24 @@ class CosyComposer
 
     protected function retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to)
     {
-        return $this->getFetcher()
+        $lock_data_obj = new ComposerLockData();
+        $lock_data_obj->setData($lockdata);
+        $data = $lock_data_obj->getPackageData($package_name);
+        if (empty($data) || empty($data->source->url)) {
+            throw new \Exception('Unknown source or non-git source found for vendor/package. Aborting.');
+        }
+        return $this->getFetcherForUrl($data->source->url)
             ->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
+    }
+
+    protected function getFetcherForUrl(string $url) : ChangelogRetriever
+    {
+        $token_chooser = new TokenChooser($this->slug->getUrl());
+        $token_chooser->setUserToken($this->untouchedUserToken);
+        $token_chooser->addTokens($this->tokens);
+        $fetcher = $this->getFetcher();
+        $fetcher->getRetriever()->setAuthToken($token_chooser->getChosenToken($url));
+        return $fetcher;
     }
 
     protected function getFetcher() : ChangelogRetriever
@@ -2123,11 +2128,6 @@ class CosyComposer
             $cosy_factory_wrapper = new ProcessFactoryWrapper();
             $cosy_factory_wrapper->setExecutor($this->executer);
             $retriever = new DependencyRepoRetriever($cosy_factory_wrapper);
-            $retriever->setAuthToken($this->userToken);
-            // Check if the user token might be an app password.
-            if (self::tokenIndicatesUserAppPassword($this->untouchedUserToken)) {
-                $retriever->setAuthToken($this->untouchedUserToken);
-            }
             $this->fetcher = new ChangelogRetriever($retriever, $cosy_factory_wrapper);
         }
         return $this->fetcher;
@@ -2138,7 +2138,13 @@ class CosyComposer
      */
     public function retrieveChangeLog($package_name, $lockdata, $version_from, $version_to)
     {
-        $fetcher = $this->getFetcher();
+        $lock_data_obj = new ComposerLockData();
+        $lock_data_obj->setData($lockdata);
+        $data = $lock_data_obj->getPackageData($package_name);
+        if (empty($data->source->url)) {
+            throw new \Exception('Unknown source or non-git source found for vendor/package. Aborting.');
+        }
+        $fetcher = $this->getFetcherForUrl($data->source->url);
         $log_obj = $fetcher->retrieveChangelog($package_name, $lockdata, $version_from, $version_to);
         $changelog_string = '';
         $json = json_decode($log_obj->getAsJson());
@@ -2157,9 +2163,6 @@ class CosyComposer
             $changelog_string = implode("\n", $lines);
         }
         $log = ChangeLogData::createFromString($changelog_string);
-        $lock_data_obj = new ComposerLockData();
-        $lock_data_obj->setData($lockdata);
-        $data = $lock_data_obj->getPackageData($package_name);
         $git_url = preg_replace('/.git$/', '', $data->source->url);
         $repo_parsed = parse_uri($git_url);
         if (!empty($repo_parsed)) {

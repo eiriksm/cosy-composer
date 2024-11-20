@@ -105,5 +105,4 @@ class TokenChooserTest extends TestCase
             ],
         ];
     }
-
 }

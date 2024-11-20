@@ -2134,6 +2134,9 @@ class CosyComposer
         $lock_data_obj = new ComposerLockData();
         $lock_data_obj->setData($lockdata);
         $data = $lock_data_obj->getPackageData($package_name);
+        if (empty($data->source->url)) {
+            throw new \Exception('Unknown source or non-git source found for vendor/package. Aborting.');
+        }
         $fetcher = $this->getFetcherForUrl($data->source->url);
         $log_obj = $fetcher->retrieveChangelog($package_name, $lockdata, $version_from, $version_to);
         $changelog_string = '';

@@ -581,15 +581,10 @@ class CosyComposer
                 }
                 break;
 
-            case 'bitbucket.org':
-            case 'gitlab.com':
-            case 'github.com':
+            default:
                 // Use the upstream package for this.
                 break;
 
-            default:
-                $url = sprintf('%s://oauth2:%s@%s:%d/%s', $this->urlArray['scheme'], $this->userToken, $hostname, $this->urlArray['port'], $this->slug->getSlug());
-                break;
         }
         $urls = [
             $url,
@@ -2108,8 +2103,13 @@ class CosyComposer
 
     protected function retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to)
     {
-        // @todo: Use for URL.
-        return $this->getFetcher()
+        $lock_data_obj = new ComposerLockData();
+        $lock_data_obj->setData($lockdata);
+        $data = $lock_data_obj->getPackageData($package_name);
+        if (empty($data) || empty($data->source->url)) {
+            throw new \Exception('Unknown source or non-git source found for vendor/package. Aborting.');
+        }
+        return $this->getFetcherForUrl($data->source->url)
             ->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
     }
 

@@ -40,7 +40,7 @@ class TokenChooser
         // remove the www part.
         if (strpos($hostname, 'www.') === 0) {
             // But only if one of those leading VCS provider hostnames.
-            if (in_array($hostname, ['www.github.com', 'www.gitlab.com', 'www.bitbucket.com'])) {
+            if (in_array($hostname, ['www.github.com', 'www.gitlab.com', 'www.bitbucket.org'])) {
                 $hostname = str_replace('www.', '', $hostname);
             }
         }
@@ -51,8 +51,8 @@ class TokenChooser
             return $this->token;
         }
         // Now see if any of the other tokens match.
-        foreach ($this->otherTokens as $other_token) {
-            if (strpos($repository_url, $hostname) !== false) {
+        foreach ($this->otherTokens as $other_hostname => $other_token) {
+            if (strpos($repository_url, $other_hostname) !== false) {
                 return $other_token;
             }
         }

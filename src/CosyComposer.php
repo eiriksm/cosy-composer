@@ -574,6 +574,14 @@ class CosyComposer
         $url = ToCloneUrl::fromRepoAndToken($this->slug->getUrl(), $this->userToken);
         switch ($hostname) {
             case 'bitbucket.org':
+                $is_bitbucket = true;
+                if (self::tokenIndicatesUserAppPassword($this->userToken)) {
+                    // The username will now be the thing before the colon.
+                    [$bitbucket_user, $this->userToken] = explode(':', $this->userToken);
+                }
+                break;
+
+            case 'bitbucket.org':
             case 'gitlab.com':
             case 'github.com':
                 // Use the upstream package for this.

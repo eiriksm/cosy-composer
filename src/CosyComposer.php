@@ -584,7 +584,6 @@ class CosyComposer
             default:
                 // Use the upstream package for this.
                 break;
-
         }
         $urls = [
             $url,

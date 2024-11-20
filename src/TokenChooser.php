@@ -8,7 +8,7 @@ class TokenChooser
     private $token;
     private $otherTokens = [];
 
-    public function __construct(string $url, string $token = null, array $other_tokens = [])
+    public function __construct(string $url, $token = null, array $other_tokens = [])
     {
         $this->url = $url;
         $this->token = $token;

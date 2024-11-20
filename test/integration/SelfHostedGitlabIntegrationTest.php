@@ -18,7 +18,6 @@ class SelfHostedGitlabIntegrationTest extends ComposerUpdateIntegrationBase
     {
         parent::setUp();
         $this->foundMessage = false;
-        $this->commandStringToFind = null;
     }
 
     protected function getMockProvider()

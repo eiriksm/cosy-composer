@@ -2,6 +2,8 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
+
 class UpdateConcurrentAllowSecurityTest extends ComposerUpdateIntegrationBase
 {
     protected $composerAssetFiles = 'composer.concurrent.security';
@@ -11,6 +13,13 @@ class UpdateConcurrentAllowSecurityTest extends ComposerUpdateIntegrationBase
     {
         parent::setUp();
         $this->updateJson = '{"installed": [{"name": "psr/http-factory", "version": "1.0.2", "latest": "1.1.0", "latest-status": "semver-safe-update"},{"name": "drupal/core", "version": "10.2.10", "latest": "10.3.10", "latest-status": "semver-safe-update"},{"name": "drupal/core-recommended", "version": "10.2.10", "latest": "10.3.10", "latest-status": "semver-safe-update"}]}';
+        $checker = $this->createMock(SecurityChecker::class);
+        $checker->method('checkDirectory')
+            ->willReturn([
+                'drupal/core' => true,
+                'drupal/core-recommended' => true,
+            ]);
+        $this->cosy->getCheckerFactory()->setChecker($checker);
     }
 
     public function testUpdatesSecurityBeyondConcurrent()

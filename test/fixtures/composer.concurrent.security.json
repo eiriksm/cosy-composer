@@ -1,0 +1,17 @@
+{
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packages.drupal.org/8"
+    }
+  ],
+  "require": {
+    "drupal/core-recommended": "^10.2.10"
+  },
+  "extra": {
+    "violinist": {
+      "number_of_concurrent_updates": "1",
+      "check_only_direct_dependencies": "0"
+    }
+  }
+}

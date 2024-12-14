@@ -559,7 +559,7 @@ class CosyComposer
         $hostname = $this->slug->getProvider();
         $url = null;
         // Make sure we accept the fingerprint of whatever we are cloning.
-        $this->execCommand(['ssh-keyscan', '-t', 'rsa,dsa', $hostname, '>>', '~/.ssh/known_hosts']);
+        $this->execCommand(['ssh-keyscan', '-t', 'rsa', $hostname, '>>', '~/.ssh/known_hosts']);
         if (!empty($_SERVER['private_key'])) {
             $this->log('Checking for existing private key');
             $filename = "$directory/id_rsa";

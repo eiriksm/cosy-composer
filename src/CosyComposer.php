@@ -1189,7 +1189,7 @@ class CosyComposer
                 ],
             ]));
         }
-        if ($this->execCommand($command, false, 5)) {
+        if ($this->execCommand($command, false, 120)) {
             $this->log($this->getLastStdOut());
             $this->log($this->getLastStdErr());
             throw new \Exception('Error committing the composer files. They are probably not changed.');

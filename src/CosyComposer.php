@@ -597,7 +597,7 @@ class CosyComposer
         }
         $this->log('Cloning repository');
         foreach ($urls as $url) {
-            $clone_result = $this->execCommand(['git', 'clone', '--depth=1', $url, $this->tmpDir], false, 120);
+            $clone_result = $this->execCommand(['git', 'clone', '--depth=1', $url, $this->tmpDir], false, 240);
             if (!$clone_result) {
                 break;
             }

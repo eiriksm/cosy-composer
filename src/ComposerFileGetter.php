@@ -4,7 +4,6 @@ namespace eiriksm\CosyComposer;
 
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Filesystem;
-use Violinist\Config\Config;
 
 class ComposerFileGetter
 {

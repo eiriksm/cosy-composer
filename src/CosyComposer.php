@@ -380,9 +380,8 @@ class CosyComposer
         $this->forkUser = $user;
     }
 
-    protected function handleTimeIntervalSetting($composer_json)
+    protected function handleTimeIntervalSetting(Config $config)
     {
-        $config = Config::createFromComposerData($composer_json);
         if (Handler::isAllowed($config)) {
             return;
         }
@@ -635,7 +634,7 @@ class CosyComposer
         if (false == $composer_json_data) {
             throw new \InvalidArgumentException('Invalid composer.json file');
         }
-        $config = Config::createFromComposerData($composer_json_data);
+        $config = $this->ensureFreshConfig($composer_json_data);
         $this->client = $this->getClient($this->slug);
         $this->privateClient = $this->getClient($this->slug);
         $this->privateClient->authenticate($this->userToken, null);
@@ -681,8 +680,8 @@ class CosyComposer
         $composer_json_data = $this->composerGetter->getComposerJsonData();
         $this->runAuthExport($hostname);
         $this->handleDrupalContribSa($composer_json_data);
-        $config = Config::createFromComposerData($composer_json_data);
-        $this->handleTimeIntervalSetting($composer_json_data);
+        $config = $this->ensureFreshConfig($composer_json_data);
+        $this->handleTimeIntervalSetting($config);
         $lock_file = $this->composerJsonDir . '/composer.lock';
         $initial_composer_lock_data = false;
         $security_alerts = [];
@@ -1014,7 +1013,7 @@ class CosyComposer
         }
         switch ($update_type) {
             case self::UPDATE_INDIVIDUAL:
-                $this->handleIndividualUpdates($data, $composer_lock_after_installing, $composer_json_data, $one_pr_per_dependency, $initial_composer_lock_data, $prs_named, $default_base, $hostname, $default_branch, $security_alerts, $is_allowed_out_of_date_pr);
+                $this->handleIndividualUpdates($data, $composer_lock_after_installing, $composer_json_data, $one_pr_per_dependency, $initial_composer_lock_data, $prs_named, $default_base, $hostname, $default_branch, $security_alerts, $is_allowed_out_of_date_pr, $config);
                 break;
 
             case self::UPDATE_ALL:
@@ -1023,6 +1022,11 @@ class CosyComposer
         }
         // Clean up.
         $this->cleanUp();
+    }
+
+    protected function ensureFreshConfig(\stdClass $composer_json_data) : Config
+    {
+        return Config::createFromComposerDataInPath($composer_json_data, sprintf('%s/%s', $this->composerJsonDir, 'composer.json'));
     }
 
     protected function getPrCount() : int
@@ -1327,9 +1331,8 @@ class CosyComposer
         $this->runAuthExportToken($hostname, $this->userToken);
     }
 
-    protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $is_allowed_out_of_date_pr)
+    protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $is_allowed_out_of_date_pr, Config $config)
     {
-        $config = Config::createFromComposerData($cdata);
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
         foreach ($data as $item) {

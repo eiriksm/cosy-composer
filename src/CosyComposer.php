@@ -634,7 +634,7 @@ class CosyComposer
         if (false == $composer_json_data) {
             throw new \InvalidArgumentException('Invalid composer.json file');
         }
-        $config = Config::createFromComposerDataInPath($composer_json_data, $this->composerJsonDir);
+        $config = $this->ensureFreshConfig($composer_json_data);
         $this->client = $this->getClient($this->slug);
         $this->privateClient = $this->getClient($this->slug);
         $this->privateClient->authenticate($this->userToken, null);
@@ -680,7 +680,7 @@ class CosyComposer
         $composer_json_data = $this->composerGetter->getComposerJsonData();
         $this->runAuthExport($hostname);
         $this->handleDrupalContribSa($composer_json_data);
-        $config = Config::createFromComposerDataInPath($composer_json_data, $this->composerJsonDir);
+        $config = $this->ensureFreshConfig($composer_json_data);
         $this->handleTimeIntervalSetting($config);
         $lock_file = $this->composerJsonDir . '/composer.lock';
         $initial_composer_lock_data = false;
@@ -1022,6 +1022,11 @@ class CosyComposer
         }
         // Clean up.
         $this->cleanUp();
+    }
+
+    protected function ensureFreshConfig(\stdClass $composer_json_data) : Config
+    {
+        return Config::createFromComposerDataInPath($composer_json_data, sprintf('%s/%s', $this->composerJsonDir, 'composer.json'));
     }
 
     protected function getPrCount() : int

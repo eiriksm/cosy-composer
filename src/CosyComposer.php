@@ -11,6 +11,7 @@ use eiriksm\CosyComposer\Exceptions\GitPushException;
 use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
 use eiriksm\CosyComposer\ListFilterer\DevDepsOnlyFilterer;
 use eiriksm\CosyComposer\ListFilterer\IndirectWithDirectFilterer;
+use eiriksm\CosyComposer\Providers\Bitbucket;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\ViolinistMessages\UpdateListItem;
 use GuzzleHttp\Psr7\Request;
@@ -574,7 +575,7 @@ class CosyComposer
         switch ($hostname) {
             case 'bitbucket.org':
                 $is_bitbucket = true;
-                if (self::tokenIndicatesUserAppPassword($this->userToken)) {
+                if (Bitbucket::tokenIndicatesUserAppPassword($this->userToken)) {
                     // The username will now be the thing before the colon.
                     [$bitbucket_user, $this->userToken] = explode(':', $this->userToken);
                 }
@@ -806,7 +807,7 @@ class CosyComposer
             $this->log('Project indicated that it should only receive security updates. Removing non-security related updates from queue');
             foreach ($data as $delta => $item) {
                 try {
-                    $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
+                    $package_name_in_composer_json = Helpers::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
                     if (isset($security_alerts[$package_name_in_composer_json])) {
                         continue;
                     }
@@ -943,7 +944,7 @@ class CosyComposer
                         $security_update = false;
                         $package_name_in_composer_json = $item->name;
                         try {
-                            $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
+                            $package_name_in_composer_json = Helpers::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
                         } catch (\Exception $e) {
                             // If this was a package that we somehow got because we have allowed to update other than direct
                             // dependencies we can avoid re-throwing this.
@@ -1222,7 +1223,7 @@ class CosyComposer
                 break;
 
             case 'bitbucket.org':
-                if (self::tokenIndicatesUserAppPassword($this->untouchedUserToken)) {
+                if (Bitbucket::tokenIndicatesUserAppPassword($this->untouchedUserToken)) {
                     [$bitbucket_user, $app_password] = explode(':', $this->untouchedUserToken);
                     $this->execCommand(
                         ['composer', 'config', '--auth', 'http-basic.bitbucket.org', $bitbucket_user, $app_password],
@@ -1355,7 +1356,7 @@ class CosyComposer
                 $version_to = $item->latest;
                 // See where this package is.
                 try {
-                    $package_name_in_composer_json = self::getComposerJsonName($cdata, $package_name, $this->composerJsonDir);
+                    $package_name_in_composer_json = Helpers::getComposerJsonName($cdata, $package_name, $this->composerJsonDir);
                 } catch (\Exception $e) {
                     // If this was a package that we somehow got because we have allowed to update other than direct
                     // dependencies we can avoid re-throwing this.
@@ -2198,69 +2199,6 @@ class CosyComposer
             }
         }
         return $lockdata->{$lockfile_key}[$key];
-    }
-
-    public static function tokenIndicatesUserAppPassword($token)
-    {
-        return strlen($token) < 50 && strpos($token, ':') !== false;
-    }
-
-    public static function getComposerJsonName($cdata, $name, $tmp_dir)
-    {
-        if (!empty($cdata->{'require-dev'}->{$name})) {
-            return $name;
-        }
-        if (!empty($cdata->require->{$name})) {
-            return $name;
-        }
-        // If we can not find it, we have to search through the names, and try to normalize them. They could be in the
-        // wrong casing, for example.
-        $possible_types = [
-            'require',
-            'require-dev',
-        ];
-        foreach ($possible_types as $type) {
-            if (empty($cdata->{$type})) {
-                continue;
-            }
-            foreach ($cdata->{$type} as $package => $version) {
-                if (strtolower($package) == strtolower($name)) {
-                    return $package;
-                }
-            }
-        }
-        if (!empty($cdata->extra->{"merge-plugin"})) {
-            $keys = [
-                'include',
-                'require',
-            ];
-            foreach ($keys as $key) {
-                if (isset($cdata->extra->{"merge-plugin"}->{$key})) {
-                    foreach ($cdata->extra->{"merge-plugin"}->{$key} as $extra_json) {
-                        $files = glob(sprintf('%s/%s', $tmp_dir, $extra_json));
-                        if (!$files) {
-                            continue;
-                        }
-                        foreach ($files as $file) {
-                            $contents = @file_get_contents($file);
-                            if (!$contents) {
-                                continue;
-                            }
-                            $json = @json_decode($contents);
-                            if (!$json) {
-                                continue;
-                            }
-                            try {
-                                return self::getComposerJsonName($json, $name, $tmp_dir);
-                            } catch (\Exception $e) {
-                              // Fine.
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        throw new \Exception('Could not find ' . $name . ' in composer.json.');
     }
 
     private function getPackagesKey($package_name, $lockfile_key, $lockdata)

@@ -4,6 +4,7 @@ namespace eiriksm\CosyComposerTest\unit;
 
 use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\CosyComposer;
+use eiriksm\CosyComposer\Helpers;
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
 use PHPUnit\Framework\TestCase;
@@ -105,7 +106,7 @@ class CosyComposerUnitTest extends TestCase
      */
     public function testGetComposerJsonName($json, $input, $expected)
     {
-        $this->assertEquals($expected, CosyComposer::getComposerJsonName($json, $input, '/tmp/derp'));
+        $this->assertEquals($expected, Helpers::getComposerJsonName($json, $input, '/tmp/derp'));
     }
 
     public function getComposerJsonVariations()

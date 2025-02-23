@@ -14,7 +14,7 @@ Violinist runners are automatically updated (with [violinist.io](https://violini
 
 ## Contribute
 
-This library is considered internal for violinist.io. As a consequence, there are no documentation on API surface, backwards compatibility, local setup or how to work with this library. Even so, pull requests are welcome, but limited support will be offered.
+This library is considered internal for violinist.io. As a consequence, there are no documentation on API surface, backwards compatibility, local setup or how to work with this library. Even so, pull requests are welcome, but limited support will be offered. Otherwise we refer to the [contributing.md file of the repository](https://github.com/eiriksm/cosy-composer/blob/main/.github/contributing.md).
 
 ## Licence
 

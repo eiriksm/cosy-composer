@@ -14,7 +14,7 @@ Violinist runners are automatically updated (with [violinist.io](https://violini
 
 ## Contribute
 
-This library is considered internal for violinist.io. As a consequence, there are no documentation on API surface, local setup or how to work with this library. Even so, pull requests are welcome, but limited support will be offered.
+This library is considered internal for violinist.io. As a consequence, there are no documentation on API surface, backwards compatibility, local setup or how to work with this library. Even so, pull requests are welcome, but limited support will be offered.
 
 ## Licence
 

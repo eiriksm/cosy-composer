@@ -806,7 +806,7 @@ class CosyComposer
             $this->log('Project indicated that it should only receive security updates. Removing non-security related updates from queue');
             foreach ($data as $delta => $item) {
                 try {
-                    $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
+                    $package_name_in_composer_json = Helpers::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
                     if (isset($security_alerts[$package_name_in_composer_json])) {
                         continue;
                     }
@@ -943,7 +943,7 @@ class CosyComposer
                         $security_update = false;
                         $package_name_in_composer_json = $item->name;
                         try {
-                            $package_name_in_composer_json = self::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
+                            $package_name_in_composer_json = Helpers::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
                         } catch (\Exception $e) {
                             // If this was a package that we somehow got because we have allowed to update other than direct
                             // dependencies we can avoid re-throwing this.
@@ -1355,7 +1355,7 @@ class CosyComposer
                 $version_to = $item->latest;
                 // See where this package is.
                 try {
-                    $package_name_in_composer_json = self::getComposerJsonName($cdata, $package_name, $this->composerJsonDir);
+                    $package_name_in_composer_json = Helpers::getComposerJsonName($cdata, $package_name, $this->composerJsonDir);
                 } catch (\Exception $e) {
                     // If this was a package that we somehow got because we have allowed to update other than direct
                     // dependencies we can avoid re-throwing this.

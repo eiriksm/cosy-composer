@@ -11,6 +11,7 @@ use eiriksm\CosyComposer\Exceptions\GitPushException;
 use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
 use eiriksm\CosyComposer\ListFilterer\DevDepsOnlyFilterer;
 use eiriksm\CosyComposer\ListFilterer\IndirectWithDirectFilterer;
+use eiriksm\CosyComposer\Providers\Bitbucket;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\ViolinistMessages\UpdateListItem;
 use GuzzleHttp\Psr7\Request;
@@ -574,7 +575,7 @@ class CosyComposer
         switch ($hostname) {
             case 'bitbucket.org':
                 $is_bitbucket = true;
-                if (self::tokenIndicatesUserAppPassword($this->userToken)) {
+                if (Bitbucket::tokenIndicatesUserAppPassword($this->userToken)) {
                     // The username will now be the thing before the colon.
                     [$bitbucket_user, $this->userToken] = explode(':', $this->userToken);
                 }
@@ -1222,7 +1223,7 @@ class CosyComposer
                 break;
 
             case 'bitbucket.org':
-                if (self::tokenIndicatesUserAppPassword($this->untouchedUserToken)) {
+                if (Bitbucket::tokenIndicatesUserAppPassword($this->untouchedUserToken)) {
                     [$bitbucket_user, $app_password] = explode(':', $this->untouchedUserToken);
                     $this->execCommand(
                         ['composer', 'config', '--auth', 'http-basic.bitbucket.org', $bitbucket_user, $app_password],

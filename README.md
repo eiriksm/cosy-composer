@@ -18,4 +18,4 @@ This library is considered internal for violinist.io. As a consequence, there ar
 
 ## Licence
 
-AGPL
+AGPL-3.0

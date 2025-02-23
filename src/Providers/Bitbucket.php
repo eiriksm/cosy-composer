@@ -207,4 +207,9 @@ class Bitbucket implements ProviderInterface
         ]);
         $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->decline($pr_id);
     }
+
+    public static function tokenIndicatesUserAppPassword($token)
+    {
+        return strlen($token) < 50 && strpos($token, ':') !== false;
+    }
 }

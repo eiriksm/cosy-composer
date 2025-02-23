@@ -1,6 +1,11 @@
 <?php
 
-public static function getComposerJsonName($cdata, $name, $tmp_dir)
+namespace eiriksm\CosyComposer;
+
+class Helpers
+{
+
+    public static function getComposerJsonName($cdata, $name, $tmp_dir)
     {
         if (!empty($cdata->{'require-dev'}->{$name})) {
             return $name;
@@ -56,4 +61,5 @@ public static function getComposerJsonName($cdata, $name, $tmp_dir)
             }
         }
         throw new \Exception('Could not find ' . $name . ' in composer.json.');
+    }
 }

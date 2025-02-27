@@ -115,7 +115,10 @@ class CosyComposer
      */
     private $forkUser;
 
-    private bool $assigneesAllowed = false;
+    /**
+     * @var bool
+     */
+    private $assigneesAllowed = false;
 
     /**
      * @var ViolinistMessages

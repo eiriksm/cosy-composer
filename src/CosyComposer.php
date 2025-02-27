@@ -115,6 +115,8 @@ class CosyComposer
      */
     private $forkUser;
 
+    private bool $assigneesAllowed = false;
+
     /**
      * @var ViolinistMessages
      */
@@ -1246,6 +1248,27 @@ class CosyComposer
         }
     }
 
+    private function getAssigneesAllowed() : bool
+    {
+        $assignees_allowed_roles = [
+            'agency',
+            'enterprise',
+        ];
+        if ($this->project && $this->project->getRoles()) {
+            foreach ($this->project->getRoles() as $role) {
+                if (in_array($role, $assignees_allowed_roles)) {
+                    return true;
+                }
+            }
+        }
+        return $this->assigneesAllowed;
+    }
+
+    public function setAssigneesAllowed(bool $assigneesAllowed)
+    {
+        $this->assigneesAllowed = $assigneesAllowed;
+    }
+
     protected function getPrParams($branch_name, $body, $title, $default_branch, Config $config)
     {
         $head = $this->forkUser . ':' . $branch_name;
@@ -1264,24 +1287,13 @@ class CosyComposer
             ], '', $body);
         }
         $assignees = $config->getAssignees();
-        $assignees_allowed_roles = [
-            'agency',
-            'enterprise',
-        ];
-        $assignees_allowed = false;
-        if ($this->project && $this->project->getRoles()) {
-            foreach ($this->project->getRoles() as $role) {
-                if (in_array($role, $assignees_allowed_roles)) {
-                    $assignees_allowed = true;
-                }
-            }
-        }
+        $assignees_allowed = $this->getAssigneesAllowed();
         if (!$assignees_allowed) {
             // Log a message so it's possible to understand why.
             if (!empty($assignees)) {
                 if ($this->isPrivate) {
                     $assignees = [];
-                    $this->log('Assignees on private projects are only allowed on the agency and enterprise plan. Configuration was detected for assignees, but will be ignored');
+                    $this->log('Assignees on private projects are only allowed on the agency and enterprise plan, or when running violinist self-hosted. Configuration was detected for assignees, but will be ignored');
                 } else {
                     $this->log('Assignees on private projects are only allowed on the agency and enterprise plan. This project was detected to be public, so assignees will still apply even though a sufficient plan is not active');
                 }

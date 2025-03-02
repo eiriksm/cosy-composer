@@ -1189,7 +1189,7 @@ class CosyComposer
             '-m',
             $msg,
         ]);
-        if (getenv('USE_NEW_COMMIT_MSG') && $item) {
+        if ($item) {
             $command[] = '-m';
             $command[] = sprintf("%s\n%s", self::COMMIT_MESSAGE_SEPARATOR, Yaml::dump([
                 'update_data' => [

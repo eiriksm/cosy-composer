@@ -17,7 +17,8 @@ class ErrorCommittingTest extends ComposerUpdateIntegrationBase
 
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
-        if ($cmd == ['git', 'commit', 'composer.json', 'composer.lock', '-m', 'Update psr/log']) {
+        $command_string = implode(' ', $cmd);
+        if (strpos($command_string, 'git commit composer.json composer.lock -m Update psr/log') === 0) {
             $return = 1;
         }
     }

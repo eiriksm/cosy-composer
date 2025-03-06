@@ -2,37 +2,23 @@
 
 namespace eiriksm\CosyComposer;
 
-use Composer\Semver\Comparator;
-use Composer\Semver\Semver;
 use eiriksm\CosyComposer\Exceptions\ChdirException;
-use eiriksm\CosyComposer\Exceptions\ComposerInstallException;
 use eiriksm\CosyComposer\Exceptions\GitCloneException;
-use eiriksm\CosyComposer\Exceptions\GitPushException;
 use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
 use eiriksm\CosyComposer\ListFilterer\DevDepsOnlyFilterer;
 use eiriksm\CosyComposer\ListFilterer\IndirectWithDirectFilterer;
 use eiriksm\CosyComposer\Providers\Bitbucket;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\CosyComposer\Updater\IndividualUpdater;
-use eiriksm\ViolinistMessages\UpdateListItem;
 use GuzzleHttp\Psr7\Request;
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
 use Http\Client\HttpClient;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Yaml\Yaml;
 use Violinist\AllowListHandler\AllowListHandler;
-use Violinist\ChangelogFetcher\ChangelogRetriever;
-use Violinist\ChangelogFetcher\DependencyRepoRetriever;
-use Violinist\CommitMessageCreator\Constant\Type;
-use Violinist\CommitMessageCreator\Creator;
 use Violinist\ComposerLockData\ComposerLockData;
-use Violinist\ComposerUpdater\Exception\ComposerUpdateProcessFailedException;
 use Violinist\ComposerUpdater\Exception\NotUpdatedException;
-use Violinist\ComposerUpdater\Updater;
 use Violinist\Config\Config;
-use Violinist\GitLogFormat\ChangeLogData;
 use eiriksm\ViolinistMessages\ViolinistMessages;
-use eiriksm\ViolinistMessages\ViolinistUpdate;
 use Github\Client;
 use Github\Exception\RuntimeException;
 use Github\Exception\ValidationFailedException;
@@ -42,7 +28,6 @@ use Violinist\RepoAndTokenToCloneUrl\ToCloneUrl;
 use Violinist\Slug\Slug;
 use Violinist\TimeFrameHandler\Handler;
 use Wa72\SimpleLogger\ArrayLogger;
-use function peterpostmann\uri\parse_uri;
 
 class CosyComposer
 {
@@ -1095,17 +1080,13 @@ class CosyComposer
         }
     }
 
-    protected function handleLabels(Config $config, $pullRequest, $security_update = false)
+    protected function handleLabels(Config $config, $pullRequest, $security_update = false) : void
     {
-        $labels = $config->getLabels();
-        if ($security_update) {
-            $labels = array_merge($labels, $config->getLabelsSecurity());
-        }
+        $labels_allowed = false;
         $labels_allowed_roles = [
             'agency',
             'enterprise',
         ];
-        $labels_allowed = false;
         if ($this->project && $this->project->getRoles()) {
             foreach ($this->project->getRoles() as $role) {
                 if (in_array($role, $labels_allowed_roles)) {

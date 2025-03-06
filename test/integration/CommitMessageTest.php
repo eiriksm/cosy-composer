@@ -2,7 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\Helpers;
 use Symfony\Component\Yaml\Yaml;
 

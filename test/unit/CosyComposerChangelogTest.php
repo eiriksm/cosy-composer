@@ -2,7 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\unit;
 
-use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\Updater\IndividualUpdater;
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;

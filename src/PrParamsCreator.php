@@ -85,7 +85,7 @@ class PrParamsCreator
         return trim($this->messageFactory->getPullRequestTitle($update));
     }
 
-    public function getPrParams(?string $fork_user = null, bool $is_private, Slug $slug, $branch_name, $body, $title, $default_branch, Config $config)
+    public function getPrParams($fork_user, bool $is_private, Slug $slug, $branch_name, $body, $title, $default_branch, Config $config)
     {
         $head = $fork_user . ':' . $branch_name;
         if ($is_private) {

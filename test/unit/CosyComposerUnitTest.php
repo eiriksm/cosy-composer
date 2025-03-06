@@ -30,15 +30,6 @@ class CosyComposerUnitTest extends TestCase
         $this->assertEquals($test_logger, $c->getLogger());
     }
 
-    public function testCacheDir()
-    {
-        $c = $this->getMockCosy();
-        $bogus_dir = uniqid();
-        // This has been deprecated so currently this test makes no sense.
-        $c->setCacheDir($bogus_dir);
-        $this->assertEquals('', $c->getCacheDir());
-    }
-
     public function testLastStdOut()
     {
         $c = $this->getMockCosy();
@@ -144,6 +135,10 @@ class CosyComposerUnitTest extends TestCase
         $prop->setAccessible(true);
         self::assertEquals($prop->getValue($c), 'token');
         // Now let's do the same with the other thing.
+        $c = new CosyComposer($this->createMock(CommandExecuter::class));
+        $reflected_cosy = new \ReflectionClass($c);
+        $prop = $reflected_cosy->getProperty('untouchedUserToken');
+        $prop->setAccessible(true);
         $c->setUserToken('another-one-token');
         self::assertEquals($prop->getValue($c), 'another-one-token');
     }

@@ -2,6 +2,8 @@
 
 namespace eiriksm\CosyComposerTest\unit;
 
+use eiriksm\CosyComposer\CosyComposer;
+use eiriksm\CosyComposer\Updater\IndividualUpdater;
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +19,10 @@ class CosyComposerChangelogTest extends TestCase
         // Of course this should not be possible, but what does one do for coverage, eh?
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Did not find the requested package (vendor/package) in the lockfile. This is probably an error');
-        $c->retrieveChangeLog('vendor/package', (object) ['packages' => [], 'packages-dev' => []], 1, 2);
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $updater->retrieveChangeLog('vendor/package', (object) ['packages' => [], 'packages-dev' => []], 1, 2);
     }
 
     public function testChangeLogRepoUnknownSource()
@@ -25,7 +30,10 @@ class CosyComposerChangelogTest extends TestCase
         $c = $this->getMockCosy();
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Unknown source or non-git source found for vendor/package. Aborting.');
-        $c->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
             [
                 'name' => 'vendor/package',
             ],
@@ -44,9 +52,13 @@ class CosyComposerChangelogTest extends TestCase
             return 0;
         });
         $c->setExecuter($mock_executer);
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('The changelog string was empty for package vendor/package');
-        $c->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+        $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
             [
                 'name' => 'vendor/package',
                 'source' => [
@@ -75,7 +87,11 @@ class CosyComposerChangelogTest extends TestCase
                 'stdout' => "112233 This is the first line\n445566 This is the second line",
                 ]);
         $c->setExecuter($mock_executer);
-        $log = $c->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $log = $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
             [
                 'name' => 'vendor/package',
                 'source' => [
@@ -109,7 +125,11 @@ class CosyComposerChangelogTest extends TestCase
                 'stdout' => $one_line_example_output,
             ]);
         $c->setExecuter($mock_executer);
-        $log = $c->retrieveChangeLog('drupal/core', json_decode(json_encode(['packages' => [
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $log = $updater->retrieveChangeLog('drupal/core', json_decode(json_encode(['packages' => [
             [
                 'name' => 'drupal/core',
                 'source' => [

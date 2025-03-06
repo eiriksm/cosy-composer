@@ -13,6 +13,7 @@ use eiriksm\CosyComposer\ListFilterer\DevDepsOnlyFilterer;
 use eiriksm\CosyComposer\ListFilterer\IndirectWithDirectFilterer;
 use eiriksm\CosyComposer\Providers\Bitbucket;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
+use eiriksm\CosyComposer\Updater\IndividualUpdater;
 use eiriksm\ViolinistMessages\UpdateListItem;
 use GuzzleHttp\Psr7\Request;
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
@@ -45,25 +46,19 @@ use function peterpostmann\uri\parse_uri;
 
 class CosyComposer
 {
+    use ComposerInstallTrait;
+    use PrCounterTrait;
+    use GitCommandsTrait;
+    use SlugAwareTrait;
+    use TokenAwareTrait;
+    use AssigneesAllowedTrait;
+    use TemporaryDirectoryAwareTrait;
+
     const UPDATE_ALL = 'update_all';
 
     const UPDATE_INDIVIDUAL = 'update_individual';
 
-    const COMMIT_MESSAGE_SEPARATOR = '------';
-
     private $urlArray;
-
-    private $openRelevantPrs = [];
-
-    /**
-     * @var ChangelogRetriever
-     */
-    private $fetcher;
-
-    /**
-     * @var string
-     */
-    private $commitMessage;
 
     /**
      * @var bool|string
@@ -93,42 +88,12 @@ class CosyComposer
     /**
      * @var string
      */
-    private $token;
-
-    /**
-     * @var Slug
-     */
-    private $slug;
-
-    /**
-     * @var string
-     */
-    private $userToken;
-
-    /**
-     * @var string
-     */
-    private $untouchedUserToken;
-
-    /**
-     * @var string
-     */
     private $forkUser;
-
-    /**
-     * @var bool
-     */
-    private $assigneesAllowed = false;
 
     /**
      * @var ViolinistMessages
      */
     private $messageFactory;
-
-    /**
-     * @var string
-     */
-    protected $tmpDir;
 
     /**
      * @var string
@@ -176,14 +141,14 @@ class CosyComposer
     private $privateClient;
 
     /**
-     * @var array
-     */
-    private $tokens = [];
-
-    /**
      * @var string
      */
     private $hostName;
+
+    /**
+     * @var PrParamsCreator
+     */
+    private $prParamsCreator;
 
     /**
      * @param array $tokens
@@ -236,22 +201,6 @@ class CosyComposer
         $this->logger = $logger;
     }
 
-
-    /**
-     * @deprecated This method is not used anymore and is a no-op.
-     */
-    public function setCacheDir()
-    {
-    }
-
-    /**
-     * @deprecated This method will always return an empty string.
-     */
-    public function getCacheDir()
-    {
-        return '';
-    }
-
     /**
      * @return HttpClient
      */
@@ -280,24 +229,6 @@ class CosyComposer
     }
 
     /**
-     * @return string
-     */
-    public function getLastStdErr()
-    {
-        $output = $this->executer->getLastOutput();
-        return !empty($output['stderr']) ? $output['stderr'] : '';
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastStdOut()
-    {
-        $output = $this->executer->getLastOutput();
-        return !empty($output['stdout']) ? $output['stdout'] : '';
-    }
-
-    /**
      * @param \eiriksm\CosyComposer\CommandExecuter $executer
      */
     public function setExecuter($executer)
@@ -319,8 +250,8 @@ class CosyComposer
      */
     public function __construct(CommandExecuter $executer)
     {
-        $tmpdir = uniqid();
-        $this->tmpDir = sprintf('/tmp/%s', $tmpdir);
+        $tmpdir_name = uniqid();
+        $this->setTmpDir(sprintf('/tmp/%s', $tmpdir_name));
         $this->messageFactory = new ViolinistMessages();
         $this->executer = $executer;
         $this->checkerFactory = new SecurityCheckerFactory();
@@ -349,7 +280,7 @@ class CosyComposer
         if (!empty($slug_url_obj['host'])) {
             $providers = array_merge($providers, [$slug_url_obj['host']]);
         }
-        $this->slug = Slug::createFromUrlAndSupportedProviders($url, $providers);
+        $this->setSlug(Slug::createFromUrlAndSupportedProviders($url, $providers));
     }
 
     /**
@@ -360,12 +291,6 @@ class CosyComposer
     public function setGithubAuth($user, $pass)
     {
         $this->setAuthentication($user);
-    }
-
-    public function setAuthentication(string $user_token)
-    {
-        $this->userToken = $user_token;
-        $this->untouchedUserToken = $user_token;
     }
 
     /**
@@ -471,7 +396,7 @@ class CosyComposer
             'version' => $current_version,
             'latest' => '',
         ];
-        $branch_name_prefix = $this->createBranchName($fake_item, false, $config);
+        $branch_name_prefix = Helpers::createBranchName($fake_item, false, $config);
         foreach ($prs_named as $branch_name => $pr) {
             if (!empty($pr["base"]["ref"])) {
                 // The base ref should be what we are actually using for merge requests.
@@ -928,7 +853,7 @@ class CosyComposer
         $is_allowed_out_of_date_pr = [];
         $one_pr_per_dependency = $config->shouldUseOnePullRequestPerPackage();
         foreach ($data as $delta => $item) {
-            $branch_name = $this->createBranchName($item, $one_pr_per_dependency, $config);
+            $branch_name = Helpers::createBranchName($item, $one_pr_per_dependency, $config);
             if (in_array($branch_name, $branches_flattened)) {
                 // Is there a PR for this?
                 if (array_key_exists($branch_name, $prs_named)) {
@@ -967,7 +892,7 @@ class CosyComposer
                         // else with this new update. Either way, we want to continue this. Continue in this context
                         // would mean, we want to keep this for update checking still, and not unset it from the update
                         // array. This will mean it will probably get an updated title later.
-                        if ($prs_named[$branch_name]['title'] != $this->createTitle($item, $fake_post_update, $security_update)) {
+                        if ($prs_named[$branch_name]['title'] != $this->getPrParamsCreator()->createTitle($item, $fake_post_update, $security_update)) {
                             $this->log(sprintf('Updating the PR of %s since the computed title does not match the title.', $item->name), Message::MESSAGE);
                             continue;
                         }
@@ -1019,7 +944,26 @@ class CosyComposer
         }
         switch ($update_type) {
             case self::UPDATE_INDIVIDUAL:
-                $this->handleIndividualUpdates($data, $composer_lock_after_installing, $composer_json_data, $one_pr_per_dependency, $initial_composer_lock_data, $prs_named, $default_base, $hostname, $default_branch, $security_alerts, $is_allowed_out_of_date_pr, $config);
+                $updater = new IndividualUpdater();
+                $updater->setLogger($this->logger);
+                $updater->setCWD($this->getCwd());
+                $updater->setExecuter($this->executer);
+                $updater->setPrCounter($this->getPrCounter());
+                $updater->setComposerJsonDir($this->composerJsonDir);
+                $updater->setMessageFactory($this->messageFactory);
+                $updater->setClient($this->getPrClient());
+                $updater->setIsPrivate($this->isPrivate);
+                $updater->setSlug($this->slug);
+                $updater->setAuthentication($this->untouchedUserToken);
+                $updater->setAssigneesAllowed($this->assigneesAllowed);
+                if ($this->forkUser) {
+                    $updater->setForkUser($this->forkUser);
+                }
+                $updater->setTmpDir($this->tmpDir);
+                if ($this->project) {
+                    $updater->setProjectData($this->project);
+                }
+                $updater->handleUpdate($data, $composer_lock_after_installing, $composer_json_data, $one_pr_per_dependency, $initial_composer_lock_data, $prs_named, $default_base, $hostname, $default_branch, $security_alerts, $is_allowed_out_of_date_pr, $config);
                 break;
 
             case self::UPDATE_ALL:
@@ -1030,20 +974,17 @@ class CosyComposer
         $this->cleanUp();
     }
 
+    protected function getPrParamsCreator()
+    {
+        if (!$this->prParamsCreator instanceof PrParamsCreator) {
+            $this->prParamsCreator = new PrParamsCreator($this->messageFactory, $this->project);
+        }
+        return $this->prParamsCreator;
+    }
+
     protected function ensureFreshConfig(\stdClass $composer_json_data) : Config
     {
         return Config::createFromComposerDataInPath($composer_json_data, sprintf('%s/%s', $this->composerJsonDir, 'composer.json'));
-    }
-
-    protected function getPrCount() : int
-    {
-        return (int) count($this->openRelevantPrs);
-    }
-
-    protected function countPR($item)
-    {
-        $package_lower = strtolower($item);
-        $this->openRelevantPrs[$package_lower] = true;
     }
 
     protected function handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $alerts, Config $config, $default_base, $default_branch, $prs_named)
@@ -1054,7 +995,7 @@ class CosyComposer
             'version' => '',
             'latest' => '',
         ];
-        $branch_name = $this->createBranchName($item, false, $config);
+        $branch_name = Helpers::createBranchName($item, false, $config);
         $pr_params = [];
         $security_update = false;
         try {
@@ -1090,8 +1031,8 @@ class CosyComposer
                 'name' => 'all',
                 'version' => '0.0.0',
             ];
-            $body = $this->createBody($fake_item, $fake_post, null, $security_update, $list);
-            $pr_params = $this->getPrParams($branch_name, $body, $title, $default_branch, $config);
+            $body = $this->getPrParamsCreator()->createBody($fake_item, $fake_post, null, $security_update, $list);
+            $pr_params = $this->getPrParamsCreator()->getPrParams($this->forkUser, $this->isPrivate, $this->getSlug(), $branch_name, $body, $title, $default_branch, $config);
             // OK, so... If we already have a branch named the name we are about to use. Is that one a branch
             // containing all the updates we now got? And is it actually up to date with the target branch? Of course,
             // if there is no such branch, then we will happily push it.
@@ -1100,7 +1041,7 @@ class CosyComposer
                 if (!empty($prs_named[$branch_name]['base']['sha']) && $prs_named[$branch_name]['base']['sha'] == $default_base) {
                     $up_to_date = true;
                 }
-                $should_update = $this->shouldUpdatePr($branch_name, $pr_params, $prs_named);
+                $should_update = Helpers::shouldUpdatePr($branch_name, $pr_params, $prs_named);
                 if (!$should_update && $up_to_date) {
                     // Well well well. Let's not push this branch over and over, shall we?
                     $this->log(sprintf('The branch %s with all updates is already up to date. Aborting the PR update', $branch_name));
@@ -1141,542 +1082,10 @@ class CosyComposer
         $this->commitFiles($msg);
     }
 
-    protected function switchBranch($branch_name)
-    {
-        $this->log('Checking out new branch: ' . $branch_name);
-        $result = $this->execCommand(['git', 'checkout', '-b', $branch_name], false);
-        if ($result) {
-            $this->log($this->getLastStdErr());
-            throw new \Exception(sprintf('There was an error checking out branch %s. Exit code was %d', $branch_name, $result));
-        }
-        // Make sure we do not have any uncommitted changes.
-        $this->execCommand(['git', 'checkout', '.'], false);
-    }
-
-    protected function cleanRepoForCommit()
-    {
-        // Clean up the composer.lock file if it was not part of the repo.
-        $this->execCommand(['git', 'clean', '-f', 'composer.*']);
-    }
-
-    protected function getCommitCreator(Config $config) : Creator
-    {
-        $creator = new Creator();
-        $type = Type::NONE;
-        $creator->setType($type);
-        try {
-            $creator->setType($config->getCommitMessageConvention());
-        } catch (\InvalidArgumentException $e) {
-            // Fall back to using none.
-        }
-        return $creator;
-    }
-
-    protected function commitFilesForPackage(UpdateListItem $item, Config $config, $is_dev = false)
-    {
-        $this->cleanRepoForCommit();
-        $creator = $this->getCommitCreator($config);
-        $msg = $creator->generateMessage($item, $is_dev);
-        $this->commitFiles($msg, $item);
-    }
-
-    protected function commitFiles($msg, ?UpdateListItem $item = null)
-    {
-        $command = array_filter([
-            'git', "commit",
-            'composer.json',
-            $this->lockFileContents ? 'composer.lock' : '',
-            '-m',
-            $msg,
-        ]);
-        if ($item) {
-            $command[] = '-m';
-            $command[] = sprintf("%s\n%s", self::COMMIT_MESSAGE_SEPARATOR, Yaml::dump([
-                'update_data' => [
-                    'package' => $item->getPackageName(),
-                    'from' => $item->getOldVersion(),
-                    'to' => $item->getNewVersion(),
-                ],
-            ]));
-        }
-        if ($this->execCommand($command, false, 120)) {
-            $this->log($this->getLastStdOut());
-            $this->log($this->getLastStdErr());
-            throw new \Exception('Error committing the composer files. They are probably not changed.');
-        }
-        $this->commitMessage = $msg;
-    }
-
-    protected function runAuthExportToken($hostname, $token)
-    {
-        if (empty($token)) {
-            return;
-        }
-        switch ($hostname) {
-            case 'github.com':
-                $this->execCommand(
-                    ['composer', 'config', '--auth', 'github-oauth.github.com', $token],
-                    false
-                );
-                break;
-
-            case 'gitlab.com':
-                $this->execCommand(
-                    ['composer', 'config', '--auth', 'gitlab-oauth.gitlab.com', $token],
-                    false
-                );
-                break;
-
-            case 'bitbucket.org':
-                if (Bitbucket::tokenIndicatesUserAppPassword($this->untouchedUserToken)) {
-                    [$bitbucket_user, $app_password] = explode(':', $this->untouchedUserToken);
-                    $this->execCommand(
-                        ['composer', 'config', '--auth', 'http-basic.bitbucket.org', $bitbucket_user, $app_password],
-                        false
-                    );
-                } else {
-                    $this->execCommand(
-                        ['composer', 'config', '--auth', 'http-basic.bitbucket.org', 'x-token-auth', $token],
-                        false
-                    );
-                }
-                break;
-
-            default:
-                $this->execCommand(
-                    ['composer', 'config', '--auth', sprintf('gitlab-oauth.%s', $token), $hostname],
-                    false
-                );
-                break;
-        }
-    }
-
-    private function getAssigneesAllowed() : bool
-    {
-        $assignees_allowed_roles = [
-            'agency',
-            'enterprise',
-        ];
-        if ($this->project && $this->project->getRoles()) {
-            foreach ($this->project->getRoles() as $role) {
-                if (in_array($role, $assignees_allowed_roles)) {
-                    return true;
-                }
-            }
-        }
-        return $this->assigneesAllowed;
-    }
-
-    public function setAssigneesAllowed(bool $assigneesAllowed)
-    {
-        $this->assigneesAllowed = $assigneesAllowed;
-    }
-
-    protected function getPrParams($branch_name, $body, $title, $default_branch, Config $config)
-    {
-        $head = $this->forkUser . ':' . $branch_name;
-        if ($this->isPrivate) {
-            $head = $branch_name;
-        }
-        if ($this->slug->getProvider() === 'bitbucket.org') {
-            // Currently does not support having the collapsible section thing.
-            // @todo: Revisit from time to time?
-            // @todo: Make sure we replace the correct one. What if the changelog has this in it?
-            $body = str_replace([
-                '<details>',
-                '<summary>',
-                '</summary>',
-                '</details>',
-            ], '', $body);
-        }
-        $assignees = $config->getAssignees();
-        $assignees_allowed = $this->getAssigneesAllowed();
-        if (!$assignees_allowed) {
-            // Log a message so it's possible to understand why.
-            if (!empty($assignees)) {
-                if ($this->isPrivate) {
-                    $assignees = [];
-                    $this->log('Assignees on private projects are only allowed on the agency and enterprise plan, or when running violinist self-hosted. Configuration was detected for assignees, but will be ignored');
-                } else {
-                    $this->log('Assignees on private projects are only allowed on the agency and enterprise plan. This project was detected to be public, so assignees will still apply even though a sufficient plan is not active');
-                }
-            }
-        }
-        return [
-            'base'  => $default_branch,
-            'head'  => $head,
-            'title' => $title,
-            'body'  => $body,
-            'assignees' => $assignees,
-        ];
-    }
-
-    protected function createPullrequest($pr_params)
-    {
-        $this->log('Creating pull request from ' . $pr_params['head']);
-        return $this->getPrClient()->createPullRequest($this->slug, $pr_params);
-    }
-
-    protected function pushCode($branch_name, $default_base, $lock_file_contents)
-    {
-        if ($this->isPrivate) {
-            $origin = 'origin';
-            if ($this->execCommand(["git", 'push', $origin, $branch_name, '--force'])) {
-                $this->log($this->getLastStdOut());
-                $this->log($this->getLastStdErr());
-                throw new GitPushException('Could not push to ' . $branch_name);
-            }
-        } else {
-            $this->preparePrClient();
-            /** @var PublicGithubWrapper $this_client */
-            $this_client = $this->client;
-            $this_client->forceUpdateBranch($branch_name, $default_base);
-            $msg = $this->commitMessage;
-            $this_client->commitNewFiles($this->tmpDir, $default_base, $branch_name, $msg, $lock_file_contents);
-        }
-    }
-
-    protected function runAuthExport($hostname)
-    {
-        // If we have multiple auth tokens, export them all.
-        if (!empty($this->tokens)) {
-            foreach ($this->tokens as $token_hostname => $token) {
-                $this->runAuthExportToken($token_hostname, $token);
-            }
-        }
-        $this->runAuthExportToken($hostname, $this->userToken);
-    }
-
-    protected function handleIndividualUpdates($data, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, $is_allowed_out_of_date_pr, Config $config)
-    {
-        $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
-        $max_number_of_prs = $config->getNumberOfAllowedPrs();
-        foreach ($data as $item) {
-            $should_indicate_can_not_update_if_unupdated = false;
-            if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
-                if (!in_array($item->name, $is_allowed_out_of_date_pr)) {
-                    $this->log(sprintf('Skipping %s because the number of max concurrent PRs (%d) seems to have been reached', $item->name, $max_number_of_prs), Message::CONCURRENT_THROTTLED, [
-                        'package' => $item->name,
-                    ]);
-                    continue;
-                }
-            }
-            $security_update = false;
-            $package_name = $item->name;
-            $branch_name = '';
-            $pr_params = [];
-            try {
-                $pre_update_data = $this->getPackageData($package_name, $lockdata);
-                $version_from = $item->version;
-                $version_to = $item->latest;
-                // See where this package is.
-                try {
-                    $package_name_in_composer_json = Helpers::getComposerJsonName($cdata, $package_name, $this->composerJsonDir);
-                } catch (\Exception $e) {
-                    // If this was a package that we somehow got because we have allowed to update other than direct
-                    // dependencies we can avoid re-throwing this.
-                    if ($config->shouldCheckDirectOnly()) {
-                        throw $e;
-                    }
-                    // Taking a risk :o.
-                    $package_name_in_composer_json = $package_name;
-                }
-                if (isset($alerts[$package_name_in_composer_json])) {
-                    $security_update = true;
-                }
-                $req_item = '';
-                $is_require_dev = false;
-                if (!empty($cdata->{'require-dev'}->{$package_name_in_composer_json})) {
-                    $req_item = $cdata->{'require-dev'}->{$package_name_in_composer_json};
-                    $is_require_dev = true;
-                } else {
-                    // @todo: Support getting req item from a merge plugin as well.
-                    if (isset($cdata->{'require'}->{$package_name_in_composer_json})) {
-                        $req_item = $cdata->{'require'}->{$package_name_in_composer_json};
-                    }
-                }
-                $should_update_beyond = false;
-                // See if the new version seems to satisfy the constraint. Unless the constraint is dev related somehow.
-                try {
-                    if (strpos((string) $req_item, 'dev') === false && !Semver::satisfies($version_to, (string)$req_item)) {
-                        // Well, unless we have actually disallowed this through config.
-                        $should_update_beyond = true;
-                        if (!$can_update_beyond) {
-                            // Let's instead try to update within the constraint.
-                            $should_update_beyond = false;
-                            $should_indicate_can_not_update_if_unupdated = true;
-                        }
-                    }
-                } catch (\Exception $e) {
-                    // Could be, some times, that we try to check a constraint that semver does not recognize. That is
-                    // totally fine.
-                }
-
-                // Create a new branch.
-                $branch_name = $this->createBranchName($item, $one_pr_per_dependency, $config);
-                $this->switchBranch($branch_name);
-                // Try to use the same version constraint.
-                $version = (string) $req_item;
-                // @todo: This is not nearly something that covers the world of constraints. Probably possible to use
-                // something from composer itself here.
-                $constraint = '';
-                if (!empty($version[0])) {
-                    switch ($version[0]) {
-                        case '^':
-                            $constraint = '^';
-                            break;
-
-                        case '~':
-                            $constraint = '~';
-                            break;
-
-                        default:
-                            $constraint = '';
-                            break;
-                    }
-                }
-                $update_with_deps = true;
-                if (!empty($cdata->extra) && !empty($cdata->extra->violinist) && isset($cdata->extra->violinist->update_with_dependencies)) {
-                    if (!(bool) $cdata->extra->violinist->update_with_dependencies) {
-                        $update_with_deps = false;
-                    }
-                }
-                $updater = new Updater($this->getCwd(), $package_name);
-                $cosy_logger = new CosyLogger();
-                $cosy_factory_wrapper = new ProcessFactoryWrapper();
-                $cosy_factory_wrapper->setExecutor($this->executer);
-                $cosy_logger->setLogger($this->getLogger());
-                // See if this package has any bundled updates.
-                $bundled_packages = $config->getBundledPackagesForPackage($package_name);
-                if (!empty($bundled_packages)) {
-                    $updater->setBundledPackages($bundled_packages);
-                }
-                $updater->setLogger($cosy_logger);
-                $updater->setProcessFactory($cosy_factory_wrapper);
-                $updater->setWithUpdate($update_with_deps);
-                $updater->setConstraint($constraint);
-                $updater->setDevPackage($is_require_dev);
-                $updater->setRunScripts($config->shouldRunScripts());
-                if ($config->shouldUpdateIndirectWithDirect()) {
-                    $updater->setShouldThrowOnUnupdated(false);
-                    if (!empty($item->child_with_update)) {
-                        $updater->setShouldThrowOnUnupdated(true);
-                        $updater->setPackagesToCheckHasUpdated([$item->child_with_update]);
-                    }
-                    // But really, we should now have an array, shouldn't we?
-                    if (!empty($item->children_with_update) && is_array($item->children_with_update)) {
-                        $updater->setShouldThrowOnUnupdated(true);
-                        $updater->setPackagesToCheckHasUpdated($item->children_with_update);
-                    }
-                }
-                if (!$lock_file_contents || ($should_update_beyond && $can_update_beyond)) {
-                    $updater->executeRequire($version_to);
-                } else {
-                    if (!empty($item->child_with_update)) {
-                        $this->log(sprintf('Running composer update for package %s to update the indirect dependency %s', $package_name, $item->child_with_update));
-                    } else {
-                        $this->log('Running composer update for package ' . $package_name);
-                    }
-                    $updater->executeUpdate();
-                }
-                $post_update_data = $updater->getPostUpdateData();
-                if (isset($post_update_data->source) && $post_update_data->source->type == 'git' && isset($pre_update_data->source)) {
-                    $version_from = $pre_update_data->source->reference;
-                    $version_to = $post_update_data->source->reference;
-                }
-                // Now, see if the update was actually to the version we are expecting.
-                // If we are updating to another dev version, composer show will tell us something like:
-                // dev-master 15eb463
-                // while the post update data version will still say:
-                // dev-master.
-                // So to compare these, we compare the hashes, if the version latest we are updating to
-                // matches the dev regex.
-                if (preg_match('/dev-\S* /', $item->latest)) {
-                    $sha = preg_replace('/dev-\S* /', '', $item->latest);
-                    // Now if the version_to matches this, we have updated to the expected version.
-                    if (strpos($version_to, $sha) === 0) {
-                        $post_update_data->version = $item->latest;
-                    }
-                }
-                // If the item->latest key is set to dependencies, we actually want to allow the branch to change, since
-                // the version of the package will of course be an actual version instead of the version called
-                // "latest".
-                if ('dependencies' !== $item->latest && $post_update_data->version != $item->latest) {
-                    $new_item = (object) [
-                        'name' => $item->name,
-                        'version' => $item->version,
-                        'latest' => $post_update_data->version,
-                    ];
-                    $new_branch_name = $this->createBranchName($new_item, $config->shouldUseOnePullRequestPerPackage(), $config);
-                    $is_an_actual_upgrade = Comparator::greaterThan($post_update_data->version, $item->version);
-                    $old_item_is_branch = strpos($item->version, 'dev-') === 0;
-                    $new_item_is_branch = strpos($post_update_data->version, 'dev-') === 0;
-                    if (!$old_item_is_branch && !$new_item_is_branch && !$is_an_actual_upgrade) {
-                        throw new NotUpdatedException('The new version is lower than the installed version');
-                    }
-                    if ($branch_name !== $new_branch_name) {
-                        $this->log(sprintf('Changing branch because of an unexpected update result. We expected the branch name to be %s but instead we are now switching to %s.', $branch_name, $new_branch_name));
-                        $this->execCommand(['git', 'checkout', '-b', $new_branch_name], false);
-                        $branch_name = $new_branch_name;
-                    }
-                }
-                $this->log('Successfully ran command composer update for package ' . $package_name);
-                $new_lock_data = json_decode(file_get_contents($this->composerJsonDir . '/composer.lock'));
-                $list_item = new UpdateListItem($package_name, $post_update_data->version, $item->version);
-                $this->log('Trying to retrieve changelog for ' . $package_name);
-                $changelog = null;
-                $changed_files = [];
-                try {
-                    $changelog = $this->retrieveChangeLog($package_name, $lockdata, $version_from, $version_to);
-                    $this->log('Changelog retrieved');
-                } catch (\Throwable $e) {
-                    // If the changelog can not be retrieved, we can live with that.
-                    $this->log('Exception for changelog: ' . $e->getMessage());
-                }
-                try {
-                    $changed_files = $this->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
-                    $this->log('Changed files retrieved');
-                } catch (\Throwable $e) {
-                    // If the changed files can not be retrieved, we can live with that.
-                    $this->log('Exception for retrieving changed files: ' . $e->getMessage());
-                }
-                // Let's try to find all of the tags between those commit shas.
-                $release_links = null;
-                try {
-                    $release_links = $this->getReleaseLinks($lockdata, $package_name, $pre_update_data, $post_update_data);
-                } catch (\Throwable $e) {
-                    $this->log('Retrieving links to releases failed');
-                }
-                $comparer = new LockDataComparer($lockdata, $new_lock_data);
-                $update_list = $comparer->getUpdateList();
-                $body = $this->createBody($item, $post_update_data, $changelog, $security_update, $update_list, $changed_files, $release_links);
-                $title = $this->createTitle($item, $post_update_data, $security_update);
-                $pr_params = $this->getPrParams($branch_name, $body, $title, $default_branch, $config);
-                // Check if this new branch name has a pr up-to-date.
-                if (!$this->shouldUpdatePr($branch_name, $pr_params, $prs_named) && array_key_exists($branch_name, $prs_named)) {
-                    if (!$default_base) {
-                        $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
-                            'package' => $item->name,
-                        ]);
-                        $this->countPR($item->name);
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
-                        continue;
-                    }
-                    // Is the pr up to date?
-                    if ($prs_named[$branch_name]['base']['sha'] == $default_base) {
-                        $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
-                            'package' => $item->name,
-                        ]);
-                        $this->countPR($item->name);
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
-                        continue;
-                    }
-                }
-                $this->commitFilesForPackage($list_item, $config, $is_require_dev);
-                $this->runAuthExport($hostname);
-                $this->pushCode($branch_name, $default_base, $lock_file_contents);
-                $pullRequest = $this->createPullrequest($pr_params);
-                if (!empty($pullRequest['html_url'])) {
-                    $this->log($pullRequest['html_url'], Message::PR_URL, [
-                        'package' => $package_name,
-                    ]);
-                    $this->handleAutomerge($config, $pullRequest, $security_update);
-                    $this->handleLabels($config, $pullRequest, $security_update);
-                    if (!empty($pullRequest['number'])) {
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named, $default_branch);
-                    }
-                }
-                $this->countPR($item->name);
-            } catch (NotUpdatedException $e) {
-                // Not updated because of the composer command, not the
-                // restriction itself.
-                if ($should_indicate_can_not_update_if_unupdated && isset($package_name) && isset($req_item) && isset($version_to)) {
-                    $message = sprintf('Package %s with the constraint %s can not be updated to %s.', $package_name, $req_item, $version_to);
-                    $this->log($message, Message::UNUPDATEABLE, [
-                        'package' => $package_name,
-                    ]);
-                } else {
-                    $why_not_name = $original_name = $item->name;
-                    $why_not_version = trim($item->latest);
-                    $not_updated_context = [
-                        'package' => $why_not_name,
-                    ];
-                    if (!empty($item->child_latest) && !empty($item->child_with_update)) {
-                        $why_not_name = $item->child_with_update;
-                        $why_not_version = trim($item->child_latest);
-                        $not_updated_context['package'] = $why_not_name;
-                        $not_updated_context['parent_package'] = $original_name;
-                    }
-                    $command = ['composer', 'why-not', $why_not_name, $why_not_version];
-                    $this->execCommand($command, false);
-                    $this->log($this->getLastStdErr(), Message::COMMAND, [
-                        'command' => implode(' ', $command),
-                        'package' => $why_not_name,
-                        'type' => 'stderr',
-                    ]);
-                    $this->log($this->getLastStdOut(), Message::COMMAND, [
-                        'command' => implode(' ', $command),
-                        'package' => $why_not_name,
-                        'type' => 'stdout',
-                    ]);
-                    if (!empty($item->child_with_update)) {
-                        $this->log(sprintf("%s was not updated running composer update for direct dependency %s", $item->child_with_update, $package_name), Message::NOT_UPDATED, $not_updated_context);
-                    } else {
-                        $this->log("$package_name was not updated running composer update", Message::NOT_UPDATED, $not_updated_context);
-                    }
-                }
-            } catch (ValidationFailedException $e) {
-                // @todo: Do some better checking. Could be several things, this.
-                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
-                // If it failed validation because it already exists, we also want to make sure all outdated PRs are
-                // closed.
-                if (!empty($prs_named[$branch_name]['number'])) {
-                    $this->countPR($item->name);
-                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
-                }
-            } catch (\Gitlab\Exception\RuntimeException $e) {
-                $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
-                if (!empty($prs_named[$branch_name]['number'])) {
-                    $this->countPR($item->name);
-                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
-                }
-            } catch (ComposerUpdateProcessFailedException $e) {
-                $this->log('Caught an exception: ' . $e->getMessage(), 'error');
-                $this->log($e->getErrorOutput(), Message::COMMAND, [
-                    'type' => 'exit_code_output',
-                    'package' => $package_name,
-                ]);
-            } catch (\Throwable $e) {
-                // @todo: Should probably handle this in some way.
-                $this->log('Caught an exception: ' . $e->getMessage(), 'error', [
-                    'package' => $package_name,
-                ]);
-            }
-            $this->log('Checking out default branch - ' . $default_branch);
-            $checkout_default_exit_code = $this->execCommand(['git', 'checkout', $default_branch], false);
-            if ($checkout_default_exit_code) {
-                $this->log($this->getLastStdErr());
-                throw new \Exception('There was an error trying to check out the default branch. The process ended with exit code ' . $checkout_default_exit_code);
-            }
-            // Also do a git checkout of the files, since we want them in the state they were on the default branch
-            $this->execCommand(['git', 'checkout', '.'], false);
-            // Re-do composer install to make output better, and to make the lock file actually be there for
-            // consecutive updates, if it is a project without it.
-            if (!$lock_file_contents) {
-                $this->execCommand(['rm', 'composer.lock']);
-            }
-            try {
-                $this->doComposerInstall($config);
-            } catch (\Throwable $e) {
-                $this->log('Rolling back state on the default branch was not successful. Subsequent updates may be affected');
-            }
-        }
-    }
-
     protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, $prs_named, Config $config, $security_update = false)
     {
         $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
-        if ($this->shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
+        if (Helpers::shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
             $this->log('Will try to update the PR based on settings.');
             $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
         }
@@ -1705,51 +1114,14 @@ class CosyComposer
             }
         }
         if (!$labels_allowed) {
-            $labels = [];
-        }
-        if (empty($labels)) {
             return;
         }
-        $this->log("Trying to add labels to PR");
-        $result = $this->getPrClient()->addLabels($pullRequest, $this->slug, $labels);
-        if (!$result) {
-            $this->log("Error adding labels");
-        } else {
-            $this->log("Labels added successfully");
-        }
+        Helpers::handleLabels($this->getPrClient(), $this->getLogger(), $this->slug, $config, $pullRequest, $security_update);
     }
 
-    protected function handleAutoMerge(Config $config, $pullRequest, $security_update = false)
+    protected function handleAutoMerge(Config $config, $pullRequest, $security_update = false) : void
     {
-        if ($config->shouldAutoMerge($security_update)) {
-            $this->log('Config indicated automerge should be enabled, Trying to enable automerge');
-            $result = $this->getPrClient()->enableAutomerge($pullRequest, $this->slug, $config->getAutomergeMethod($security_update));
-            if (!$result) {
-                $this->log('Enabling automerge failed.');
-            }
-        }
-    }
-
-    /**
-     * Helper function.
-     */
-    protected function shouldUpdatePr($branch_name, $pr_params, $prs_named)
-    {
-        if (empty($branch_name)) {
-            return false;
-        }
-        if (empty($pr_params)) {
-            return false;
-        }
-        if (!empty($prs_named[$branch_name]['title']) && $prs_named[$branch_name]['title'] != $pr_params['title']) {
-            return true;
-        }
-        if (!empty($prs_named[$branch_name]['body']) && !empty($pr_params['body'])) {
-            if (trim($prs_named[$branch_name]['body']) != trim($pr_params['body'])) {
-                return true;
-            }
-        }
-        return false;
+        Helpers::handleAutoMerge($this->getPrClient(), $this->getLogger(), $this->slug, $config, $pullRequest, $security_update);
     }
 
     /**
@@ -1794,134 +1166,6 @@ class CosyComposer
         if (file_exists('/usr/local/bin/composer.bak')) {
             rename('/usr/local/bin/composer.bak', '/usr/local/bin/composer');
         }
-    }
-
-    /**
-     * Creates a title for a PR.
-     *
-     * @param \stdClass $item
-     *   The item in question.
-     *
-     * @return string
-     *   A string ready to use.
-     */
-    protected function createTitle($item, $post_update_data, $security_update = false)
-    {
-        $update = new ViolinistUpdate();
-        $update->setName($item->name);
-        $update->setCurrentVersion($item->version);
-        $update->setNewVersion($post_update_data->version);
-        $update->setSecurityUpdate($security_update);
-        if ($item->version === $post_update_data->version) {
-            // I guess we are updating the dependencies? We are surely not updating from one version to the same.
-            return sprintf('Update dependencies of %s', $item->name);
-        }
-        return trim($this->messageFactory->getPullRequestTitle($update));
-    }
-
-    /**
-     * @param $lockdata
-     * @param $package_name
-     * @param $pre_update_data
-     * @param $post_update_data
-     * @return array
-     * @throws \Exception
-     */
-    public function getReleaseLinks($lockdata, $package_name, $pre_update_data, $post_update_data) : array
-    {
-        $extra_info = '';
-        if (empty($pre_update_data->source->reference) || empty($post_update_data->source->reference)) {
-            throw new \Exception('No SHAs to use to compare and retrieve tags for release links');
-        }
-        if (empty($post_update_data->source->url)) {
-            throw new \Exception('No source URL to attempt to parse in post update data source');
-        }
-        $data = $this->getFetcherForUrl($post_update_data->source->url)->retrieveTagsBetweenShas($lockdata, $package_name, $pre_update_data->source->reference, $post_update_data->source->reference);
-        $url = $post_update_data->source->url;
-        $url = preg_replace('/.git$/', '', $url);
-        $url_parsed = parse_url($url);
-        if (empty($url_parsed['host'])) {
-            throw new \Exception('No URL to parse in post update data source');
-        }
-        $link_pattern = null;
-        $links = [];
-        switch ($url_parsed['host']) {
-            case 'github.com':
-                $link_pattern = "$url/releases/tag/%s";
-                break;
-
-            case 'git.drupalcode.org':
-            case 'git.drupal.org':
-                $project_name = str_replace('/project/', '', $url_parsed['path']);
-                $link_pattern = "https://www.drupal.org/project/$project_name/releases/%s";
-                break;
-
-            default:
-                throw new \Exception('Git URL host not supported.');
-        }
-        foreach ($data as $item) {
-            $link = sprintf($link_pattern, $item);
-            $links[] = sprintf('- [Release notes for tag %s](%s)', $item, $link);
-        }
-        return $links;
-    }
-
-    /**
-     * Helper to create body.
-     */
-    public function createBody($item, $post_update_data, $changelog = null, $security_update = false, array $update_list = [], $changed_files = [], $release_notes_for_package = [])
-    {
-        $update = new ViolinistUpdate();
-        $update->setName($item->name);
-        $update->setCurrentVersion($item->version);
-        $update->setNewVersion($post_update_data->version);
-        $update->setSecurityUpdate($security_update);
-        if ($changelog) {
-            /** @var \Violinist\GitLogFormat\ChangeLogData $changelog */
-            $update->setChangelog($changelog->getAsMarkdown());
-        }
-        if ($this->project && $this->project->getCustomPrMessage()) {
-            $update->setCustomMessage($this->project->getCustomPrMessage());
-        }
-        $update->setUpdatedList($update_list);
-        if ($changed_files) {
-            $update->setChangedFiles($changed_files);
-        }
-        if ($release_notes_for_package) {
-            $update->setPackageReleaseNotes($release_notes_for_package);
-        }
-        return $this->messageFactory->getPullRequestBody($update);
-    }
-
-    /**
-     * Helper to create branch name.
-     */
-    protected function createBranchName($item, $one_per_package = false, $config = null)
-    {
-
-        if ($one_per_package) {
-            // Add a prefix.
-            $prefix = '';
-            if ($config) {
-                /** @var Config $config */
-                $prefix = $config->getBranchPrefix();
-            }
-            return sprintf('%sviolinist%s', $prefix, $this->createBranchNameFromVersions($item->name, '', ''));
-        }
-        return $this->createBranchNameFromVersions($item->name, $item->version, $item->latest, $config);
-    }
-
-    protected function createBranchNameFromVersions($package, $version_from, $version_to, $config = null)
-    {
-        $item_string = sprintf('%s%s%s', $package, $version_from, $version_to);
-        // @todo: Fix this properly.
-        $result = preg_replace('/[^a-zA-Z0-9]+/', '', $item_string);
-        $prefix = '';
-        if ($config) {
-            /** @var Config $config */
-            $prefix = $config->getBranchPrefix();
-        }
-        return $prefix.$result;
     }
 
     /**
@@ -2051,40 +1295,6 @@ class CosyComposer
         }
     }
 
-  /**
-   * Does a composer install.
-   *
-   * @throws \eiriksm\CosyComposer\Exceptions\ComposerInstallException
-   */
-    protected function doComposerInstall(Config $config) : void
-    {
-        $this->log('Running composer install');
-        $install_command = ['composer', 'install', '--no-ansi', '-n'];
-        if (!$config->shouldRunScripts()) {
-            $install_command[] = '--no-scripts';
-        }
-        try {
-            if ($code = $this->execCommand($install_command, false, 1200)) {
-                // Other status code than 0.
-                $this->log($this->getLastStdOut(), Message::COMMAND);
-                $this->log($this->getLastStdErr());
-                throw new ComposerInstallException('Composer install failed with exit code ' . $code);
-            }
-        } catch (ComposerInstallException $e) {
-            throw $e;
-        } catch (\Throwable $e) {
-            $this->log($this->getLastStdOut(), Message::COMMAND);
-            $this->log($this->getLastStdErr());
-            throw new ComposerInstallException($e->getMessage());
-        }
-
-        $command_output = $this->executer->getLastOutput();
-        if (!empty($command_output['stderr'])) {
-            $this->log($command_output['stderr'], Message::COMMAND);
-        }
-        $this->log('composer install completed successfully');
-    }
-
    /**
     * Changes to a different directory.
     */
@@ -2117,109 +1327,6 @@ class CosyComposer
     public function setTmpDir($tmpDir)
     {
         $this->tmpDir = $tmpDir;
-    }
-
-    protected function retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to)
-    {
-        $lock_data_obj = new ComposerLockData();
-        $lock_data_obj->setData($lockdata);
-        $data = $lock_data_obj->getPackageData($package_name);
-        if (empty($data) || empty($data->source->url)) {
-            throw new \Exception('Unknown source or non-git source found for vendor/package. Aborting.');
-        }
-        return $this->getFetcherForUrl($data->source->url)
-            ->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
-    }
-
-    protected function getFetcherForUrl(string $url) : ChangelogRetriever
-    {
-        $token_chooser = new TokenChooser($this->slug->getUrl());
-        $token_chooser->setUserToken($this->untouchedUserToken);
-        $token_chooser->addTokens($this->tokens);
-        $fetcher = $this->getFetcher();
-        $fetcher->getRetriever()->setAuthToken($token_chooser->getChosenToken($url));
-        return $fetcher;
-    }
-
-    protected function getFetcher() : ChangelogRetriever
-    {
-        if (!$this->fetcher instanceof ChangelogRetriever) {
-            $cosy_factory_wrapper = new ProcessFactoryWrapper();
-            $cosy_factory_wrapper->setExecutor($this->executer);
-            $retriever = new DependencyRepoRetriever($cosy_factory_wrapper);
-            $this->fetcher = new ChangelogRetriever($retriever, $cosy_factory_wrapper);
-        }
-        return $this->fetcher;
-    }
-
-    /**
-     * Helper to retrieve changelog.
-     */
-    public function retrieveChangeLog($package_name, $lockdata, $version_from, $version_to)
-    {
-        $lock_data_obj = new ComposerLockData();
-        $lock_data_obj->setData($lockdata);
-        $data = $lock_data_obj->getPackageData($package_name);
-        if (empty($data->source->url)) {
-            throw new \Exception('Unknown source or non-git source found for vendor/package. Aborting.');
-        }
-        $fetcher = $this->getFetcherForUrl($data->source->url);
-        $log_obj = $fetcher->retrieveChangelog($package_name, $lockdata, $version_from, $version_to);
-        $changelog_string = '';
-        $json = json_decode($log_obj->getAsJson());
-        foreach ($json as $item) {
-            $changelog_string .= sprintf("%s %s\n", $item->hash, $item->message);
-        }
-        if (mb_strlen($changelog_string) > 60000) {
-            // Truncate it to 60K.
-            $changelog_string = mb_substr($changelog_string, 0, 60000);
-            // Then split it into lines.
-            $lines = explode("\n", $changelog_string);
-            // Cut off the last one, since it could be partial.
-            array_pop($lines);
-            // Then append a line saying the changelog was too long.
-            $lines[] = sprintf('%s ...more commits found, but message is too long for PR', $version_to);
-            $changelog_string = implode("\n", $lines);
-        }
-        $log = ChangeLogData::createFromString($changelog_string);
-        $git_url = preg_replace('/.git$/', '', $data->source->url);
-        $repo_parsed = parse_uri($git_url);
-        if (!empty($repo_parsed)) {
-            switch ($repo_parsed['_protocol']) {
-                case 'git@github.com':
-                    $git_url = sprintf('https://github.com/%s', $repo_parsed['path']);
-                    break;
-            }
-        }
-        $log->setGitSource($git_url);
-        return $log;
-    }
-
-    private function getPackageData($package_name, $lockdata)
-    {
-        $lockfile_key = 'packages';
-        $key = $this->getPackagesKey($package_name, $lockfile_key, $lockdata);
-        if ($key === false) {
-            // Well, could be a dev req.
-            $lockfile_key = 'packages-dev';
-            $key = $this->getPackagesKey($package_name, $lockfile_key, $lockdata);
-            // If the key still is false, then this is not looking so good.
-            if ($key === false) {
-                throw new \Exception(
-                    sprintf(
-                        'Did not find the requested package (%s) in the lockfile. This is probably an error',
-                        $package_name
-                    )
-                );
-            }
-        }
-        return $lockdata->{$lockfile_key}[$key];
-    }
-
-    private function getPackagesKey($package_name, $lockfile_key, $lockdata)
-    {
-        $names = array_column($lockdata->{$lockfile_key}, 'name');
-        return array_search($package_name, $names);
     }
 
     /**
@@ -2309,6 +1416,11 @@ class CosyComposer
                 throw $e;
             }
         }
+    }
+
+    protected function getlockFileContents()
+    {
+        return $this->lockFileContents;
     }
 
     public static function shouldEnablePublicGithubWrapper() : bool

@@ -93,7 +93,7 @@ trait GitCommandsTrait
             }
         } else {
             $this->preparePrClient();
-            /** @var eiriksm\CosyComposer\Providers\PublicGithubWrapper $this_client */
+            /** @var \eiriksm\CosyComposer\Providers\PublicGithubWrapper $this_client */
             $this_client = $this->client;
             $this_client->forceUpdateBranch($branch_name, $default_base);
             $msg = $this->commitMessage;

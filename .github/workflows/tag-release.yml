@@ -1,0 +1,47 @@
+name: 'Tag and Release'
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get the previous release tag
+        id: previous
+        run: |
+          previous_tag=$(git tag --list --sort=creatordate | tail --lines 1)
+          echo "Previous tag: $previous_tag" >> "$GITHUB_STEP_SUMMARY"
+          echo "tag=$previous_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Create the next release tag
+        id: next
+        run: |
+          IFS='.' read -r major minor patch <<< "${{ steps.previous.outputs.tag }}"
+
+          # Increment the patch version
+          patch=$((patch + 1))
+
+          # Output the new version
+          final_tag="$major.$minor.$patch"
+          echo $final_tag
+          echo "Next tag will be $final_tag" >> "$GITHUB_STEP_SUMMARY"
+          echo "tag=${final_tag}" >> "$GITHUB_OUTPUT"
+
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ steps.next.outputs.tag }} \
+            --notes-start-tag=${{ steps.previous.outputs.tag }} \
+            --target=main \
+            --generate-notes

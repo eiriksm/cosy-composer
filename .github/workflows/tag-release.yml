@@ -2,6 +2,8 @@ name: 'Tag and Release'
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
   release:
@@ -17,7 +19,6 @@ jobs:
       - name: Get the previous release tag
         id: previous
         run: |
-          # Otherwise, get the previous release tag
           previous_tag=$(git tag --list --sort=creatordate | tail --lines 1)
           echo "Previous tag: $previous_tag" >> "$GITHUB_STEP_SUMMARY"
           echo "tag=$previous_tag" >> "$GITHUB_OUTPUT"
@@ -37,7 +38,6 @@ jobs:
           echo "tag=${final_tag}" >> "$GITHUB_OUTPUT"
 
       - name: Create Release
-        if: false
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

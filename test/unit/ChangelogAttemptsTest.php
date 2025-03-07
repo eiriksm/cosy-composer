@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\unit;
 
+use eiriksm\CosyComposer\Updater\IndividualUpdater;
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
 use PHPUnit\Framework\TestCase;
@@ -39,8 +40,11 @@ class ChangelogAttemptsTest extends TestCase
             ->willReturn([
                 'stdout' => "112233 This is the first line\n445566 This is the second line",
             ]);
-        $this->cosy->setExecuter($mock_executer);
-        $log = $this->cosy->retrieveChangeLog('psr/log', json_decode(json_encode(['packages' => [
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($this->cosy->getSlug());
+        $updater->setAuthentication($this->cosy->getUntouchedUserToken());
+        $log = $updater->retrieveChangeLog('psr/log', json_decode(json_encode(['packages' => [
             [
                 'name' => 'psr/log',
                 'source' => [
@@ -72,8 +76,11 @@ class ChangelogAttemptsTest extends TestCase
             ->willReturn([
                 'stdout' => "112233 This is the first line\n445566 This is the second line",
             ]);
-        $this->cosy->setExecuter($mock_executer);
-        $log = $this->cosy->retrieveChangeLog('user/private', json_decode(json_encode(['packages' => [
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($this->cosy->getSlug());
+        $updater->setAuthentication($this->cosy->getUntouchedUserToken());
+        $log = $updater->retrieveChangeLog('user/private', json_decode(json_encode(['packages' => [
             [
                 'name' => 'user/private',
                 'source' => [
@@ -106,7 +113,11 @@ class ChangelogAttemptsTest extends TestCase
                 'stdout' => "112233 This is the first line\n445566 This is the second line",
             ]);
         $this->cosy->setExecuter($mock_executer);
-        $log = $this->cosy->retrieveChangeLog('user/private', json_decode(json_encode(['packages' => [
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($this->cosy->getSlug());
+        $updater->setAuthentication($this->cosy->getUntouchedUserToken());
+        $log = $updater->retrieveChangeLog('user/private', json_decode(json_encode(['packages' => [
             [
                 'name' => 'user/private',
                 'source' => [

@@ -2,8 +2,48 @@
 
 namespace eiriksm\CosyComposer;
 
+use Psr\Log\LoggerInterface;
+use Violinist\Config\Config;
+use Violinist\Slug\Slug;
+
 class Helpers
 {
+
+    /**
+     * Helper to create branch name.
+     */
+    public static function createBranchName($item, $one_per_package = false, $config = null)
+    {
+        if ($one_per_package) {
+            // Add a prefix.
+            $prefix = '';
+            if ($config) {
+                /** @var Config $config */
+                $prefix = $config->getBranchPrefix();
+            }
+            return sprintf('%sviolinist%s', $prefix, self::createBranchNameFromVersions($item->name, '', ''));
+        }
+        return self::createBranchNameFromVersions($item->name, $item->version, $item->latest, $config);
+    }
+
+    public static function getCommitMessageSeparator()
+    {
+        // Workaround for not being able to define a constant inside a trait.
+        return '------';
+    }
+
+    public static function createBranchNameFromVersions($package, $version_from, $version_to, $config = null)
+    {
+        $item_string = sprintf('%s%s%s', $package, $version_from, $version_to);
+        // @todo: Fix this properly.
+        $result = preg_replace('/[^a-zA-Z0-9]+/', '', $item_string);
+        $prefix = '';
+        if ($config) {
+            /** @var Config $config */
+            $prefix = $config->getBranchPrefix();
+        }
+        return $prefix.$result;
+    }
 
     public static function getComposerJsonName($cdata, $name, $tmp_dir)
     {
@@ -61,5 +101,53 @@ class Helpers
             }
         }
         throw new \Exception('Could not find ' . $name . ' in composer.json.');
+    }
+
+    public static function shouldUpdatePr($branch_name, $pr_params, $prs_named)
+    {
+        if (empty($branch_name)) {
+            return false;
+        }
+        if (empty($pr_params)) {
+            return false;
+        }
+        if (!empty($prs_named[$branch_name]['title']) && $prs_named[$branch_name]['title'] != $pr_params['title']) {
+            return true;
+        }
+        if (!empty($prs_named[$branch_name]['body']) && !empty($pr_params['body'])) {
+            if (trim($prs_named[$branch_name]['body']) != trim($pr_params['body'])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static function handleAutoMerge(ProviderInterface $client, LoggerInterface $logger, Slug $slug, Config $config, $pullRequest, $security_update = false)
+    {
+        if ($config->shouldAutoMerge($security_update)) {
+            $logger->log('info', 'Config indicated automerge should be enabled, Trying to enable automerge');
+            $result = $client->enableAutomerge($pullRequest, $slug, $config->getAutomergeMethod($security_update));
+            if (!$result) {
+                $logger->log('info', 'Enabling automerge failed.');
+            }
+        }
+    }
+
+    public static function handleLabels(ProviderInterface $client, LoggerInterface $logger, Slug $slug, Config $config, $pullRequest, $security_update = false)
+    {
+        $labels = $config->getLabels();
+        if ($security_update) {
+            $labels = array_merge($labels, $config->getLabelsSecurity());
+        }
+        if (empty($labels)) {
+            return;
+        }
+        $logger->log('info', 'Trying to add labels to PR');
+        $result = $client->addLabels($pullRequest, $slug, $labels);
+        if (!$result) {
+            $logger->log('info', 'Error adding labels');
+        } else {
+            $logger->log('info', 'Labels added successfully');
+        }
     }
 }

@@ -17,13 +17,8 @@ jobs:
       - name: Get the previous release tag
         id: previous
         run: |
-          if ${{ github.event.inputs.tag-name != null || inputs.tag-name != null }}; then
-            # If we have explicitly set a tag name, use that
-            previous_tag=$(git tag --list --sort=creatordate | tail --lines 1)
-          else
-            # Otherwise, get the previous release tag
-            previous_tag=$(git tag --list --sort=creatordate 'release-*' | tail --lines 1)
-          fi
+          # Otherwise, get the previous release tag
+          previous_tag=$(git tag --list --sort=creatordate | tail --lines 1)
           echo "Previous tag: $previous_tag" >> "$GITHUB_STEP_SUMMARY"
           echo "tag=$previous_tag" >> "$GITHUB_OUTPUT"
 

@@ -44,8 +44,20 @@ class IndividualUpdater extends BaseUpdater
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
         foreach ($data as $item) {
+            $security_update = false;
+            $package_name_in_composer_json = $item->name;
+            try {
+                $package_name_in_composer_json = Helpers::getComposerJsonName($cdata, $item->name, $this->composerJsonDir);
+            } catch (\Exception $e) {
+            }
+            if (isset($alerts[$package_name_in_composer_json])) {
+                $security_update = true;
+            }
             if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
-                if (!in_array($item->name, $is_allowed_out_of_date_pr)) {
+                if ($security_update && $config->shouldAllowSecurityUpdatesOnConcurrentLimit()) {
+                    $this->log(sprintf('The concurrent limit (%d) is reached, but the update of %s is a security update, so we will try to update it anyway.', $max_number_of_prs, $package_name_in_composer_json));
+                }
+                elseif (!in_array($item->name, $is_allowed_out_of_date_pr)) {
                     $this->log(
                         sprintf(
                             'Skipping %s because the number of max concurrent PRs (%d) seems to have been reached',
@@ -70,17 +82,16 @@ class IndividualUpdater extends BaseUpdater
                 $default_base,
                 $hostname,
                 $default_branch,
-                $alerts,
+                $security_update,
                 $config,
                 $can_update_beyond
             );
         }
     }
 
-    protected function handleUpdateItem($item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $alerts, Config $config, $can_update_beyond)
+    protected function handleUpdateItem($item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $security_update, Config $config, $can_update_beyond)
     {
         $should_indicate_can_not_update_if_unupdated = false;
-        $security_update = false;
         $package_name = $item->name;
         $branch_name = '';
         $pr_params = [];
@@ -100,9 +111,6 @@ class IndividualUpdater extends BaseUpdater
                 }
                 // Taking a risk :o.
                 $package_name_in_composer_json = $package_name;
-            }
-            if (isset($alerts[$package_name_in_composer_json])) {
-                $security_update = true;
             }
             $req_item = '';
             $is_require_dev = false;

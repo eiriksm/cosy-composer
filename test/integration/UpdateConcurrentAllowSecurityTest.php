@@ -26,6 +26,7 @@ class UpdateConcurrentAllowSecurityTest extends ComposerUpdateIntegrationBase
     {
         $this->runtestExpectedOutput();
         self::assertFalse($this->findMessage('Skipping drupal/core because the number of max concurrent PRs (1) seems to have been reached', $this->cosy));
+        $this->assertOutputContainsMessage('The concurrent limit (1) is reached, but the update of drupal/core-recommended is a security update, so we will try to update it anyway.', $this->cosy);
     }
 
     protected function getPrsNamed()

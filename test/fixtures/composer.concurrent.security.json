@@ -11,7 +11,8 @@
   "extra": {
     "violinist": {
       "number_of_concurrent_updates": "1",
-      "check_only_direct_dependencies": "0"
+      "check_only_direct_dependencies": "0",
+      "allow_security_updates_on_concurrent_limit": "1"
     }
   }
 }

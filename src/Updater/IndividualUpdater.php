@@ -56,8 +56,7 @@ class IndividualUpdater extends BaseUpdater
             if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
                 if ($security_update && $config->shouldAllowSecurityUpdatesOnConcurrentLimit()) {
                     $this->log(sprintf('The concurrent limit (%d) is reached, but the update of %s is a security update, so we will try to update it anyway.', $max_number_of_prs, $package_name_in_composer_json));
-                }
-                elseif (!in_array($item->name, $is_allowed_out_of_date_pr)) {
+                } elseif (!in_array($item->name, $is_allowed_out_of_date_pr)) {
                     $this->log(
                         sprintf(
                             'Skipping %s because the number of max concurrent PRs (%d) seems to have been reached',

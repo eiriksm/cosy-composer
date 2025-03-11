@@ -4,6 +4,7 @@ namespace eiriksm\CosyComposerTest\unit;
 
 use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\CosyComposer;
+use eiriksm\CosyComposer\Helpers;
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
 use PHPUnit\Framework\TestCase;
@@ -27,15 +28,6 @@ class CosyComposerUnitTest extends TestCase
         $test_logger = $this->createMock(LoggerInterface::class);
         $c->setLogger($test_logger);
         $this->assertEquals($test_logger, $c->getLogger());
-    }
-
-    public function testCacheDir()
-    {
-        $c = $this->getMockCosy();
-        $bogus_dir = uniqid();
-        // This has been deprecated so currently this test makes no sense.
-        $c->setCacheDir($bogus_dir);
-        $this->assertEquals('', $c->getCacheDir());
     }
 
     public function testLastStdOut()
@@ -105,7 +97,7 @@ class CosyComposerUnitTest extends TestCase
      */
     public function testGetComposerJsonName($json, $input, $expected)
     {
-        $this->assertEquals($expected, CosyComposer::getComposerJsonName($json, $input, '/tmp/derp'));
+        $this->assertEquals($expected, Helpers::getComposerJsonName($json, $input, '/tmp/derp'));
     }
 
     public function getComposerJsonVariations()
@@ -143,6 +135,10 @@ class CosyComposerUnitTest extends TestCase
         $prop->setAccessible(true);
         self::assertEquals($prop->getValue($c), 'token');
         // Now let's do the same with the other thing.
+        $c = new CosyComposer($this->createMock(CommandExecuter::class));
+        $reflected_cosy = new \ReflectionClass($c);
+        $prop = $reflected_cosy->getProperty('untouchedUserToken');
+        $prop->setAccessible(true);
         $c->setUserToken('another-one-token');
         self::assertEquals($prop->getValue($c), 'another-one-token');
     }

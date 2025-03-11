@@ -2,7 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use eiriksm\CosyComposer\CosyComposer;
+use eiriksm\CosyComposer\Helpers;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -33,7 +33,7 @@ class CommitMessageTest extends ComposerUpdateIntegrationBase
         putenv('USE_NEW_COMMIT_MSG=1');
         $this->runtestExpectedOutput();
         self::assertEquals($this->hasCorrectCommit, true);
-        $parts = explode(CosyComposer::COMMIT_MESSAGE_SEPARATOR, $this->commitCommand);
+        $parts = explode(Helpers::getCommitMessageSeparator(), $this->commitCommand);
         $data = Yaml::parse($parts[1]);
         self::assertNotEmpty($data["update_data"]);
         self::assertEquals($data["update_data"]["from"], '1.0.0');

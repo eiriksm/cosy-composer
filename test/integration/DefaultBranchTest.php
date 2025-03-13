@@ -28,7 +28,8 @@ class DefaultBranchTest extends ComposerUpdateIntegrationBase
         self::assertEquals($this->prParams['base'], $expected_default_branch);
     }
 
-    public static function defaultBranchProvider() {
+    public static function defaultBranchProvider()
+    {
         return [
             [
                 false,

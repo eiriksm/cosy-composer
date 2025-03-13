@@ -3,7 +3,7 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 /**
- * Test for a default commit message.
+ * Test for running composer commands on default branch.
  */
 class ConfigBranchOrderTest extends ComposerUpdateIntegrationBase
 {

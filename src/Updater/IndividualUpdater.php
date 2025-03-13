@@ -88,7 +88,7 @@ class IndividualUpdater extends BaseUpdater
         }
     }
 
-    protected function handleUpdateItem($item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $security_update, Config $config, $can_update_beyond)
+    protected function handleUpdateItem($item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $config, $can_update_beyond)
     {
         $should_indicate_can_not_update_if_unupdated = false;
         $package_name = $item->name;
@@ -281,6 +281,10 @@ class IndividualUpdater extends BaseUpdater
             $pr_params_creator->setLogger($this->getLogger());
             $body = $pr_params_creator->createBody($item, $post_update_data, $changelog, $security_update, $update_list, $changed_files, $release_links);
             $title = $pr_params_creator->createTitle($item, $post_update_data, $security_update);
+            if ($config->getDefaultBranch($security_update)) {
+                $this->log('Default target branch branch from config is set to ' . $config->getDefaultBranch($security_update));
+                $default_branch = $config->getDefaultBranch($security_update);
+            }
             $pr_params = $pr_params_creator->getPrParams($this->forkUser, $this->isPrivate, $this->getSlug(), $branch_name, $body, $title, $default_branch, $config);
             // Check if this new branch name has a pr up-to-date.
             if (!Helpers::shouldUpdatePr($branch_name, $pr_params, $prs_named) && array_key_exists($branch_name, $prs_named)) {

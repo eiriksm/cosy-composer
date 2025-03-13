@@ -36,7 +36,7 @@ class DefaultBranchTest extends ComposerUpdateIntegrationBase
                 'main-which-we-use-for-the-tests',
             ],
             [
-                false,
+                true,
                 'other-main-which-we-use-for-security-tests',
             ],
         ];

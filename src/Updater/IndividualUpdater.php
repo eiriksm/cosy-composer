@@ -90,6 +90,8 @@ class IndividualUpdater extends BaseUpdater
 
     protected function handleUpdateItem($item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
     {
+        // Default to global config.
+        $config = $global_config;
         $should_indicate_can_not_update_if_unupdated = false;
         $package_name = $item->name;
         $branch_name = '';

@@ -88,8 +88,10 @@ class IndividualUpdater extends BaseUpdater
         }
     }
 
-    protected function handleUpdateItem($item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $config, $can_update_beyond)
+    protected function handleUpdateItem($item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
     {
+        // Default to global config.
+        $config = $global_config;
         $should_indicate_can_not_update_if_unupdated = false;
         $package_name = $item->name;
         $branch_name = '';
@@ -102,10 +104,12 @@ class IndividualUpdater extends BaseUpdater
             // See where this package is.
             try {
                 $package_name_in_composer_json = Helpers::getComposerJsonName($cdata, $package_name, $this->composerJsonDir);
+                $config = $global_config->getConfigForPackage($package_name_in_composer_json);
             } catch (\Exception $e) {
                 // If this was a package that we somehow got because we have allowed to update other than direct
                 // dependencies we can avoid re-throwing this.
-                if ($config->shouldCheckDirectOnly()) {
+                $config = $global_config->getConfigForPackage($package_name);
+                if ($global_config->shouldCheckDirectOnly()) {
                     throw $e;
                 }
                 // Taking a risk :o.

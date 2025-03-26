@@ -6,10 +6,12 @@ use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
 use eiriksm\CosyComposer\CosyLogger;
 use eiriksm\CosyComposer\Helpers;
+use eiriksm\CosyComposer\IndividualUpdateItem;
 use eiriksm\CosyComposer\LockDataComparer;
 use eiriksm\CosyComposer\Message;
 use eiriksm\CosyComposer\ProcessFactoryWrapper;
 use eiriksm\CosyComposer\PrParamsCreator;
+use eiriksm\CosyComposer\UpdateItemInterface;
 use eiriksm\ViolinistMessages\UpdateListItem;
 use Github\Exception\ValidationFailedException;
 use Violinist\ComposerLockData\ComposerLockData;
@@ -43,11 +45,13 @@ class IndividualUpdater extends BaseUpdater
         $this->initialComposerLockData = $initial_lock_file_data;
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
+        $data = $this->convertDataToDto($data);
         foreach ($data as $item) {
+            $item_name = $item->getPackageName();
             $security_update = false;
-            $package_name_in_composer_json = $item->name;
+            $package_name_in_composer_json = $item_name;
             try {
-                $package_name_in_composer_json = Helpers::getComposerJsonName($cdata, $item->name, $this->composerJsonDir);
+                $package_name_in_composer_json = Helpers::getComposerJsonName($cdata, $item_name, $this->composerJsonDir);
             } catch (\Exception $e) {
             }
             if (isset($alerts[$package_name_in_composer_json])) {
@@ -56,16 +60,16 @@ class IndividualUpdater extends BaseUpdater
             if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
                 if ($security_update && $config->shouldAllowSecurityUpdatesOnConcurrentLimit()) {
                     $this->log(sprintf('The concurrent limit (%d) is reached, but the update of %s is a security update, so we will try to update it anyway.', $max_number_of_prs, $package_name_in_composer_json));
-                } elseif (!in_array($item->name, $is_allowed_out_of_date_pr)) {
+                } elseif (!in_array($item_name, $is_allowed_out_of_date_pr)) {
                     $this->log(
                         sprintf(
                             'Skipping %s because the number of max concurrent PRs (%d) seems to have been reached',
-                            $item->name,
+                            $item_name,
                             $max_number_of_prs
                         ),
                         Message::CONCURRENT_THROTTLED,
                         [
-                            'package' => $item->name,
+                            'package' => $item_name,
                         ]
                     );
                     continue;
@@ -88,8 +92,12 @@ class IndividualUpdater extends BaseUpdater
         }
     }
 
-    protected function handleUpdateItem($item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
+    protected function handleUpdateItem(UpdateItemInterface $item_object, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
     {
+        if (!$item_object instanceof IndividualUpdateItem) {
+            throw new \RuntimeException('The item object is not an instance of IndividualUpdateItem');
+        }
+        $item = $item_object->getRawData();
         // Default to global config.
         $config = $global_config;
         $should_indicate_can_not_update_if_unupdated = false;
@@ -443,5 +451,17 @@ class IndividualUpdater extends BaseUpdater
             Helpers::handleAutoMerge($this->client, $this->logger, $this->slug, $config, $prs_named[$branch_name], $security_update);
             $this->handleLabels($config, $prs_named[$branch_name], $security_update);
         }
+    }
+
+    /**
+     * @return UpdateItemInterface[]
+     */
+    protected function convertDataToDto(array $data) : array
+    {
+        $new_items = [];
+        foreach ($data as $item) {
+            $new_items[] = new IndividualUpdateItem($item);
+        }
+        return $new_items;
     }
 }

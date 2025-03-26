@@ -464,38 +464,4 @@ class IndividualUpdater extends BaseUpdater
         }
         return $new_items;
     }
-
-    protected function wrapRetrieveChangelog(string $package_name, \stdClass $post_update_data, UpdateItemInterface $item, $lockdata)
-    {
-        if (!$item instanceof IndividualUpdateItem) {
-            return null;
-        }
-        $list_item = new UpdateListItem($package_name, $post_update_data->version, $item->getVersion());
-        $this->log('Trying to retrieve changelog for ' . $package_name);
-        $changelog = null;
-        try {
-            $changelog = $this->retrieveChangeLog($package_name, $lockdata, $item->getVersion(), $item->getNewVersion());
-            $this->log('Changelog retrieved');
-        } catch (\Throwable $e) {
-            // If the changelog can not be retrieved, we can live with that.
-            $this->log('Exception for changelog: ' . $e->getMessage());
-        }
-        return $changelog;
-    }
-
-    protected function wrapRetrieveChangedFiles(string $package_name, \stdClass $lockdata, UpdateItemInterface $item) : array
-    {
-        if (!$item instanceof IndividualUpdateItem) {
-            return [];
-        }
-        $changed_files = [];
-        try {
-            $changed_files = $this->retrieveChangedFiles($package_name, $lockdata, $item->getVersion(), $item->getNewVersion());
-            $this->log('Changed files retrieved');
-        } catch (\Throwable $e) {
-            // If the changed files can not be retrieved, we can live with that.
-            $this->log('Exception for retrieving changed files: ' . $e->getMessage());
-        }
-        return $changed_files;
-    }
 }

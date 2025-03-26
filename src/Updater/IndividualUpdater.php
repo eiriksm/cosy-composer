@@ -94,6 +94,9 @@ class IndividualUpdater extends BaseUpdater
 
     protected function handleUpdateItem(UpdateItemInterface $item_object, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
     {
+        if (!$item_object instanceof IndividualUpdateItem) {
+            throw new \RuntimeException('The item object is not an instance of IndividualUpdateItem');
+        }
         $item = $item_object->getRawData();
         // Default to global config.
         $config = $global_config;

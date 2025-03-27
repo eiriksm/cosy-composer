@@ -135,6 +135,5 @@ class HelperTest extends TestCase
                 'slug',
             ],
         ];
-
     }
 }

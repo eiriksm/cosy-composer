@@ -16,7 +16,7 @@ trait GitCommandsTrait
      */
     protected $commitMessage;
 
-    protected function switchBranch($branch_name)
+    protected function switchBranch($branch_name, $clean = true)
     {
         $this->log('Checking out new branch: ' . $branch_name);
         $result = $this->execCommand(['git', 'checkout', '-b', $branch_name], false);
@@ -24,8 +24,10 @@ trait GitCommandsTrait
             $this->log($this->getLastStdErr());
             throw new \Exception(sprintf('There was an error checking out branch %s. Exit code was %d', $branch_name, $result));
         }
-        // Make sure we do not have any uncommitted changes.
-        $this->execCommand(['git', 'checkout', '.'], false);
+        if ($clean) {
+            // Make sure we do not have any uncommitted changes.
+            $this->execCommand(['git', 'checkout', '.'], false);
+        }
     }
 
     protected function cleanRepoForCommit()

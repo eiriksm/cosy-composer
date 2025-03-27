@@ -9,21 +9,36 @@ use Violinist\Slug\Slug;
 class Helpers
 {
 
+    public static function createBranchNameForGroup(\stdClass $rule, Config $config) : string
+    {
+        if (!empty($rule->slug)) {
+            return self::createBranchNameFromNameAndConfig($rule->slug, $config);
+        }
+        // Create a slug based on the name. To do that, we  lowercase it, and
+        // remove all the characters that are not a-z.
+        $name = preg_replace('/[^a-z]+/', '', strtolower($rule->name));
+        return self::createBranchNameFromNameAndConfig($name, $config);
+    }
+
     /**
      * Helper to create branch name.
      */
     public static function createBranchName($item, $one_per_package = false, $config = null)
     {
         if ($one_per_package) {
-            // Add a prefix.
-            $prefix = '';
+            $name = sprintf('violinist%s', self::createBranchNameFromVersions($item->name, '', ''));
             if ($config) {
                 /** @var Config $config */
-                $prefix = $config->getBranchPrefix();
+                return self::createBranchNameFromNameAndConfig($name, $config);
             }
-            return sprintf('%sviolinist%s', $prefix, self::createBranchNameFromVersions($item->name, '', ''));
+            return $name;
         }
         return self::createBranchNameFromVersions($item->name, $item->version, $item->latest, $config);
+    }
+
+    public static function createBranchNameFromNameAndConfig(string $name, Config $config)
+    {
+        return sprintf('%s%s', $config->getBranchPrefix(), $name);
     }
 
     public static function getCommitMessageSeparator()

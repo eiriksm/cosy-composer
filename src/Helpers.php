@@ -12,7 +12,7 @@ class Helpers
     public static function createBranchNameForGroup(\stdClass $rule, Config $config) : string
     {
         if (!empty($rule->slug)) {
-            return $rule->slug;
+            return self::createBranchNameFromNameAndConfig($rule->slug, $config);
         }
         // Create a slug based on the name. To do that, we  lowercase it, and
         // remove all the characters that are not a-z.

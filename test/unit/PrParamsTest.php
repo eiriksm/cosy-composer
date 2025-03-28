@@ -78,7 +78,7 @@ class PrParamsTest extends TestCase
                     'head' => 'test:derptest',
                     'title' => 'Update test/package from 1.0.0 to 1.0.1
 ',
-                ]
+                ],
             ],
             [
                 false,
@@ -89,8 +89,8 @@ class PrParamsTest extends TestCase
                     'head' => 'test:derptest',
                     'title' => 'Update test/package from 1.0.0 to 1.0.1
 ',
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

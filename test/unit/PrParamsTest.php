@@ -16,7 +16,7 @@ class PrParamsTest extends TestCase
      *
      * @dataProvider prParamsProvider
      */
-    public function testPrParams(bool $is_private, Slug $slug, Config $config, $expected)
+    public function testPrParams(bool $is_private, Slug $slug, Config $config, $expected) : void
     {
         $msg_factory = new ViolinistMessages();
         $pr_params_creator = new PrParamsCreator($msg_factory);
@@ -41,6 +41,18 @@ class PrParamsTest extends TestCase
         if ($slug->getProvider() === 'bitbucket.org') {
             self::assertStringNotContainsString('<details>', $pr_params['body']);
         }
+    }
+
+    /**
+     * Test the PR params when there is a group.
+     *
+     * For now this actually reuses the same as the regular params.
+     *
+     * @dataProvider prParamsProvider
+     */
+    public function testPrParamsForGroup(bool $is_private, Slug $slug, Config $config, $expected) : void
+    {
+        $this->testPrParams($is_private, $slug, $config, $expected);
     }
 
     public static function prParamsProvider()

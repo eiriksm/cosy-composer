@@ -85,23 +85,41 @@ class PrParamsCreator
         return trim($this->messageFactory->getPullRequestTitle($update));
     }
 
-    public function getPrParams($fork_user, bool $is_private, Slug $slug, $branch_name, $body, $title, $default_branch, Config $config)
+    public static function getHead($fork_user, $is_private, $branch_name)
     {
         $head = $fork_user . ':' . $branch_name;
         if ($is_private) {
             $head = $branch_name;
         }
-        if ($slug->getProvider() === 'bitbucket.org') {
-            // Currently does not support having the collapsible section thing.
-            // @todo: Revisit from time to time?
-            // @todo: Make sure we replace the correct one. What if the changelog has this in it?
-            $body = str_replace([
-                '<details>',
-                '<summary>',
-                '</summary>',
-                '</details>',
-            ], '', $body);
+        return $head;
+    }
+
+    public static function cleanupBody(Slug $slug, &$body)
+    {
+        if ($slug->getProvider() !== 'bitbucket.org') {
+            return;
         }
+        // Currently does not support having the collapsible section thing.
+        // @todo: Revisit from time to time?
+        // @todo: Make sure we replace the correct one. What if the changelog has this in it?
+        $body = str_replace([
+            '<details>',
+            '<summary>',
+            '</summary>',
+            '</details>',
+        ], '', $body);
+    }
+
+    public function getPrParamsForGroup($fork_user, bool $is_private, Slug $slug, $branch_name, $body, $title, $default_branch, $config)
+    {
+        // @todo: Currently re-using the same as regular params. At some point
+        // we might want to either remove this method, or make the difference
+        // explicit.
+        return $this->getPrParams($fork_user, $is_private, $slug, $branch_name, $body, $title, $default_branch, $config);
+    }
+
+    protected function processAssignees(Config $config, $is_private)
+    {
         $assignees = $config->getAssignees();
         $assignees_allowed = $this->getAssigneesAllowed();
         if (!$assignees_allowed) {
@@ -115,6 +133,14 @@ class PrParamsCreator
                 }
             }
         }
+        return $assignees;
+    }
+
+    public function getPrParams($fork_user, bool $is_private, Slug $slug, $branch_name, $body, $title, $default_branch, Config $config)
+    {
+        $head = self::getHead($fork_user, $is_private, $branch_name);
+        self::cleanupBody($slug, $body);
+        $assignees = $this->processAssignees($config, $is_private);
         return [
             'base'  => $default_branch,
             'head'  => $head,

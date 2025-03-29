@@ -5,6 +5,7 @@ namespace eiriksm\CosyComposer\Updater;
 use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
 use eiriksm\CosyComposer\CosyLogger;
+use eiriksm\CosyComposer\GroupUpdateItem;
 use eiriksm\CosyComposer\Helpers;
 use eiriksm\CosyComposer\IndividualUpdateItem;
 use eiriksm\CosyComposer\LockDataComparer;
@@ -46,6 +47,29 @@ class IndividualUpdater extends BaseUpdater
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
         $data = $this->convertDataToDto($data);
+        // And now convert the data to DTOs for the groups.
+        $groups = self::createGroups($data, $config);
+        // Now we have the groups, we can loop through them and handle them. In
+        // the process we will also remove items from the individual items.
+        foreach ($groups as $group) {
+            // Alright, let's take the rule, and remove any items that are in
+            // composer.json and also in the group.
+            $has_match = false;
+            foreach ($data as $key => $item) {
+                // Now let's see if it matches the group, and remove it from the
+                // updates.
+                if (!$group->groupRuleMatches($item->getPackageName())) {
+                    continue;
+                }
+                // Not sure how it can not have a match somewhere, but hey.
+                $has_match = true;
+                unset($data[$key]);
+            }
+            if ($has_match) {
+                // Of course, also add it to the actual jobs we will be doing.
+                $data[] = $group;
+            }
+        }
         foreach ($data as $item) {
             $item_name = $item->getPackageName();
             $security_update = false;
@@ -92,8 +116,114 @@ class IndividualUpdater extends BaseUpdater
         }
     }
 
+    protected function handleGroup(GroupUpdateItem $item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
+    {
+        // @todo: This should rather take the config from the rule.
+        $config = $global_config;
+        // Alright, its a group. Let's gather all the package names that are in
+        // composer json, and also matches.
+        $package_matches = [];
+        $composer_json = json_decode(file_get_contents($this->composerJsonDir . '/composer.json'));
+        if (!empty($composer_json->require)) {
+            foreach ($composer_json->require as $key => $value) {
+                if ($item->groupRuleMatches($key)) {
+                    $package_matches[] = $key;
+                }
+            }
+        }
+        if (!empty($composer_json->{'require-dev'})) {
+            foreach ($composer_json->{'require-dev'} as $key => $value) {
+                if ($item->groupRuleMatches($key)) {
+                    $package_matches[] = $key;
+                }
+            }
+        }
+        if (empty($package_matches)) {
+            // That's very strange. Let's call it an error.
+            throw new \RuntimeException('No packages found in composer.json that matches the group rule');
+        }
+        try {
+            // Create a branch. This should be specified in the rule config, yeah?
+            $rule = $item->getRule();
+            if (empty($rule->name)) {
+                throw new \RuntimeException('The group rule does not have a name');
+            }
+            // The branch will be based on either the name, which we now know
+            // exists, or a slug.
+            $branch_name = Helpers::createBranchNameForGroup($rule, $config);
+            $this->switchBranch($branch_name);
+            // Now let's update them.
+            $package_name = array_shift($package_matches);
+            $updater = new Updater($this->getCwd(), $package_matches[0]);
+            $updater->setPackagesToCheckHasUpdated($package_matches);
+            $array_copy = $package_matches;
+            array_shift($array_copy);
+            $cosy_logger = new CosyLogger();
+            $cosy_factory_wrapper = new ProcessFactoryWrapper();
+            $cosy_factory_wrapper->setExecutor($this->executer);
+            $cosy_logger->setLogger($this->getLogger());
+            if (!empty($array_copy)) {
+                $updater->setBundledPackages($array_copy);
+            }
+            $updater->setLogger($cosy_logger);
+            $updater->setProcessFactory($cosy_factory_wrapper);
+            $updater->setWithUpdate($config->shouldUpdateWithDependencies());
+            $updater->setRunScripts($config->shouldRunScripts());
+            if (!$lock_file_contents) {
+                throw new \Exception('The group update can not be run with composer require');
+            } else {
+                $this->log('Running composer update for package ' . $package_name);
+                $updater->executeUpdate();
+            }
+            // I guess at this point we know that something updated. Which is good. Let's create a PR then.
+            $pr_params_creator = $this->getPrParamsCreator();
+            $body = $title = '';
+            $pr_params = $pr_params_creator->getPrParamsForGroup($this->forkUser, $this->isPrivate, $this->slug, $branch_name, $body, $title, $default_branch, $config);
+            $this->commitFilesForGroup($rule->name, $config);
+            $this->runAuthExport($hostname);
+            $this->pushCode($branch_name, $default_base, $lock_file_contents);
+            $pullRequest = $this->createPullrequest($pr_params);
+        } catch (NotUpdatedException $e) {
+            // Not updated because of the composer command, not the
+            // restriction itself.
+            $item_data_items = $item->getData();
+            foreach ($item_data_items as $update_item) {
+                $why_not_name = $update_item->name;
+                $why_not_version = trim($update_item->latest);
+                $not_updated_context = [
+                    'package' => $why_not_name,
+                ];
+                $command = [
+                    'composer',
+                    'why-not',
+                    $why_not_name,
+                    $why_not_version,
+                ];
+                $this->execCommand($command, false);
+                $this->log($this->getLastStdErr(), Message::COMMAND, [
+                    'command' => implode(' ', $command),
+                    'package' => $why_not_name,
+                    'type' => 'stderr',
+                ]);
+                $this->log($this->getLastStdOut(), Message::COMMAND, [
+                    'command' => implode(' ', $command),
+                    'package' => $why_not_name,
+                    'type' => 'stdout',
+                ]);
+                $this->log(sprintf('Package %s was not updated', $update_item->name), Message::NOT_UPDATED, $not_updated_context);
+            }
+        } catch (\Throwable $e) {
+            // @todo: Should probably handle this in some way.
+            $this->log('Caught an exception: ' . $e->getMessage(), 'error');
+        }
+        $this->executePostUpdateStep($default_branch, $lock_file_contents, $config);
+    }
+
     protected function handleUpdateItem(UpdateItemInterface $item_object, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
     {
+        if ($item_object instanceof GroupUpdateItem) {
+            return $this->handleGroup($item_object, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $security_update, $global_config, $can_update_beyond);
+        }
         if (!$item_object instanceof IndividualUpdateItem) {
             throw new \RuntimeException('The item object is not an instance of IndividualUpdateItem');
         }
@@ -137,7 +267,7 @@ class IndividualUpdater extends BaseUpdater
             $should_update_beyond = false;
             // See if the new version seems to satisfy the constraint. Unless the constraint is dev related somehow.
             try {
-                if (strpos((string) $req_item, 'dev') === false && !Semver::satisfies($version_to, (string)$req_item)) {
+                if (strpos((string) $req_item, 'dev') === false && !Semver::satisfies($version_to, (string) $req_item)) {
                     // Well, unless we have actually disallowed this through config.
                     $should_update_beyond = true;
                     if (!$can_update_beyond) {
@@ -288,9 +418,7 @@ class IndividualUpdater extends BaseUpdater
             }
             $comparer = new LockDataComparer($lockdata, $new_lock_data);
             $update_list = $comparer->getUpdateList();
-            $pr_params_creator = new PrParamsCreator($this->messageFactory, $this->projectData);
-            $pr_params_creator->setAssigneesAllowed($this->assigneesAllowed);
-            $pr_params_creator->setLogger($this->getLogger());
+            $pr_params_creator = $this->getPrParamsCreator();
             $body = $pr_params_creator->createBody($item, $post_update_data, $changelog, $security_update, $update_list, $changed_files, $release_links);
             $title = $pr_params_creator->createTitle($item, $post_update_data, $security_update);
             if ($config->getDefaultBranch($security_update)) {
@@ -355,7 +483,12 @@ class IndividualUpdater extends BaseUpdater
                     $not_updated_context['package'] = $why_not_name;
                     $not_updated_context['parent_package'] = $original_name;
                 }
-                $command = ['composer', 'why-not', $why_not_name, $why_not_version];
+                $command = [
+                    'composer',
+                    'why-not',
+                    $why_not_name,
+                    $why_not_version,
+                ];
                 $this->execCommand($command, false);
                 $this->log($this->getLastStdErr(), Message::COMMAND, [
                     'command' => implode(' ', $command),
@@ -400,6 +533,11 @@ class IndividualUpdater extends BaseUpdater
                 'package' => $package_name,
             ]);
         }
+        $this->executePostUpdateStep($default_branch, $lock_file_contents, $config);
+    }
+
+    protected function executePostUpdateStep($default_branch, $lock_file_contents, Config $config)
+    {
         $this->log('Checking out default branch - ' . $default_branch);
         $checkout_default_exit_code = $this->execCommand(['git', 'checkout', $default_branch], false);
         if ($checkout_default_exit_code) {
@@ -463,5 +601,43 @@ class IndividualUpdater extends BaseUpdater
             $new_items[] = new IndividualUpdateItem($item);
         }
         return $new_items;
+    }
+
+    /**
+     * @param UpdateItemInterface[] $items
+     * @return GroupUpdateItem[]
+     */
+    public static function createGroups(array $items, Config $config) : array
+    {
+        /** @var GroupUpdateItem[] $groups */
+        $groups = [];
+        $rules = $config->getRules();
+        foreach ($items as $item) {
+            foreach ($rules as $rule) {
+                $matches = $config->getMatcherFactory()->hasMatches($rule, $item->getPackageName());
+                if (!$matches) {
+                    continue;
+                }
+                // Well alright then. Let's create a group of it.
+                $group = new GroupUpdateItem($rule, $item->getRawData(), $config);
+                // We don't need multiple groups of the same rule. So create a
+                // hash of it and use it as the key.
+                $hash = md5(json_encode($rule));
+                if (empty($groups[$hash])) {
+                    $groups[$hash] = $group;
+                    continue;
+                }
+                $groups[$hash]->addData($item->getRawData());
+            }
+        }
+        return $groups;
+    }
+
+    protected function getPrParamsCreator() : PrParamsCreator
+    {
+        $pr_params_creator = new PrParamsCreator($this->messageFactory, $this->projectData);
+        $pr_params_creator->setAssigneesAllowed($this->assigneesAllowed);
+        $pr_params_creator->setLogger($this->getLogger());
+        return $pr_params_creator;
     }
 }

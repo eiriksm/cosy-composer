@@ -21,6 +21,8 @@ abstract class ComposerUpdateIntegrationBase extends Base
 
     protected $prParams = [];
 
+    protected $prParamsArray = [];
+
     protected $hasAutoMerge = false;
 
     /**
@@ -73,6 +75,7 @@ abstract class ComposerUpdateIntegrationBase extends Base
     protected function createPullRequest(Slug $slug, array $params)
     {
         $this->prParams = $params;
+        $this->prParamsArray[] = $params;
         return [
             'number' => 456,
             'html_url' => $this->fakePrUrl,

@@ -304,12 +304,7 @@ class IndividualUpdater extends BaseUpdater
                         break;
                 }
             }
-            $update_with_deps = true;
-            if (!empty($cdata->extra) && !empty($cdata->extra->violinist) && isset($cdata->extra->violinist->update_with_dependencies)) {
-                if (!(bool) $cdata->extra->violinist->update_with_dependencies) {
-                    $update_with_deps = false;
-                }
-            }
+            $update_with_deps = $config->shouldUpdateWithDependencies();
             $updater = new Updater($this->getCwd(), $package_name);
             $cosy_logger = new CosyLogger();
             $cosy_factory_wrapper = new ProcessFactoryWrapper();
@@ -385,7 +380,7 @@ class IndividualUpdater extends BaseUpdater
                 }
                 if ($branch_name !== $new_branch_name) {
                     $this->log(sprintf('Changing branch because of an unexpected update result. We expected the branch name to be %s but instead we are now switching to %s.', $branch_name, $new_branch_name));
-                    $this->execCommand(['git', 'checkout', '-b', $new_branch_name], false);
+                    $this->switchBranch($new_branch_name, false);
                     $branch_name = $new_branch_name;
                 }
             }

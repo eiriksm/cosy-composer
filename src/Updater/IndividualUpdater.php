@@ -613,6 +613,9 @@ class IndividualUpdater extends BaseUpdater
         $groups = [];
         $rules = $config->getRules();
         foreach ($items as $item) {
+            if (!$item instanceof IndividualUpdateItem) {
+                continue;
+            }
             foreach ($rules as $rule) {
                 $matches = $config->getMatcherFactory()->hasMatches($rule, $item->getPackageName());
                 if (!$matches) {

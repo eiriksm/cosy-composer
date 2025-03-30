@@ -255,7 +255,7 @@ class IndividualUpdater extends BaseUpdater
                 }
                 if ($branch_name !== $new_branch_name) {
                     $this->log(sprintf('Changing branch because of an unexpected update result. We expected the branch name to be %s but instead we are now switching to %s.', $branch_name, $new_branch_name));
-                    $this->execCommand(['git', 'checkout', '-b', $new_branch_name], false);
+                    $this->switchBranch($new_branch_name, false);
                     $branch_name = $new_branch_name;
                 }
             }

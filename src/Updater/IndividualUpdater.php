@@ -174,12 +174,7 @@ class IndividualUpdater extends BaseUpdater
                         break;
                 }
             }
-            $update_with_deps = true;
-            if (!empty($cdata->extra) && !empty($cdata->extra->violinist) && isset($cdata->extra->violinist->update_with_dependencies)) {
-                if (!(bool) $cdata->extra->violinist->update_with_dependencies) {
-                    $update_with_deps = false;
-                }
-            }
+            $update_with_deps = $config->shouldUpdateWithDependencies();
             $updater = new Updater($this->getCwd(), $package_name);
             $cosy_logger = new CosyLogger();
             $cosy_factory_wrapper = new ProcessFactoryWrapper();

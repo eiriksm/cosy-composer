@@ -177,6 +177,10 @@ class IndividualUpdater extends BaseUpdater
             }
             // I guess at this point we know that something updated. Which is good. Let's create a PR then.
             $pr_params_creator = $this->getPrParamsCreator();
+            $new_lock_data = json_decode(file_get_contents($this->composerJsonDir . '/composer.lock'));
+            $comparer = new LockDataComparer($lockdata, $new_lock_data);
+            $update_list = $comparer->getUpdateList();
+            $body = $pr_params_creator->createBodyForGroup($rule->name, $update_list);
             $body = $title = '';
             $pr_params = $pr_params_creator->getPrParamsForGroup($this->forkUser, $this->isPrivate, $this->slug, $branch_name, $body, $title, $default_branch, $config);
             $this->commitFilesForGroup($rule->name, $config);

@@ -62,6 +62,11 @@ class PrParamsCreator
         return $this->messageFactory->getPullRequestBody($update);
     }
 
+    public function createBodyForGroup(string $group_name, $update_list = [])
+    {
+        return $this->messageFactory->getPullRequestBodyForGroup($group_name);
+    }
+
     /**
      * Creates a title for a PR.
      *

@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposer;
 
+use eiriksm\ViolinistMessages\UpdateListItem;
 use eiriksm\ViolinistMessages\ViolinistMessages;
 use eiriksm\ViolinistMessages\ViolinistUpdate;
 use Psr\Log\LoggerAwareTrait;
@@ -62,9 +63,14 @@ class PrParamsCreator
         return $this->messageFactory->getPullRequestBody($update);
     }
 
+    /**
+     * @param string $group_name
+     * @param ViolinistUpdate[] $update_list
+     * @return string
+     */
     public function createBodyForGroup(string $group_name, $update_list = [])
     {
-        return $this->messageFactory->getPullRequestBodyForGroup($group_name);
+        return $this->messageFactory->getPullRequestBodyForGroup($group_name, $update_list);
     }
 
     /**

@@ -14,6 +14,7 @@ use eiriksm\CosyComposer\ProcessFactoryWrapper;
 use eiriksm\CosyComposer\PrParamsCreator;
 use eiriksm\CosyComposer\UpdateItemInterface;
 use eiriksm\ViolinistMessages\UpdateListItem;
+use eiriksm\ViolinistMessages\ViolinistUpdate;
 use Github\Exception\ValidationFailedException;
 use Violinist\ComposerLockData\ComposerLockData;
 use Violinist\ComposerUpdater\Exception\ComposerUpdateProcessFailedException;
@@ -178,10 +179,51 @@ class IndividualUpdater extends BaseUpdater
             // I guess at this point we know that something updated. Which is good. Let's create a PR then.
             $pr_params_creator = $this->getPrParamsCreator();
             $new_lock_data = json_decode(file_get_contents($this->composerJsonDir . '/composer.lock'));
+            $post_update_lock = ComposerLockData::createFromString(json_encode($new_lock_data));
             $comparer = new LockDataComparer($lockdata, $new_lock_data);
+            $package_lock_data = ComposerLockData::createFromString(json_encode($lockdata));
             $update_list = $comparer->getUpdateList();
-            $body = $pr_params_creator->createBodyForGroup($rule->name, $update_list);
-            $body = $title = '';
+            $update_array = array_map(function (UpdateListItem $update) use ($lockdata, $package_lock_data, $post_update_lock) {
+                $update_obj = new ViolinistUpdate();
+                $update_obj->setName($update->getPackageName());
+                $update_obj->setCurrentVersion($update->getOldVersion());
+                $update_obj->setNewVersion($update->getNewVersion());
+                $package_name = $update->getPackageName();
+                $pre_update_data = $package_lock_data->getPackageData($package_name);
+                $post_update_data = $post_update_lock->getPackageData($package_name);
+                $version_from = $update->getOldVersion();
+                $version_to = $update->getNewVersion();
+                $this->log('Trying to retrieve changelog for ' . $package_name);
+                $changelog = null;
+                $changed_files = [];
+                try {
+                    $changelog = $this->retrieveChangeLog($package_name, $lockdata, $version_from, $version_to);
+                    $update_obj->setChangelog($changelog->getAsMarkdown());
+                    $this->log('Changelog retrieved');
+                } catch (\Throwable $e) {
+                    // If the changelog can not be retrieved, we can live with that.
+                    $this->log('Exception for changelog: ' . $e->getMessage());
+                }
+                try {
+                    $changed_files = $this->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
+                    $update_obj->setChangedFiles($changed_files);
+                    $this->log('Changed files retrieved');
+                } catch (\Throwable $e) {
+                    // If the changed files can not be retrieved, we can live with that.
+                    $this->log('Exception for retrieving changed files: ' . $e->getMessage());
+                }
+                // Let's try to find all of the tags between those commit shas.
+                $release_links = null;
+                try {
+                    $release_links = $this->getReleaseLinks($lockdata, $package_name, $pre_update_data, $post_update_data);
+                    $update_obj->setPackageReleaseNotes($release_links);
+                } catch (\Throwable $e) {
+                    $this->log('Retrieving links to releases failed');
+                }
+                return $update_obj;
+            }, $update_list);
+            $body = $pr_params_creator->createBodyForGroup($rule->name, $update_array);
+            $title = sprintf('Update group `%s`', $rule->name);
             $pr_params = $pr_params_creator->getPrParamsForGroup($this->forkUser, $this->isPrivate, $this->slug, $branch_name, $body, $title, $default_branch, $config);
             $this->commitFilesForGroup($rule->name, $config);
             $this->runAuthExport($hostname);

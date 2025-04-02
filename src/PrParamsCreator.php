@@ -2,7 +2,6 @@
 
 namespace eiriksm\CosyComposer;
 
-use eiriksm\ViolinistMessages\UpdateListItem;
 use eiriksm\ViolinistMessages\ViolinistMessages;
 use eiriksm\ViolinistMessages\ViolinistUpdate;
 use Psr\Log\LoggerAwareTrait;

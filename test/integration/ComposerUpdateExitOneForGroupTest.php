@@ -6,7 +6,6 @@ use Violinist\Slug\Slug;
 
 class ComposerUpdateExitOneForGroupTest extends ComposerUpdateIntegrationBase
 {
-    private $prsUpdated = [];
     protected $composerAssetFiles = 'composer-group-contrib-and-core';
     protected $updateJson = '{
     "installed": [
@@ -68,15 +67,6 @@ class ComposerUpdateExitOneForGroupTest extends ComposerUpdateIntegrationBase
     ]
 }
 ';
-
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->mockProvider->method('updatePullRequest')
-            ->willReturnCallback(function (Slug $slug, $number, array $params) {
-                $this->prsUpdated[$number] = true;
-            });
-    }
 
     public function testGroupUpdatesExistCodeOneOnComposerUpdate()
     {

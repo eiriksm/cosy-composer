@@ -155,19 +155,13 @@ class IndividualUpdater extends BaseUpdater
             $this->switchBranch($branch_name);
             // Now let's update them.
             $package_name = array_shift($package_matches);
-            $updater = new Updater($this->getCwd(), $package_matches[0]);
+            $updater = $this->getUpdater($package_matches[0]);
             $updater->setPackagesToCheckHasUpdated($package_matches);
             $array_copy = $package_matches;
             array_shift($array_copy);
-            $cosy_logger = new CosyLogger();
-            $cosy_factory_wrapper = new ProcessFactoryWrapper();
-            $cosy_factory_wrapper->setExecutor($this->executer);
-            $cosy_logger->setLogger($this->getLogger());
             if (!empty($array_copy)) {
                 $updater->setBundledPackages($array_copy);
             }
-            $updater->setLogger($cosy_logger);
-            $updater->setProcessFactory($cosy_factory_wrapper);
             $updater->setWithUpdate($config->shouldUpdateWithDependencies());
             $updater->setRunScripts($config->shouldRunScripts());
             if (!$lock_file_contents) {
@@ -351,18 +345,12 @@ class IndividualUpdater extends BaseUpdater
                 }
             }
             $update_with_deps = $config->shouldUpdateWithDependencies();
-            $updater = new Updater($this->getCwd(), $package_name);
-            $cosy_logger = new CosyLogger();
-            $cosy_factory_wrapper = new ProcessFactoryWrapper();
-            $cosy_factory_wrapper->setExecutor($this->executer);
-            $cosy_logger->setLogger($this->getLogger());
+            $updater = $this->getUpdater($package_name);
             // See if this package has any bundled updates.
             $bundled_packages = $config->getBundledPackagesForPackage($package_name);
             if (!empty($bundled_packages)) {
                 $updater->setBundledPackages($bundled_packages);
             }
-            $updater->setLogger($cosy_logger);
-            $updater->setProcessFactory($cosy_factory_wrapper);
             $updater->setWithUpdate($update_with_deps);
             $updater->setConstraint($constraint);
             $updater->setDevPackage($is_require_dev);
@@ -683,5 +671,17 @@ class IndividualUpdater extends BaseUpdater
         $pr_params_creator->setAssigneesAllowed($this->assigneesAllowed);
         $pr_params_creator->setLogger($this->getLogger());
         return $pr_params_creator;
+    }
+
+    protected function getUpdater(string $package_name) : Updater
+    {
+        $updater = new Updater($this->getCwd(), $package_name);
+        $cosy_logger = new CosyLogger();
+        $cosy_factory_wrapper = new ProcessFactoryWrapper();
+        $cosy_factory_wrapper->setExecutor($this->executer);
+        $cosy_logger->setLogger($this->getLogger());
+        $updater->setLogger($cosy_logger);
+        $updater->setProcessFactory($cosy_factory_wrapper);
+        return $updater;
     }
 }

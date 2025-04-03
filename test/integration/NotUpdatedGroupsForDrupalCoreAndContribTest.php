@@ -100,8 +100,6 @@ class NotUpdatedGroupsForDrupalCoreAndContribTest extends ComposerUpdateIntegrat
 
     public function handleExecutorReturnCallback(array $cmd, &$return)
     {
-        $this->stdout = '';
-        $this->errorOutput = '';
         // If it contains all of these items it seems to be the contrib update
         // command.
         $command_parts = ['composer', 'update', 'drupal/coffee', 'drupal/gin'];

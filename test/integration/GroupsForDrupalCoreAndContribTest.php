@@ -4,6 +4,8 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class GroupsForDrupalCoreAndContribTest extends ComposerUpdateIntegrationBase
 {
+    private $foundContribMessage = false;
+    private $foundCoreMessage = false;
     private $stdout = '';
     private $errorOutput = '';
     protected $composerAssetFiles = 'composer-group-contrib-and-core';
@@ -163,6 +165,8 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
 '), trim($this->prParamsArray[0]["body"]));
         self::assertEquals($this->prParamsArray[0]["title"], 'Update group `Minor and Patch Contrib`');
         self::assertEquals($this->prParamsArray[1]["head"], 'minor-patch-core');
+        self::assertTrue($this->foundCoreMessage);
+        self::assertTrue($this->foundContribMessage);
     }
 
     public function handleExecutorReturnCallback(array $cmd, &$return)
@@ -179,6 +183,14 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
         $command_parts_for_core = ['composer', 'update', 'drupal/core-project-message', 'drupal/core-recommended'];
         if (count(array_intersect($command_parts_for_core, $cmd)) === count($command_parts_for_core)) {
             $this->placeComposerLockContentsFromFixture('composer-group-contrib-and-core.lock.updated_core', $this->dir);
+        }
+        // The last part might be the commit message for the contrib update.
+        $last_item = $cmd[count($cmd) - 1];
+        if ($last_item === 'Update dependency group Minor and Patch Contrib') {
+            $this->foundContribMessage = true;
+        }
+        if ($last_item === 'Update dependency group Minor and Patch Core') {
+            $this->foundCoreMessage = true;
         }
         $cmd_string = implode(' ', $cmd);
         if ($cmd_string === 'git -C /tmp/1d5bf652d7764ca52c520543a832c577 log 2.0.0..2.0.1 --oneline') {

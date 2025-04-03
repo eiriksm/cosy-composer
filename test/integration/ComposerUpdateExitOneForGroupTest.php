@@ -2,7 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Github\Exception\ValidationFailedException;
 use Violinist\Slug\Slug;
 
 class ComposerUpdateExitOneForGroupTest extends ComposerUpdateIntegrationBase

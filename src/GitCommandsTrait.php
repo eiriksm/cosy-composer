@@ -84,6 +84,14 @@ trait GitCommandsTrait
         $this->commitFiles($msg, $item);
     }
 
+    protected function commitFilesForGroup(string $group_name, Config $config)
+    {
+        $this->cleanRepoForCommit();
+        $creator = $this->getCommitCreator($config);
+        $msg = $creator->generateMessageForGroup($group_name);
+        $this->commitFiles($msg);
+    }
+
     protected function pushCode($branch_name, $default_base, $lock_file_contents)
     {
         if ($this->isPrivate) {

@@ -63,6 +63,16 @@ class PrParamsCreator
     }
 
     /**
+     * @param string $group_name
+     * @param ViolinistUpdate[] $update_list
+     * @return string
+     */
+    public function createBodyForGroup(string $group_name, $update_list = [])
+    {
+        return $this->messageFactory->getPullRequestBodyForGroup($group_name, $update_list);
+    }
+
+    /**
      * Creates a title for a PR.
      *
      * @param \stdClass $item

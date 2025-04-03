@@ -252,6 +252,26 @@ class IndividualUpdater extends BaseUpdater
                 ]);
                 $this->log(sprintf('Package %s was not updated', $update_item->name), Message::NOT_UPDATED, $not_updated_context);
             }
+        } catch (ValidationFailedException $e) {
+            // @todo: Do some better checking. Could be several things, this.
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
+            // If it failed validation because it already exists, we also want to make sure all outdated PRs are
+            // closed.
+            $raw_item = $item->getData();
+            if (!empty($prs_named[$branch_name]['number'])) {
+                // @todo: Count the PR and close outdated.
+            }
+        } catch (\Gitlab\Exception\RuntimeException $e) {
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
+            if (!empty($prs_named[$branch_name]['number'])) {
+                // @todo: Count the PR and close outdated.
+            }
+        } catch (ComposerUpdateProcessFailedException $e) {
+            $this->log('Caught an exception: ' . $e->getMessage(), 'error');
+            $this->log($e->getErrorOutput(), Message::COMMAND, [
+                'type' => 'exit_code_output',
+                'package' => $package_name,
+            ]);
         } catch (\Throwable $e) {
             // @todo: Should probably handle this in some way.
             $this->log('Caught an exception: ' . $e->getMessage(), 'error');

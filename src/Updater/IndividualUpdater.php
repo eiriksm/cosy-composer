@@ -143,6 +143,8 @@ class IndividualUpdater extends BaseUpdater
             // That's very strange. Let's call it an error.
             throw new \RuntimeException('No packages found in composer.json that matches the group rule');
         }
+        $branch_name = '';
+        $pr_params = [];
         try {
             // Create a branch. This should be specified in the rule config, yeah?
             $rule = $item->getRule();

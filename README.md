@@ -10,7 +10,7 @@ This library is considered internal for violinist.io.
 
 ## Versioning
 
-Violinist runners are automatically updated (with [violinist.io](https://violinist.io)) to the latest revision of this library. No attempt at versioning are made beyond that, since the library is considered internal to violinist.io.
+Violinist runners are automatically updated (with [violinist.io](https://violinist.io)) to the latest version of this library. No attempt at versioning are made beyond that, since the library is considered internal to violinist.io. Every commit to the repo will trigger a new version of the library, and there may or may not be breaking changes without following proper semantic versioning.
 
 ## Contribute
 

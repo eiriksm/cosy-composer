@@ -2,8 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Violinist\Slug\Slug;
-
 class ComposerUpdateExitOneForGroupTest extends ComposerUpdateIntegrationBase
 {
     protected $composerAssetFiles = 'composer-group-contrib-and-core';

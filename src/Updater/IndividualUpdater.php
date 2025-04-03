@@ -154,10 +154,10 @@ class IndividualUpdater extends BaseUpdater
             $branch_name = Helpers::createBranchNameForGroup($rule, $config);
             $this->switchBranch($branch_name);
             // Now let's update them.
-            $package_name = array_shift($package_matches);
-            $updater = $this->getUpdater($package_matches[0]);
-            $updater->setPackagesToCheckHasUpdated($package_matches);
             $array_copy = $package_matches;
+            $package_name = array_shift($package_matches);
+            $updater = $this->getUpdater($package_name);
+            $updater->setPackagesToCheckHasUpdated($package_matches);
             array_shift($array_copy);
             if (!empty($array_copy)) {
                 $updater->setBundledPackages($array_copy);

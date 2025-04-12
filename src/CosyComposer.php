@@ -551,6 +551,8 @@ class CosyComposer
             throw new \InvalidArgumentException('Invalid composer.json file');
         }
         $config = $this->ensureFreshConfig($composer_json_data);
+        $this->doComposerInstall($config);
+        $config = $this->ensureFreshConfig($composer_json_data);
         $this->client = $this->getClient($this->slug);
         $this->privateClient = $this->getClient($this->slug);
         $this->privateClient->authenticate($this->userToken, null);

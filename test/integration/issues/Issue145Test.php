@@ -41,7 +41,7 @@ class Issue145Test extends ComposerUpdateIntegrationBase
 
             case ['composer', 'install', '--no-ansi', '-n']:
                 $this->numberOfIstalls++;
-                if ($this->numberOfIstalls === 3) {
+                if ($this->numberOfIstalls === 5) {
                     $return = 1;
                 }
                 break;

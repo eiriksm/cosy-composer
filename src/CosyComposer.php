@@ -594,11 +594,12 @@ class CosyComposer
             $this->log($this->getLastStdErr());
             throw new \Exception('There was an error trying to switch to default branch');
         }
-        // Re-read the composer.json file, since it can be different on the default branch,
+        // Re-read the composer.json file, since it can be different on the default branch.
+        $this->doComposerInstall($config);
         $composer_json_data = $this->composerGetter->getComposerJsonData();
+        $config = $this->ensureFreshConfig($composer_json_data);
         $this->runAuthExport($hostname);
         $this->handleDrupalContribSa($composer_json_data);
-        $config = $this->ensureFreshConfig($composer_json_data);
         $this->handleTimeIntervalSetting($config);
         $lock_file = $this->composerJsonDir . '/composer.lock';
         $initial_composer_lock_data = false;

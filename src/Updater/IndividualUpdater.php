@@ -55,7 +55,7 @@ class IndividualUpdater extends BaseUpdater
         $has_extend_key = $config->getExtendNameForKey('number_of_concurrent_updates');
         if ($has_extend_key) {
             $chain = $config->getReadableChainForExtendName($has_extend_key);
-            $this->log(sprintf('The option number_of_concurrent_updates is set in the extend config called %s with the chain %s', $max_number_of_prs, $has_extend_key, $chain));
+            $this->log(sprintf('The option number_of_concurrent_updates is set in the extend config called %s with the chain %s', $has_extend_key, $chain));
         }
         $data = $this->convertDataToDto($data);
         // And now convert the data to DTOs for the groups.

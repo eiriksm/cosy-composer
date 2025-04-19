@@ -47,6 +47,16 @@ class IndividualUpdater extends BaseUpdater
         $this->initialComposerLockData = $initial_lock_file_data;
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
+        if ($max_number_of_prs) {
+            $this->log('The option number_of_concurrent_updates is set to ' . $max_number_of_prs);
+        } else {
+            $this->log('The option number_of_concurrent_updates is not set, so we will not limit the number of concurrent updates');
+        }
+        $has_extend_key = $config->getExtendNameForKey('number_of_concurrent_updates');
+        if ($has_extend_key) {
+            $chain = $config->getReadableChainForExtendName($has_extend_key);
+            $this->log(sprintf('The option number_of_concurrent_updates is set in the extend config called %s with the chain %s', $max_number_of_prs, $has_extend_key, $chain));
+        }
         $data = $this->convertDataToDto($data);
         // And now convert the data to DTOs for the groups.
         $groups = self::createGroups($data, $config);
@@ -81,6 +91,9 @@ class IndividualUpdater extends BaseUpdater
             }
             if (isset($alerts[$package_name_in_composer_json])) {
                 $security_update = true;
+            }
+            if ($max_number_of_prs) {
+                $this->log(sprintf('Current count of PRs is %d', $this->getPrCount()));
             }
             if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
                 if ($security_update && $config->shouldAllowSecurityUpdatesOnConcurrentLimit()) {

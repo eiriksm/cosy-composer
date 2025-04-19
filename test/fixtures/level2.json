@@ -1,0 +1,8 @@
+{
+  "name": "vendor/shared-violinist-common",
+  "extra": {
+    "violinist": {
+      "extends": "violinist-base-config.json"
+    }
+  }
+}

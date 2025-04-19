@@ -1,0 +1,12 @@
+{
+  "always_allow_direct_dependencies": true,
+  "automerge": true,
+  "automerge_method": "squash",
+  "branch_prefix": "violinist/",
+  "check_only_direct_dependencies": false,
+  "commit_message_convention": "conventional",
+  "labels": ["dependencies"],
+  "labels_security": ["dependencies", "security"],
+  "number_of_concurrent_updates": 5,
+  "allow_security_updates_on_concurrent_limit": true
+}

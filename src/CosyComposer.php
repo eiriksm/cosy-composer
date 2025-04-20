@@ -13,6 +13,7 @@ use eiriksm\CosyComposer\Updater\IndividualUpdater;
 use GuzzleHttp\Psr7\Request;
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
 use Http\Client\HttpClient;
+use League\Flysystem\FilesystemAdapter;
 use Symfony\Component\Process\Process;
 use Violinist\AllowListHandler\AllowListHandler;
 use Violinist\ComposerLockData\ComposerLockData;
@@ -420,6 +421,17 @@ class CosyComposer
         $this->hostName = $hostname;
     }
 
+    public function getLocalAdapterForTempDir(string $directory) : FilesystemAdapter
+    {
+        $this->setTmpDir($directory);
+        $composer_json_dir = $this->tmpDir;
+        if ($this->project && $this->project->getComposerJsonDir()) {
+            $composer_json_dir = sprintf('%s/%s', $this->tmpDir, $this->project->getComposerJsonDir());
+        }
+        $this->composerJsonDir = $composer_json_dir;
+        return new LocalFilesystemAdapter($this->composerJsonDir);
+    }
+
     /**
      * @throws \eiriksm\CosyComposer\Exceptions\ChdirException
      * @throws \eiriksm\CosyComposer\Exceptions\GitCloneException
@@ -524,22 +536,24 @@ class CosyComposer
             throw new GitCloneException('Problem with the execCommand git clone. Exit code was ' . $clone_result);
         }
         $this->log('Repository cloned');
-        $composer_json_dir = $this->tmpDir;
-        if ($this->project && $this->project->getComposerJsonDir()) {
-            $composer_json_dir = sprintf('%s/%s', $this->tmpDir, $this->project->getComposerJsonDir());
-        }
-        $this->composerJsonDir = $composer_json_dir;
+        $local_adapter = $this->getLocalAdapterForTempDir($this->tmpDir);
         if (!$this->chdir($this->composerJsonDir)) {
             throw new ChdirException('Problem with changing dir to the clone dir.');
         }
-        $local_adapter = new LocalFilesystemAdapter($this->composerJsonDir);
         if (!empty($_ENV['config_branch'])) {
             $config_branch = $_ENV['config_branch'];
             $this->log('Changing to config branch: ' . $config_branch);
             $tmpdir = sprintf('/tmp/%s', uniqid('', true));
             $clone_result = $this->execCommand(['git', 'clone', '--depth=1', $url, $tmpdir, '-b', $config_branch], false, 120);
             if (!$clone_result) {
-                $local_adapter = new LocalFilesystemAdapter($tmpdir);
+                $local_adapter = $this->getLocalAdapterForTempDir($tmpdir);
+            } else {
+                $this->log($this->getLastStdOut());
+                $this->log($this->getLastStdErr());
+                throw new GitCloneException('Problem with git clone of the config branch. Exit code was ' . $clone_result);
+            }
+            if (!$this->chdir($this->composerJsonDir)) {
+                throw new ChdirException('Problem with changing dir to the clone dir of the config branch.');
             }
         }
         $this->composerGetter = new ComposerFileGetter($local_adapter);

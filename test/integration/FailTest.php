@@ -3,7 +3,6 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 use eiriksm\CosyComposer\CommandExecuter;
-use eiriksm\CosyComposer\Exceptions\ChdirException;
 
 class FailTest extends Base
 {

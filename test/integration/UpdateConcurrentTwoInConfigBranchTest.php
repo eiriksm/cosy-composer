@@ -4,16 +4,12 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class UpdateConcurrentTwoInConfigBranchTest extends UpdateConcurrentTwoTest
 {
-    private $sha;
-    protected $composerAssetFiles = 'composer.concurrent.two';
+    private $configBranchCloneDir;
 
     public function setUp() : void
     {
         $_ENV['config_branch'] = 'config-branch';
         parent::setUp();
-        $this->sha = 123;
-
-        $this->updateJson = '{"installed": [{"name": "psr/cache", "version": "1.0.0", "latest": "1.0.1", "latest-status": "semver-safe-update"},{"name": "psr/log", "version": "1.1.3", "latest": "1.1.4", "latest-status": "semver-safe-update"}]}';
     }
 
     public function tearDown(): void
@@ -40,7 +36,7 @@ class UpdateConcurrentTwoInConfigBranchTest extends UpdateConcurrentTwoTest
         $this->runtestExpectedOutput();
         $this->assertOutputContainsMessage('Skipping psr/cache because a pull request already exists', $this->cosy);
         // We have one PR open. Our limit is 1.
-        $msg = $this->findMessage('Skipping psr/log because the number of max concurrent PRs (2) seems to have been reached', $this->cosy);
+        $msg = $this->findMessage('Skipping psr/log because the number of max concurrent PRs (1) seems to have been reached', $this->cosy);
         self::assertNotFalse($msg);
     }
 
@@ -53,13 +49,14 @@ class UpdateConcurrentTwoInConfigBranchTest extends UpdateConcurrentTwoTest
         foreach ($packages as $package) {
             $expected_command = $this->createExpectedCommandForPackage($package);
             if ($expected_command === $cmd) {
-                $this->placeUpdatedComposerLock();
+                $this->placeComposerLockContentsFromFixture(sprintf('%s.lock.updated', $this->composerAssetFiles), $this->configBranchCloneDir);
             }
         }
         // Also make sure we act on the thing with the config branch being
         // checked out.
         if (!empty($cmd[6]) && $cmd[1] === 'clone' && $cmd[6] === 'config-branch') {
-            mkdir($cmd[4]);
+            $this->configBranchCloneDir = $cmd[4];
+            mkdir($this->configBranchCloneDir);
             $composer_data = (object) [
                 'require' => (object) [
                     'psr/log' => '^1.1',
@@ -72,33 +69,18 @@ class UpdateConcurrentTwoInConfigBranchTest extends UpdateConcurrentTwoTest
                 ],
             ];
             $composer_data = json_encode($composer_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-            $composer_file = "$cmd[4]/composer.json";
+            $composer_file = sprintf('%s/composer.json', $this->configBranchCloneDir);
             file_put_contents($composer_file, $composer_data);
             // Also create the other.json file.
             $other_json = [
                 'number_of_concurrent_updates' => 1,
             ];
             $other_json = json_encode($other_json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-            $other_json_file = "$cmd[4]/other.json";
+            $other_json_file = sprintf('%s/other.json', $this->configBranchCloneDir);
             file_put_contents($other_json_file, $other_json);
+            $this->placeComposerLockContentsFromFixture(sprintf('%s.lock', $this->composerAssetFiles), $this->configBranchCloneDir);
         }
-
-        $a = 'b';
     }
-
-    protected function getPrsNamed()
-    {
-        return [
-            'psrcache100101' => [
-                'base' => [
-                    'sha' => $this->sha,
-                ],
-                'number' => 123,
-                'title' => 'Update psr/cache from 1.0.0 to 1.0.1',
-            ],
-        ];
-    }
-
 
     protected function createComposerFileFromFixtures($dir, $filename)
     {
@@ -118,12 +100,6 @@ class UpdateConcurrentTwoInConfigBranchTest extends UpdateConcurrentTwoTest
         $composer_data = json_encode($composer_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         $composer_file = "$dir/composer.json";
         file_put_contents($composer_file, $composer_data);
-    }
-
-    protected function getBranchesFlattened()
-    {
-        return [
-            'psrcache100101',
-        ];
+        $this->placeComposerLockContentsFromFixture(sprintf('%s.lock', $this->composerAssetFiles), $this->dir);
     }
 }

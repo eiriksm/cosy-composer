@@ -29,22 +29,6 @@ class FailTest extends Base
         $c->run();
     }
 
-    public function testChdirToCloneFail()
-    {
-        $c = $this->getMockCosy();
-        $mock_executer = $this->createMock(CommandExecuter::class);
-        $mock_executer->method('executeCommand')
-            ->will($this->returnCallback(
-                function ($cmd) {
-                    return 0;
-                }
-            ));
-        $this->expectExceptionMessage('Problem with changing dir to the clone dir.');
-        $this->expectException(ChdirException::class);
-        $c->setExecuter($mock_executer);
-        $c->run();
-    }
-
     public function testNoComposerFile()
     {
         $c = $this->getMockCosy();

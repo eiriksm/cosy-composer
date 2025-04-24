@@ -537,9 +537,7 @@ class CosyComposer
         }
         $this->log('Repository cloned');
         $local_adapter = $this->getLocalAdapterForTempDir($this->tmpDir);
-        if (!$this->chdir($this->composerJsonDir)) {
-            throw new ChdirException('Problem with changing dir to the clone dir.');
-        }
+        $this->chdir($this->composerJsonDir);
         if (!empty($_ENV['config_branch'])) {
             $config_branch = $_ENV['config_branch'];
             $this->log('Changing to config branch: ' . $config_branch);
@@ -1318,14 +1316,6 @@ class CosyComposer
     public function getTmpDir()
     {
         return $this->tmpDir;
-    }
-
-    /**
-     * @param string $tmpDir
-     */
-    public function setTmpDir($tmpDir)
-    {
-        $this->tmpDir = $tmpDir;
     }
 
     /**

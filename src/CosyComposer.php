@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposer;
 
+use eiriksm\CosyComposer\Exceptions\ChdirException;
 use eiriksm\CosyComposer\Exceptions\GitCloneException;
 use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
 use eiriksm\CosyComposer\ListFilterer\DevDepsOnlyFilterer;

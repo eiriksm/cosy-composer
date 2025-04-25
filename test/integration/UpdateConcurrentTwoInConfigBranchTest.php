@@ -5,6 +5,7 @@ namespace eiriksm\CosyComposerTest\integration;
 class UpdateConcurrentTwoInConfigBranchTest extends UpdateConcurrentTwoTest
 {
     private $configBranchCloneDir;
+    private $hasCheckedOutFirst = false;
 
     public function setUp() : void
     {
@@ -79,6 +80,10 @@ class UpdateConcurrentTwoInConfigBranchTest extends UpdateConcurrentTwoTest
             $other_json_file = sprintf('%s/other.json', $this->configBranchCloneDir);
             file_put_contents($other_json_file, $other_json);
             $this->placeComposerLockContentsFromFixture(sprintf('%s.lock', $this->composerAssetFiles), $this->configBranchCloneDir);
+        }
+        if ($cmd[1] === 'checkout' && $cmd[2] === 'master' && !$this->hasCheckedOutFirst) {
+            $this->hasCheckedOutFirst = true;
+            $this->createComposerFileFromFixtures($this->configBranchCloneDir, 'composer.json');
         }
     }
 

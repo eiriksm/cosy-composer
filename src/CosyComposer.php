@@ -538,7 +538,9 @@ class CosyComposer
         $this->log('Repository cloned');
         $local_adapter = $this->getLocalAdapterForTempDir($this->tmpDir);
         $this->chdir($this->composerJsonDir);
+        $uses_config_branch = false;
         if (!empty($_ENV['config_branch'])) {
+            $uses_config_branch = true;
             $config_branch = $_ENV['config_branch'];
             $this->log('Changing to config branch: ' . $config_branch);
             $tmpdir = sprintf('/tmp/%s', uniqid('', true));
@@ -609,8 +611,10 @@ class CosyComposer
         }
         // Re-read the composer.json file, since it can be different on the default branch.
         $this->doComposerInstall($config);
-        $composer_json_data = $this->composerGetter->getComposerJsonData();
-        $config = $this->ensureFreshConfig($composer_json_data);
+        if (!$uses_config_branch) {
+            $composer_json_data = $this->composerGetter->getComposerJsonData();
+            $config = $this->ensureFreshConfig($composer_json_data);
+        }
         $this->runAuthExport($hostname);
         $this->handleDrupalContribSa($composer_json_data);
         $this->handleTimeIntervalSetting($config);

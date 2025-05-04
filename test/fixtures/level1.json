@@ -1,0 +1,11 @@
+{
+  "name": "vendor/shared-violinist-drupal",
+  "require": {
+    "vendor/shared-violinist-common": "1.x-dev"
+  },
+  "extra": {
+    "violinist": {
+      "extends": "violinist-drupal-config.json"
+    }
+  }
+}

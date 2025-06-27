@@ -3,6 +3,7 @@
 namespace eiriksm\CosyComposer\Providers;
 
 use eiriksm\CosyComposer\ProviderInterface;
+use Github\Api\Repository\Commits;
 use Github\AuthMethod;
 use Github\Client;
 use Github\ResultPager;
@@ -121,7 +122,7 @@ class Github implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed(Slug $slug) : array
+    public function getPrsNamed(Slug $slug) : NamedPrs
     {
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
@@ -129,9 +130,23 @@ class Github implements ProviderInterface
         $api = $this->client->api('pr');
         $method = 'all';
         $prs = $pager->fetchAll($api, $method, [$user, $repo]);
-        $prs_named = [];
+        $prs_named = new NamedPrs();
         foreach ($prs as $pr) {
-            $prs_named[$pr['head']['ref']] = $pr;
+            $prs_named->addFromPrData($pr);
+            // Attempt to retrieve the actual commit.
+            try {
+                /** @var Commits $commits */
+                $commits = $this->client->api('repo')->commits();
+                $commit = $commits->show($user, $repo, $pr['head']['sha']);
+                if (!empty($commit["commit"]["message"])) {
+                    $prs_named->addFromCommit($commit["commit"]["message"], $pr);
+                } else {
+                    $prs_named->addFromPrData($pr);
+                }
+                $prs_named[$pr['head']['ref']]['commit'] = $commit;
+            } catch (\Exception $e) {
+                // If the commit is not found, we just skip it.
+            }
         }
         return $prs_named;
     }

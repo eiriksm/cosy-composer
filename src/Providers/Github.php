@@ -3,7 +3,6 @@
 namespace eiriksm\CosyComposer\Providers;
 
 use eiriksm\CosyComposer\ProviderInterface;
-use Github\Api\Repository\Commits;
 use Github\AuthMethod;
 use Github\Client;
 use Github\ResultPager;

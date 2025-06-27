@@ -2,7 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\unit;
 
-
 use eiriksm\CosyComposer\Providers\NamedPrs;
 use PHPUnit\Framework\TestCase;
 

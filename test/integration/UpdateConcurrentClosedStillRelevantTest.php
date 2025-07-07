@@ -2,6 +2,8 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
+
 class UpdateConcurrentClosedStillRelevantTest extends ComposerUpdateIntegrationBase
 {
     protected $composerAssetFiles = 'composer.concurrent.update_branch';
@@ -40,17 +42,20 @@ class UpdateConcurrentClosedStillRelevantTest extends ComposerUpdateIntegrationB
         }
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        return NamedPrs::createFromArray([
             'psrlog113114' => [
                 'base' => [
                     'sha' => $this->sha,
                 ],
                 'number' => 123,
                 'title' => 'Update psr/cache from 1.0.0 to 1.0.1',
+                'head' => [
+                    'ref' => 'psrlog113114',
+                ],
             ],
-        ];
+        ]);
     }
 
     protected function getBranchesFlattened()

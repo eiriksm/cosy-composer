@@ -71,7 +71,7 @@ class Gitlab implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed(Slug $slug) : array
+    public function getPrsNamed(Slug $slug) : NamedPrs
     {
         $pager = new ResultPager($this->client);
         $api = $this->client->mergeRequests();
@@ -97,9 +97,12 @@ class Gitlab implements ProviderInterface
                     'sha' => !empty($commits[1]["id"]) ? $commits[1]["id"] : $pr['sha'],
                     'ref' => $pr["target_branch"],
                 ],
+                'head' => [
+                    'ref' => $pr['source_branch'],
+                ],
             ];
         }
-        return $prs_named;
+        return NamedPrs::createFromArray($prs_named);
     }
 
     public function getDefaultBase(Slug $slug, $default_branch)

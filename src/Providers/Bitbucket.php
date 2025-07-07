@@ -90,7 +90,7 @@ class Bitbucket implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed(Slug $slug) : array
+    public function getPrsNamed(Slug $slug) : NamedPrs
     {
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
@@ -113,9 +113,12 @@ class Bitbucket implements ProviderInterface
                 'html_url' => $pr["links"]["html"]["href"],
                 'number' => $pr["id"],
                 'title' => $pr["title"],
+                'head' => [
+                    'ref' => $pr["source"]["branch"]["name"],
+                ],
             ];
         }
-        return $prs_named;
+        return NamedPrs::createFromArray($prs_named);
     }
 
     public function getDefaultBase(Slug $slug, $default_branch)

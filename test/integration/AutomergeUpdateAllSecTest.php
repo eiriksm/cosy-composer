@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 /**
@@ -30,20 +31,23 @@ class AutomergeUpdateAllSecTest extends AutoMergeBase
         $this->cosy->getCheckerFactory()->setChecker($checker);
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
         if (!$this->isUpdate) {
-            return [];
+            return NamedPrs::createFromArray([]);
         }
-        return [
+        return NamedPrs::createFromArray([
             'violinistall' => [
                 'base' => [
                     'sha' => 456,
                 ],
+                'head' => [
+                    'ref' => 'violinistall',
+                ],
                 'title' => 'not the same as the other',
                 'number' => 666,
             ],
-        ];
+        ]);
     }
 
     protected function createExpectedCommandForPackage($package)

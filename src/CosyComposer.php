@@ -8,6 +8,7 @@ use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
 use eiriksm\CosyComposer\ListFilterer\DevDepsOnlyFilterer;
 use eiriksm\CosyComposer\ListFilterer\IndirectWithDirectFilterer;
 use eiriksm\CosyComposer\Providers\Bitbucket;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\CosyComposer\Updater\IndividualUpdater;
 use GuzzleHttp\Psr7\Request;
@@ -375,7 +376,7 @@ class CosyComposer
         }
     }
 
-    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, $prs_named, $default_branch)
+    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, NamedPrs $prs_named_obj, $default_branch)
     {
         $fake_item = (object) [
             'name' => $package_name,
@@ -383,6 +384,7 @@ class CosyComposer
             'latest' => '',
         ];
         $branch_name_prefix = Helpers::createBranchName($fake_item, false, $config);
+        $prs_named = $prs_named_obj->getAllPrsNamed();
         foreach ($prs_named as $branch_name => $pr) {
             if (!empty($pr["base"]["ref"])) {
                 // The base ref should be what we are actually using for merge requests.
@@ -834,7 +836,7 @@ class CosyComposer
         $branch_slug->setUserName($branch_user);
         $branch_slug->setUserRepo($user_repo);
         $branches_flattened = [];
-        $prs_named = [];
+        $prs_named = NamedPrs::createFromArray([]);
         $default_base = null;
         try {
             if ($default_base_upstream = $this->privateClient->getDefaultBase($this->slug, $default_branch)) {
@@ -861,17 +863,18 @@ class CosyComposer
             $branch_name = Helpers::createBranchName($item, $one_pr_per_dependency, $config);
             if (in_array($branch_name, $branches_flattened)) {
                 // Is there a PR for this?
-                if (array_key_exists($branch_name, $prs_named)) {
+                $prs_named_array = $prs_named->getAllPrsNamed();
+                if (array_key_exists($branch_name, $prs_named_array)) {
                     $this->countPR($item->name);
                     if (!$default_base && !$one_pr_per_dependency) {
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
                             'package' => $item->name,
                         ]);
                         unset($data[$delta]);
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);
                     }
                     // Is the pr up to date?
-                    if ($prs_named[$branch_name]['base']['sha'] == $default_base) {
+                    if ($prs_named_array[$branch_name]['base']['sha'] == $default_base) {
                         // Create a fake "post-update-data" object.
                         $fake_post_update = (object) [
                             'version' => $item->latest,
@@ -897,18 +900,18 @@ class CosyComposer
                         // else with this new update. Either way, we want to continue this. Continue in this context
                         // would mean, we want to keep this for update checking still, and not unset it from the update
                         // array. This will mean it will probably get an updated title later.
-                        if ($prs_named[$branch_name]['title'] != $this->getPrParamsCreator()->createTitle($item, $fake_post_update, $security_update)) {
+                        if ($prs_named_array[$branch_name]['title'] != $this->getPrParamsCreator()->createTitle($item, $fake_post_update, $security_update)) {
                             $this->log(sprintf('Updating the PR of %s since the computed title does not match the title.', $item->name), Message::MESSAGE);
                             continue;
                         }
                         $context = [
                             'package' => $item->name,
                         ];
-                        if (!empty($prs_named[$branch_name]['html_url'])) {
+                        if (!empty($prs_named_array[$branch_name]['html_url'])) {
                             $context['url'] = $prs_named[$branch_name]['html_url'];
                         }
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, $context);
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);
                         unset($data[$delta]);
                     } else {
                         $is_allowed_out_of_date_pr[] = $item->name;
@@ -992,7 +995,7 @@ class CosyComposer
         return Config::createFromComposerDataInPath($composer_json_data, sprintf('%s/%s', $this->composerJsonDir, 'composer.json'));
     }
 
-    protected function handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $alerts, Config $config, $default_base, $default_branch, $prs_named)
+    protected function handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $alerts, Config $config, $default_base, $default_branch, NamedPrs $prs_named)
     {
         // We are going to hack an item here. We want the package to be "all" and the versions to be blank.
         $item = (object) [
@@ -1041,9 +1044,10 @@ class CosyComposer
             // OK, so... If we already have a branch named the name we are about to use. Is that one a branch
             // containing all the updates we now got? And is it actually up to date with the target branch? Of course,
             // if there is no such branch, then we will happily push it.
-            if (!empty($prs_named[$branch_name])) {
+            $prs_named_array = $prs_named->getAllPrsNamed();
+            if (!empty($prs_named_array[$branch_name])) {
                 $up_to_date = false;
-                if (!empty($prs_named[$branch_name]['base']['sha']) && $prs_named[$branch_name]['base']['sha'] == $default_base) {
+                if (!empty($prs_named_array[$branch_name]['base']['sha']) && $prs_named_array[$branch_name]['base']['sha'] == $default_base) {
                     $up_to_date = true;
                 }
                 $should_update = Helpers::shouldUpdatePr($branch_name, $pr_params, $prs_named);
@@ -1087,16 +1091,17 @@ class CosyComposer
         $this->commitFiles($msg);
     }
 
-    protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, $prs_named, Config $config, $security_update = false)
+    protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, NamedPrs $prs_named, Config $config, $security_update = false)
     {
+        $prs_named_array = $prs_named->getAllPrsNamed();
         $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
         if (Helpers::shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
             $this->log('Will try to update the PR based on settings.');
-            $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
+            $this->getPrClient()->updatePullRequest($this->slug, $prs_named_array[$branch_name]['number'], $pr_params);
         }
-        if (!empty($prs_named[$branch_name])) {
-            $this->handleAutoMerge($config, $prs_named[$branch_name], $security_update);
-            $this->handleLabels($config, $prs_named[$branch_name], $security_update);
+        if (!empty($prs_named_array[$branch_name])) {
+            $this->handleAutoMerge($config, $prs_named_array[$branch_name], $security_update);
+            $this->handleLabels($config, $prs_named_array[$branch_name], $security_update);
         }
     }
 

@@ -10,6 +10,7 @@ use eiriksm\CosyComposer\Message;
 use eiriksm\CosyComposer\PrCounterTrait;
 use eiriksm\CosyComposer\ProcessFactoryWrapper;
 use eiriksm\CosyComposer\ProviderInterface;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use eiriksm\CosyComposer\SlugAwareTrait;
 use eiriksm\CosyComposer\TemporaryDirectoryAwareTrait;
 use eiriksm\CosyComposer\TokenAwareTrait;
@@ -291,7 +292,7 @@ abstract class BaseUpdater implements UpdaterInterface
         return $this->fetcher;
     }
 
-    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, $prs_named, $default_branch)
+    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, NamedPrs $prs_named, $default_branch)
     {
         $fake_item = (object) [
             'name' => $package_name,
@@ -299,7 +300,12 @@ abstract class BaseUpdater implements UpdaterInterface
             'latest' => '',
         ];
         $branch_name_prefix = Helpers::createBranchName($fake_item, false, $config);
-        foreach ($prs_named as $branch_name => $pr) {
+        $relevant_prs = $prs_named->getPrsFromPackage($package_name);
+        if (empty($relevant_prs)) {
+            $this->getLogger()->info(new Message('No direct relevant PRs found for package ' . $package_name));
+            $relevant_prs = $prs_named->getAllPrsNamed();
+        }
+        foreach ($relevant_prs as $branch_name => $pr) {
             if (!empty($pr["base"]["ref"])) {
                 // The base ref should be what we are actually using for merge requests.
                 if ($pr["base"]["ref"] != $default_branch) {

@@ -2,6 +2,8 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
+
 class UpdateAllBranchNotUpToDateTest extends UpdateAllBase
 {
 
@@ -45,7 +47,7 @@ class UpdateAllBranchNotUpToDateTest extends UpdateAllBase
         self::assertEquals($this->foundBranch, true);
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
         $title = 'Update all composer dependencies';
         $body = 'If you have a high test coverage index, and your tests for this pull request are passing, it should be both safe and recommended to merge this update.
@@ -77,14 +79,17 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
         if ($this->changeSha) {
             $sha = md5($sha . time());
         }
-        return [
+        return NamedPrs::createFromArray([
             'violinistall' => [
                 'base' => [
                     'sha' => $sha,
                 ],
                 'title' => $title,
                 'body' => $body,
+                'head' => [
+                    'ref' => 'violinistall',
+                ],
             ],
-        ];
+        ]);
     }
 }

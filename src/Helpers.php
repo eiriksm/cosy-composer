@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposer;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Psr\Log\LoggerInterface;
 use Violinist\Config\Config;
 use Violinist\Slug\Slug;
@@ -118,8 +119,9 @@ class Helpers
         throw new \Exception('Could not find ' . $name . ' in composer.json.');
     }
 
-    public static function shouldUpdatePr($branch_name, $pr_params, $prs_named)
+    public static function shouldUpdatePr($branch_name, $pr_params, NamedPrs $prs_named_obj)
     {
+        $prs_named = $prs_named_obj->getAllPrsNamed();
         if (empty($branch_name)) {
             return false;
         }

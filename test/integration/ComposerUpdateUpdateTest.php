@@ -5,6 +5,7 @@ namespace eiriksm\CosyComposerTest\integration;
 use eiriksm\CosyComposer\Message;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\Providers\Github;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use Github\Exception\RuntimeException;
 use Violinist\ProjectData\ProjectData;
@@ -119,7 +120,7 @@ a custom message
         $mock_provider->method('getDefaultBase')
             ->willReturn($default_sha);
         $mock_provider->method('getPrsNamed')
-            ->willReturn([]);
+            ->willReturn(NamedPrs::createFromArray([]));
         $mock_provider_factory->method('createFromHost')
             ->willReturn($mock_provider);
 

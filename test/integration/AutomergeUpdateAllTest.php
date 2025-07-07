@@ -2,6 +2,8 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
+
 /**
  * Test for automerge being enabled.
  */
@@ -17,20 +19,23 @@ class AutomergeUpdateAllTest extends AutoMergeBase
     protected $checkPrUrl = true;
     protected $usesDirect = false;
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
         if (!$this->isUpdate) {
-            return [];
+            return NamedPrs::createFromArray([]);
         }
-        return [
+        return NamedPrs::createFromArray([
             'violinistall' => [
                 'base' => [
                     'sha' => 456,
                 ],
+                'head' => [
+                    'ref' => 'violinistall',
+                ],
                 'title' => 'not the same as the other',
                 'number' => 666,
             ],
-        ];
+        ]);
     }
 
     protected function createExpectedCommandForPackage($package)

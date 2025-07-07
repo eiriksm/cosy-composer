@@ -10,6 +10,15 @@ class NamedPrs
     private $prs = [];
     private $knownPackagePrs = [];
 
+    public static function createFromArray(array $prs) : NamedPrs
+    {
+        $value = new self();
+        foreach ($prs as $pr) {
+            $value->addFromPrData($pr);
+        }
+        return $value;
+    }
+
     public function addFromPrData(array $pr) : void
     {
         $this->prs[$pr['head']['ref']] = $pr;
@@ -31,6 +40,19 @@ class NamedPrs
         } catch (\Throwable $e) {
             // Not possible then, I guess.
         }
+    }
+
+    public function getAllPrsNamed()
+    {
+        $named = [];
+        foreach ($this->prs as $name => $pr) {
+            $named[$name] = $pr;
+        }
+        // Also add the known package PRs.
+        foreach ($this->knownPackagePrs as $package => $pr) {
+            $named[$pr['head']['ref']] = $pr;
+        }
+        return $named;
     }
 
     public function getPrsFromPackage(string $package) : array

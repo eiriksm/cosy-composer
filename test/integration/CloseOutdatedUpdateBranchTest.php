@@ -50,28 +50,28 @@ class CloseOutdatedUpdateBranchTest extends CloseOutdatedBase
                     'sha' => 123,
                 ],
                 'head' => [
-                    'ref' => 'psrlog100114'
+                    'ref' => 'psrlog100114',
                 ],
             ],
             'psrlog100113' => [
                 'number' => 123,
                 'title' => 'Test update',
                 'head' => [
-                    'ref' => 'psrlog100113'
+                    'ref' => 'psrlog100113',
                 ],
             ],
             'psrlog100112' => [
                 'number' => 124,
                 'title' => 'Test update',
                 'head' => [
-                    'ref' => 'psrlog100112'
+                    'ref' => 'psrlog100112',
                 ],
             ],
             'psrlog100111' => [
                 'number' => 125,
                 'title' => 'Test update',
                 'head' => [
-                    'ref' => 'psrlog100111'
+                    'ref' => 'psrlog100111',
                 ],
             ],
         ]);

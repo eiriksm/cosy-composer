@@ -38,7 +38,7 @@ class NamedPrs
                 if (empty($this->knownPackagePrs[$yaml["update_data"]["package"]])) {
                     $this->knownPackagePrs[$yaml["update_data"]["package"]] = [];
                 }
-                $this->knownPackagePrs[$yaml["update_data"]["package"]][] = $pr;
+                $this->knownPackagePrs[$yaml["update_data"]["package"]][] = $pr_data;
             }
         } catch (\Throwable $e) {
             // Not possible then, I guess.

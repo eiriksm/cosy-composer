@@ -40,6 +40,12 @@ class PublicGithubWrapper extends Github
     public function setUrlFromTokenUrl($url)
     {
         $parsed_url = parse_url($url);
+        if (empty($parsed_url['scheme'])) {
+            $parsed_url['scheme'] = 'https';
+        }
+        if (empty($parsed_url['host'])) {
+            $parsed_url['host'] = 'github.com';
+        }
         $this->baseUrl = sprintf('%s://%s', $parsed_url['scheme'], $parsed_url['host']);
     }
 

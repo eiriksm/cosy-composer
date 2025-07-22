@@ -170,6 +170,9 @@ class Gitlab implements ProviderInterface
     public static function getProjectId($url)
     {
         $url = parse_url($url);
+        if (empty($url['path'])) {
+            $url['path'] = '/';
+        }
         return ltrim($url['path'], '/');
     }
 

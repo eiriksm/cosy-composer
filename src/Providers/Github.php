@@ -142,7 +142,6 @@ class Github implements ProviderInterface
                 } else {
                     $prs_named->addFromPrData($pr);
                 }
-                $prs_named[$pr['head']['ref']]['commit'] = $commit;
             } catch (\Exception $e) {
                 // If the commit is not found, we just skip it.
             }

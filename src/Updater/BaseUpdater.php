@@ -257,6 +257,9 @@ abstract class BaseUpdater implements UpdaterInterface
 
             case 'git.drupalcode.org':
             case 'git.drupal.org':
+                if (empty($url_parsed['path'])) {
+                    throw new \Exception('No path to parse in post update data source');
+                }
                 $project_name = str_replace('/project/', '', $url_parsed['path']);
                 $link_pattern = "https://www.drupal.org/project/$project_name/releases/%s";
                 break;

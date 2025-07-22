@@ -35,7 +35,7 @@ class IndirectWithDirectFilterer implements FilterInterface
      */
     public function filter(array $list) : array
     {
-        /** @var IndirectWithDirectFilterListItem $new_list */
+        /** @var IndirectWithDirectFilterListItem[] $new_list */
         $new_list = [];
         foreach ($list as $value) {
             // Find the reason we have this.

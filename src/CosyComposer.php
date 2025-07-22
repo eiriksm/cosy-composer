@@ -250,7 +250,7 @@ class CosyComposer
             $url = preg_replace('/\.git$/', '', $url);
         }
         $slug_url_obj = parse_url($url);
-        if (empty($slug_url_obj['port'])) {
+        if (empty($slug_url_obj['port']) && !empty($slug_url_obj['scheme'])) {
             // Set it based on scheme.
             switch ($slug_url_obj['scheme']) {
                 case 'http':
@@ -908,7 +908,7 @@ class CosyComposer
                             'package' => $item->name,
                         ];
                         if (!empty($prs_named_array[$branch_name]['html_url'])) {
-                            $context['url'] = $prs_named[$branch_name]['html_url'];
+                            $context['url'] = $prs_named_array[$branch_name]['html_url'];
                         }
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, $context);
                         $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);

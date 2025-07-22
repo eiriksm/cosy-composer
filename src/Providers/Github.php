@@ -134,7 +134,7 @@ class Github implements ProviderInterface
             $prs_named->addFromPrData($pr);
             // Attempt to retrieve the actual commit.
             try {
-                /** @var Commits $commits */
+                /** @var \Github\Api\Repository\Commits $commits */
                 $commits = $this->client->api('repo')->commits();
                 $commit = $commits->show($user, $repo, $pr['head']['sha']);
                 if (!empty($commit["commit"]["message"])) {

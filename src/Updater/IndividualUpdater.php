@@ -566,12 +566,14 @@ class IndividualUpdater extends BaseUpdater
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
             // If it failed validation because it already exists, we also want to make sure all outdated PRs are
             // closed.
+            $prs_named_array = $prs_named->getAllPrsNamed();
             if (!empty($prs_named_array[$branch_name]['number'])) {
                 $this->countPR($item->name);
                 $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);
             }
         } catch (\Gitlab\Exception\RuntimeException $e) {
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
+            $prs_named_array = $prs_named->getAllPrsNamed();
             if (!empty($prs_named_array[$branch_name]['number'])) {
                 $this->countPR($item->name);
                 $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);

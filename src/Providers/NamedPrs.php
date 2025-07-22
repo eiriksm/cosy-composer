@@ -35,7 +35,10 @@ class NamedPrs
             [$_discard, $data] = explode(Helpers::getCommitMessageSeparator(), $commit);
             $yaml = Yaml::parse($data);
             if (!empty($yaml["update_data"]["package"])) {
-                $this->knownPackagePrs[$yaml["update_data"]["package"]] = $pr;
+                if (empty($this->knownPackagePrs[$yaml["update_data"]["package"]])) {
+                    $this->knownPackagePrs[$yaml["update_data"]["package"]] = [];
+                }
+                $this->knownPackagePrs[$yaml["update_data"]["package"]][] = $pr;
             }
         } catch (\Throwable $e) {
             // Not possible then, I guess.
@@ -49,8 +52,10 @@ class NamedPrs
             $named[$name] = $pr;
         }
         // Also add the known package PRs.
-        foreach ($this->knownPackagePrs as $package => $pr) {
-            $named[$pr['head']['ref']] = $pr;
+        foreach ($this->knownPackagePrs as $package => $prs) {
+            foreach ($prs as $pr) {
+                $named[$pr['head']['ref']] = $pr;
+            }
         }
         return $named;
     }
@@ -60,7 +65,7 @@ class NamedPrs
         $relevant_prs = [];
         // First see if its in the known package Prs.
         if (!empty($this->knownPackagePrs[$package])) {
-            $relevant_prs[] = $this->knownPackagePrs[$package];
+            $relevant_prs = $this->knownPackagePrs[$package];
         }
         return $relevant_prs;
     }

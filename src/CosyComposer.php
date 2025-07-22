@@ -383,7 +383,6 @@ class CosyComposer
             'version' => $current_version,
             'latest' => '',
         ];
-        $branch_name_prefix = Helpers::createBranchName($fake_item, false, $config);
         $prs_for_package = $prs_named_obj->getPrsFromPackage($package_name);
         foreach ($prs_for_package as $pr) {
             if (!empty($pr["base"]["ref"])) {

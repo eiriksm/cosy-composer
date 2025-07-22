@@ -24,7 +24,7 @@ class NamedPrs
         $this->prs[$pr['head']['ref']] = $pr;
     }
 
-    public function addFromCommit(string $commit, array $pr) : void
+    public function addFromCommit(string $commit_message, array $pr_data) : void
     {
         // Try to parse the commit message to find a package name. It's
         // formatted like this:
@@ -32,7 +32,7 @@ class NamedPrs
         // ---- (separator from Helpers::getCommitMessageSeparator
         // Yaml of update data.
         try {
-            [$_discard, $data] = explode(Helpers::getCommitMessageSeparator(), $commit);
+            [$_discard, $data] = explode(Helpers::getCommitMessageSeparator(), $commit_message);
             $yaml = Yaml::parse($data);
             if (!empty($yaml["update_data"]["package"])) {
                 if (empty($this->knownPackagePrs[$yaml["update_data"]["package"]])) {

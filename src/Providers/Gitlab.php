@@ -79,7 +79,7 @@ class Gitlab implements ProviderInterface
         $prs = $pager->fetchAll($api, $method, [self::getProjectId($slug->getUrl()), [
             'state' => 'opened',
         ]]);
-        $prs_named = [];
+        $prs_named = new NamedPrs();
         foreach ($prs as $pr) {
             if ($pr['state'] !== 'opened') {
                 continue;
@@ -88,7 +88,7 @@ class Gitlab implements ProviderInterface
             $commits = $this->client->repositories()->commits(self::getProjectId($slug->getUrl()), [
                 'ref_name' => $pr['source_branch'],
             ]);
-            $prs_named[$pr['source_branch']] = [
+            $data = [
                 'title' => $pr['title'],
                 'body' => !empty($pr['description']) ? $pr['description'] : '',
                 'html_url' => !empty($pr['web_url']) ? $pr['web_url'] : '',
@@ -101,8 +101,12 @@ class Gitlab implements ProviderInterface
                     'ref' => $pr['source_branch'],
                 ],
             ];
+            $prs_named->addFromPrData($data);
+            if (!empty($commits[0]["id"]) && !empty($commits[0]["message"])) {
+                $prs_named->addFromCommit($commits[0]["message"], $data);
+            }
         }
-        return NamedPrs::createFromArray($prs_named);
+        return $prs_named;
     }
 
     public function getDefaultBase(Slug $slug, $default_branch)

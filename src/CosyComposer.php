@@ -378,16 +378,11 @@ class CosyComposer
 
     protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, NamedPrs $prs_named_obj, $default_branch)
     {
-        $fake_item = (object) [
-            'name' => $package_name,
-            'version' => $current_version,
-            'latest' => '',
-        ];
         $prs_for_package = $prs_named_obj->getPrsFromPackage($package_name);
         foreach ($prs_for_package as $pr) {
             if (!empty($pr["base"]["ref"])) {
                 // The base ref should be what we are actually using for merge requests.
-                if ($pr["base"]["ref"] != $default_branch) {
+                if ($pr["base"]["ref"] !== $default_branch) {
                     continue;
                 }
             }

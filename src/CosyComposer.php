@@ -384,25 +384,16 @@ class CosyComposer
             'latest' => '',
         ];
         $branch_name_prefix = Helpers::createBranchName($fake_item, false, $config);
-        $prs_named = $prs_named_obj->getAllPrsNamed();
-        foreach ($prs_named as $branch_name => $pr) {
+        $prs_for_package = $prs_named_obj->getPrsFromPackage($package_name);
+        foreach ($prs_for_package as $pr) {
             if (!empty($pr["base"]["ref"])) {
                 // The base ref should be what we are actually using for merge requests.
                 if ($pr["base"]["ref"] != $default_branch) {
                     continue;
                 }
             }
-            if ($pr["number"] == $pr_id) {
-                // We really don't want to close the one we are considering as the latest one, do we?
-                continue;
-            }
-            // We are just going to assume, if the number of the PR does not match. And the branch name does
-            // indeed "match", well. Match as in it updates the exact package from the exact same version. Then
-            // the current/recent PR will update to a newer version. Or it could also be that the branch was
-            // created while the project was using one PR per version, and then they switched. Either way. These
-            // two scenarios are both scenarios we want to handle in such a way that we are closing this PR that
-            // is matching.
-            if (strpos($branch_name, $branch_name_prefix) === false) {
+            // We don't want to close this exact PR do we?
+            if ((string) $pr['number'] === (string) $pr_id) {
                 continue;
             }
             $comment = $this->messageFactory->getPullRequestClosedMessage($pr_id);

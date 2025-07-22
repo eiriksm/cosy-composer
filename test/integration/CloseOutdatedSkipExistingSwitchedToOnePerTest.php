@@ -22,7 +22,13 @@ class CloseOutdatedSkipExistingSwitchedToOnePerTest extends CloseOutdatedBase
 
     protected function getPrsNamed() : NamedPrs
     {
-        return NamedPrs::createFromArray([
+        $prs_named = new NamedPrs();
+        $fake_commit = 'test commit
+------
+update_data:
+  package: psr/log';
+
+        $pr_array = [
             'violinistpsrlog' => [
                 'base' => [
                     'sha' => 123,
@@ -64,6 +70,10 @@ class CloseOutdatedSkipExistingSwitchedToOnePerTest extends CloseOutdatedBase
                     'ref' => 'psrlog100111',
                 ],
             ],
-        ]);
+        ];
+        foreach ($pr_array as $value) {
+            $prs_named->addFromCommit($fake_commit, $value);
+        }
+        return $prs_named;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use GuzzleHttp\Psr7\Response;
 use Http\Client\HttpClient;
 
@@ -29,7 +30,7 @@ class UpdateBranchTitleChangedTest extends ComposerUpdateIntegrationBase
         $this->assertOutputContainsMessage('Updating the PR of drupal/core-recommended since the computed title does not match the title.', $this->cosy);
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
         $title = 'Update drupal/core-recommended from 10.2.1 to 10.2.2';
         $body = 'If you have a high test coverage index, and your tests for this pull request are passing, it should be both safe and recommended to merge this update.
@@ -73,7 +74,7 @@ Here is a list of changes between the version you use, and the version this pull
 ***
 This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).
 ';
-        return [
+        return NamedPrs::createFromArray([
             'drupalcorerecommended10211022' => [
                 'base' => [
                     'sha' => 123,
@@ -81,8 +82,11 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
                 'number' => 342,
                 'title' => $title,
                 'body' => $body,
+                'head' => [
+                    'ref' => 'drupalcorerecommended10211022',
+                ],
             ],
-        ];
+        ]);
     }
 
     public function getBranchesFlattened()

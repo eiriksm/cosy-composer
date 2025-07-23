@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposer;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Violinist\Slug\Slug;
 
 interface ProviderInterface
@@ -24,11 +25,7 @@ interface ProviderInterface
 
     public function getBranchesFlattened(Slug $slug);
 
-    /**
-     * @param Slug $slug
-     * @return array
-     */
-    public function getPrsNamed(Slug $slug) : array;
+    public function getPrsNamed(Slug $slug) : NamedPrs;
 
     public function getDefaultBase(Slug $slug, $default_branch);
 

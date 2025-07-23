@@ -11,6 +11,7 @@ use eiriksm\CosyComposer\IndividualUpdateItem;
 use eiriksm\CosyComposer\LockDataComparer;
 use eiriksm\CosyComposer\Message;
 use eiriksm\CosyComposer\ProcessFactoryWrapper;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use eiriksm\CosyComposer\PrParamsCreator;
 use eiriksm\CosyComposer\UpdateItemInterface;
 use eiriksm\ViolinistMessages\UpdateListItem;
@@ -42,7 +43,7 @@ class IndividualUpdater extends BaseUpdater
     /**
      * {@inheritdoc}
      */
-    public function handleUpdate($data, $lockdata, $cdata, $one_pr_per_dependency, $initial_lock_file_data, $prs_named, $default_base, $hostname, $default_branch, $alerts, $is_allowed_out_of_date_pr, Config $config)
+    public function handleUpdate($data, $lockdata, $cdata, $one_pr_per_dependency, $initial_lock_file_data, NamedPrs $prs_named, $default_base, $hostname, $default_branch, $alerts, $is_allowed_out_of_date_pr, Config $config)
     {
         $this->initialComposerLockData = $initial_lock_file_data;
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
@@ -117,8 +118,9 @@ class IndividualUpdater extends BaseUpdater
         }
     }
 
-    protected function handleGroup(GroupUpdateItem $item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
+    protected function handleGroup(GroupUpdateItem $item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, NamedPrs $prs_named_object, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
     {
+        $prs_named = $prs_named_object->getAllPrsNamed();
         // @todo: This should rather take the config from the rule.
         $config = $global_config;
         // Alright, its a group. Let's gather all the package names that are in
@@ -256,7 +258,7 @@ class IndividualUpdater extends BaseUpdater
             }
         } catch (ValidationFailedException $e) {
             // @todo: Do some better checking. Could be several things, this.
-            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $config, $security_update);
             // If it failed validation because it already exists, we also want to make sure all outdated PRs are
             // closed.
             $raw_item = $item->getData();
@@ -264,7 +266,7 @@ class IndividualUpdater extends BaseUpdater
                 // @todo: Count the PR and close outdated.
             }
         } catch (\Gitlab\Exception\RuntimeException $e) {
-            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $config, $security_update);
             if (!empty($prs_named[$branch_name]['number'])) {
                 // @todo: Count the PR and close outdated.
             }
@@ -281,7 +283,7 @@ class IndividualUpdater extends BaseUpdater
         $this->executePostUpdateStep($default_branch, $lock_file_contents, $config);
     }
 
-    protected function handleUpdateItem(UpdateItemInterface $item_object, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
+    protected function handleUpdateItem(UpdateItemInterface $item_object, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, NamedPrs $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
     {
         if ($item_object instanceof GroupUpdateItem) {
             return $this->handleGroup($item_object, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $security_update, $global_config, $can_update_beyond);
@@ -478,22 +480,24 @@ class IndividualUpdater extends BaseUpdater
             }
             $pr_params = $pr_params_creator->getPrParams($this->forkUser, $this->isPrivate, $this->getSlug(), $branch_name, $body, $title, $default_branch, $config);
             // Check if this new branch name has a pr up-to-date.
-            if (!Helpers::shouldUpdatePr($branch_name, $pr_params, $prs_named) && array_key_exists($branch_name, $prs_named)) {
+            $prs_named_array = $prs_named->getAllPrsNamed();
+            if (!Helpers::shouldUpdatePr($branch_name, $pr_params, $prs_named) && array_key_exists($branch_name, $prs_named_array)) {
                 if (!$default_base) {
                     $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
                         'package' => $item->name,
                     ]);
                     $this->countPR($item->name);
-                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
+                    $pr_id = $prs_named_array[$branch_name]['number'];
+                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pr_id, $prs_named, $default_branch);
                     return;
                 }
                 // Is the pr up to date?
-                if ($prs_named[$branch_name]['base']['sha'] == $default_base) {
+                if ($prs_named_array[$branch_name]['base']['sha'] == $default_base) {
                     $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
                         'package' => $item->name,
                     ]);
                     $this->countPR($item->name);
-                    $pr_id = $prs_named[$branch_name]['number'];
+                    $pr_id = $prs_named_array[$branch_name]['number'];
                     $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pr_id, $prs_named, $default_branch);
                     return;
                 }
@@ -562,15 +566,17 @@ class IndividualUpdater extends BaseUpdater
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
             // If it failed validation because it already exists, we also want to make sure all outdated PRs are
             // closed.
-            if (!empty($prs_named[$branch_name]['number'])) {
+            $prs_named_array = $prs_named->getAllPrsNamed();
+            if (!empty($prs_named_array[$branch_name]['number'])) {
                 $this->countPR($item->name);
-                $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
+                $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);
             }
         } catch (\Gitlab\Exception\RuntimeException $e) {
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
-            if (!empty($prs_named[$branch_name]['number'])) {
+            $prs_named_array = $prs_named->getAllPrsNamed();
+            if (!empty($prs_named_array[$branch_name]['number'])) {
                 $this->countPR($item->name);
-                $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
+                $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);
             }
         } catch (ComposerUpdateProcessFailedException $e) {
             $this->log('Caught an exception: ' . $e->getMessage(), 'error');
@@ -629,10 +635,11 @@ class IndividualUpdater extends BaseUpdater
         Helpers::handleLabels($this->getPrClient(), $this->getLogger(), $this->slug, $config, $pullRequest, $security_update);
     }
 
-    protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, $prs_named, Config $config, $security_update = false)
+    protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, NamedPrs $prs_named_obj, Config $config, $security_update = false)
     {
+        $prs_named = $prs_named_obj->getAllPrsNamed();
         $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
-        if (Helpers::shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
+        if (Helpers::shouldUpdatePr($branch_name, $pr_params, $prs_named_obj)) {
             $this->log('Will try to update the PR based on settings.');
             $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
         }

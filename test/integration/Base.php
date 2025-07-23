@@ -5,6 +5,7 @@ namespace eiriksm\CosyComposerTest\integration;
 use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\Providers\Github;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
 use PHPUnit\Framework\TestCase;
@@ -75,7 +76,7 @@ abstract class Base extends TestCase
                 return $this->getDefaultSha();
             });
         $mock_provider->method('getPrsNamed')
-            ->willReturn([]);
+            ->willReturn(NamedPrs::createFromArray([]));
         $mock_provider_factory->method('createFromHost')
             ->willReturn($mock_provider);
         /** @var CosyComposer $c */
@@ -204,12 +205,12 @@ abstract class Base extends TestCase
 
     protected function getBranchesFlattened()
     {
-        return [];
+        return array_keys($this->getPrsNamed()->getAllPrsNamed());
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [];
+        return NamedPrs::createFromArray([]);
     }
 
     protected function getMockOutputWithUpdate($package, $version_from, $version_to)

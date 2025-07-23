@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 class UpdateConcurrentAllowSecurityTest extends ComposerUpdateIntegrationBase
@@ -29,17 +30,20 @@ class UpdateConcurrentAllowSecurityTest extends ComposerUpdateIntegrationBase
         $this->assertOutputContainsMessage('The concurrent limit (1) is reached, but the update of drupal/core-recommended is a security update, so we will try to update it anyway.', $this->cosy);
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        return NamedPrs::createFromArray([
             'psrhttpfactory102110' => [
                 'base' => [
                     'sha' => 'abab',
                 ],
                 'number' => 123,
                 'title' => 'Update psr/http-factory from 1.0.2 to 1.1.0',
+                'head' => [
+                    'ref' => 'psrhttpfactory102110',
+                ],
             ],
-        ];
+        ]);
     }
 
     protected function getBranchesFlattened()

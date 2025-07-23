@@ -2,6 +2,8 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
+
 /**
  * Test that we are closing PRs not the latest and greatest.
  */
@@ -14,14 +16,18 @@ class CloseOutdatedTest extends CloseOutdatedBase
     protected $checkPrUrl = true;
     protected $expectedClosedPrs = [124, 125];
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        return NamedPrs::createFromArray([
             'psrlog100114' => [
                 'number' => 456,
                 'title' => 'Test update',
                 'base' => [
                     'ref' => 'master',
+                    'sha' => 123,
+                ],
+                'head' => [
+                    'ref' => 'psrlog100114',
                 ],
             ],
             'psrlog100113' => [
@@ -29,6 +35,10 @@ class CloseOutdatedTest extends CloseOutdatedBase
                 'title' => 'Test update',
                 'base' => [
                     'ref' => 'notmaster',
+                    'sha' => 456,
+                ],
+                'head' => [
+                    'ref' => 'psrlog100113',
                 ],
             ],
             'psrlog100112' => [
@@ -36,6 +46,10 @@ class CloseOutdatedTest extends CloseOutdatedBase
                 'title' => 'Test update',
                 'base' => [
                     'ref' => 'master',
+                    'sha' => 123,
+                ],
+                'head' => [
+                    'ref' => 'psrlog100112',
                 ],
             ],
             'psrlog100111' => [
@@ -43,8 +57,12 @@ class CloseOutdatedTest extends CloseOutdatedBase
                 'title' => 'Test update',
                 'base' => [
                     'ref' => 'master',
+                    'sha' => 123,
+                ],
+                'head' => [
+                    'ref' => 'psrlog100111',
                 ],
             ],
-        ];
+        ]);
     }
 }

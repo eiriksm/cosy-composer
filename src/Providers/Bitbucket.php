@@ -90,7 +90,7 @@ class Bitbucket implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed(Slug $slug) : array
+    public function getPrsNamed(Slug $slug) : NamedPrs
     {
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
@@ -100,12 +100,12 @@ class Bitbucket implements ProviderInterface
         $prs = [
             'values' => $paginator->fetchAll($prs_client, 'list'),
         ];
-        $prs_named = [];
+        $prs_named = new NamedPrs();
         foreach ($prs["values"] as $pr) {
             if ($pr["state"] !== 'OPEN') {
                 continue;
             }
-            $prs_named[$pr["source"]["branch"]["name"]] = [
+            $data = [
                 'base' => [
                     'sha' => $pr["destination"]["commit"]["hash"],
                     'ref' => $pr["destination"]["branch"]["name"],
@@ -113,7 +113,18 @@ class Bitbucket implements ProviderInterface
                 'html_url' => $pr["links"]["html"]["href"],
                 'number' => $pr["id"],
                 'title' => $pr["title"],
+                'head' => [
+                    'ref' => $pr["source"]["branch"]["name"],
+                ],
             ];
+            $prs_named->addFromPrData($data);
+            try {
+                // See if we can retrieve the commit as well.
+                $commit = $api_repo->workspaces($user)->commit($repo)->show($pr["source"]["commit"]["hash"]);
+                $prs_named->addFromCommit($commit["message"], $data);
+            } catch (\Throwable $e) {
+                // If the commit is not found, we just skip it.
+            }
         }
         return $prs_named;
     }

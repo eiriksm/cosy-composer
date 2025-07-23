@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Github\Exception\ValidationFailedException;
 use Violinist\Slug\Slug;
 
@@ -29,12 +30,15 @@ class BranchPrefixOnePerUnexpectedUpdateButNeedsUpdateTest extends ComposerUpdat
         throw new ValidationFailedException();
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        return NamedPrs::createFromArray([
             'my_prefixviolinistpsrlog' => [
                 'base' => [
                     'sha' => 123,
+                ],
+                'head' => [
+                    'ref' => 'my_prefixviolinistpsrlog',
                 ],
                 'number' => 666,
                 'title' => 'Update psr/log from 1.0.0 to 1.1.4',
@@ -57,6 +61,6 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).
 ',
             ],
-        ];
+        ]);
     }
 }

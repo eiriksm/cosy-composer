@@ -139,8 +139,6 @@ class Github implements ProviderInterface
                 $commit = $commits->show($user, $repo, $pr['head']['sha']);
                 if (!empty($commit["commit"]["message"])) {
                     $prs_named->addFromCommit($commit["commit"]["message"], $pr);
-                } else {
-                    $prs_named->addFromPrData($pr);
                 }
             } catch (\Exception $e) {
                 // If the commit is not found, we just skip it.

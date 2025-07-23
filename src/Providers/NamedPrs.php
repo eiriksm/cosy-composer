@@ -31,6 +31,9 @@ class NamedPrs
         // Commit subject
         // ---- (separator from Helpers::getCommitMessageSeparator
         // Yaml of update data.
+        if (strpos($commit_message, Helpers::getCommitMessageSeparator()) === false) {
+            return;
+        }
         try {
             [$_discard, $data] = explode(Helpers::getCommitMessageSeparator(), $commit_message);
             $yaml = Yaml::parse($data);

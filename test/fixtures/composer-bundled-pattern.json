@@ -54,12 +54,7 @@
                                 "drupal/*"
                             ]
                         }
-                    ],
-                    "config": {
-                        "bundled_packages": {
-                            "drupal/*": []
-                        }
-                    }
+                    ]
                 }
             ]
         },

@@ -40,6 +40,7 @@ class CosyComposer
     use TokenAwareTrait;
     use AssigneesAllowedTrait;
     use TemporaryDirectoryAwareTrait;
+    use ConfigOverrideLoggerTrait;
 
     const UPDATE_ALL = 'update_all';
 
@@ -650,12 +651,7 @@ class CosyComposer
         $direct = null;
         if ($config->shouldCheckDirectOnly()) {
             $this->log('Checking only direct dependencies since config option check_only_direct_dependencies is enabled');
-            $extends_responsible = $config->getExtendNameForKey('check_only_direct_dependencies');
-            if ($extends_responsible) {
-                $this->log('The config option check_only_direct_dependencies was set by the extends config ' . $extends_responsible);
-                $chain = $config->getReadableChainForExtendName($extends_responsible);
-                $this->log(sprintf('The chain of extends is %s', $chain));
-            }
+            $this->logConfigOverride($config, 'check_only_direct_dependencies');
             $direct = '--direct';
         }
         // If we should always update all, then of course we should not only check direct dependencies outdated.
@@ -730,11 +726,7 @@ class CosyComposer
         }
         $handler->setLogger($this->getLogger());
         foreach (['allow_list', 'always_allow_direct_dependencies'] as $item) {
-            if ($config->getExtendNameForKey($item)) {
-                $this->log('The config option ' . $item . ' was set by the extends config ' . $config->getExtendNameForKey($item));
-                $chain = $config->getReadableChainForExtendName($config->getExtendNameForKey($item));
-                $this->log(sprintf('The chain of extends is %s', $chain));
-            }
+            $this->logConfigOverride($config, $item);
         }
         $data = $handler->applyToItems($data);
         // Remove non-security packages, if indicated.

@@ -4,6 +4,7 @@ namespace eiriksm\CosyComposer\Updater;
 
 use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
+use eiriksm\CosyComposer\ConfigOverrideLoggerTrait;
 use eiriksm\CosyComposer\CosyLogger;
 use eiriksm\CosyComposer\GroupUpdateItem;
 use eiriksm\CosyComposer\Helpers;
@@ -26,6 +27,8 @@ use Violinist\ProjectData\ProjectData;
 
 class IndividualUpdater extends BaseUpdater
 {
+    use ConfigOverrideLoggerTrait;
+
     /**
      * @var string
      */
@@ -53,11 +56,7 @@ class IndividualUpdater extends BaseUpdater
         } else {
             $this->log('The option number_of_concurrent_updates is not set, so we will not limit the number of concurrent updates');
         }
-        $has_extend_key = $config->getExtendNameForKey('number_of_concurrent_updates');
-        if ($has_extend_key) {
-            $chain = $config->getReadableChainForExtendName($has_extend_key);
-            $this->log(sprintf('The option number_of_concurrent_updates is set in the extend config called %s with the chain %s', $has_extend_key, $chain));
-        }
+        $this->logConfigOverride($config, 'number_of_concurrent_updates');
         $data = $this->convertDataToDto($data);
         // And now convert the data to DTOs for the groups.
         $groups = self::createGroups($data, $config);

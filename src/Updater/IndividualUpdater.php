@@ -386,7 +386,7 @@ class IndividualUpdater extends BaseUpdater
             // See if this package has any bundled updates.
             $bundled_packages = $config->getBundledPackagesForPackage($package_name);
             if (!empty($bundled_packages)) {
-                $updater->setBundledPackages($bundled_packages);
+                $updater->setBundledPackages(array_values(array_unique($bundled_packages)));
             }
             $updater->setWithUpdate($update_with_deps);
             $updater->setConstraint($constraint);

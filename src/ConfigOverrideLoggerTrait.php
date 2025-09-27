@@ -19,4 +19,3 @@ trait ConfigOverrideLoggerTrait
         }
     }
 }
-

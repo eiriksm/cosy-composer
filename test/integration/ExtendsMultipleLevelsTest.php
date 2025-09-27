@@ -16,7 +16,9 @@ class ExtendsMultipleLevelsTest extends ComposerUpdateIntegrationBase
     {
         $this->runtestExpectedOutput();
         $output = $this->cosy->getOutput();
-        $this->findMessage('The option number_of_concurrent_updates is set to 5 in the extend config called violinist-base-config.json with the chain "vendor/shared-violinist-drupal" -> "violinist-drupal-config.json" -> "vendor/shared-violinist-common" -> "violinist-base-config.json"', $this->cosy);
+        $this->assertOutputContainsMessage('The option number_of_concurrent_updates is set to 5', $this->cosy);
+        $this->assertOutputContainsMessage('The config option number_of_concurrent_updates was set by the extends config violinist-base-config.json', $this->cosy);
+        $this->assertOutputContainsMessage('The chain of extends is "vendor/shared-violinist-drupal" -> "violinist-drupal-config.json" -> "vendor/shared-violinist-common" -> "violinist-base-config.json"', $this->cosy);
     }
 
     protected function createComposerFileFromFixtures($dir, $filename)

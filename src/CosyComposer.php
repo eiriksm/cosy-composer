@@ -8,11 +8,13 @@ use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
 use eiriksm\CosyComposer\ListFilterer\DevDepsOnlyFilterer;
 use eiriksm\CosyComposer\ListFilterer\IndirectWithDirectFilterer;
 use eiriksm\CosyComposer\Providers\Bitbucket;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\CosyComposer\Updater\IndividualUpdater;
 use GuzzleHttp\Psr7\Request;
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
 use Http\Client\HttpClient;
+use League\Flysystem\FilesystemAdapter;
 use Symfony\Component\Process\Process;
 use Violinist\AllowListHandler\AllowListHandler;
 use Violinist\ComposerLockData\ComposerLockData;
@@ -248,7 +250,7 @@ class CosyComposer
             $url = preg_replace('/\.git$/', '', $url);
         }
         $slug_url_obj = parse_url($url);
-        if (empty($slug_url_obj['port'])) {
+        if (empty($slug_url_obj['port']) && !empty($slug_url_obj['scheme'])) {
             // Set it based on scheme.
             switch ($slug_url_obj['scheme']) {
                 case 'http':
@@ -374,32 +376,18 @@ class CosyComposer
         }
     }
 
-    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, $prs_named, $default_branch)
+    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, NamedPrs $prs_named_obj, $default_branch)
     {
-        $fake_item = (object) [
-            'name' => $package_name,
-            'version' => $current_version,
-            'latest' => '',
-        ];
-        $branch_name_prefix = Helpers::createBranchName($fake_item, false, $config);
-        foreach ($prs_named as $branch_name => $pr) {
+        $prs_for_package = $prs_named_obj->getPrsFromPackage($package_name);
+        foreach ($prs_for_package as $pr) {
             if (!empty($pr["base"]["ref"])) {
                 // The base ref should be what we are actually using for merge requests.
-                if ($pr["base"]["ref"] != $default_branch) {
+                if ($pr["base"]["ref"] !== $default_branch) {
                     continue;
                 }
             }
-            if ($pr["number"] == $pr_id) {
-                // We really don't want to close the one we are considering as the latest one, do we?
-                continue;
-            }
-            // We are just going to assume, if the number of the PR does not match. And the branch name does
-            // indeed "match", well. Match as in it updates the exact package from the exact same version. Then
-            // the current/recent PR will update to a newer version. Or it could also be that the branch was
-            // created while the project was using one PR per version, and then they switched. Either way. These
-            // two scenarios are both scenarios we want to handle in such a way that we are closing this PR that
-            // is matching.
-            if (strpos($branch_name, $branch_name_prefix) === false) {
+            // We don't want to close this exact PR do we?
+            if ((string) $pr['number'] === (string) $pr_id) {
                 continue;
             }
             $comment = $this->messageFactory->getPullRequestClosedMessage($pr_id);
@@ -418,6 +406,17 @@ class CosyComposer
     public function setViolinistHostname(string $hostname)
     {
         $this->hostName = $hostname;
+    }
+
+    public function getLocalAdapterForTempDir(string $directory) : FilesystemAdapter
+    {
+        $this->setTmpDir($directory);
+        $composer_json_dir = $this->tmpDir;
+        if ($this->project && $this->project->getComposerJsonDir()) {
+            $composer_json_dir = sprintf('%s/%s', $this->tmpDir, $this->project->getComposerJsonDir());
+        }
+        $this->composerJsonDir = $composer_json_dir;
+        return new LocalFilesystemAdapter($this->composerJsonDir);
     }
 
     /**
@@ -524,22 +523,24 @@ class CosyComposer
             throw new GitCloneException('Problem with the execCommand git clone. Exit code was ' . $clone_result);
         }
         $this->log('Repository cloned');
-        $composer_json_dir = $this->tmpDir;
-        if ($this->project && $this->project->getComposerJsonDir()) {
-            $composer_json_dir = sprintf('%s/%s', $this->tmpDir, $this->project->getComposerJsonDir());
-        }
-        $this->composerJsonDir = $composer_json_dir;
-        if (!$this->chdir($this->composerJsonDir)) {
-            throw new ChdirException('Problem with changing dir to the clone dir.');
-        }
-        $local_adapter = new LocalFilesystemAdapter($this->composerJsonDir);
+        $local_adapter = $this->getLocalAdapterForTempDir($this->tmpDir);
+        $this->chdir($this->composerJsonDir);
+        $uses_config_branch = false;
         if (!empty($_ENV['config_branch'])) {
+            $uses_config_branch = true;
             $config_branch = $_ENV['config_branch'];
             $this->log('Changing to config branch: ' . $config_branch);
             $tmpdir = sprintf('/tmp/%s', uniqid('', true));
             $clone_result = $this->execCommand(['git', 'clone', '--depth=1', $url, $tmpdir, '-b', $config_branch], false, 120);
             if (!$clone_result) {
-                $local_adapter = new LocalFilesystemAdapter($tmpdir);
+                $local_adapter = $this->getLocalAdapterForTempDir($tmpdir);
+            } else {
+                $this->log($this->getLastStdOut());
+                $this->log($this->getLastStdErr());
+                throw new GitCloneException('Problem with git clone of the config branch. Exit code was ' . $clone_result);
+            }
+            if (!$this->chdir($this->composerJsonDir)) {
+                throw new ChdirException('Problem with changing dir to the clone dir of the config branch.');
             }
         }
         $this->composerGetter = new ComposerFileGetter($local_adapter);
@@ -597,8 +598,10 @@ class CosyComposer
         }
         // Re-read the composer.json file, since it can be different on the default branch.
         $this->doComposerInstall($config);
-        $composer_json_data = $this->composerGetter->getComposerJsonData();
-        $config = $this->ensureFreshConfig($composer_json_data);
+        if (!$uses_config_branch) {
+            $composer_json_data = $this->composerGetter->getComposerJsonData();
+            $config = $this->ensureFreshConfig($composer_json_data);
+        }
         $this->runAuthExport($hostname);
         $this->handleDrupalContribSa($composer_json_data);
         $this->handleTimeIntervalSetting($config);
@@ -831,7 +834,7 @@ class CosyComposer
         $branch_slug->setUserName($branch_user);
         $branch_slug->setUserRepo($user_repo);
         $branches_flattened = [];
-        $prs_named = [];
+        $prs_named = NamedPrs::createFromArray([]);
         $default_base = null;
         try {
             if ($default_base_upstream = $this->privateClient->getDefaultBase($this->slug, $default_branch)) {
@@ -858,17 +861,18 @@ class CosyComposer
             $branch_name = Helpers::createBranchName($item, $one_pr_per_dependency, $config);
             if (in_array($branch_name, $branches_flattened)) {
                 // Is there a PR for this?
-                if (array_key_exists($branch_name, $prs_named)) {
+                $prs_named_array = $prs_named->getAllPrsNamed();
+                if (array_key_exists($branch_name, $prs_named_array)) {
                     $this->countPR($item->name);
                     if (!$default_base && !$one_pr_per_dependency) {
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
                             'package' => $item->name,
                         ]);
                         unset($data[$delta]);
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);
                     }
                     // Is the pr up to date?
-                    if ($prs_named[$branch_name]['base']['sha'] == $default_base) {
+                    if ($prs_named_array[$branch_name]['base']['sha'] == $default_base) {
                         // Create a fake "post-update-data" object.
                         $fake_post_update = (object) [
                             'version' => $item->latest,
@@ -894,18 +898,18 @@ class CosyComposer
                         // else with this new update. Either way, we want to continue this. Continue in this context
                         // would mean, we want to keep this for update checking still, and not unset it from the update
                         // array. This will mean it will probably get an updated title later.
-                        if ($prs_named[$branch_name]['title'] != $this->getPrParamsCreator()->createTitle($item, $fake_post_update, $security_update)) {
+                        if ($prs_named_array[$branch_name]['title'] != $this->getPrParamsCreator()->createTitle($item, $fake_post_update, $security_update)) {
                             $this->log(sprintf('Updating the PR of %s since the computed title does not match the title.', $item->name), Message::MESSAGE);
                             continue;
                         }
                         $context = [
                             'package' => $item->name,
                         ];
-                        if (!empty($prs_named[$branch_name]['html_url'])) {
-                            $context['url'] = $prs_named[$branch_name]['html_url'];
+                        if (!empty($prs_named_array[$branch_name]['html_url'])) {
+                            $context['url'] = $prs_named_array[$branch_name]['html_url'];
                         }
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, $context);
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named[$branch_name]['number'], $prs_named, $default_branch);
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);
                         unset($data[$delta]);
                     } else {
                         $is_allowed_out_of_date_pr[] = $item->name;
@@ -989,7 +993,7 @@ class CosyComposer
         return Config::createFromComposerDataInPath($composer_json_data, sprintf('%s/%s', $this->composerJsonDir, 'composer.json'));
     }
 
-    protected function handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $alerts, Config $config, $default_base, $default_branch, $prs_named)
+    protected function handleUpdateAll($initial_composer_lock_data, $composer_lock_after_installing, $alerts, Config $config, $default_base, $default_branch, NamedPrs $prs_named)
     {
         // We are going to hack an item here. We want the package to be "all" and the versions to be blank.
         $item = (object) [
@@ -1038,9 +1042,10 @@ class CosyComposer
             // OK, so... If we already have a branch named the name we are about to use. Is that one a branch
             // containing all the updates we now got? And is it actually up to date with the target branch? Of course,
             // if there is no such branch, then we will happily push it.
-            if (!empty($prs_named[$branch_name])) {
+            $prs_named_array = $prs_named->getAllPrsNamed();
+            if (!empty($prs_named_array[$branch_name])) {
                 $up_to_date = false;
-                if (!empty($prs_named[$branch_name]['base']['sha']) && $prs_named[$branch_name]['base']['sha'] == $default_base) {
+                if (!empty($prs_named_array[$branch_name]['base']['sha']) && $prs_named_array[$branch_name]['base']['sha'] == $default_base) {
                     $up_to_date = true;
                 }
                 $should_update = Helpers::shouldUpdatePr($branch_name, $pr_params, $prs_named);
@@ -1084,16 +1089,17 @@ class CosyComposer
         $this->commitFiles($msg);
     }
 
-    protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, $prs_named, Config $config, $security_update = false)
+    protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, NamedPrs $prs_named, Config $config, $security_update = false)
     {
+        $prs_named_array = $prs_named->getAllPrsNamed();
         $this->log('Had a problem with creating the pull request: ' . $e->getMessage(), 'error');
         if (Helpers::shouldUpdatePr($branch_name, $pr_params, $prs_named)) {
             $this->log('Will try to update the PR based on settings.');
-            $this->getPrClient()->updatePullRequest($this->slug, $prs_named[$branch_name]['number'], $pr_params);
+            $this->getPrClient()->updatePullRequest($this->slug, $prs_named_array[$branch_name]['number'], $pr_params);
         }
-        if (!empty($prs_named[$branch_name])) {
-            $this->handleAutoMerge($config, $prs_named[$branch_name], $security_update);
-            $this->handleLabels($config, $prs_named[$branch_name], $security_update);
+        if (!empty($prs_named_array[$branch_name])) {
+            $this->handleAutoMerge($config, $prs_named_array[$branch_name], $security_update);
+            $this->handleLabels($config, $prs_named_array[$branch_name], $security_update);
         }
     }
 
@@ -1317,14 +1323,6 @@ class CosyComposer
     public function getTmpDir()
     {
         return $this->tmpDir;
-    }
-
-    /**
-     * @param string $tmpDir
-     */
-    public function setTmpDir($tmpDir)
-    {
-        $this->tmpDir = $tmpDir;
     }
 
     /**

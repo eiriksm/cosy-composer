@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Github\Exception\ValidationFailedException;
 use Gitlab\Exception\RuntimeException;
 use Violinist\Slug\Slug;
@@ -38,25 +39,41 @@ class CloseOutdatedUpdateBranchTest extends CloseOutdatedBase
         throw new $this->exceptionClass('for real');
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        return NamedPrs::createFromArray([
             'psrlog100114' => [
                 'number' => 456,
                 'title' => 'Test update',
+                'base' => [
+                    'ref' => 'master',
+                    'sha' => 123,
+                ],
+                'head' => [
+                    'ref' => 'psrlog100114',
+                ],
             ],
             'psrlog100113' => [
                 'number' => 123,
                 'title' => 'Test update',
+                'head' => [
+                    'ref' => 'psrlog100113',
+                ],
             ],
             'psrlog100112' => [
                 'number' => 124,
                 'title' => 'Test update',
+                'head' => [
+                    'ref' => 'psrlog100112',
+                ],
             ],
             'psrlog100111' => [
                 'number' => 125,
                 'title' => 'Test update',
+                'head' => [
+                    'ref' => 'psrlog100111',
+                ],
             ],
-        ];
+        ]);
     }
 }

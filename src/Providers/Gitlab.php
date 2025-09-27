@@ -71,7 +71,7 @@ class Gitlab implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed(Slug $slug) : array
+    public function getPrsNamed(Slug $slug) : NamedPrs
     {
         $pager = new ResultPager($this->client);
         $api = $this->client->mergeRequests();
@@ -79,7 +79,7 @@ class Gitlab implements ProviderInterface
         $prs = $pager->fetchAll($api, $method, [self::getProjectId($slug->getUrl()), [
             'state' => 'opened',
         ]]);
-        $prs_named = [];
+        $prs_named = new NamedPrs();
         foreach ($prs as $pr) {
             if ($pr['state'] !== 'opened') {
                 continue;
@@ -88,7 +88,7 @@ class Gitlab implements ProviderInterface
             $commits = $this->client->repositories()->commits(self::getProjectId($slug->getUrl()), [
                 'ref_name' => $pr['source_branch'],
             ]);
-            $prs_named[$pr['source_branch']] = [
+            $data = [
                 'title' => $pr['title'],
                 'body' => !empty($pr['description']) ? $pr['description'] : '',
                 'html_url' => !empty($pr['web_url']) ? $pr['web_url'] : '',
@@ -97,7 +97,14 @@ class Gitlab implements ProviderInterface
                     'sha' => !empty($commits[1]["id"]) ? $commits[1]["id"] : $pr['sha'],
                     'ref' => $pr["target_branch"],
                 ],
+                'head' => [
+                    'ref' => $pr['source_branch'],
+                ],
             ];
+            $prs_named->addFromPrData($data);
+            if (!empty($commits[0]["id"]) && !empty($commits[0]["message"])) {
+                $prs_named->addFromCommit($commits[0]["message"], $data);
+            }
         }
         return $prs_named;
     }
@@ -167,6 +174,9 @@ class Gitlab implements ProviderInterface
     public static function getProjectId($url)
     {
         $url = parse_url($url);
+        if (empty($url['path'])) {
+            $url['path'] = '/';
+        }
         return ltrim($url['path'], '/');
     }
 

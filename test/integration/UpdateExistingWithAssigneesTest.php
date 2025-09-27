@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Github\Exception\ValidationFailedException;
 use Gitlab\Exception\RuntimeException;
 use Violinist\ProjectData\ProjectData;
@@ -51,13 +52,19 @@ class UpdateExistingWithAssigneesTest extends ComposerUpdateIntegrationBase
         ];
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        return NamedPrs::createFromArray([
             'drushdrush9721036' => [
+                'base' => [
+                    'sha' => '123',
+                ],
                 'number' => 123,
                 'title' => 'Not update drush, thats for sure. This will trigger an update of the PR',
+                'head' => [
+                    'ref' => 'drushdrush9721036',
+                ],
             ],
-        ];
+        ]);
     }
 }

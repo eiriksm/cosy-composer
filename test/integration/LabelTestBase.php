@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Github\Exception\ValidationFailedException;
 use Violinist\Slug\Slug;
 use Violinist\ProjectData\ProjectData;
@@ -32,20 +33,23 @@ abstract class LabelTestBase extends ComposerUpdateIntegrationBase
         throw new ValidationFailedException('I want you to update please');
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
         if (!$this->isUpdate) {
-            return [];
+            return NamedPrs::createFromArray([]);
         }
-        return [
+        return NamedPrs::createFromArray([
             'psrlog113114' => [
                 'base' => [
                     'sha' => 456,
                 ],
                 'title' => 'not the same as the other',
                 'number' => 666,
+                'head' => [
+                    'ref' => 'psrlog113114',
+                ],
             ],
-        ];
+        ]);
     }
 
     /**

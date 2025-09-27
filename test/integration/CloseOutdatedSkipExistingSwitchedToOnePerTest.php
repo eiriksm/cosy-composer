@@ -2,6 +2,8 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
+
 /**
  * Test that we are closing PRs not the latest and greatest.
  */
@@ -18,15 +20,24 @@ class CloseOutdatedSkipExistingSwitchedToOnePerTest extends CloseOutdatedBase
         parent::testOutdatedClosed();
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        $prs_named = new NamedPrs();
+        $fake_commit = 'test commit
+------
+update_data:
+  package: psr/log';
+
+        $pr_array = [
             'violinistpsrlog' => [
                 'base' => [
                     'sha' => 123,
                 ],
                 'number' => 456,
                 'title' => 'Update psr/log from 1.0.0 to 1.1.4',
+                'head' => [
+                    'ref' => 'violinistpsrlog',
+                ],
             ],
             'psrlog100114' => [
                 'base' => [
@@ -34,24 +45,35 @@ class CloseOutdatedSkipExistingSwitchedToOnePerTest extends CloseOutdatedBase
                 ],
                 'number' => 356,
                 'title' => 'Update psr/log from 1.0.0 to 1.1.4',
+                'head' => [
+                    'ref' => 'psrlog100114',
+                ],
             ],
             'psrlog100113' => [
                 'number' => 123,
                 'title' => 'Test update',
+                'head' => [
+                    'ref' => 'psrlog100113',
+                ],
             ],
             'psrlog100112' => [
                 'number' => 124,
                 'title' => 'Test update',
+                'head' => [
+                    'ref' => 'psrlog100112',
+                ],
             ],
             'psrlog100111' => [
                 'number' => 125,
                 'title' => 'Test update',
+                'head' => [
+                    'ref' => 'psrlog100111',
+                ],
             ],
         ];
-    }
-
-    protected function getBranchesFlattened()
-    {
-        return array_keys($this->getPrsNamed());
+        foreach ($pr_array as $value) {
+            $prs_named->addFromCommit($fake_commit, $value);
+        }
+        return $prs_named;
     }
 }

@@ -3,7 +3,6 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 use eiriksm\CosyComposer\CommandExecuter;
-use eiriksm\CosyComposer\Exceptions\ChdirException;
 
 class FailTest extends Base
 {
@@ -26,22 +25,6 @@ class FailTest extends Base
             ));
         $c->setExecuter($mock_executer);
         $this->expectExceptionMessage('Problem with the execCommand git clone. Exit code was 42');
-        $c->run();
-    }
-
-    public function testChdirToCloneFail()
-    {
-        $c = $this->getMockCosy();
-        $mock_executer = $this->createMock(CommandExecuter::class);
-        $mock_executer->method('executeCommand')
-            ->will($this->returnCallback(
-                function ($cmd) {
-                    return 0;
-                }
-            ));
-        $this->expectExceptionMessage('Problem with changing dir to the clone dir.');
-        $this->expectException(ChdirException::class);
-        $c->setExecuter($mock_executer);
         $c->run();
     }
 

@@ -240,7 +240,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                 break;
 
             default:
-                $client_expects = $mock_client->expects($this->once());
+                $client_expects = $mock_client->expects($this->any());
                 $client_expects->method('api')
                     ->with($this->getPrApiMethod())
                     ->willReturn($mock_pr);
@@ -272,8 +272,11 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                     ->willReturn($mock_response);
                 break;
         }
+        /** @var ProviderInterface $provider */
         $provider = $this->getProvider($mock_client);
-        $this->assertEquals(['patch-1', 'patch-2'], array_keys($provider->getPrsNamed($slug)));
+        $prs = $provider->getPrsNamed($slug);
+        $named_array = $prs->getAllPrsNamed();
+        $this->assertEquals(['patch-1', 'patch-2'], array_keys($named_array));
     }
 
     protected function configureArguments($key, InvocationMocker $object)

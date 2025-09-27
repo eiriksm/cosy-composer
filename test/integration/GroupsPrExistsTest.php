@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Github\Exception\ValidationFailedException;
 use Violinist\Slug\Slug;
 
@@ -108,17 +109,23 @@ class GroupsPrExistsTest extends ComposerUpdateIntegrationBase
         throw new ValidationFailedException('The PR exists');
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        return NamedPrs::createFromArray([
             'minor-patch-core' => [
                 'title' => 'Update group `Drupal core`',
                 'number' => 123,
+                'head' => [
+                    'ref' => 'minor-patch-core',
+                ],
             ],
             'minor-and-patch-contrib' => [
                 'title' => 'Update group `Drupal contrib`',
                 'number' => 456,
+                'head' => [
+                    'ref' => 'minor-and-patch-contrib',
+                ],
             ],
-        ];
+        ]);
     }
 }

@@ -51,7 +51,7 @@ class BundledPackagesPatternTest extends ComposerUpdateIntegrationBase
             $matches = array_intersect($this->targetPackages, $command);
             return count($matches) === count($this->targetPackages);
         });
-        self::assertNotEmpty($this->composerUpdateCommands, 'Expected at least one composer update command to run');
+        self::assertCount(1, $this->composerUpdateCommands, 'Expected to run a single composer update command for bundled packages');
         self::assertCount(1, $matchingCommands, 'Expected a single composer update command covering both target packages');
         $command = reset($matchingCommands);
         foreach ($this->targetPackages as $package) {
@@ -67,7 +67,6 @@ class BundledPackagesPatternTest extends ComposerUpdateIntegrationBase
     protected function handleExecutorReturnCallback(array $cmd, &$return)
     {
         if (isset($cmd[0], $cmd[1]) && $cmd[0] === 'composer' && $cmd[1] === 'update') {
-            var_dump($cmd);
             if (array_intersect($this->targetPackages, $cmd)) {
                 $this->composerUpdateCommands[] = $cmd;
                 $this->placeComposerLockContentsFromFixture('composer-bundled-pattern.lock.updated', $this->dir);

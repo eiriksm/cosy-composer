@@ -43,9 +43,25 @@
     },
     "extra": {
         "violinist": {
-            "bundled_packages": {
-                "drupal/*": []
-            }
+            "rules": [
+                {
+                    "name": "Bundle Drupal",
+                    "slug": "bundle-drupal",
+                    "matchRules": [
+                        {
+                            "type": "names",
+                            "values": [
+                                "drupal/*"
+                            ]
+                        }
+                    ],
+                    "config": {
+                        "bundled_packages": {
+                            "drupal/*": []
+                        }
+                    }
+                }
+            ]
         },
         "drupal-scaffold": {
             "locations": {

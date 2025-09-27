@@ -31,16 +31,6 @@ class IndividualUpdater extends BaseUpdater
      */
     private $composerJsonDir;
 
-    /**
-     * @var array<string, array<int, string>>
-     */
-    private $patternBundledPackages = [];
-
-    /**
-     * @var array<string, bool>
-     */
-    private $patternBundledFollowers = [];
-
     public function __construct()
     {
     }
@@ -59,8 +49,6 @@ class IndividualUpdater extends BaseUpdater
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
         $data = $this->convertDataToDto($data);
-        $this->patternBundledPackages = [];
-        $this->patternBundledFollowers = [];
         // And now convert the data to DTOs for the groups.
         $groups = self::createGroups($data, $config);
         // Now we have the groups, we can loop through them and handle them. In
@@ -86,7 +74,7 @@ class IndividualUpdater extends BaseUpdater
         }
         foreach ($data as $item) {
             $item_name = $item->getPackageName();
-            if ($item instanceof IndividualUpdateItem && empty($this->patternBundledPackages[$item_name]) && !empty($this->patternBundledFollowers[$item_name])) {
+            if ($item instanceof IndividualUpdateItem) {
                 $this->log(sprintf('Skipping %s because it will be updated as part of a bundled pattern', $item_name));
                 continue;
             }
@@ -666,51 +654,6 @@ class IndividualUpdater extends BaseUpdater
             Helpers::handleAutoMerge($this->client, $this->logger, $this->slug, $config, $prs_named[$branch_name], $security_update);
             $this->handleLabels($config, $prs_named[$branch_name], $security_update);
         }
-    }
-
-    protected function getBundledPackagesByPattern(Config $config, string $package_name, array $all_items) : array
-    {
-        $config_data = $config->getConfig();
-        if (empty($config_data->bundled_packages) || !is_object($config_data->bundled_packages)) {
-            return [];
-        }
-        $bundled = [];
-        foreach ($config_data->bundled_packages as $pattern => $packages) {
-            if (!$this->patternContainsGlob($pattern)) {
-                continue;
-            }
-            if (!fnmatch($pattern, $package_name)) {
-                continue;
-            }
-            $targets = [];
-            if (is_array($packages) && count($packages)) {
-                $targets = $packages;
-            } else {
-                foreach ($all_items as $candidate) {
-                    if (!$candidate instanceof IndividualUpdateItem) {
-                        continue;
-                    }
-                    $candidate_name = $candidate->getPackageName();
-                    if (fnmatch($pattern, $candidate_name)) {
-                        $targets[] = $candidate_name;
-                    }
-                }
-            }
-            $targets[] = $package_name;
-            $targets = array_values(array_unique($targets));
-            sort($targets);
-            if ($targets[0] !== $package_name) {
-                continue;
-            }
-            $bundled = array_merge($bundled, array_diff($targets, [$package_name]));
-        }
-        $bundled = array_values(array_unique($bundled));
-        return $bundled;
-    }
-
-    protected function patternContainsGlob(string $pattern) : bool
-    {
-        return strpbrk($pattern, '*?[') !== false;
     }
 
     /**

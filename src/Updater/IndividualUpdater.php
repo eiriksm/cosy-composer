@@ -84,7 +84,6 @@ class IndividualUpdater extends BaseUpdater
                 $data[] = $group;
             }
         }
-        $this->preparePatternBundles($data, $config);
         foreach ($data as $item) {
             $item_name = $item->getPackageName();
             if ($item instanceof IndividualUpdateItem && empty($this->patternBundledPackages[$item_name]) && !empty($this->patternBundledFollowers[$item_name])) {
@@ -666,44 +665,6 @@ class IndividualUpdater extends BaseUpdater
         if (!empty($prs_named[$branch_name])) {
             Helpers::handleAutoMerge($this->client, $this->logger, $this->slug, $config, $prs_named[$branch_name], $security_update);
             $this->handleLabels($config, $prs_named[$branch_name], $security_update);
-        }
-    }
-
-    protected function preparePatternBundles(array $items, Config $config) : void
-    {
-        $available_packages = [];
-        foreach ($items as $candidate) {
-            if (!$candidate instanceof IndividualUpdateItem) {
-                continue;
-            }
-            $available_packages[$candidate->getPackageName()] = true;
-        }
-        if (empty($available_packages)) {
-            return;
-        }
-        foreach ($items as $candidate) {
-            if (!$candidate instanceof IndividualUpdateItem) {
-                continue;
-            }
-            $package_name = $candidate->getPackageName();
-            if (!empty($this->patternBundledFollowers[$package_name])) {
-                continue;
-            }
-            $package_config = $config->getConfigForPackage($package_name);
-            $bundled_for_pattern = $this->getBundledPackagesByPattern($package_config, $package_name, $items);
-            if (empty($bundled_for_pattern)) {
-                continue;
-            }
-            $valid_followers = array_values(array_filter($bundled_for_pattern, function ($name) use ($available_packages) {
-                return isset($available_packages[$name]);
-            }));
-            if (empty($valid_followers)) {
-                continue;
-            }
-            $this->patternBundledPackages[$package_name] = array_values(array_unique(array_merge($this->patternBundledPackages[$package_name] ?? [], $valid_followers)));
-            foreach ($valid_followers as $follower) {
-                $this->patternBundledFollowers[$follower] = true;
-            }
         }
     }
 

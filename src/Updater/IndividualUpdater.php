@@ -738,7 +738,7 @@ class IndividualUpdater extends BaseUpdater
             $targets[] = $package_name;
             $targets = array_values(array_unique($targets));
             sort($targets);
-            if (empty($targets) || $targets[0] !== $package_name) {
+            if ($targets[0] !== $package_name) {
                 continue;
             }
             $bundled = array_merge($bundled, array_diff($targets, [$package_name]));

@@ -74,10 +74,6 @@ class IndividualUpdater extends BaseUpdater
         }
         foreach ($data as $item) {
             $item_name = $item->getPackageName();
-            if ($item instanceof IndividualUpdateItem) {
-                $this->log(sprintf('Skipping %s because it will be updated as part of a bundled pattern', $item_name));
-                continue;
-            }
             $security_update = false;
             $package_name_in_composer_json = $item_name;
             try {
@@ -376,9 +372,6 @@ class IndividualUpdater extends BaseUpdater
             $updater = $this->getUpdater($package_name);
             // See if this package has any bundled updates.
             $bundled_packages = $config->getBundledPackagesForPackage($package_name);
-            if (!empty($this->patternBundledPackages[$package_name])) {
-                $bundled_packages = array_merge($bundled_packages, $this->patternBundledPackages[$package_name]);
-            }
             if (!empty($bundled_packages)) {
                 $updater->setBundledPackages(array_values(array_unique($bundled_packages)));
             }

@@ -747,6 +747,11 @@ class IndividualUpdater extends BaseUpdater
         return $bundled;
     }
 
+    protected function patternContainsGlob(string $pattern) : bool
+    {
+        return strpbrk($pattern, '*?[') !== false;
+    }
+
     /**
      * @return UpdateItemInterface[]
      */

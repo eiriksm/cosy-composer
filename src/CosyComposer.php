@@ -1078,7 +1078,7 @@ class CosyComposer
         $this->cleanRepoForCommit();
         $creator = $this->getCommitCreator($config);
         $msg = $creator->generateMessageFromString('Update all dependencies');
-        $this->commitFiles($msg);
+        $this->commitFiles($msg, null, 'all');
     }
 
     protected function handlePossibleUpdatePrScenario(\Exception $e, $branch_name, $pr_params, NamedPrs $prs_named, Config $config, $security_update = false)

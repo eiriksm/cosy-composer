@@ -4,6 +4,7 @@ namespace eiriksm\CosyComposer\Updater;
 
 use Composer\Semver\Comparator;
 use Composer\Semver\Semver;
+use eiriksm\CosyComposer\ConfigOverrideLoggerTrait;
 use eiriksm\CosyComposer\CosyLogger;
 use eiriksm\CosyComposer\GroupUpdateItem;
 use eiriksm\CosyComposer\Helpers;
@@ -26,6 +27,8 @@ use Violinist\ProjectData\ProjectData;
 
 class IndividualUpdater extends BaseUpdater
 {
+    use ConfigOverrideLoggerTrait;
+
     /**
      * @var string
      */
@@ -48,6 +51,12 @@ class IndividualUpdater extends BaseUpdater
         $this->initialComposerLockData = $initial_lock_file_data;
         $can_update_beyond = $config->shouldAllowUpdatesBeyondConstraint();
         $max_number_of_prs = $config->getNumberOfAllowedPrs();
+        if ($max_number_of_prs) {
+            $this->log('The option number_of_concurrent_updates is set to ' . $max_number_of_prs);
+        } else {
+            $this->log('The option number_of_concurrent_updates is not set, so we will not limit the number of concurrent updates');
+        }
+        $this->logConfigOverride($config, 'number_of_concurrent_updates');
         $data = $this->convertDataToDto($data);
         // And now convert the data to DTOs for the groups.
         $groups = self::createGroups($data, $config);
@@ -82,6 +91,9 @@ class IndividualUpdater extends BaseUpdater
             }
             if (isset($alerts[$package_name_in_composer_json])) {
                 $security_update = true;
+            }
+            if ($max_number_of_prs) {
+                $this->log(sprintf('Current count of PRs is %d', $this->getPrCount()));
             }
             if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
                 if ($security_update && $config->shouldAllowSecurityUpdatesOnConcurrentLimit()) {

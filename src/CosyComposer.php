@@ -40,6 +40,7 @@ class CosyComposer
     use TokenAwareTrait;
     use AssigneesAllowedTrait;
     use TemporaryDirectoryAwareTrait;
+    use ConfigOverrideLoggerTrait;
 
     const UPDATE_ALL = 'update_all';
 
@@ -650,6 +651,7 @@ class CosyComposer
         $direct = null;
         if ($config->shouldCheckDirectOnly()) {
             $this->log('Checking only direct dependencies since config option check_only_direct_dependencies is enabled');
+            $this->logConfigOverride($config, 'check_only_direct_dependencies');
             $direct = '--direct';
         }
         // If we should always update all, then of course we should not only check direct dependencies outdated.
@@ -723,6 +725,9 @@ class CosyComposer
             $handler = AllowListHandler::createFromArray(array_merge($require_list, $config->getAllowList()));
         }
         $handler->setLogger($this->getLogger());
+        foreach (['allow_list', 'always_allow_direct_dependencies'] as $item) {
+            $this->logConfigOverride($config, $item);
+        }
         $data = $handler->applyToItems($data);
         // Remove non-security packages, if indicated.
         if ($config->shouldOnlyUpdateSecurityUpdates()) {

@@ -36,7 +36,7 @@ trait GitCommandsTrait
         $this->execCommand(['git', 'clean', '-f', 'composer.*']);
     }
 
-    protected function commitFiles($msg, ?UpdateListItem $item = null)
+    protected function commitFiles($msg, ?UpdateListItem $item = null, string $updateType = 'unknown')
     {
         $command = array_filter([
             'git', "commit",
@@ -45,15 +45,10 @@ trait GitCommandsTrait
             '-m',
             $msg,
         ]);
-        if ($item) {
+        $metadata = $this->getCommitMetadata($item, $updateType);
+        if (!empty($metadata)) {
             $command[] = '-m';
-            $command[] = sprintf("%s\n%s", Helpers::getCommitMessageSeparator(), Yaml::dump([
-                'update_data' => [
-                    'package' => $item->getPackageName(),
-                    'from' => $item->getOldVersion(),
-                    'to' => $item->getNewVersion(),
-                ],
-            ]));
+            $command[] = sprintf("%s\n%s", Helpers::getCommitMessageSeparator(), Yaml::dump($metadata));
         }
         if ($this->execCommand($command, false, 120)) {
             $this->log($this->getLastStdOut());
@@ -61,6 +56,24 @@ trait GitCommandsTrait
             throw new \Exception('Error committing the composer files. They are probably not changed.');
         }
         $this->commitMessage = $msg;
+    }
+
+    protected function getCommitMetadata(?UpdateListItem $item, string $updateType) : array
+    {
+        $metadata = [
+            'violinist_metadata' => [
+                'source' => 'violinist',
+                'type' => $updateType,
+            ],
+        ];
+        if ($item) {
+            $metadata['update_data'] = [
+                'package' => $item->getPackageName(),
+                'from' => $item->getOldVersion(),
+                'to' => $item->getNewVersion(),
+            ];
+        }
+        return $metadata;
     }
 
     protected function getCommitCreator(Config $config) : Creator
@@ -81,7 +94,7 @@ trait GitCommandsTrait
         $this->cleanRepoForCommit();
         $creator = $this->getCommitCreator($config);
         $msg = $creator->generateMessage($item, $is_dev);
-        $this->commitFiles($msg, $item);
+        $this->commitFiles($msg, $item, 'package');
     }
 
     protected function commitFilesForGroup(string $group_name, Config $config)
@@ -89,7 +102,7 @@ trait GitCommandsTrait
         $this->cleanRepoForCommit();
         $creator = $this->getCommitCreator($config);
         $msg = $creator->generateMessageForGroup($group_name);
-        $this->commitFiles($msg);
+        $this->commitFiles($msg, null, 'group');
     }
 
     protected function pushCode($branch_name, $default_base, $lock_file_contents)

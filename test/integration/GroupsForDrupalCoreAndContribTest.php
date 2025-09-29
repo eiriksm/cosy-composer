@@ -185,11 +185,10 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
             $this->placeComposerLockContentsFromFixture('composer-group-contrib-and-core.lock.updated_core', $this->dir);
         }
         // The last part might be the commit message for the contrib update.
-        $last_item = $cmd[count($cmd) - 1];
-        if ($last_item === 'Update dependency group Minor and Patch Contrib') {
+        if (in_array('Update dependency group Minor and Patch Contrib', $cmd, true)) {
             $this->foundContribMessage = true;
         }
-        if ($last_item === 'Update dependency group Minor and Patch Core') {
+        if (in_array('Update dependency group Minor and Patch Core', $cmd, true)) {
             $this->foundCoreMessage = true;
         }
         $cmd_string = implode(' ', $cmd);

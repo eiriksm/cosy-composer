@@ -105,10 +105,20 @@ trait GitCommandsTrait
         $this->commitFiles($msg, null, 'group');
     }
 
-    protected function pushCode($branch_name, $default_base, $lock_file_contents)
+    protected function pushCode($branch_name, $default_base, $lock_file_contents, string $default_branch)
     {
         if ($this->isPrivate) {
             $origin = 'origin';
+            // Let's double check if we don't still have a PR that is actually
+            // open, and is up to date.
+            $main_sha = $this->privateClient->getDefaultBase($this->getSlug(), $default_branch);
+            if ($main_sha !== $default_base) {
+                throw new \Exception('The main branch has changed since we started. Aborting to be safe.');
+            }
+            // OK, now look at all the PRs we have, and see if we can find one
+            // with the branch name we are about to push.
+            $all_prs = $this->privateClient->getPrsNamed($this->getSlug());
+            $a = 'b';
             if ($this->execCommand(["git", 'push', $origin, $branch_name, '--force'])) {
                 $this->log($this->getLastStdOut());
                 $this->log($this->getLastStdErr());

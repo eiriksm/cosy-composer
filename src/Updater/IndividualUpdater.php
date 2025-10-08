@@ -237,7 +237,7 @@ class IndividualUpdater extends BaseUpdater
             $pr_params = $pr_params_creator->getPrParamsForGroup($this->forkUser, $this->isPrivate, $this->slug, $branch_name, $body, $title, $default_branch, $config);
             $this->commitFilesForGroup($rule->name, $config);
             $this->runAuthExport($hostname);
-            $this->pushCode($branch_name, $default_base, $lock_file_contents);
+            $this->pushCode($branch_name, $default_base, $lock_file_contents, $default_branch);
             $pullRequest = $this->createPullrequest($pr_params);
         } catch (NotUpdatedException $e) {
             // Not updated because of the composer command, not the
@@ -516,7 +516,7 @@ class IndividualUpdater extends BaseUpdater
             }
             $this->commitFilesForPackage($list_item, $config, $is_require_dev);
             $this->runAuthExport($hostname);
-            $this->pushCode($branch_name, $default_base, $lock_file_contents);
+            $this->pushCode($branch_name, $default_base, $lock_file_contents, $default_branch);
             $pullRequest = $this->createPullrequest($pr_params);
             if (!empty($pullRequest['html_url'])) {
                 $this->log($pullRequest['html_url'], Message::PR_URL, [

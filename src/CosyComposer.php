@@ -1048,7 +1048,7 @@ class CosyComposer
                 }
             }
             $this->commitFilesForAll($config);
-            $this->pushCode($branch_name, $default_base, $initial_composer_lock_data);
+            $this->pushCode($branch_name, $default_base, $initial_composer_lock_data, $default_branch);
             $pullRequest = $this->createPullrequest($pr_params);
             if (!empty($pullRequest['html_url'])) {
                 $this->log($pullRequest['html_url'], Message::PR_URL, [

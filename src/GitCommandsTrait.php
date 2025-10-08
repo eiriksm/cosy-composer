@@ -111,14 +111,20 @@ trait GitCommandsTrait
             $origin = 'origin';
             // Let's double check if we don't still have a PR that is actually
             // open, and is up to date.
-            $main_sha = $this->privateClient->getDefaultBase($this->getSlug(), $default_branch);
+            $main_sha = $this->getPrClient()->getDefaultBase($this->getSlug(), $default_branch);
             if ($main_sha !== $default_base) {
                 throw new \Exception('The main branch has changed since we started. Aborting to be safe.');
             }
             // OK, now look at all the PRs we have, and see if we can find one
             // with the branch name we are about to push.
-            $all_prs = $this->privateClient->getPrsNamed($this->getSlug());
-            $a = 'b';
+            $all_prs = $this->getPrClient()->getPrsNamed($this->getSlug());
+            $all_of_them = $all_prs->getAllPrsNamed();
+            if (!empty($all_of_them[$branch_name]["base"]["sha"])) {
+                if ($all_of_them[$branch_name]["base"]["sha"] === $main_sha) {
+                    $this->log('A pull request already exists for branch ' . $branch_name . ' and it is up to date. Not pushing any code.');
+                    return;
+                }
+            }
             if ($this->execCommand(["git", 'push', $origin, $branch_name, '--force'])) {
                 $this->log($this->getLastStdOut());
                 $this->log($this->getLastStdErr());

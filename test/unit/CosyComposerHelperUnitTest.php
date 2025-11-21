@@ -5,7 +5,8 @@ namespace eiriksm\CosyComposerTest\unit;
 use eiriksm\CosyComposer\Helpers;
 use PHPUnit\Framework\TestCase;
 
-class CosyComposerHelperUnitTest extends TestCase {
+class CosyComposerHelperUnitTest extends TestCase
+{
 
     const TEMP_DIR_NAME = 'my-completely-unique-test-dir';
 
@@ -120,5 +121,4 @@ class CosyComposerHelperUnitTest extends TestCase {
             [$standard_json, 'nested/nested', 'nested/nested'],
         ];
     }
-
 }

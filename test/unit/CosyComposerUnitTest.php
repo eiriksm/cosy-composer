@@ -100,7 +100,7 @@ class CosyComposerUnitTest extends TestCase
         $this->assertEquals($expected, Helpers::getComposerJsonName($json, $input, '/tmp/derp'));
     }
 
-    public function getComposerJsonVariations()
+    public static function getComposerJsonVariations()
     {
         $standard_json = (object) [
             'require' => (object) [

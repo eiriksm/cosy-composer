@@ -135,6 +135,7 @@ class IndividualUpdater extends BaseUpdater
         $prs_named = $prs_named_object->getAllPrsNamed();
         // @todo: This should rather take the config from the rule.
         $config = $global_config;
+        $item_config = $config->getConfigForRuleObject($item->getRule());
         // Alright, its a group. Let's gather all the package names that are in
         // composer json, and also matches.
         $package_matches = [];
@@ -171,7 +172,7 @@ class IndividualUpdater extends BaseUpdater
             $this->switchBranch($branch_name);
             // Now let's update them.
             $array_copy = $package_matches;
-            $package_name = array_shift($package_matches);
+            $package_name = reset($package_matches);
             $updater = $this->getUpdater($package_name);
             $updater->setPackagesToCheckHasUpdated($package_matches);
             array_shift($array_copy);
@@ -239,6 +240,18 @@ class IndividualUpdater extends BaseUpdater
             $this->runAuthExport($hostname);
             $this->pushCode($branch_name, $default_base, $lock_file_contents, $default_branch);
             $pullRequest = $this->createPullrequest($pr_params);
+            if (!empty($pullRequest['html_url'])) {
+                $this->log($pullRequest['html_url'], Message::PR_URL, [
+                    'package' => $package_name,
+                ]);
+
+                Helpers::handleAutoMerge($this->client, $this->logger, $this->slug, $item_config, $pullRequest, $security_update);
+                $this->handleLabels($config, $pullRequest, $security_update);
+                if (!empty($pullRequest['number'])) {
+                    // @todo: Handle outdated here.
+                }
+            }
+            $this->countPR($item->getPackageName());
         } catch (NotUpdatedException $e) {
             // Not updated because of the composer command, not the
             // restriction itself.

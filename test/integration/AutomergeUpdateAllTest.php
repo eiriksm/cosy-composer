@@ -5,7 +5,7 @@ namespace eiriksm\CosyComposerTest\integration;
 use eiriksm\CosyComposer\Providers\NamedPrs;
 
 /**
- * Test for automerge being enabled.
+ * Test for automerge being enabled, even when using update all.
  */
 class AutomergeUpdateAllTest extends AutoMergeBase
 {

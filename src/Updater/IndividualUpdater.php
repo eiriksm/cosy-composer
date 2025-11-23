@@ -251,7 +251,7 @@ class IndividualUpdater extends BaseUpdater
                     // @todo: Handle outdated here.
                 }
             }
-            $this->countPR($item->name);
+            $this->countPR($item->getPackageName());
         } catch (NotUpdatedException $e) {
             // Not updated because of the composer command, not the
             // restriction itself.

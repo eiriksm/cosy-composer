@@ -14,7 +14,7 @@ class OutputFromUpdateTest extends Base
         $c = $this->cosy;
         $dir = $this->dir;
         $this->getMockOutputWithUpdate('eirik/private-pack', '1.0.0', '1.0.2');
-        $this->placeComposerContentsFromFixture('composer-json-private.json', $dir);
+        $this->createComposerFileFromFixtures($dir, 'composer-json-private.json');
         $mock_executer = $this->createMock(CommandExecuter::class);
         $mock_executer->method('executeCommand')
             ->willReturnCallback(function ($cmd) {

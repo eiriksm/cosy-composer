@@ -121,13 +121,6 @@ abstract class Base extends TestCase
         file_put_contents("$dir/composer.lock", $composer_lock_contents);
     }
 
-    protected function placeComposerContentsFromFixture($filename, $dir)
-    {
-        $composer_contents = file_get_contents(__DIR__ . '/../fixtures/' . $filename);
-        $composer_file = "$dir/composer.json";
-        file_put_contents($composer_file, $composer_contents);
-    }
-
     protected function createComposerFileFromFixtures($dir, $filename)
     {
         $composer_contents = file_get_contents(__DIR__ . "/../fixtures/$filename");

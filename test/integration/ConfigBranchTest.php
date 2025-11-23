@@ -57,6 +57,6 @@ config_branch=config'],
         // Now retrieve the dir.
         $dir = str_replace(' -b config', '', str_replace('git clone --depth=1 https://x-access-token:user-token@github.com/a/b ', '', $cmd_string));
         mkdir($dir);
-        $this->placeComposerContentsFromFixture('empty.json', $dir);
+        $this->createComposerFileFromFixtures($dir, 'empty.json');
     }
 }

@@ -1,0 +1,28 @@
+{
+  "name": "company/project",
+  "require": {
+    "symfony/console": "^5.4",
+    "psr/container": "^1.0"
+  },
+  "extra": {
+    "violinist": {
+      "rules": [
+        {
+          "name": "Symfony packages",
+          "slug": "symfony-group",
+          "matchRules": [
+            {
+              "type": "names",
+              "values": [
+                "symfony/*"
+              ]
+            }
+          ],
+          "config": {
+            "automerge": 1
+          }
+        }
+      ]
+    }
+  }
+}

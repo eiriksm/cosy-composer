@@ -235,7 +235,7 @@ class IndividualUpdater extends BaseUpdater
             }, $update_list);
             $body = $pr_params_creator->createBodyForGroup($rule->name, $update_array);
             $title = sprintf('Update group `%s`', $rule->name);
-            $pr_params = $pr_params_creator->getPrParamsForGroup($this->forkUser, $this->isPrivate, $this->slug, $branch_name, $body, $title, $default_branch, $config);
+            $pr_params = $pr_params_creator->getPrParamsForGroup($this->forkUser, $this->isPrivate, $this->slug, $branch_name, $body, $title, $default_branch, $item_config);
             $this->commitFilesForGroup($rule->name, $config);
             $this->runAuthExport($hostname);
             $this->pushCode($branch_name, $default_base, $lock_file_contents, $default_branch);

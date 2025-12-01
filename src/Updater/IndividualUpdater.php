@@ -246,7 +246,7 @@ class IndividualUpdater extends BaseUpdater
                 ]);
 
                 Helpers::handleAutoMerge($this->client, $this->logger, $this->slug, $item_config, $pullRequest, $security_update);
-                $this->handleLabels($config, $pullRequest, $security_update);
+                $this->handleLabels($item_config, $pullRequest, $security_update);
                 if (!empty($pullRequest['number'])) {
                     // @todo: Handle outdated here.
                 }

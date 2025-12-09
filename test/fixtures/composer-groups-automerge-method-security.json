@@ -1,0 +1,30 @@
+{
+  "name": "company/project",
+  "require": {
+    "psr/log": "^1.0",
+    "symfony/console": "^5.0"
+  },
+  "extra": {
+    "violinist": {
+      "automerge_security": 1,
+      "automerge_method_security": "merge",
+      "rules": [
+        {
+          "name": "PSR Packages",
+          "matchRules": [
+            {
+              "type": "names",
+              "values": [
+                "psr/*"
+              ]
+            }
+          ],
+          "config": {
+            "automerge_security": 1,
+            "automerge_method_security": "rebase"
+          }
+        }
+      ]
+    }
+  }
+}

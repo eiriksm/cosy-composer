@@ -307,6 +307,20 @@ class CosyComposer
         throw new OutsideProcessingHoursException('Current hour is inside timeframe disallowed');
     }
 
+    /**
+     * Apply the ignore_platform_requirements setting from config to the command executer.
+     *
+     * This sets the COMPOSER_IGNORE_PLATFORM_REQS environment variable which
+     * propagates to all composer commands.
+     */
+    protected function applyIgnorePlatformRequirements(Config $config): void
+    {
+        if ($config->shouldIgnorePlatformRequirements()) {
+            $this->log('Ignoring platform requirements for composer commands (COMPOSER_IGNORE_PLATFORM_REQS=1)');
+        }
+        $this->executer->setIgnorePlatformRequirements($config->shouldIgnorePlatformRequirements());
+    }
+
     public function handleDrupalContribSa($cdata)
     {
         if (!getenv('DRUPAL_CONTRIB_SA_PATH')) {
@@ -553,6 +567,7 @@ class CosyComposer
             throw new \InvalidArgumentException('Invalid composer.json file');
         }
         $config = $this->ensureFreshConfig($composer_json_data);
+        $this->applyIgnorePlatformRequirements($config);
         $this->runAuthExport($hostname);
         $this->doComposerInstall($config);
         $config = $this->ensureFreshConfig($composer_json_data);
@@ -602,6 +617,7 @@ class CosyComposer
         if (!$uses_config_branch) {
             $composer_json_data = $this->composerGetter->getComposerJsonData();
             $config = $this->ensureFreshConfig($composer_json_data);
+            $this->applyIgnorePlatformRequirements($config);
         }
         $this->runAuthExport($hostname);
         $this->handleDrupalContribSa($composer_json_data);

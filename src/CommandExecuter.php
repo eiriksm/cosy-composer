@@ -30,6 +30,21 @@ class CommandExecuter
         'COMPOSER_ALLOW_SUPERUSER' => 'true',
     ];
 
+    /**
+     * Enable or disable ignoring platform requirements for Composer commands.
+     *
+     * When enabled, sets COMPOSER_IGNORE_PLATFORM_REQS=1 which is equivalent
+     * to passing --ignore-platform-reqs to all composer commands.
+     */
+    public function setIgnorePlatformRequirements(bool $ignore): void
+    {
+        if ($ignore) {
+            $this->env['COMPOSER_IGNORE_PLATFORM_REQS'] = '1';
+        } else {
+            unset($this->env['COMPOSER_IGNORE_PLATFORM_REQS']);
+        }
+    }
+
     public function __construct(LoggerInterface $logger, ProcessFactory $factory)
     {
         $this->logger = $logger;

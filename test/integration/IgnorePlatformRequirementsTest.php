@@ -3,7 +3,6 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 use eiriksm\CosyComposer\CommandExecuter;
-use Violinist\Slug\Slug;
 
 /**
  * Test for ignore_platform_requirements configuration option.

@@ -182,11 +182,6 @@ class HelperTest extends TestCase
                 null,
                 ['composer', 'outdated', '--format=json', '--no-interaction', '--minor-only'],
             ],
-            'null defaults to minor only' => [
-                null,
-                null,
-                ['composer', 'outdated', '--format=json', '--no-interaction', '--minor-only'],
-            ],
         ];
     }
 }

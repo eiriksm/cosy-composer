@@ -21,6 +21,35 @@ class Helpers
         return self::createBranchNameFromNameAndConfig($name, $config);
     }
 
+    public static function createComposerOutdatedCommandFromConfig(Config $config, bool $direct_only = false) : array
+    {
+        $composer_outdated_command = [
+            'composer',
+            'outdated',
+            '--format=json',
+            '--no-interaction',
+        ];
+        if ($direct_only) {
+            $composer_outdated_command[] = '--direct';
+        }
+        switch ($config->getComposerOutdatedFlag()) {
+            case 'patch':
+                $composer_outdated_command[] = '--patch-only';
+                break;
+            case 'major-only':
+                $composer_outdated_command[] = '--major-only';
+                break;
+            case 'major':
+                // No extra flag needed.
+                break;
+            case 'minor':
+            default:
+                $composer_outdated_command[] = '--minor-only';
+                break;
+        }
+        return $composer_outdated_command;
+    }
+
     /**
      * Helper to create branch name.
      */

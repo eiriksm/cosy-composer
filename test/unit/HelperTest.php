@@ -136,4 +136,52 @@ class HelperTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider composerOutdatedCommandProvider
+     */
+    public function testCreateComposerOutdatedCommandFromConfig($outdated_flag, $direct, $expected)
+    {
+        $config = $this->getMockBuilder(Config::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getComposerOutdatedFlag'])
+            ->getMock();
+        $config
+            ->expects(self::once())
+            ->method('getComposerOutdatedFlag')
+            ->willReturn($outdated_flag);
+
+        self::assertSame($expected, Helpers::createComposerOutdatedCommandFromConfig($config, $direct));
+    }
+
+    public static function composerOutdatedCommandProvider()
+    {
+        return [
+            'patch and direct' => [
+                'patch',
+                true,
+                ['composer', 'outdated', '--format=json', '--no-interaction', '--direct', '--patch-only'],
+            ],
+            'minor' => [
+                'minor',
+                false,
+                ['composer', 'outdated', '--format=json', '--no-interaction', '--minor-only'],
+            ],
+            'major only' => [
+                'major-only',
+                false,
+                ['composer', 'outdated', '--format=json', '--no-interaction', '--major-only'],
+            ],
+            'major' => [
+                'major',
+                true,
+                ['composer', 'outdated', '--format=json', '--no-interaction', '--direct'],
+            ],
+            'unknown defaults to minor only' => [
+                'unexpected',
+                false,
+                ['composer', 'outdated', '--format=json', '--no-interaction', '--minor-only'],
+            ],
+        ];
+    }
 }

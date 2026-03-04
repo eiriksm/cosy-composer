@@ -159,27 +159,27 @@ class HelperTest extends TestCase
         return [
             'patch and direct' => [
                 'patch',
-                '--direct',
+                true,
                 ['composer', 'outdated', '--format=json', '--no-interaction', '--direct', '--patch-only'],
             ],
             'minor' => [
                 'minor',
-                null,
+                false,
                 ['composer', 'outdated', '--format=json', '--no-interaction', '--minor-only'],
             ],
             'major only' => [
                 'major-only',
-                null,
+                false,
                 ['composer', 'outdated', '--format=json', '--no-interaction', '--major-only'],
             ],
             'major' => [
                 'major',
-                '--direct',
+                true,
                 ['composer', 'outdated', '--format=json', '--no-interaction', '--direct'],
             ],
             'unknown defaults to minor only' => [
                 'unexpected',
-                null,
+                false,
                 ['composer', 'outdated', '--format=json', '--no-interaction', '--minor-only'],
             ],
         ];

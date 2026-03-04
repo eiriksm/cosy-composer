@@ -664,25 +664,25 @@ class CosyComposer
         // repo is a manual job merging and maintaining. On top of that, it requires the built container to be
         // up to date. So here could be several hours of delay on critical stuff.
         $this->attachDrupalAdvisories($security_alerts);
-        $direct = null;
+        $direct_only = false;
         if ($config->shouldCheckDirectOnly()) {
             $this->log('Checking only direct dependencies since config option check_only_direct_dependencies is enabled');
             $this->logConfigOverride($config, 'check_only_direct_dependencies');
-            $direct = '--direct';
+            $direct_only = true;
         }
         // If we should always update all, then of course we should not only check direct dependencies outdated.
         // Regardless of the option above actually.
         if ($config->shouldAlwaysUpdateAll()) {
             $this->log('Checking all (not only direct dependencies) since config option always_update_all is enabled');
-            $direct = null;
+            $direct_only = false;
         }
         // If we should allow indirect packages to updated via running composer update my/direct, then we need to
         // uncover which indirect are actually out of date. Meaning direct is required to be false.
         if ($config->shouldUpdateIndirectWithDirect()) {
             $this->log('Checking all (not only direct dependencies) since config option allow_update_indirect_with_direct is enabled');
-            $direct = null;
+            $direct_only = false;
         }
-        $composer_outdated_command = Helpers::createComposerOutdatedCommandFromConfig($config, $direct);
+        $composer_outdated_command = Helpers::createComposerOutdatedCommandFromConfig($config, $direct_only);
         $this->execCommand($composer_outdated_command);
         $raw_data = $this->getLastStdOut();
         $json_update = @json_decode($raw_data);

@@ -21,7 +21,7 @@ class Helpers
         return self::createBranchNameFromNameAndConfig($name, $config);
     }
 
-    public static function createComposerOutdatedCommandFromConfig(Config $config, $direct) : array
+    public static function createComposerOutdatedCommandFromConfig(Config $config, bool $direct_only = false) : array
     {
         $composer_outdated_command = [
             'composer',
@@ -29,8 +29,8 @@ class Helpers
             '--format=json',
             '--no-interaction',
         ];
-        if ($direct) {
-            $composer_outdated_command[] = $direct;
+        if ($direct_only) {
+            $composer_outdated_command[] = '--direct';
         }
         switch ($config->getComposerOutdatedFlag()) {
             case 'patch':

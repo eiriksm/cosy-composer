@@ -45,6 +45,9 @@ class Helpers
             case 'major':
                 // No extra flag needed.
                 break;
+            default:
+                $composer_outdated_command[] = '--minor-only';
+                break;
         }
         return $composer_outdated_command;
     }

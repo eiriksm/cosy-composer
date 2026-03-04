@@ -682,23 +682,7 @@ class CosyComposer
             $this->log('Checking all (not only direct dependencies) since config option allow_update_indirect_with_direct is enabled');
             $direct = null;
         }
-        $composer_outdated_command = [
-            'composer',
-            'outdated',
-            '--format=json',
-            '--no-interaction',
-        ];
-        if ($direct) {
-            $composer_outdated_command[] = $direct;
-        }
-        switch ($config->getComposerOutdatedFlag()) {
-            case 'patch':
-                $composer_outdated_command[] = '--patch-only';
-                break;
-            default:
-                $composer_outdated_command[] = '--minor-only';
-                break;
-        }
+        $composer_outdated_command = Helpers::createComposerOutdatedCommandFromConfig($config, $direct);
         $this->execCommand($composer_outdated_command);
         $raw_data = $this->getLastStdOut();
         $json_update = @json_decode($raw_data);

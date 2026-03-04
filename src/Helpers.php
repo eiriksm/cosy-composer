@@ -36,14 +36,15 @@ class Helpers
             case 'patch':
                 $composer_outdated_command[] = '--patch-only';
                 break;
-            case 'minor':
-                $composer_outdated_command[] = '--minor-only';
-                break;
             case 'major-only':
                 $composer_outdated_command[] = '--major-only';
                 break;
             case 'major':
                 // No extra flag needed.
+                break;
+            case 'minor':
+            default:
+                $composer_outdated_command[] = '--minor-only';
                 break;
         }
         return $composer_outdated_command;

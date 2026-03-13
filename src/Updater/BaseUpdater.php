@@ -309,8 +309,6 @@ abstract class BaseUpdater implements UpdaterInterface
             $relevant_prs = $prs_named->getAllPrsNamed();
         }
         foreach ($relevant_prs as $pr) {
-            // Use head ref from PR data directly, since the array may be
-            // numerically indexed when coming from getPrsFromPackage.
             $branch_name = $pr['head']['ref'] ?? '';
             if (!empty($pr["base"]["ref"])) {
                 // The base ref should be what we are actually using for merge requests.

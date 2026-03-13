@@ -308,7 +308,8 @@ abstract class BaseUpdater implements UpdaterInterface
             $this->getLogger()->info(new Message('No direct relevant PRs found for package ' . $package_name));
             $relevant_prs = $prs_named->getAllPrsNamed();
         }
-        foreach ($relevant_prs as $branch_name => $pr) {
+        foreach ($relevant_prs as $pr) {
+            $branch_name = $pr['head']['ref'] ?? '';
             if (!empty($pr["base"]["ref"])) {
                 // The base ref should be what we are actually using for merge requests.
                 if ($pr["base"]["ref"] != $default_branch) {

@@ -747,7 +747,9 @@ class CosyComposer
             $this->cleanUp();
             return;
         }
-        $all_outdated_package_names = array_map(fn($item) => $item->name, $data);
+        $all_outdated_package_names = array_map(function ($item) {
+            return $item->name;
+        }, $data);
         // Only update the ones in the allow list, if indicated.
         $handler = AllowListHandler::createFromConfig($config);
         // If we have an allow list, we should also make sure to include the

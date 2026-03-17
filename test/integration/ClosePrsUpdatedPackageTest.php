@@ -15,7 +15,7 @@ class ClosePrsUpdatedPackageTest extends CloseOutdatedBase
     protected $packageForUpdateOutput = 'psr/log';
     protected $packageVersionForFromUpdateOutput = '1.1.3';
     protected $packageVersionForToUpdateOutput = '1.1.4';
-    protected $composerAssetFiles = 'composer.concurrent.update_branch';
+    protected $composerAssetFiles = 'composer.close.updated_package';
     protected $checkPrUrl = true;
     protected $expectedClosedPrs = [789];
 

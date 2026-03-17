@@ -7,7 +7,7 @@ use eiriksm\CosyComposer\Providers\NamedPrs;
 /**
  * Test that PRs are NOT closed when a package is still outdated.
  *
- * Scenario: allow_update_indirect_with_direct is enabled. psr/cache is an
+ * Scenario: check_only_direct_dependencies is disabled. psr/cache is an
  * indirect dependency that is still outdated (appears in composer outdated).
  * A violinist PR exists for psr/cache. The PR should NOT be closed.
  */

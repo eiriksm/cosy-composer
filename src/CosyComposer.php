@@ -887,6 +887,14 @@ class CosyComposer
         if ($default_base && $default_branch) {
             $this->log(sprintf('Current commit SHA for %s is %s', $default_branch, $default_base));
         }
+        if ($config->shouldUpdateIndirectWithDirect()) {
+            $filterer = IndirectWithDirectFilterer::create($composer_lock_after_installing, $composer_json_data);
+            $filtered_data = $filterer->filter($data);
+            foreach ($filtered_data as $item) {
+                $all_outdated_package_names[] = $item->name;
+            }
+            $all_outdated_package_names = array_unique($all_outdated_package_names);
+        }
         $this->closePrsForNoLongerRelevantPackages($prs_named, $all_outdated_package_names, $composer_json_data, $default_branch);
         $is_allowed_out_of_date_pr = [];
         $one_pr_per_dependency = $config->shouldUseOnePullRequestPerPackage();

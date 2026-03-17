@@ -63,6 +63,11 @@ class NamedPrs
         return $named;
     }
 
+    public function getKnownPackageNames() : array
+    {
+        return array_keys($this->knownPackagePrs);
+    }
+
     public function getPrsFromPackage(string $package) : array
     {
         $relevant_prs = [];

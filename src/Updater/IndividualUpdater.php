@@ -641,7 +641,7 @@ class IndividualUpdater extends BaseUpdater
 
     protected function handleLabels(Config $config, $pullRequest, $security_update = false) : void
     {
-        if (!Helpers::areLabelsAllowed($this->projectData)) {
+        if (!Helpers::hasAgencyOrEnterpriseRole($this->projectData)) {
             return;
         }
         Helpers::handleLabels($this->getPrClient(), $this->getLogger(), $this->slug, $config, $pullRequest, $security_update);

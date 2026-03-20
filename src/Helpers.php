@@ -10,6 +10,10 @@ use Violinist\Slug\Slug;
 
 class Helpers
 {
+    const AGENCY_OR_ENTERPRISE_ROLES = [
+        'agency',
+        'enterprise',
+    ];
 
     public static function createBranchNameForGroup(\stdClass $rule, Config $config) : string
     {
@@ -185,15 +189,11 @@ class Helpers
         }
     }
 
-    public static function areLabelsAllowed(?ProjectData $project) : bool
+    public static function hasAgencyOrEnterpriseRole(?ProjectData $project) : bool
     {
-        $labels_allowed_roles = [
-            'agency',
-            'enterprise',
-        ];
         if ($project && $project->getRoles()) {
             foreach ($project->getRoles() as $role) {
-                if (in_array($role, $labels_allowed_roles)) {
+                if (in_array($role, self::AGENCY_OR_ENTERPRISE_ROLES)) {
                     return true;
                 }
             }

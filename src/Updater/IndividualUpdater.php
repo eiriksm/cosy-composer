@@ -23,7 +23,6 @@ use Violinist\ComposerUpdater\Exception\ComposerUpdateProcessFailedException;
 use Violinist\ComposerUpdater\Exception\NotUpdatedException;
 use Violinist\ComposerUpdater\Updater;
 use Violinist\Config\Config;
-use Violinist\ProjectData\ProjectData;
 
 class IndividualUpdater extends BaseUpdater
 {

@@ -5,6 +5,7 @@ namespace eiriksm\CosyComposer;
 use eiriksm\CosyComposer\Providers\NamedPrs;
 use Psr\Log\LoggerInterface;
 use Violinist\Config\Config;
+use Violinist\ProjectData\ProjectData;
 use Violinist\Slug\Slug;
 
 class Helpers
@@ -182,6 +183,22 @@ class Helpers
                 $logger->log('info', 'Enabling automerge failed.');
             }
         }
+    }
+
+    public static function areLabelsAllowed(?ProjectData $project) : bool
+    {
+        $labels_allowed_roles = [
+            'agency',
+            'enterprise',
+        ];
+        if ($project && $project->getRoles()) {
+            foreach ($project->getRoles() as $role) {
+                if (in_array($role, $labels_allowed_roles)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static function handleLabels(ProviderInterface $client, LoggerInterface $logger, Slug $slug, Config $config, $pullRequest, $security_update = false)

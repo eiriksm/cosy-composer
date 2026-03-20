@@ -248,7 +248,7 @@ class CosyComposer
     public function setUrl($url = null)
     {
         if (!empty($url)) {
-            $url = preg_replace('/\.git$/', '', $url);
+            $url = Helpers::stripGitSuffix($url);
         }
         $slug_url_obj = parse_url($url);
         if (empty($slug_url_obj['port']) && !empty($slug_url_obj['scheme'])) {

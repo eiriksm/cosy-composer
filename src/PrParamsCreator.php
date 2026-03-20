@@ -162,16 +162,8 @@ class PrParamsCreator
 
     private function getAssigneesAllowed() : bool
     {
-        $assignees_allowed_roles = [
-            'agency',
-            'enterprise',
-        ];
-        if ($this->projectData && $this->projectData->getRoles()) {
-            foreach ($this->projectData->getRoles() as $role) {
-                if (in_array($role, $assignees_allowed_roles)) {
-                    return true;
-                }
-            }
+        if (Helpers::hasAgencyOrEnterpriseRole($this->projectData)) {
+            return true;
         }
         return $this->assigneesAllowed;
     }

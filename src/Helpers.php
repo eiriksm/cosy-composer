@@ -5,10 +5,15 @@ namespace eiriksm\CosyComposer;
 use eiriksm\CosyComposer\Providers\NamedPrs;
 use Psr\Log\LoggerInterface;
 use Violinist\Config\Config;
+use Violinist\ProjectData\ProjectData;
 use Violinist\Slug\Slug;
 
 class Helpers
 {
+    const AGENCY_OR_ENTERPRISE_ROLES = [
+        'agency',
+        'enterprise',
+    ];
 
     public static function createBranchNameForGroup(\stdClass $rule, Config $config) : string
     {
@@ -182,6 +187,18 @@ class Helpers
                 $logger->log('info', 'Enabling automerge failed.');
             }
         }
+    }
+
+    public static function hasAgencyOrEnterpriseRole(?ProjectData $project) : bool
+    {
+        if ($project && $project->getRoles()) {
+            foreach ($project->getRoles() as $role) {
+                if (in_array($role, self::AGENCY_OR_ENTERPRISE_ROLES)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static function handleLabels(ProviderInterface $client, LoggerInterface $logger, Slug $slug, Config $config, $pullRequest, $security_update = false)

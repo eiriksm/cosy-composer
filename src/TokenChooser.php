@@ -36,7 +36,7 @@ class TokenChooser
         // Now first check if the url of the object matches the repository url.
         $hostname = parse_url($this->url, PHP_URL_HOST);
         // We don't want www. in the hostname if it's one of the three big VCS
-        // hosts. So basically, if it matches one of them + has wwww. in front,
+        // hosts. So basically, if it matches one of them + has www. in front,
         // remove the www part.
         if (strpos($hostname, 'www.') === 0) {
             // But only if one of those leading VCS provider hostnames.

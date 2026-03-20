@@ -43,7 +43,7 @@ class AuthExportTest extends ComposerUpdateIntegrationBase
         if ($cmd_string === sprintf('composer config --auth github-oauth.github.com %s', self::FAKE_GITHUB_TOKEN)) {
             $this->hasExportedGithub = true;
         }
-        if ($cmd_string === sprintf('composer config --auth gitlab-oauth.%s some.gitlab.company.com', self::FAKE_GITLAB_SELF_HOSTED_TOKEN)) {
+        if ($cmd_string === sprintf('composer config --auth gitlab-oauth.some.gitlab.company.com %s', self::FAKE_GITLAB_SELF_HOSTED_TOKEN)) {
             $this->hasExportedGitlabSelfHosted = true;
         }
         if ($cmd_string === sprintf('composer config --auth http-basic.bitbucket.org x-token-auth %s', self::FAKE_BITBUCKET_TOKEN)) {

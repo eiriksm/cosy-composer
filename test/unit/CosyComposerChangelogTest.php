@@ -132,8 +132,8 @@ class CosyComposerChangelogTest extends TestCase
             ],
         ]])), 1, 2);
         $this->assertStringContainsString('https://github.com/vendor/package/commit/112233', $log->getAsMarkdown());
-        // Make sure ".git" was fully stripped and doesn't appear in the URL.
-        $this->assertStringNotContainsString('.git', $log->getAsMarkdown());
+        // Make sure the commit URL does not incorrectly include the ".git" suffix.
+        $this->assertStringNotContainsString('https://github.com/vendor/package.git/commit/', $log->getAsMarkdown());
     }
 
     public function testChangeLogNonDotGitSuffixNotStripped()

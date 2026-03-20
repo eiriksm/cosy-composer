@@ -5,7 +5,7 @@ namespace eiriksm\CosyComposerTest\integration;
 use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
 
 /**
- * Test for issue 164.
+ * Test for branch prefix.
  */
 class BranchPrefixTest extends ComposerUpdateIntegrationBase
 {

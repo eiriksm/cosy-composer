@@ -3,7 +3,7 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 /**
- * Test for using the dev deps config option to 0.
+ * Test for config extending across multiple levels.
  */
 class ExtendsMultipleLevelsTest extends ComposerUpdateIntegrationBase
 {

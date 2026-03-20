@@ -29,7 +29,7 @@ class NamedPrs
         // Try to parse the commit message to find a package name. It's
         // formatted like this:
         // Commit subject
-        // ---- (separator from Helpers::getCommitMessageSeparator
+        // ------ (separator from Helpers::getCommitMessageSeparator)
         // Yaml of update data.
         if (strpos($commit_message, Helpers::getCommitMessageSeparator()) === false) {
             return;

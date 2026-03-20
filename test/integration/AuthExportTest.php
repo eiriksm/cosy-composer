@@ -3,7 +3,7 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 /**
- * Test for a default commit message.
+ * Test for auth token export.
  */
 class AuthExportTest extends ComposerUpdateIntegrationBase
 {

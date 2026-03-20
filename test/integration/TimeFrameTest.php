@@ -5,7 +5,7 @@ namespace eiriksm\CosyComposerTest\integration;
 use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
 
 /**
- * Test for branch prefix with one_per option set.
+ * Test for time frame processing hours.
  */
 class TimeFrameTest extends ComposerUpdateIntegrationBase
 {

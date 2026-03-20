@@ -199,7 +199,7 @@ abstract class BaseUpdater implements UpdaterInterface
             $changelog_string = implode("\n", $lines);
         }
         $log = ChangeLogData::createFromString($changelog_string);
-        $git_url = preg_replace('/.git$/', '', $data->source->url);
+        $git_url = Helpers::stripGitSuffix($data->source->url);
         $repo_parsed = parse_uri($git_url);
         if (!empty($repo_parsed)) {
             switch ($repo_parsed['_protocol']) {
@@ -243,7 +243,7 @@ abstract class BaseUpdater implements UpdaterInterface
         }
         $data = $this->getFetcherForUrl($post_update_data->source->url)->retrieveTagsBetweenShas($lockdata, $package_name, $pre_update_data->source->reference, $post_update_data->source->reference);
         $url = $post_update_data->source->url;
-        $url = preg_replace('/.git$/', '', $url);
+        $url = Helpers::stripGitSuffix($url);
         $url_parsed = parse_url($url);
         if (empty($url_parsed['host'])) {
             throw new \Exception('No URL to parse in post update data source');

@@ -71,6 +71,11 @@ class Helpers
         return sprintf('%s%s', $config->getBranchPrefix(), $name);
     }
 
+    public static function stripGitSuffix(string $url) : string
+    {
+        return preg_replace('/\.git$/', '', $url);
+    }
+
     public static function getCommitMessageSeparator()
     {
         // Workaround for not being able to define a constant inside a trait.

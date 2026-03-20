@@ -747,9 +747,6 @@ class CosyComposer
             $this->cleanUp();
             return;
         }
-        $all_outdated_package_names = array_map(function ($item) {
-            return $item->name;
-        }, $data);
         // Only update the ones in the allow list, if indicated.
         $handler = AllowListHandler::createFromConfig($config);
         // If we have an allow list, we should also make sure to include the
@@ -887,6 +884,14 @@ class CosyComposer
         if ($default_base && $default_branch) {
             $this->log(sprintf('Current commit SHA for %s is %s', $default_branch, $default_base));
         }
+        // Build the list of truly outdated package names after all cleanup
+        // (missing latest/latest-status, abandoned, allowlist, blocklist, etc.)
+        // so that closePrsForNoLongerRelevantPackages() doesn't skip packages
+        // that were in the raw composer outdated output but aren't actually
+        // outdated.
+        $all_outdated_package_names = array_map(function ($item) {
+            return $item->name;
+        }, $data);
         if ($config->shouldUpdateIndirectWithDirect()) {
             $filterer = IndirectWithDirectFilterer::create($composer_lock_after_installing, $composer_json_data);
             $filtered_data = $filterer->filter($data);

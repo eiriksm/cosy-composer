@@ -105,6 +105,66 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals(true, $called);
     }
 
+    public function testChangeLogDotGitSuffix()
+    {
+        $c = $this->getMockCosy();
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
+            return 0;
+        });
+        $mock_executer->expects($this->once())
+            ->method('getLastOutput')
+            ->willReturn([
+                'stdout' => "112233 This is the first line",
+            ]);
+        $c->setExecuter($mock_executer);
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        // URL ends with .git — should be stripped so commit links use the base URL.
+        $log = $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'https://github.com/vendor/package.git',
+                ],
+            ],
+        ]])), 1, 2);
+        $this->assertStringContainsString('https://github.com/vendor/package/commit/112233', $log->getAsMarkdown());
+        // Make sure ".git" was fully stripped and doesn't appear in the URL.
+        $this->assertStringNotContainsString('.git', $log->getAsMarkdown());
+    }
+
+    public function testChangeLogNonDotGitSuffixNotStripped()
+    {
+        $c = $this->getMockCosy();
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
+            return 0;
+        });
+        $mock_executer->expects($this->once())
+            ->method('getLastOutput')
+            ->willReturn([
+                'stdout' => "112233 This is the first line",
+            ]);
+        $c->setExecuter($mock_executer);
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        // URL ends with "-git" (not ".git") — should NOT be stripped.
+        $log = $updater->retrieveChangeLog('vendor/package-git', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package-git',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'https://github.com/vendor/package-git',
+                ],
+            ],
+        ]])), 1, 2);
+        $this->assertStringContainsString('https://github.com/vendor/package-git/commit/112233', $log->getAsMarkdown());
+    }
+
     public function testChangeLogSuperLong()
     {
         $c = $this->getMockCosy();

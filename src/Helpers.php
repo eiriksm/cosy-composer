@@ -20,7 +20,7 @@ class Helpers
         if (!empty($rule->slug)) {
             return self::createBranchNameFromNameAndConfig($rule->slug, $config);
         }
-        // Create a slug based on the name. To do that, we  lowercase it, and
+        // Create a slug based on the name. To do that, we lowercase it, and
         // remove all the characters that are not a-z.
         $name = preg_replace('/[^a-z]+/', '', strtolower($rule->name));
         return self::createBranchNameFromNameAndConfig($name, $config);

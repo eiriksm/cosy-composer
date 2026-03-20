@@ -3,7 +3,7 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 /**
- * Test for automerge being enabled.
+ * Test for automerge method configuration.
  */
 class AutomergeMethodTest extends AutoMergeBase
 {

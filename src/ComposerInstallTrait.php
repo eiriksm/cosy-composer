@@ -92,7 +92,7 @@ trait ComposerInstallTrait
 
             default:
                 $this->execCommand(
-                    ['composer', 'config', '--auth', sprintf('gitlab-oauth.%s', $token), $hostname],
+                    ['composer', 'config', '--auth', sprintf('gitlab-oauth.%s', $hostname), $token],
                     false
                 );
                 break;

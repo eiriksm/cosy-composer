@@ -248,7 +248,7 @@ class CosyComposer
     public function setUrl($url = null)
     {
         if (!empty($url)) {
-            $url = preg_replace('/\.git$/', '', $url);
+            $url = Helpers::stripGitSuffix($url);
         }
         $slug_url_obj = parse_url($url);
         if (empty($slug_url_obj['port']) && !empty($slug_url_obj['scheme'])) {
@@ -1151,19 +1151,7 @@ class CosyComposer
 
     protected function handleLabels(Config $config, $pullRequest, $security_update = false) : void
     {
-        $labels_allowed = false;
-        $labels_allowed_roles = [
-            'agency',
-            'enterprise',
-        ];
-        if ($this->project && $this->project->getRoles()) {
-            foreach ($this->project->getRoles() as $role) {
-                if (in_array($role, $labels_allowed_roles)) {
-                    $labels_allowed = true;
-                }
-            }
-        }
-        if (!$labels_allowed) {
+        if (!Helpers::hasAgencyOrEnterpriseRole($this->project)) {
             return;
         }
         Helpers::handleLabels($this->getPrClient(), $this->getLogger(), $this->slug, $config, $pullRequest, $security_update);

@@ -3,7 +3,7 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 /**
- * Test for a default commit message.
+ * Test for allow list with direct dev dependencies.
  */
 class AllowListDirectDevTest extends ComposerUpdateIntegrationBase
 {

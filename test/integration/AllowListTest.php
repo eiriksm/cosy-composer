@@ -3,7 +3,7 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 /**
- * Test for a default commit message.
+ * Test for allow list filtering.
  */
 class AllowListTest extends ComposerUpdateIntegrationBase
 {

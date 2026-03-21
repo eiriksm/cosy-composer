@@ -5,17 +5,22 @@ namespace eiriksm\CosyComposer;
 use eiriksm\CosyComposer\Providers\NamedPrs;
 use Psr\Log\LoggerInterface;
 use Violinist\Config\Config;
+use Violinist\ProjectData\ProjectData;
 use Violinist\Slug\Slug;
 
 class Helpers
 {
+    const AGENCY_OR_ENTERPRISE_ROLES = [
+        'agency',
+        'enterprise',
+    ];
 
     public static function createBranchNameForGroup(\stdClass $rule, Config $config) : string
     {
         if (!empty($rule->slug)) {
             return self::createBranchNameFromNameAndConfig($rule->slug, $config);
         }
-        // Create a slug based on the name. To do that, we  lowercase it, and
+        // Create a slug based on the name. To do that, we lowercase it, and
         // remove all the characters that are not a-z.
         $name = preg_replace('/[^a-z]+/', '', strtolower($rule->name));
         return self::createBranchNameFromNameAndConfig($name, $config);
@@ -69,6 +74,11 @@ class Helpers
     public static function createBranchNameFromNameAndConfig(string $name, Config $config)
     {
         return sprintf('%s%s', $config->getBranchPrefix(), $name);
+    }
+
+    public static function stripGitSuffix(string $url) : string
+    {
+        return preg_replace('/\.git$/', '', $url);
     }
 
     public static function getCommitMessageSeparator()
@@ -177,6 +187,18 @@ class Helpers
                 $logger->log('info', 'Enabling automerge failed.');
             }
         }
+    }
+
+    public static function hasAgencyOrEnterpriseRole(?ProjectData $project) : bool
+    {
+        if ($project && $project->getRoles()) {
+            foreach ($project->getRoles() as $role) {
+                if (in_array($role, self::AGENCY_OR_ENTERPRISE_ROLES)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static function handleLabels(ProviderInterface $client, LoggerInterface $logger, Slug $slug, Config $config, $pullRequest, $security_update = false)

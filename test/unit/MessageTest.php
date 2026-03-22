@@ -14,5 +14,6 @@ class MessageTest extends TestCase
         $this->assertEquals('test', $msg->getMessage());
         $this->assertEquals(Message::PR_URL, $msg->getType());
         $this->assertEquals(true, ($time <= $msg->getTimestamp()));
+        $this->assertEquals('test', (string) $msg);
     }
 }

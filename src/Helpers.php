@@ -81,10 +81,11 @@ class Helpers
         return preg_replace('/\.git$/', '', $url);
     }
 
+    const COMMIT_MESSAGE_SEPARATOR = '------';
+
     public static function getCommitMessageSeparator()
     {
-        // Workaround for not being able to define a constant inside a trait.
-        return '------';
+        return self::COMMIT_MESSAGE_SEPARATOR;
     }
 
     public static function createBranchNameFromVersions($package, $version_from, $version_to, $config = null)

@@ -20,7 +20,7 @@
         "m4tthumphrey/php-gitlab-api": "^10 || ^11",
         "peterpostmann/parse_uri": "^1.0",
         "php-http/guzzle7-adapter": "^1",
-        "symfony/polyfil-php80": "^1.0",
+        "symfony/polyfill-php80": "^1.0",
         "symfony/process": "^5.4 || ^6 || ^7",
         "symfony/yaml": "^5.4 || ^6 || ^7",
         "violinist-dev/allow-list-handler": "^1.0",

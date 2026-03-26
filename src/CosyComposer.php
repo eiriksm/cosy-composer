@@ -422,7 +422,7 @@ class CosyComposer
     {
         $is_enabled = self::shouldEnableCloseNoLongerRelevant();
         if (!$is_enabled) {
-             return;
+            return;
         }
         $lock_package_names = [];
         foreach (['packages', 'packages-dev'] as $key) {

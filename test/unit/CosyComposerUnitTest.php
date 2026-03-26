@@ -20,6 +20,7 @@ class CosyComposerUnitTest extends TestCase
         parent::tearDown();
         // Make sure we clear out the env var USE_GITHUB_PUBLIC_WRAPPER.
         putenv('USE_GITHUB_PUBLIC_WRAPPER');
+        putenv('USE_CLOSE_NO_LONGER_RELEVANT');
     }
 
     public function testSetLogger()
@@ -163,5 +164,16 @@ class CosyComposerUnitTest extends TestCase
             ['0', false],
             ['derp', true],
         ];
+    }
+
+    /**
+     * Test that a special flag gives us the correct answer of a method.
+     *
+     * @dataProvider getEnvVariations
+     */
+    public function testShouldEnableCloseNoLongerRelevant($env_var, $expected)
+    {
+        putenv('USE_CLOSE_NO_LONGER_RELEVANT=' . $env_var);
+        $this->assertEquals($expected, CosyComposer::shouldEnableCloseNoLongerRelevant());
     }
 }

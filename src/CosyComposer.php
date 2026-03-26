@@ -420,6 +420,10 @@ class CosyComposer
 
     protected function closePrsForNoLongerRelevantPackages(NamedPrs $prs_named, array $all_outdated_package_names, $composer_json_data, $default_branch)
     {
+        $is_enabled = self::shouldEnableCloseNoLongerRelevant();
+        if (!$is_enabled) {
+             return;
+        }
         foreach ($prs_named->getKnownPackageNames() as $package_name) {
             if (in_array($package_name, $all_outdated_package_names)) {
                 continue;
@@ -1456,5 +1460,10 @@ class CosyComposer
     public static function shouldEnablePublicGithubWrapper() : bool
     {
         return !empty(getenv('USE_GITHUB_PUBLIC_WRAPPER'));
+    }
+
+    public static function shouldEnableCloseNoLongerRelevant() : bool
+    {
+        return !empty(getenv('USE_CLOSE_NO_LONGER_RELEVANT'));
     }
 }

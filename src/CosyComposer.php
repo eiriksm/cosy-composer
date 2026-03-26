@@ -418,25 +418,26 @@ class CosyComposer
         }
     }
 
-    protected function closePrsForNoLongerRelevantPackages(NamedPrs $prs_named, array $all_outdated_package_names, $composer_json_data, $default_branch)
+    protected function closePrsForNoLongerRelevantPackages(NamedPrs $prs_named, array $all_outdated_package_names, $composer_lock_data, $default_branch)
     {
         $is_enabled = self::shouldEnableCloseNoLongerRelevant();
         if (!$is_enabled) {
              return;
+        }
+        $lock_package_names = [];
+        foreach (['packages', 'packages-dev'] as $key) {
+            if (!empty($composer_lock_data->{$key})) {
+                foreach ($composer_lock_data->{$key} as $package) {
+                    $lock_package_names[] = $package->name;
+                }
+            }
         }
         foreach ($prs_named->getKnownPackageNames() as $package_name) {
             if (in_array($package_name, $all_outdated_package_names)) {
                 continue;
             }
             $prs_for_package = $prs_named->getPrsFromPackage($package_name);
-            // Determine the reason: is the package removed from composer.json, or was it updated outside of violinist?
-            $is_removed = true;
-            if (!empty($composer_json_data->require) && property_exists($composer_json_data->require, $package_name)) {
-                $is_removed = false;
-            }
-            if (!empty($composer_json_data->{'require-dev'}) && property_exists($composer_json_data->{'require-dev'}, $package_name)) {
-                $is_removed = false;
-            }
+            $is_removed = !in_array($package_name, $lock_package_names);
             foreach ($prs_for_package as $pr) {
                 if (!empty($pr["base"]["ref"]) && $pr["base"]["ref"] !== $default_branch) {
                     continue;
@@ -447,7 +448,7 @@ class CosyComposer
                 } else {
                     $comment = "Closing this pull request because the package $package_name has been updated outside of this pull request.";
                 }
-                $this->getLogger()->log('info', new Message("Closing PR number $pr_number for $package_name since the package is no longer outdated"));
+                $this->getLogger()->log('info', new Message("Closing PR number $pr_number for $package_name since the package is no longer outdated, or the config changed in a way that makes this PR no longer relevant"));
                 try {
                     $this->getPrClient()->closePullRequestWithComment($this->slug, $pr_number, $comment);
                     $this->getLogger()->log('info', new Message("Successfully closed PR $pr_number"));
@@ -837,26 +838,14 @@ class CosyComposer
                 }
             }
         }
-        if (empty($data)) {
-            $this->log('No updates found');
-            $this->cleanUp();
-            return;
-        }
-        // Try to log what updates are found.
-        $this->log('The following updates were found:');
-        $updates_string = '';
-        foreach ($data as $delta => $item) {
-            $updates_string .= sprintf(
-                "%s: %s installed, %s available (type %s)\n",
-                $item->name,
-                $item->version,
-                $item->latest,
-                $item->{'latest-status'}
-            );
-        }
-        $this->log($updates_string, Message::UPDATE, [
-            'packages' => $data,
-        ]);
+        // Build the list of truly outdated package names after all cleanup
+        // (missing latest/latest-status, abandoned, allowlist, blocklist, etc.)
+        // so that closePrsForNoLongerRelevantPackages() doesn't skip packages
+        // that were in the raw composer outdated output but aren't actually
+        // outdated.
+        $all_outdated_package_names = array_map(function ($item) {
+            return $item->name;
+        }, $data);
         // Try to see if we have already dealt with this (i.e already have a branch for all the updates.
         $branch_user = $this->forkUser;
         if ($this->isPrivate) {
@@ -885,17 +874,33 @@ class CosyComposer
             // Safe to ignore.
             $this->log('Had a runtime exception with the fetching of branches and Prs: ' . $e->getMessage());
         }
+        if (empty($data)) {
+            $this->log('No updates found');
+            // First attempt at cleaning up. If there are no updates, but we do
+            // actually have open violinist PRs, then we should for sure close
+            // them all.
+            $this->closePrsForNoLongerRelevantPackages($prs_named, $all_outdated_package_names, $composer_lock_after_installing, $default_branch);
+            $this->cleanUp();
+            return;
+        }
+        // Try to log what updates are found.
+        $this->log('The following updates were found:');
+        $updates_string = '';
+        foreach ($data as $delta => $item) {
+            $updates_string .= sprintf(
+                "%s: %s installed, %s available (type %s)\n",
+                $item->name,
+                $item->version,
+                $item->latest,
+                $item->{'latest-status'}
+            );
+        }
+        $this->log($updates_string, Message::UPDATE, [
+            'packages' => $data,
+        ]);
         if ($default_base && $default_branch) {
             $this->log(sprintf('Current commit SHA for %s is %s', $default_branch, $default_base));
         }
-        // Build the list of truly outdated package names after all cleanup
-        // (missing latest/latest-status, abandoned, allowlist, blocklist, etc.)
-        // so that closePrsForNoLongerRelevantPackages() doesn't skip packages
-        // that were in the raw composer outdated output but aren't actually
-        // outdated.
-        $all_outdated_package_names = array_map(function ($item) {
-            return $item->name;
-        }, $data);
         if ($config->shouldUpdateIndirectWithDirect()) {
             $filterer = IndirectWithDirectFilterer::create($composer_lock_after_installing, $composer_json_data);
             $filtered_data = $filterer->filter($data);
@@ -904,7 +909,8 @@ class CosyComposer
             }
             $all_outdated_package_names = array_unique($all_outdated_package_names);
         }
-        $this->closePrsForNoLongerRelevantPackages($prs_named, $all_outdated_package_names, $composer_json_data, $default_branch);
+        // Now we are closing the ones that are no longer relevant.
+        $this->closePrsForNoLongerRelevantPackages($prs_named, $all_outdated_package_names, $composer_lock_after_installing, $default_branch);
         $is_allowed_out_of_date_pr = [];
         $one_pr_per_dependency = $config->shouldUseOnePullRequestPerPackage();
         foreach ($data as $delta => $item) {

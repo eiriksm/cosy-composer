@@ -446,9 +446,9 @@ class CosyComposer
                 if ($is_removed) {
                     $comment = "Closing this pull request because the package $package_name has been removed from the project dependencies.";
                 } else {
-                    $comment = "Closing this pull request because the package $package_name has been updated outside of this pull request.";
+                    $comment = "Closing this pull request because the package $package_name has been updated outside of this pull request, or the config changed in a way that makes this PR no longer relevant";
                 }
-                $this->getLogger()->log('info', new Message("Closing PR number $pr_number for $package_name since the package is no longer outdated, or the config changed in a way that makes this PR no longer relevant"));
+                $this->getLogger()->log('info', new Message("Closing PR number $pr_number for $package_name since the package is no longer outdated"));
                 try {
                     $this->getPrClient()->closePullRequestWithComment($this->slug, $pr_number, $comment);
                     $this->getLogger()->log('info', new Message("Successfully closed PR $pr_number"));

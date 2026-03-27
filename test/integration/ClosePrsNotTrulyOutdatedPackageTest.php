@@ -10,11 +10,12 @@ use eiriksm\CosyComposer\Providers\NamedPrs;
  *
  * Scenario: psr/cache shows up in `composer outdated` output but with
  * latest-status "up-to-date" (or missing latest/latest-status). The cleanup
- * at lines 822-838 in CosyComposer::run() unsets these entries from $data.
- * However, $all_outdated_package_names was already built from the raw $data
- * before that cleanup. This means psr/cache is still in
- * $all_outdated_package_names, so closePrsForNoLongerRelevantPackages() skips
- * it and the PR is NOT closed - even though the package is not truly outdated.
+ * phase in CosyComposer::run() that unsets entries missing latest/latest-status
+ * or marked up-to-date removes these entries from $data. However,
+ * $all_outdated_package_names was already built from the raw $data before that
+ * cleanup. This means psr/cache is still in $all_outdated_package_names, so
+ * closePrsForNoLongerRelevantPackages() skips it and the PR is NOT closed -
+ * even though the package is not truly outdated.
  *
  * This test verifies whether this bug exists: expectedClosedPrs is [789],
  * meaning we WANT the PR to be closed. If the test fails, the bug is confirmed.

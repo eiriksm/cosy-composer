@@ -8,14 +8,23 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class NoUpdateNoRemoteCallsWhenCloseDisabledTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.1.3';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
     protected $composerAssetFiles = 'composer-non-dev';
+
+    public function setUp() : void
+    {
+        parent::setUp();
+        putenv('USE_CLOSE_NO_LONGER_RELEVANT');
+        $this->updateJson = '{"installed": []}';
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        putenv('USE_CLOSE_NO_LONGER_RELEVANT');
+    }
 
     public function testNoUpdateRunSkipsRemotePrLookupsWhenCleanupDisabled()
     {
-        putenv('USE_CLOSE_NO_LONGER_RELEVANT');
         $this->mockProvider->expects($this->never())
             ->method('getDefaultBase');
         $this->mockProvider->expects($this->never())

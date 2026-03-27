@@ -10,15 +10,10 @@ use eiriksm\CosyComposer\Providers\NamedPrs;
  *
  * Scenario: psr/cache shows up in `composer outdated` output but with
  * latest-status "up-to-date" (or missing latest/latest-status). The cleanup
- * phase in CosyComposer::run() that unsets entries missing latest/latest-status
- * or marked up-to-date removes these entries from $data. However,
- * $all_outdated_package_names was already built from the raw $data before that
- * cleanup. This means psr/cache is still in $all_outdated_package_names, so
- * closePrsForNoLongerRelevantPackages() skips it and the PR is NOT closed -
- * even though the package is not truly outdated.
- *
- * This test verifies whether this bug exists: expectedClosedPrs is [789],
- * meaning we WANT the PR to be closed. If the test fails, the bug is confirmed.
+ * phase in CosyComposer::run() removes these entries from $data before
+ * $all_outdated_package_names is built, so psr/cache is correctly excluded
+ * from the outdated list. closePrsForNoLongerRelevantPackages() then sees
+ * psr/cache is no longer outdated and closes its PR.
  */
 class ClosePrsNotTrulyOutdatedPackageTest extends CloseOutdatedBase
 {
@@ -35,9 +30,8 @@ class ClosePrsNotTrulyOutdatedPackageTest extends CloseOutdatedBase
         // psr/log is truly outdated (has latest + latest-status).
         // psr/cache appears in composer outdated but is abandoned / not truly
         // outdated: it has latest-status "up-to-date" so CosyComposer::run()
-        // will unset it from $data. But because $all_outdated_package_names is
-        // built before that cleanup, psr/cache remains in the list, preventing
-        // closePrsForNoLongerRelevantPackages() from closing its PR.
+        // removes it from $data before building $all_outdated_package_names.
+        // The PR for psr/cache should therefore be closed.
         $this->updateJson = '{"installed": [' .
             '{"name": "psr/log", "version": "1.1.3", "latest": "1.1.4", "latest-status": "semver-safe-update"},' .
             '{"name": "psr/cache", "version": "1.0.0", "latest": "1.0.0", "latest-status": "up-to-date"}' .

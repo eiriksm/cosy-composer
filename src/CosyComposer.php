@@ -846,6 +846,11 @@ class CosyComposer
         $all_outdated_package_names = array_map(function ($item) {
             return $item->name;
         }, $data);
+        if (empty($data) && !self::shouldEnableCloseNoLongerRelevant()) {
+            $this->log('No updates found');
+            $this->cleanUp();
+            return;
+        }
         // Try to see if we have already dealt with this (i.e already have a branch for all the updates.
         $branch_user = $this->forkUser;
         if ($this->isPrivate) {

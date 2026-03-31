@@ -16,11 +16,18 @@ abstract class CloseOutdatedBase extends ComposerUpdateIntegrationBase
     public function setUp() : void
     {
         parent::setUp();
+        putenv('USE_CLOSE_NO_LONGER_RELEVANT=true');
         $this->getMockProvider()
             ->method('closePullRequestWithComment')
             ->willReturnCallback(function (Slug $slug, $pr_id, $comment) {
                 $this->closedPrs[] = $pr_id;
             });
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        putenv('USE_CLOSE_NO_LONGER_RELEVANT');
     }
 
     public function testOutdatedClosed()

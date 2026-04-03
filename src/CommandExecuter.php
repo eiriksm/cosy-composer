@@ -18,13 +18,14 @@ class CommandExecuter
      */
     protected $processFactory;
 
-    protected ?string $cwd = null;
+    /** @var string|null */
+    protected $cwd;
 
     /** @var array<int, array{stdout: string, stderr: string}> */
-    protected array $output = [];
+    protected $output = [];
 
     /** @var array<string, string> */
-    protected array $env = [
+    protected $env = [
         'COMPOSER_DISCARD_CHANGES' => 'true',
         'COMPOSER_ALLOW_SUPERUSER' => 'true',
     ];

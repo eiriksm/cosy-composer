@@ -18,12 +18,12 @@ class ComposerFileGetter
         $this->fs = new Filesystem($adapter);
     }
 
-    public function hasComposerFile()
+    public function hasComposerFile(): bool
     {
         return $this->fs->fileExists('composer.json');
     }
 
-    public function getComposerJsonData()
+    public function getComposerJsonData(): object|false
     {
         $data = $this->fs->read('composer.json');
         if (false == $data) {

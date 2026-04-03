@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class ComposerFileGetterTest extends TestCase
 {
-    public function testHasComposerFile()
+    public function testHasComposerFile(): void
     {
         $adapter = $this->createMock(FilesystemAdapter::class);
         $adapter->expects($this->once())
@@ -19,7 +19,7 @@ class ComposerFileGetterTest extends TestCase
         $this->assertEquals(false, $getter->hasComposerFile());
     }
 
-    public function testBadJsonData()
+    public function testBadJsonData(): void
     {
         $adapter = $this->createMock(FilesystemAdapter::class);
         $adapter->expects($this->once())
@@ -35,7 +35,7 @@ class ComposerFileGetterTest extends TestCase
         $this->assertEquals(false, $getter->getComposerJsonData());
     }
 
-    public function testReadComposerJsonContents()
+    public function testReadComposerJsonContents(): void
     {
         $adapter = $this->createMock(FilesystemAdapter::class);
         $adapter->expects($this->once())

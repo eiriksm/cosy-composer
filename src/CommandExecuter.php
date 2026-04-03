@@ -54,7 +54,7 @@ class CommandExecuter
      * @param array<string> $command
      * @param array<string, string> $env
      */
-    public function executeCommand(array $command, bool $log = true, int $timeout = 120, array $env = []): ?int
+    public function executeCommand(array $command, bool $log = true, ?float $timeout = 120, array $env = []): ?int
     {
         if ($log) {
             $this->logger->log('info', new Message('Creating command ' . implode(' ', $command), Message::COMMAND));

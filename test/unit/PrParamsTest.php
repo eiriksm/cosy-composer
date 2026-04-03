@@ -81,6 +81,53 @@ class PrParamsTest extends TestCase
         $this->testPrParams($is_private, $slug, $config, $expected, 'getPrParamsForGroup');
     }
 
+    /**
+     * Test that the details element is removed from Bitbucket PR bodies.
+     */
+    public function testCleanupBodyRemovesDetailsForBitbucket() : void
+    {
+        $body = '<details>
+<summary>List of release notes</summary>
+
+- [Release notes for tag 1.0.1](https://github.com/test/package/releases/tag/1.0.1)
+
+</details>
+
+Some other text here.';
+
+        $slug = Slug::createFromUrl('https://bitbucket.org/test/repo');
+        PrParamsCreator::cleanupBody($slug, $body);
+        self::assertStringNotContainsString('<details>', $body);
+        self::assertStringNotContainsString('</details>', $body);
+        self::assertStringNotContainsString('<summary>', $body);
+        self::assertStringNotContainsString('</summary>', $body);
+        // Make sure the actual content is still there.
+        self::assertStringContainsString('List of release notes', $body);
+        self::assertStringContainsString('Release notes for tag 1.0.1', $body);
+        self::assertStringContainsString('Some other text here.', $body);
+    }
+
+    /**
+     * Test that the details element is NOT removed from non-Bitbucket PR bodies.
+     */
+    public function testCleanupBodyKeepsDetailsForNonBitbucket() : void
+    {
+        $body = '<details>
+<summary>List of release notes</summary>
+
+- [Release notes for tag 1.0.1](https://github.com/test/package/releases/tag/1.0.1)
+
+</details>';
+
+        // Test with a GitHub slug.
+        $slug = Slug::createFromUrl('https://github.com/test/repo');
+        PrParamsCreator::cleanupBody($slug, $body);
+        self::assertStringContainsString('<details>', $body);
+        self::assertStringContainsString('</details>', $body);
+        self::assertStringContainsString('<summary>', $body);
+        self::assertStringContainsString('</summary>', $body);
+    }
+
     public static function prParamsProvider()
     {
         return [

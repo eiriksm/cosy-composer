@@ -53,7 +53,7 @@ trait GitCommandsTrait
         if ($this->execCommand($command, false, 120)) {
             $this->log($this->getLastStdOut());
             $this->log($this->getLastStdErr());
-            $this->execCommand(['git', 'checkout', '.'], false);
+            $this->execCommand(['git', 'checkout', '.']);
             throw new \Exception('Error committing the composer files. They are probably not changed.');
         }
         $this->commitMessage = $msg;

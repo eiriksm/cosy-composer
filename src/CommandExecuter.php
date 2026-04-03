@@ -18,14 +18,13 @@ class CommandExecuter
      */
     protected $processFactory;
 
-    protected $cwd;
+    protected ?string $cwd = null;
 
-    protected $output = [];
+    /** @var array<int, array{stdout: string, stderr: string}> */
+    protected array $output = [];
 
-    /**
-     * @var array
-     */
-    protected $env = [
+    /** @var array<string, string> */
+    protected array $env = [
         'COMPOSER_DISCARD_CHANGES' => 'true',
         'COMPOSER_ALLOW_SUPERUSER' => 'true',
     ];
@@ -51,7 +50,11 @@ class CommandExecuter
         $this->processFactory = $factory;
     }
 
-    public function executeCommand(array $command, $log = true, $timeout = 120, array $env = [])
+    /**
+     * @param array<string> $command
+     * @param array<string, string> $env
+     */
+    public function executeCommand(array $command, bool $log = true, int $timeout = 120, array $env = []): ?int
     {
         if ($log) {
             $this->logger->log('info', new Message('Creating command ' . implode(' ', $command), Message::COMMAND));
@@ -78,32 +81,29 @@ class CommandExecuter
         }
     }
 
-    public function getLastOutput()
+    /**
+     * @return array{stdout: string, stderr: string}
+     */
+    public function getLastOutput(): array
     {
         $last_index = count($this->output) - 1;
         return $this->output[$last_index];
     }
 
     /**
-     * @return array
+     * @return array<string, string>
      */
-    protected function getEnv()
+    protected function getEnv(): array
     {
         return $this->env;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getCwd()
+    public function getCwd(): ?string
     {
         return $this->cwd;
     }
 
-    /**
-     * @param mixed $cwd
-     */
-    public function setCwd($cwd)
+    public function setCwd(?string $cwd): void
     {
         $this->cwd = $cwd;
     }

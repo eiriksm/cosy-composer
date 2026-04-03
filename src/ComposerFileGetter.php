@@ -23,7 +23,10 @@ class ComposerFileGetter
         return $this->fs->fileExists('composer.json');
     }
 
-    public function getComposerJsonData(): object|false
+    /**
+     * @return object|false
+     */
+    public function getComposerJsonData()
     {
         $data = $this->fs->read('composer.json');
         if (false == $data) {

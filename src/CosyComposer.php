@@ -610,7 +610,7 @@ class CosyComposer
             throw new \InvalidArgumentException('No composer.json file found.');
         }
         $composer_json_data = $this->composerGetter->getComposerJsonData();
-        if (false == $composer_json_data) {
+        if ($composer_json_data === false) {
             throw new \InvalidArgumentException('Invalid composer.json file');
         }
         $config = $this->ensureFreshConfig($composer_json_data);
@@ -663,6 +663,9 @@ class CosyComposer
         $this->doComposerInstall($config);
         if (!$uses_config_branch) {
             $composer_json_data = $this->composerGetter->getComposerJsonData();
+            if ($composer_json_data === false) {
+                throw new \InvalidArgumentException('Invalid composer.json file');
+            }
             $config = $this->ensureFreshConfig($composer_json_data);
             $this->applyIgnorePlatformRequirements($config);
         }

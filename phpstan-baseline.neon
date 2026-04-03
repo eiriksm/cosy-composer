@@ -1,16 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ComposerFileGetter\\:\\:getComposerJsonData\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/ComposerFileGetter.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ComposerFileGetter\\:\\:hasComposerFile\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/ComposerFileGetter.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\CosyComposer\\:\\:attachDrupalAdvisories\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: src/CosyComposer.php
@@ -7634,21 +7624,6 @@ parameters:
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\ChangelogAttemptsTest\\:\\:testClonesForPublicPackage\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/unit/ChangelogAttemptsTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\ComposerFileGetterTest\\:\\:testBadJsonData\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/ComposerFileGetterTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\ComposerFileGetterTest\\:\\:testHasComposerFile\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/ComposerFileGetterTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\ComposerFileGetterTest\\:\\:testReadComposerJsonContents\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/ComposerFileGetterTest.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerChangelogTest\\:\\:getMockCosy\\(\\) has parameter \\$dir with no type specified\\.$#"

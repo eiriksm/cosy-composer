@@ -1,5 +1,6 @@
 parameters:
-    level: 5
+    level: 6
     reportMaybes: true
 includes:
+    - phpstan-baseline.neon
     - vendor/phpstan/phpstan-phpunit/extension.neon

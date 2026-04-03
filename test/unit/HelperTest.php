@@ -3,6 +3,7 @@
 namespace eiriksm\CosyComposerTest\unit;
 
 use eiriksm\CosyComposer\Helpers;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use PHPUnit\Framework\TestCase;
 use Violinist\Config\Config;
 
@@ -152,6 +153,74 @@ class HelperTest extends TestCase
             ->willReturn($outdated_flag);
 
         self::assertSame($expected, Helpers::createComposerOutdatedCommandFromConfig($config, $direct));
+    }
+
+    /**
+     * @dataProvider shouldUpdatePrProvider
+     */
+    public function testShouldUpdatePr($branch_name, $pr_params, NamedPrs $prs_named, $expected)
+    {
+        self::assertSame($expected, Helpers::shouldUpdatePr($branch_name, $pr_params, $prs_named));
+    }
+
+    public static function shouldUpdatePrProvider()
+    {
+        $base_pr = [
+            'head' => ['ref' => 'my-branch'],
+            'title' => 'Update package to 1.0.1',
+            'body' => 'This updates package from 1.0.0 to 1.0.1.',
+        ];
+
+        return [
+            'empty branch name returns false' => [
+                '',
+                ['title' => 'Update', 'body' => 'body'],
+                NamedPrs::createFromArray([$base_pr]),
+                false,
+            ],
+            'empty pr_params returns false' => [
+                'my-branch',
+                [],
+                NamedPrs::createFromArray([$base_pr]),
+                false,
+            ],
+            'no change returns false' => [
+                'my-branch',
+                ['title' => 'Update package to 1.0.1', 'body' => 'This updates package from 1.0.0 to 1.0.1.'],
+                NamedPrs::createFromArray([$base_pr]),
+                false,
+            ],
+            'title changed returns true' => [
+                'my-branch',
+                ['title' => 'Security update for package to 1.0.1', 'body' => 'This updates package from 1.0.0 to 1.0.1.'],
+                NamedPrs::createFromArray([$base_pr]),
+                true,
+            ],
+            'body changed returns true' => [
+                'my-branch',
+                ['title' => 'Update package to 1.0.1', 'body' => 'This updates package from 1.0.0 to 1.0.2 with additional packages.'],
+                NamedPrs::createFromArray([$base_pr]),
+                true,
+            ],
+            'both title and body changed returns true' => [
+                'my-branch',
+                ['title' => 'New title', 'body' => 'New body'],
+                NamedPrs::createFromArray([$base_pr]),
+                true,
+            ],
+            'branch not in named prs returns false' => [
+                'unknown-branch',
+                ['title' => 'Update', 'body' => 'body'],
+                NamedPrs::createFromArray([$base_pr]),
+                false,
+            ],
+            'body with whitespace difference returns false' => [
+                'my-branch',
+                ['title' => 'Update package to 1.0.1', 'body' => '  This updates package from 1.0.0 to 1.0.1.  '],
+                NamedPrs::createFromArray([$base_pr]),
+                false,
+            ],
+        ];
     }
 
     public static function composerOutdatedCommandProvider()

@@ -3,7 +3,6 @@
 namespace eiriksm\CosyComposerTest\integration\issues;
 
 use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
-use Violinist\Slug\Slug;
 
 /**
  * Class Issue107Test.

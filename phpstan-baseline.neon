@@ -7956,6 +7956,11 @@ parameters:
 			path: test/unit/HelperTest.php
 
 		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\HelperTest\\:\\:shouldUpdatePrProvider\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: test/unit/HelperTest.php
+
+		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\HelperTest\\:\\:testBranchName\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/unit/HelperTest.php
@@ -8007,6 +8012,26 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\HelperTest\\:\\:testGroupBranch\\(\\) has parameter \\$expected with no type specified\\.$#"
+			count: 1
+			path: test/unit/HelperTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\HelperTest\\:\\:testShouldUpdatePr\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: test/unit/HelperTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\HelperTest\\:\\:testShouldUpdatePr\\(\\) has parameter \\$branch_name with no type specified\\.$#"
+			count: 1
+			path: test/unit/HelperTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\HelperTest\\:\\:testShouldUpdatePr\\(\\) has parameter \\$expected with no type specified\\.$#"
+			count: 1
+			path: test/unit/HelperTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\HelperTest\\:\\:testShouldUpdatePr\\(\\) has parameter \\$pr_params with no type specified\\.$#"
 			count: 1
 			path: test/unit/HelperTest.php
 

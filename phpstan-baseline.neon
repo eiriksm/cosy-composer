@@ -1,61 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\CommandExecuter\\:\\:executeCommand\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/CommandExecuter.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\CommandExecuter\\:\\:executeCommand\\(\\) has parameter \\$command with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/CommandExecuter.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\CommandExecuter\\:\\:executeCommand\\(\\) has parameter \\$env with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/CommandExecuter.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\CommandExecuter\\:\\:executeCommand\\(\\) has parameter \\$log with no type specified\\.$#"
-			count: 1
-			path: src/CommandExecuter.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\CommandExecuter\\:\\:executeCommand\\(\\) has parameter \\$timeout with no type specified\\.$#"
-			count: 1
-			path: src/CommandExecuter.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\CommandExecuter\\:\\:getEnv\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/CommandExecuter.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\CommandExecuter\\:\\:getLastOutput\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/CommandExecuter.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\CommandExecuter\\:\\:setCwd\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/CommandExecuter.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposer\\\\CommandExecuter\\:\\:\\$cwd has no type specified\\.$#"
-			count: 1
-			path: src/CommandExecuter.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposer\\\\CommandExecuter\\:\\:\\$env type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/CommandExecuter.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposer\\\\CommandExecuter\\:\\:\\$output has no type specified\\.$#"
-			count: 1
-			path: src/CommandExecuter.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\ComposerFileGetter\\:\\:getComposerJsonData\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: src/ComposerFileGetter.php
@@ -7689,21 +7634,6 @@ parameters:
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\ChangelogAttemptsTest\\:\\:testClonesForPublicPackage\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/unit/ChangelogAttemptsTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CommandExecuterTest\\:\\:testExecuteCommand\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CommandExecuterTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CommandExecuterTest\\:\\:testSetIgnorePlatformRequirementsFalse\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CommandExecuterTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CommandExecuterTest\\:\\:testSetIgnorePlatformRequirementsTrue\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CommandExecuterTest.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\ComposerFileGetterTest\\:\\:testBadJsonData\\(\\) has no return type specified\\.$#"

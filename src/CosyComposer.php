@@ -783,6 +783,10 @@ class CosyComposer
         if ($config->shouldOnlyUpdateSecurityUpdates()) {
             $this->log('Project indicated that it should only receive security updates. Removing non-security related updates from queue');
             foreach ($data as $delta => $item) {
+                $package_config = $config->getConfigForPackage($item->name);
+                if (!$package_config->shouldOnlyUpdateSecurityUpdates()) {
+                    continue;
+                }
                 try {
                     $package_name_in_composer_json = Helpers::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
                     if (isset($security_alerts[$package_name_in_composer_json])) {

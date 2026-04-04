@@ -16,6 +16,6 @@ class SecurityUpdatesOnlyRuleExceptionTest extends ComposerUpdateIntegrationBase
         // But the rule overrides security_updates_only to 0 for psr/log,
         // so it should still be updated.
         $this->runtestExpectedOutput();
-        self::assertNotEmpty($this->prParams);
+        self::assertNotEmpty($this->prParams, 'Expected to have PR params for psr/log but no PR params found');
     }
 }

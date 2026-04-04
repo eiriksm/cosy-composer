@@ -29,7 +29,7 @@ class GitlabProviderTest extends ProvidersTestBase
         $this->assertEquals(true, $provider->repoIsPrivate($slug));
     }
 
-    public function getProvider($client)
+    public function getProvider(object $client)
     {
         return new Gitlab($client);
     }

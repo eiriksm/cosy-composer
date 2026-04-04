@@ -11,7 +11,7 @@ use Symfony\Component\Process\Process;
 
 class CommandExecuterTest extends TestCase
 {
-    public function testExecuteCommand()
+    public function testExecuteCommand(): void
     {
         $process_mock = $this->createMock(ProcessFactory::class);
         $logger_mock = $this->createMock(LoggerInterface::class);
@@ -51,7 +51,7 @@ class CommandExecuterTest extends TestCase
         $this->assertEquals(true, $called_correctly);
     }
 
-    public function testSetIgnorePlatformRequirementsTrue()
+    public function testSetIgnorePlatformRequirementsTrue(): void
     {
         $process_mock = $this->createMock(ProcessFactory::class);
         $logger_mock = $this->createMock(LoggerInterface::class);
@@ -79,7 +79,7 @@ class CommandExecuterTest extends TestCase
         $this->assertEquals('1', $captured_env['COMPOSER_IGNORE_PLATFORM_REQS']);
     }
 
-    public function testSetIgnorePlatformRequirementsFalse()
+    public function testSetIgnorePlatformRequirementsFalse(): void
     {
         $process_mock = $this->createMock(ProcessFactory::class);
         $logger_mock = $this->createMock(LoggerInterface::class);

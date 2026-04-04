@@ -81,6 +81,103 @@ class PrParamsTest extends TestCase
         $this->testPrParams($is_private, $slug, $config, $expected, 'getPrParamsForGroup');
     }
 
+    /**
+     * Test that the details element is removed from Bitbucket PR bodies.
+     */
+    public function testCleanupBodyRemovesDetailsForBitbucket() : void
+    {
+        $body = '<details>
+<summary>List of release notes</summary>
+
+- [Release notes for tag 1.0.1](https://github.com/test/package/releases/tag/1.0.1)
+
+</details>
+
+Some other text here.';
+
+        $slug = Slug::createFromUrl('https://bitbucket.org/test/repo');
+        PrParamsCreator::cleanupBody($slug, $body);
+        self::assertStringNotContainsString('<details>', $body);
+        self::assertStringNotContainsString('</details>', $body);
+        self::assertStringNotContainsString('<summary>', $body);
+        self::assertStringNotContainsString('</summary>', $body);
+        // Make sure the actual content is still there.
+        self::assertStringContainsString('List of release notes', $body);
+        self::assertStringContainsString('Release notes for tag 1.0.1', $body);
+        self::assertStringContainsString('Some other text here.', $body);
+    }
+
+    /**
+     * Test that details/summary elements with attributes are also removed for Bitbucket.
+     *
+     * @see https://github.com/eiriksm/cosy-composer/issues/183
+     */
+    public function testCleanupBodyRemovesDetailsWithAttributesForBitbucket() : void
+    {
+        $body = '<details open>
+<summary class="release-notes">List of release notes</summary>
+
+- [Release notes for tag 1.0.1](https://github.com/test/package/releases/tag/1.0.1)
+
+</details>
+
+Some other text here.';
+
+        $slug = Slug::createFromUrl('https://bitbucket.org/test/repo');
+        PrParamsCreator::cleanupBody($slug, $body);
+        self::assertStringNotContainsString('<details', $body);
+        self::assertStringNotContainsString('</details>', $body);
+        self::assertStringNotContainsString('<summary', $body);
+        self::assertStringNotContainsString('</summary>', $body);
+        // Make sure the actual content is still there.
+        self::assertStringContainsString('List of release notes', $body);
+        self::assertStringContainsString('Release notes for tag 1.0.1', $body);
+        self::assertStringContainsString('Some other text here.', $body);
+    }
+
+    /**
+     * Test that the details element is NOT removed from non-Bitbucket PR bodies.
+     */
+    public function testCleanupBodyKeepsDetailsForNonBitbucket() : void
+    {
+        $body = '<details>
+<summary>List of release notes</summary>
+
+- [Release notes for tag 1.0.1](https://github.com/test/package/releases/tag/1.0.1)
+
+</details>';
+
+        // Test with a GitHub slug.
+        $slug = Slug::createFromUrl('https://github.com/test/repo');
+        PrParamsCreator::cleanupBody($slug, $body);
+        self::assertStringContainsString('<details>', $body);
+        self::assertStringContainsString('</details>', $body);
+        self::assertStringContainsString('<summary>', $body);
+        self::assertStringContainsString('</summary>', $body);
+    }
+
+    public function testCreateBodyWithRepoUrlFallback() : void
+    {
+        $msg_factory = new ViolinistMessages();
+        $pr_params_creator = new PrParamsCreator($msg_factory);
+        $item = (object) ['name' => 'vendor/package', 'version' => '1.0.0'];
+        $post_update_data = (object) ['version' => '2.0.0'];
+        $body = $pr_params_creator->createBody($item, $post_update_data, null, false, [], [], [], 'https://github.com/vendor/package');
+        self::assertStringContainsString('project page', $body);
+        self::assertStringContainsString('https://github.com/vendor/package', $body);
+    }
+
+    public function testCreateBodyWithoutRepoUrlOrChangelog() : void
+    {
+        $msg_factory = new ViolinistMessages();
+        $pr_params_creator = new PrParamsCreator($msg_factory);
+        $item = (object) ['name' => 'vendor/package', 'version' => '1.0.0'];
+        $post_update_data = (object) ['version' => '2.0.0'];
+        $body = $pr_params_creator->createBody($item, $post_update_data, null, false, [], [], [], null);
+        self::assertStringNotContainsString('project page', $body);
+        self::assertStringNotContainsString('Changelog', $body);
+    }
+
     public static function prParamsProvider()
     {
         return [

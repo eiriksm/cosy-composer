@@ -45,6 +45,11 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - symfony/yaml: v4.4.18 (updated from v3.4.47)
 
 
+### Changelog
+
+Here is a list of changes between the version you use, and the version this pull request updates to:
+
+Could not retrieve changelog. See the [project page](https://github.com/drush-ops/drush) for more information.
 
 ### Working with this branch
 

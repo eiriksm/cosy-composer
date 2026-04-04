@@ -51,6 +51,11 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - psr/log: 1.1.4 (updated from 1.0.0)
 
 
+### Changelog
+
+Here is a list of changes between the version you use, and the version this pull request updates to:
+
+Could not retrieve changelog. See the [project page](https://github.com/php-fig/log) for more information.
 
 ### Working with this branch
 

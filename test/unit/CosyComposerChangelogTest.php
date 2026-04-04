@@ -12,7 +12,7 @@ class CosyComposerChangelogTest extends TestCase
     use GetExecuterTrait;
     use GetCosyTrait;
 
-    public function testChangeLogPackageNotFound()
+    public function testChangeLogPackageNotFound() : void
     {
         $c = $this->getMockCosy();
         // Of course this should not be possible, but what does one do for coverage, eh?
@@ -24,7 +24,7 @@ class CosyComposerChangelogTest extends TestCase
         $updater->retrieveChangeLog('vendor/package', (object) ['packages' => [], 'packages-dev' => []], 1, 2);
     }
 
-    public function testChangeLogRepoUnknownSource()
+    public function testChangeLogRepoUnknownSource() : void
     {
         $c = $this->getMockCosy();
         $this->expectException(\Exception::class);
@@ -39,7 +39,7 @@ class CosyComposerChangelogTest extends TestCase
         ]])), 1, 2);
     }
 
-    public function testChangeLogRepoCloneError()
+    public function testChangeLogRepoCloneError() : void
     {
         $c = $this->getMockCosy();
         $called = false;
@@ -69,7 +69,7 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals(true, $called);
     }
 
-    public function testChangeLogRegular()
+    public function testChangeLogRegular() : void
     {
         $c = $this->getMockCosy();
         $called = false;
@@ -105,7 +105,7 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals(true, $called);
     }
 
-    public function testChangeLogDotGitSuffix()
+    public function testChangeLogDotGitSuffix() : void
     {
         $c = $this->getMockCosy();
         $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
@@ -136,7 +136,7 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertStringNotContainsString('https://github.com/vendor/package.git/commit/', $log->getAsMarkdown());
     }
 
-    public function testChangeLogNonDotGitSuffixNotStripped()
+    public function testChangeLogNonDotGitSuffixNotStripped() : void
     {
         $c = $this->getMockCosy();
         $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
@@ -165,7 +165,57 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertStringContainsString('https://github.com/vendor/package-git/commit/112233', $log->getAsMarkdown());
     }
 
-    public function testChangeLogSuperLong()
+    public function testGetRepoUrlHttps() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'https://github.com/vendor/package.git',
+                ],
+            ],
+        ]])));
+        $this->assertEquals('https://github.com/vendor/package', $url);
+    }
+
+    public function testGetRepoUrlSsh() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@github.com:vendor/package.git',
+                ],
+            ],
+        ]])));
+        $this->assertEquals('https://github.com/vendor/package', $url);
+    }
+
+    public function testGetRepoUrlNoSource() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+            ],
+        ]])));
+        $this->assertNull($url);
+    }
+
+    public function testChangeLogSuperLong() : void
     {
         $c = $this->getMockCosy();
         $called = false;

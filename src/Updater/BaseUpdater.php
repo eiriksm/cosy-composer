@@ -170,6 +170,29 @@ abstract class BaseUpdater implements UpdaterInterface
     }
 
     /**
+     * Resolves a clean URL for a package's repository from lock data.
+     */
+    public function getRepoUrl(string $package_name, object $lockdata) : ?string
+    {
+        $lock_data_obj = new ComposerLockData();
+        $lock_data_obj->setData($lockdata);
+        $data = $lock_data_obj->getPackageData($package_name);
+        if (empty($data->source->url)) {
+            return null;
+        }
+        $git_url = Helpers::stripGitSuffix($data->source->url);
+        $repo_parsed = parse_uri($git_url);
+        if (!empty($repo_parsed)) {
+            switch ($repo_parsed['_protocol']) {
+                case 'git@github.com':
+                    $git_url = sprintf('https://github.com/%s', $repo_parsed['path']);
+                    break;
+            }
+        }
+        return $git_url;
+    }
+
+    /**
      * Helper to retrieve changelog.
      */
     public function retrieveChangeLog($package_name, $lockdata, $version_from, $version_to)
@@ -199,16 +222,10 @@ abstract class BaseUpdater implements UpdaterInterface
             $changelog_string = implode("\n", $lines);
         }
         $log = ChangeLogData::createFromString($changelog_string);
-        $git_url = Helpers::stripGitSuffix($data->source->url);
-        $repo_parsed = parse_uri($git_url);
-        if (!empty($repo_parsed)) {
-            switch ($repo_parsed['_protocol']) {
-                case 'git@github.com':
-                    $git_url = sprintf('https://github.com/%s', $repo_parsed['path']);
-                    break;
-            }
+        $git_url = $this->getRepoUrl($package_name, $lockdata);
+        if ($git_url) {
+            $log->setGitSource($git_url);
         }
-        $log->setGitSource($git_url);
         return $log;
     }
 

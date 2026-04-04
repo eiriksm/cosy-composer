@@ -530,7 +530,12 @@ class CosyComposer
         $hostname = $this->slug->getProvider();
         $url = null;
         // Make sure we accept the fingerprint of whatever we are cloning.
-        $this->execCommand(['ssh-keyscan', '-t', 'rsa', $hostname, '>>', '~/.ssh/known_hosts']);
+        $known_hosts_file = "$directory/known_hosts";
+        $this->execCommand(['ssh-keyscan', '-t', 'rsa', $hostname], false);
+        $keyscan_output = $this->getLastStdOut();
+        if (!empty($keyscan_output)) {
+            file_put_contents($known_hosts_file, $keyscan_output, FILE_APPEND);
+        }
         if (!empty($_SERVER['private_key'])) {
             $this->log('Checking for existing private key');
             $filename = "$directory/id_rsa";
@@ -605,7 +610,7 @@ class CosyComposer
             throw new \InvalidArgumentException('No composer.json file found.');
         }
         $composer_json_data = $this->composerGetter->getComposerJsonData();
-        if (false == $composer_json_data) {
+        if ($composer_json_data === false) {
             throw new \InvalidArgumentException('Invalid composer.json file');
         }
         $config = $this->ensureFreshConfig($composer_json_data);
@@ -658,6 +663,9 @@ class CosyComposer
         $this->doComposerInstall($config);
         if (!$uses_config_branch) {
             $composer_json_data = $this->composerGetter->getComposerJsonData();
+            if ($composer_json_data === false) {
+                throw new \InvalidArgumentException('Invalid composer.json file');
+            }
             $config = $this->ensureFreshConfig($composer_json_data);
             $this->applyIgnorePlatformRequirements($config);
         }

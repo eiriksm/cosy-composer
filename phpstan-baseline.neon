@@ -8439,3 +8439,13 @@ parameters:
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\TokenChooserTest\\:\\:tokenChooserProvider\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/unit/TokenChooserTest.php
+
+		-
+			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConsecutiveNoLockTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
+			count: 1
+			path: test/integration/UpdateConsecutiveNoLockTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConsecutiveNoLockTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
+			count: 1
+			path: test/integration/UpdateConsecutiveNoLockTest.php

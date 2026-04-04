@@ -12,9 +12,9 @@ class UpdateConsecutiveNoLockTest extends ComposerUpdateIntegrationBase
 {
     protected $composerAssetFiles = 'composer.consecutive.nolock';
 
-    protected $removedLockFile = false;
+    protected bool $removedLockFile = false;
 
-    protected $composerInstallCount = 0;
+    protected int $composerInstallCount = 0;
 
     public function setUp() : void
     {
@@ -22,7 +22,7 @@ class UpdateConsecutiveNoLockTest extends ComposerUpdateIntegrationBase
         $this->updateJson = '{"installed": [{"name": "psr/cache", "version": "1.0.0", "latest": "1.0.1", "latest-status": "semver-safe-update"},{"name": "psr/log", "version": "1.1.3", "latest": "1.1.4", "latest-status": "semver-safe-update"}]}';
     }
 
-    public function testConsecutiveRunsWithNoLockFile()
+    public function testConsecutiveRunsWithNoLockFile() : void
     {
         $this->runtestExpectedOutput();
         // Both packages should be updated via composer require (since there's no lock file).
@@ -35,7 +35,10 @@ class UpdateConsecutiveNoLockTest extends ComposerUpdateIntegrationBase
         self::assertGreaterThanOrEqual(4, $this->composerInstallCount, 'Composer install should run between consecutive updates');
     }
 
-    protected function handleExecutorReturnCallback($cmd, &$return)
+    /**
+     * @param array<string> $cmd
+     */
+    protected function handleExecutorReturnCallback(array $cmd, &$return) : void
     {
         // With no lock file, the code uses composer require with the constraint prefix.
         $require_commands = [
@@ -52,7 +55,7 @@ class UpdateConsecutiveNoLockTest extends ComposerUpdateIntegrationBase
             // Actually remove the lock file to simulate the rm command.
             @unlink($this->dir . '/composer.lock');
         }
-        if (is_array($cmd) && count($cmd) >= 2 && $cmd[0] === 'composer' && $cmd[1] === 'install') {
+        if (count($cmd) >= 2 && $cmd[0] === 'composer' && $cmd[1] === 'install') {
             $this->composerInstallCount++;
             // Only place the lock file starting from the 3rd composer install
             // call. The first two happen before the initial lock file check
@@ -65,12 +68,15 @@ class UpdateConsecutiveNoLockTest extends ComposerUpdateIntegrationBase
         }
     }
 
-    protected function placeInitialComposerLock()
+    protected function placeInitialComposerLock() : void
     {
         // Deliberately do NOT place a lock file to simulate a project without one.
     }
 
-    protected function getBranchesFlattened()
+    /**
+     * @return array<string>
+     */
+    protected function getBranchesFlattened() : array
     {
         return [];
     }

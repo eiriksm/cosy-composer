@@ -8421,26 +8421,6 @@ parameters:
 			path: test/unit/Providers/SelfHostedGitlabTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\TestProviderInterface\\:\\:getBranchMethod\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/TestProviderInterface.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\TestProviderInterface\\:\\:getMockClient\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/TestProviderInterface.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\TestProviderInterface\\:\\:getProvider\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/TestProviderInterface.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\TestProviderInterface\\:\\:getProvider\\(\\) has parameter \\$client with no type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/TestProviderInterface.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\PullRequestsTest\\:\\:testPullrequestTitle\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/unit/PullRequestsTest.php

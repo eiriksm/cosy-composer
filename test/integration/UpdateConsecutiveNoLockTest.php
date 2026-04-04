@@ -10,10 +10,13 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class UpdateConsecutiveNoLockTest extends ComposerUpdateIntegrationBase
 {
+    /** @var string */
     protected $composerAssetFiles = 'composer.consecutive.nolock';
 
+    /** @var bool */
     protected $removedLockFile = false;
 
+    /** @var int */
     protected $composerInstallCount = 0;
 
     public function setUp() : void
@@ -37,6 +40,7 @@ class UpdateConsecutiveNoLockTest extends ComposerUpdateIntegrationBase
 
     /**
      * @param array<string> $cmd
+     * @param int $return
      */
     protected function handleExecutorReturnCallback(array $cmd, &$return) : void
     {

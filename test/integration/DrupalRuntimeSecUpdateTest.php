@@ -2,7 +2,8 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Http\Adapter\Guzzle7\Client;
+use GuzzleHttp\Psr7\Response;
+use Http\Client\HttpClient;
 use Violinist\Slug\Slug;
 
 class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
@@ -11,7 +12,21 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
     public function setUp() : void
     {
         parent::setUp();
-        $this->cosy->setHttpClient(new Client());
+        $fixturesDir = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR;
+        $client = $this->createMock(HttpClient::class);
+        $client->method('sendRequest')
+            ->willReturnCallback(function ($request) use ($fixturesDir) {
+                $url = (string) $request->getUri();
+                if (str_contains($url, '/7.x')) {
+                    $xml = file_get_contents($fixturesDir . 'updates-drupal-7x.xml');
+                } elseif (str_contains($url, '/8.x')) {
+                    $xml = file_get_contents($fixturesDir . 'updates-drupal-8x.xml');
+                } else {
+                    $xml = file_get_contents($fixturesDir . 'updates-drupal-current.xml');
+                }
+                return new Response(200, [], $xml);
+            });
+        $this->cosy->setHttpClient($client);
     }
 
     /**

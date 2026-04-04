@@ -114,12 +114,8 @@ class PrParamsCreator
         // Currently does not support having the collapsible section thing.
         // @todo: Revisit from time to time?
         // @todo: Make sure we replace the correct one. What if the changelog has this in it?
-        $body = str_replace([
-            '<details>',
-            '<summary>',
-            '</summary>',
-            '</details>',
-        ], '', $body);
+        $body = preg_replace('/<\/?details[^>]*>/', '', $body);
+        $body = preg_replace('/<\/?summary[^>]*>/', '', $body);
     }
 
     public function getPrParamsForGroup($fork_user, bool $is_private, Slug $slug, $branch_name, $body, $title, $default_branch, $config)

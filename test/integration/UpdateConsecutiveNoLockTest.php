@@ -12,9 +12,9 @@ class UpdateConsecutiveNoLockTest extends ComposerUpdateIntegrationBase
 {
     protected $composerAssetFiles = 'composer.consecutive.nolock';
 
-    protected bool $removedLockFile = false;
+    protected $removedLockFile = false;
 
-    protected int $composerInstallCount = 0;
+    protected $composerInstallCount = 0;
 
     public function setUp() : void
     {

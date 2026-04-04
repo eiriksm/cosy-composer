@@ -3511,22 +3511,7 @@ parameters:
 			path: test/integration/Base.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\Base\\:\\:getMockCosy\\(\\) has parameter \\$dir with no type specified\\.$#"
-			count: 1
-			path: test/integration/Base.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\Base\\:\\:getMockDefinition\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/Base.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\Base\\:\\:getMockExecuterWithReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/Base.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\Base\\:\\:getMockExecuterWithReturnCallback\\(\\) has parameter \\$function with no type specified\\.$#"
 			count: 1
 			path: test/integration/Base.php
 
@@ -7441,11 +7426,6 @@ parameters:
 			path: test/integration/issues/Issue238Test.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue90Test\\:\\:getMockCosy\\(\\) has parameter \\$dir with no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue90Test.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue90Test\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue90Test.php
@@ -7596,21 +7576,6 @@ parameters:
 			path: test/integration/issues/Issue98Test.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\ChangelogAttemptsTest\\:\\:getMockCosy\\(\\) has parameter \\$dir with no type specified\\.$#"
-			count: 1
-			path: test/unit/ChangelogAttemptsTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\ChangelogAttemptsTest\\:\\:getMockExecuterWithReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/ChangelogAttemptsTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\ChangelogAttemptsTest\\:\\:getMockExecuterWithReturnCallback\\(\\) has parameter \\$function with no type specified\\.$#"
-			count: 1
-			path: test/unit/ChangelogAttemptsTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\ChangelogAttemptsTest\\:\\:testClonedPrivate\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/unit/ChangelogAttemptsTest.php
@@ -7624,56 +7589,6 @@ parameters:
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\ChangelogAttemptsTest\\:\\:testClonesForPublicPackage\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/unit/ChangelogAttemptsTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerChangelogTest\\:\\:getMockCosy\\(\\) has parameter \\$dir with no type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerChangelogTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerChangelogTest\\:\\:getMockExecuterWithReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerChangelogTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerChangelogTest\\:\\:getMockExecuterWithReturnCallback\\(\\) has parameter \\$function with no type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerChangelogTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerChangelogTest\\:\\:testChangeLogDotGitSuffix\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerChangelogTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerChangelogTest\\:\\:testChangeLogNonDotGitSuffixNotStripped\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerChangelogTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerChangelogTest\\:\\:testChangeLogPackageNotFound\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerChangelogTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerChangelogTest\\:\\:testChangeLogRegular\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerChangelogTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerChangelogTest\\:\\:testChangeLogRepoCloneError\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerChangelogTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerChangelogTest\\:\\:testChangeLogRepoUnknownSource\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerChangelogTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerChangelogTest\\:\\:testChangeLogSuperLong\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerChangelogTest.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerHelperUnitTest\\:\\:getComposerJsonVariations\\(\\) has no return type specified\\.$#"
@@ -7722,21 +7637,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerUnitTest\\:\\:getEnvVariations\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerUnitTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerUnitTest\\:\\:getMockCosy\\(\\) has parameter \\$dir with no type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerUnitTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerUnitTest\\:\\:getMockExecuterWithReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerUnitTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerUnitTest\\:\\:getMockExecuterWithReturnCallback\\(\\) has parameter \\$function with no type specified\\.$#"
 			count: 1
 			path: test/unit/CosyComposerUnitTest.php
 
@@ -8539,11 +8439,6 @@ parameters:
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\TestProviderInterface\\:\\:getProvider\\(\\) has parameter \\$client with no type specified\\.$#"
 			count: 1
 			path: test/unit/Providers/TestProviderInterface.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\PullRequestsTest\\:\\:getMockCosy\\(\\) has parameter \\$dir with no type specified\\.$#"
-			count: 1
-			path: test/unit/PullRequestsTest.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\PullRequestsTest\\:\\:testPullrequestTitle\\(\\) has no return type specified\\.$#"

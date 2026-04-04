@@ -7,7 +7,10 @@ use eiriksm\CosyComposer\CommandExecuter;
 trait GetExecuterTrait
 {
 
-    protected function getMockExecuterWithReturnCallback($function)
+    /**
+     * @return \PHPUnit\Framework\MockObject\MockObject&CommandExecuter
+     */
+    protected function getMockExecuterWithReturnCallback(callable $function)
     {
         $mock_executer = $this->createMock(CommandExecuter::class);
         $mock_executer->method('executeCommand')

@@ -14,7 +14,7 @@ use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 trait GetCosyTrait
 {
-    protected function getMockCosy($dir = null) : CosyComposer
+    protected function getMockCosy(?string $dir = null) : CosyComposer
     {
         $executer = $this->createMock(CommandExecuter::class);
         $c = new CosyComposer($executer);

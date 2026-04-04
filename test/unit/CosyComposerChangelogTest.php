@@ -165,6 +165,56 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertStringContainsString('https://github.com/vendor/package-git/commit/112233', $log->getAsMarkdown());
     }
 
+    public function testGetRepoUrlHttps() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'https://github.com/vendor/package.git',
+                ],
+            ],
+        ]])));
+        $this->assertEquals('https://github.com/vendor/package', $url);
+    }
+
+    public function testGetRepoUrlSsh() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@github.com:vendor/package.git',
+                ],
+            ],
+        ]])));
+        $this->assertEquals('https://github.com/vendor/package', $url);
+    }
+
+    public function testGetRepoUrlNoSource() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+            ],
+        ]])));
+        $this->assertNull($url);
+    }
+
     public function testChangeLogSuperLong() : void
     {
         $c = $this->getMockCosy();

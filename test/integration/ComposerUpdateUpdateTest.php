@@ -66,6 +66,11 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - psr/log: 1.0.2#changed (updated from 1.0.2#4ebe3a8bf773a19edfe0a84b6585ba3d401b724d)
 
 
+### Changelog
+
+Here is a list of changes between the version you use, and the version this pull request updates to:
+
+Could not retrieve changelog. See the [project page](https://github.com/php-fig/log) for more information.
 
 ### Working with this branch
 
@@ -176,6 +181,11 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - drupal/core: 8.4.8 (updated from 8.4.7)
 
 
+### Changelog
+
+Here is a list of changes between the version you use, and the version this pull request updates to:
+
+Could not retrieve changelog. See the [project page](https://github.com/drupal/core) for more information.
 
 ### Working with this branch
 
@@ -227,6 +237,11 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - laminas/laminas-zendframework-bridge: 1.1.0 (new package, previously not installed)
 
 
+### Changelog
+
+Here is a list of changes between the version you use, and the version this pull request updates to:
+
+Could not retrieve changelog. See the [project page](https://github.com/drupal/core) for more information.
 
 ### Working with this branch
 

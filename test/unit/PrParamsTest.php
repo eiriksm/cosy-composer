@@ -128,6 +128,28 @@ Some other text here.';
         self::assertStringContainsString('</summary>', $body);
     }
 
+    public function testCreateBodyWithRepoUrlFallback() : void
+    {
+        $msg_factory = new ViolinistMessages();
+        $pr_params_creator = new PrParamsCreator($msg_factory);
+        $item = (object) ['name' => 'vendor/package', 'version' => '1.0.0'];
+        $post_update_data = (object) ['version' => '2.0.0'];
+        $body = $pr_params_creator->createBody($item, $post_update_data, null, false, [], [], [], 'https://github.com/vendor/package');
+        self::assertStringContainsString('project page', $body);
+        self::assertStringContainsString('https://github.com/vendor/package', $body);
+    }
+
+    public function testCreateBodyWithoutRepoUrlOrChangelog() : void
+    {
+        $msg_factory = new ViolinistMessages();
+        $pr_params_creator = new PrParamsCreator($msg_factory);
+        $item = (object) ['name' => 'vendor/package', 'version' => '1.0.0'];
+        $post_update_data = (object) ['version' => '2.0.0'];
+        $body = $pr_params_creator->createBody($item, $post_update_data, null, false, [], [], [], null);
+        self::assertStringNotContainsString('project page', $body);
+        self::assertStringNotContainsString('Changelog', $body);
+    }
+
     public static function prParamsProvider()
     {
         return [

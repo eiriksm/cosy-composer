@@ -38,7 +38,7 @@ class PrParamsCreator
     /**
      * Helper to create body.
      */
-    public function createBody($item, $post_update_data, $changelog = null, $security_update = false, array $update_list = [], $changed_files = [], $release_notes_for_package = [])
+    public function createBody($item, $post_update_data, $changelog = null, $security_update = false, array $update_list = [], $changed_files = [], $release_notes_for_package = [], $repo_url = null)
     {
         $update = new ViolinistUpdate();
         $update->setName($item->name);
@@ -48,6 +48,8 @@ class PrParamsCreator
         if ($changelog) {
             /** @var \Violinist\GitLogFormat\ChangeLogData $changelog */
             $update->setChangelog($changelog->getAsMarkdown());
+        } elseif ($repo_url) {
+            $update->setChangelog(sprintf('Could not retrieve changelog. See the [project page](%s) for more information.', $repo_url));
         }
         if ($this->projectData && $this->projectData->getCustomPrMessage()) {
             $update->setCustomMessage($this->projectData->getCustomPrMessage());

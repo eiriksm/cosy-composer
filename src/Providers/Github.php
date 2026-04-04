@@ -161,6 +161,21 @@ class Github implements ProviderInterface
         return $default_base;
     }
 
+    public function getDefaultBaseTimestamp(Slug $slug, $default_branch)
+    {
+        $user = $slug->getUserName();
+        $repo = $slug->getUserRepo();
+        $branches = $this->getBranches($user, $repo);
+        foreach ($branches as $branch) {
+            if ($branch['name'] == $default_branch) {
+                if (!empty($branch['commit']['commit']['committer']['date'])) {
+                    return $branch['commit']['commit']['committer']['date'];
+                }
+            }
+        }
+        return null;
+    }
+
     public function createFork($user, $repo, $fork_user)
     {
         return $this->client->api('repo')->forks()->create($user, $repo, [

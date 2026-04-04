@@ -29,6 +29,8 @@ interface ProviderInterface
 
     public function getDefaultBase(Slug $slug, $default_branch);
 
+    public function getDefaultBaseTimestamp(Slug $slug, $default_branch);
+
     public function createFork($user, $repo, $fork_user);
 
     public function closePullRequestWithComment(Slug $slug, $pr_id, $comment);

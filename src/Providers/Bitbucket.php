@@ -144,6 +144,21 @@ class Bitbucket implements ProviderInterface
         return substr($default_base, 0, 12);
     }
 
+    public function getDefaultBaseTimestamp(Slug $slug, $default_branch)
+    {
+        $user = $slug->getUserName();
+        $repo = $slug->getUserRepo();
+        $branches = $this->getBranches($user, $repo);
+        foreach ($branches as $branch) {
+            if ($branch['name'] == $default_branch) {
+                if (!empty($branch['target']['date'])) {
+                    return $branch['target']['date'];
+                }
+            }
+        }
+        return null;
+    }
+
     public function createFork($user, $repo, $fork_user)
     {
         throw new \Exception('Bitbucket integration only support creating PRs as the authenticated user.');

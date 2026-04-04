@@ -5,12 +5,11 @@ namespace eiriksm\CosyComposerTest\unit\Providers;
 interface TestProviderInterface
 {
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
+     * @return object
      */
     public function getMockClient();
 
     /**
-     * @param \PHPUnit\Framework\MockObject\MockObject $client
      * @return \eiriksm\CosyComposer\ProviderInterface
      */
     public function getProvider($client);

@@ -144,7 +144,7 @@ class Bitbucket implements ProviderInterface
         return substr($default_base, 0, 12);
     }
 
-    public function getDefaultBaseTimestamp(Slug $slug, $default_branch)
+    public function getDefaultBaseTimestamp(Slug $slug, string $default_branch) : ?string
     {
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();

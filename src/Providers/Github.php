@@ -161,7 +161,7 @@ class Github implements ProviderInterface
         return $default_base;
     }
 
-    public function getDefaultBaseTimestamp(Slug $slug, $default_branch)
+    public function getDefaultBaseTimestamp(Slug $slug, string $default_branch) : ?string
     {
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();

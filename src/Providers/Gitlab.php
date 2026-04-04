@@ -121,7 +121,7 @@ class Gitlab implements ProviderInterface
         return $default_base;
     }
 
-    public function getDefaultBaseTimestamp(Slug $slug, $default_branch)
+    public function getDefaultBaseTimestamp(Slug $slug, string $default_branch) : ?string
     {
         $branches = $this->getBranches($slug);
         foreach ($branches as $branch) {

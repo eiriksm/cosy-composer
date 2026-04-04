@@ -29,7 +29,7 @@ interface ProviderInterface
 
     public function getDefaultBase(Slug $slug, $default_branch);
 
-    public function getDefaultBaseTimestamp(Slug $slug, $default_branch);
+    public function getDefaultBaseTimestamp(Slug $slug, string $default_branch) : ?string;
 
     public function createFork($user, $repo, $fork_user);
 

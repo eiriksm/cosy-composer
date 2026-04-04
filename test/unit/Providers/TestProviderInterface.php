@@ -2,19 +2,16 @@
 
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
-use eiriksm\CosyComposer\ProviderInterface;
-use PHPUnit\Framework\MockObject\MockObject;
-
 interface TestProviderInterface
 {
     /**
-     * @return MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     public function getMockClient();
 
     /**
-     * @param MockObject $client
-     * @return ProviderInterface
+     * @param \PHPUnit\Framework\MockObject\MockObject $client
+     * @return \eiriksm\CosyComposer\ProviderInterface
      */
     public function getProvider($client);
 

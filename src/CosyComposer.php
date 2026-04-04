@@ -913,6 +913,12 @@ class CosyComposer
         ]);
         if ($default_base && $default_branch) {
             $this->log(sprintf('Current commit SHA for %s is %s', $default_branch, $default_base));
+            if (!$this->execCommand(['git', 'log', '-1', '--format=%cI', $default_branch], false)) {
+                $commit_timestamp = trim($this->getLastStdOut());
+                if ($commit_timestamp) {
+                    $this->log(sprintf('Current commit timestamp for %s is %s', $default_branch, $commit_timestamp));
+                }
+            }
         }
         if ($config->shouldUpdateIndirectWithDirect()) {
             $filterer = IndirectWithDirectFilterer::create($composer_lock_after_installing, $composer_json_data);

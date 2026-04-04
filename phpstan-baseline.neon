@@ -8420,3 +8420,4 @@ parameters:
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\TokenChooserTest\\:\\:tokenChooserProvider\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/unit/TokenChooserTest.php
+

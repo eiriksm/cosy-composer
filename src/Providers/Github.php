@@ -165,13 +165,13 @@ class Github implements ProviderInterface
     {
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
-        $branches = $this->getBranches($user, $repo);
-        foreach ($branches as $branch) {
-            if ($branch['name'] == $default_branch) {
-                if (!empty($branch['commit']['commit']['committer']['date'])) {
-                    return $branch['commit']['commit']['committer']['date'];
-                }
+        try {
+            $branch = $this->client->api('repo')->branches($user, $repo, $default_branch);
+            if (!empty($branch['commit']['commit']['committer']['date'])) {
+                return $branch['commit']['commit']['committer']['date'];
             }
+        } catch (\Exception $e) {
+            // If the branch is not found, we just return null.
         }
         return null;
     }

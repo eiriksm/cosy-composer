@@ -170,7 +170,7 @@ abstract class BaseUpdater implements UpdaterInterface
     }
 
     /**
-     * Resolves a clean HTTPS URL for a package's repository from lock data.
+     * Resolves a clean URL for a package's repository from lock data.
      */
     public function getRepoUrl(string $package_name, object $lockdata) : ?string
     {

@@ -159,7 +159,7 @@ class GithubProviderTest extends ProvidersTestBase
         $this->assertEquals($testresponse, $g->updatePullRequest($slug, $id, $params));
     }
 
-    public function getProvider($client)
+    public function getProvider(object $client)
     {
         return new Github($client);
     }

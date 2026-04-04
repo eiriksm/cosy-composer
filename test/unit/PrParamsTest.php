@@ -108,6 +108,34 @@ Some other text here.';
     }
 
     /**
+     * Test that details/summary elements with attributes are also removed for Bitbucket.
+     *
+     * @see https://github.com/eiriksm/cosy-composer/issues/183
+     */
+    public function testCleanupBodyRemovesDetailsWithAttributesForBitbucket() : void
+    {
+        $body = '<details open>
+<summary class="release-notes">List of release notes</summary>
+
+- [Release notes for tag 1.0.1](https://github.com/test/package/releases/tag/1.0.1)
+
+</details>
+
+Some other text here.';
+
+        $slug = Slug::createFromUrl('https://bitbucket.org/test/repo');
+        PrParamsCreator::cleanupBody($slug, $body);
+        self::assertStringNotContainsString('<details', $body);
+        self::assertStringNotContainsString('</details>', $body);
+        self::assertStringNotContainsString('<summary', $body);
+        self::assertStringNotContainsString('</summary>', $body);
+        // Make sure the actual content is still there.
+        self::assertStringContainsString('List of release notes', $body);
+        self::assertStringContainsString('Release notes for tag 1.0.1', $body);
+        self::assertStringContainsString('Some other text here.', $body);
+    }
+
+    /**
      * Test that the details element is NOT removed from non-Bitbucket PR bodies.
      */
     public function testCleanupBodyKeepsDetailsForNonBitbucket() : void

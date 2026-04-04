@@ -2,17 +2,10 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Http\Adapter\Guzzle7\Client;
 use Violinist\Slug\Slug;
 
 class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
 {
-
-    public function setUp() : void
-    {
-        parent::setUp();
-        $this->cosy->setHttpClient(new Client());
-    }
 
     /**
      * @dataProvider getDrupalUpdatesAndSec

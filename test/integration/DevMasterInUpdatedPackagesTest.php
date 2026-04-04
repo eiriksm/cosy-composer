@@ -35,6 +35,11 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - psr/log: dev-master#dd738d0b4491f32725492cf345f6b501f5922fec (updated from dev-master#2b71ffbefcc3a1ccb610294835bcfde8f594f8e7)
 
 
+### Changelog
+
+Here is a list of changes between the version you use, and the version this pull request updates to:
+
+Could not retrieve changelog. See the [project page](https://github.com/php-fig/log) for more information.
 
 ### Working with this branch
 

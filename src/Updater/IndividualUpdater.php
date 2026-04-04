@@ -213,6 +213,10 @@ class IndividualUpdater extends BaseUpdater
                 } catch (\Throwable $e) {
                     // If the changelog can not be retrieved, we can live with that.
                     $this->log('Exception for changelog: ' . $e->getMessage());
+                    $repo_url = $this->getRepoUrl($package_name, $lockdata);
+                    if ($repo_url) {
+                        $update_obj->setChangelog(sprintf('Could not retrieve changelog. See the [project page](%s) for more information.', $repo_url));
+                    }
                 }
                 try {
                     $changed_files = $this->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
@@ -479,6 +483,7 @@ class IndividualUpdater extends BaseUpdater
                 // If the changelog can not be retrieved, we can live with that.
                 $this->log('Exception for changelog: ' . $e->getMessage());
             }
+            $repo_url = $this->getRepoUrl($package_name, $lockdata);
             try {
                 $changed_files = $this->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
                 $this->log('Changed files retrieved');
@@ -496,7 +501,7 @@ class IndividualUpdater extends BaseUpdater
             $comparer = new LockDataComparer($lockdata, $new_lock_data);
             $update_list = $comparer->getUpdateList();
             $pr_params_creator = $this->getPrParamsCreator();
-            $body = $pr_params_creator->createBody($item, $post_update_data, $changelog, $security_update, $update_list, $changed_files, $release_links);
+            $body = $pr_params_creator->createBody($item, $post_update_data, $changelog, $security_update, $update_list, $changed_files, $release_links, $repo_url);
             $title = $pr_params_creator->createTitle($item, $post_update_data, $security_update);
             if ($config->getDefaultBranch($security_update)) {
                 $this->log('Default target branch branch from config is set to ' . $config->getDefaultBranch($security_update));

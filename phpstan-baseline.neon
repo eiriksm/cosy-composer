@@ -7966,11 +7966,6 @@ parameters:
 			path: test/unit/ProviderFactoryTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\GithubProviderTest\\:\\:getProvider\\(\\) has parameter \\$client with no type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/GithubProviderTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\GithubProviderTest\\:\\:testCreateFork\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/unit/Providers/GithubProviderTest.php
@@ -8022,11 +8017,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\GitlabProviderTest\\:\\:getPrClassName\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/GitlabProviderTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\GitlabProviderTest\\:\\:getProvider\\(\\) has parameter \\$client with no type specified\\.$#"
 			count: 1
 			path: test/unit/Providers/GitlabProviderTest.php
 
@@ -8380,15 +8370,6 @@ parameters:
 			count: 1
 			path: test/unit/Providers/PublicGithubWrapperTest.php
 
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\SelfHostedGitlabTest\\:\\:getProvider\\(\\) has parameter \\$client with no type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/SelfHostedGitlabTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\TestProviderInterface\\:\\:getProvider\\(\\) has parameter \\$client with no type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/TestProviderInterface.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\PullRequestsTest\\:\\:testPullrequestTitle\\(\\) has no return type specified\\.$#"

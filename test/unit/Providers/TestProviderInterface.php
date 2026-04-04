@@ -12,7 +12,7 @@ interface TestProviderInterface
     /**
      * @return \eiriksm\CosyComposer\ProviderInterface
      */
-    public function getProvider($client);
+    public function getProvider(object $client);
 
     /**
      * @return string

@@ -38,7 +38,7 @@ class PrParamsCreator
     /**
      * Helper to create body.
      */
-    public function createBody($item, $post_update_data, $changelog = null, $security_update = false, array $update_list = [], $changed_files = [], $release_notes_for_package = [], $repo_url = null)
+    public function createBody($item, $post_update_data, $changelog = null, $security_update = false, array $update_list = [], $changed_files = [], $release_notes_for_package = [], ?string $repo_url = null)
     {
         $update = new ViolinistUpdate();
         $update->setName($item->name);

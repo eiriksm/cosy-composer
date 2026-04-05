@@ -8,7 +8,9 @@ use Violinist\Slug\Slug;
 
 class GroupsPrExistsConcurrentTest extends ComposerUpdateIntegrationBase
 {
+    /** @var string */
     protected $composerAssetFiles = 'composer-group-contrib-and-core-concurrent';
+    /** @var string */
     protected $updateJson = '{
     "installed": [
         {
@@ -78,12 +80,9 @@ class GroupsPrExistsConcurrentTest extends ComposerUpdateIntegrationBase
             });
     }
 
-    public function testGroupPrExistsCountsConcurrent()
+    public function testGroupPrExistsCountsConcurrent(): void
     {
         $this->runtestExpectedOutput();
-        // The first group (core) has an existing PR and throws ValidationFailedException.
-        // With countPR called in the catch block, the concurrent limit (1) should be reached,
-        // so the second group (contrib) should be skipped.
         // The first group (contrib) has an existing PR and throws ValidationFailedException.
         // With countPR called in the catch block, the concurrent limit (1) should be reached,
         // so the second group (core) should be skipped.
@@ -93,7 +92,11 @@ class GroupsPrExistsConcurrentTest extends ComposerUpdateIntegrationBase
         );
     }
 
-    public function handleExecutorReturnCallback(array $cmd, &$return)
+    /**
+     * @param array<mixed> $cmd
+     * @param mixed $return
+     */
+    public function handleExecutorReturnCallback(array $cmd, &$return): void
     {
         $command_parts = ['composer', 'update', 'drupal/core-composer-scaffold', 'drupal/core-project-message', 'drupal/core-recommended'];
         if (count(array_intersect($command_parts, $cmd)) === count($command_parts)) {
@@ -105,6 +108,10 @@ class GroupsPrExistsConcurrentTest extends ComposerUpdateIntegrationBase
         }
     }
 
+    /**
+     * @param array<mixed> $params
+     * @return array<mixed>
+     */
     protected function createPullRequest(Slug $slug, array $params)
     {
         throw new ValidationFailedException('The PR exists');

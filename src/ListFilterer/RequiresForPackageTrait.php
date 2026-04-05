@@ -4,9 +4,13 @@ namespace eiriksm\CosyComposer\ListFilterer;
 
 trait RequiresForPackageTrait
 {
+    /** @var array<string, string[]> */
     private $scannedCache = [];
 
-    protected function findRequiresForPackage($package_obj, $initial_package = null)
+    /**
+     * @return \stdClass[]
+     */
+    protected function findRequiresForPackage(\stdClass $package_obj, ?string $initial_package = null): array
     {
         $package_name = mb_strtolower($package_obj->name);
         $key = $package_name;
@@ -63,13 +67,13 @@ trait RequiresForPackageTrait
         return $requires;
     }
 
-    protected function isInComposerJson($package_name)
+    protected function isInComposerJson(string $package_name): bool
     {
         $type = $this->getRequireTypeInComposerJsonForPackage($package_name);
         return (bool) $type;
     }
 
-    protected function getRequireTypeInComposerJsonForPackage($package_name)
+    protected function getRequireTypeInComposerJsonForPackage(string $package_name): ?string
     {
         $package_name = mb_strtolower($package_name);
         foreach (FilterInterface::REQUIRE_TYPES as $type) {

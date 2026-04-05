@@ -16,19 +16,22 @@ class DevDepsOnlyFilterer implements FilterInterface
      */
     protected $composerJson;
 
-    public function __construct($composer_lock, $composer_json)
+    public function __construct(\stdClass $composer_lock, \stdClass $composer_json)
     {
         $this->lockData = $composer_lock;
         $this->composerJson = $composer_json;
     }
 
-    public static function create($composer_lock, $composer_json)
+    public static function create(\stdClass $composer_lock, \stdClass $composer_json): self
     {
         return new self($composer_lock, $composer_json);
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @param \stdClass[] $list
+     * @return \stdClass[]
      */
     public function filter(array $list): array
     {

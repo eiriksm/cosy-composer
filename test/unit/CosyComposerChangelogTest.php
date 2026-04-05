@@ -201,6 +201,42 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals('https://github.com/vendor/package', $url);
     }
 
+    public function testGetRepoUrlBitbucketSsh() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@bitbucket.org:vendor/package.git',
+                ],
+            ],
+        ]])));
+        $this->assertEquals('https://bitbucket.org/vendor/package', $url);
+    }
+
+    public function testGetRepoUrlGitlabSsh() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@gitlab.com:vendor/package.git',
+                ],
+            ],
+        ]])));
+        $this->assertEquals('https://gitlab.com/vendor/package', $url);
+    }
+
     public function testGetRepoUrlNoSource() : void
     {
         $c = $this->getMockCosy();

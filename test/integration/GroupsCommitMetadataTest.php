@@ -7,8 +7,10 @@ use Symfony\Component\Yaml\Yaml;
 
 class GroupsCommitMetadataTest extends ComposerUpdateIntegrationBase
 {
-    private $commitCommand = '';
+    private string $commitCommand = '';
+    /** @var string */
     protected $composerAssetFiles = 'composer.tg';
+    /** @var string */
     protected $updateJson = '{
     "installed": [
         {
@@ -31,7 +33,7 @@ class GroupsCommitMetadataTest extends ComposerUpdateIntegrationBase
 }
 ';
 
-    public function testGroupCommitMetadata()
+    public function testGroupCommitMetadata(): void
     {
         $this->runtestExpectedOutput();
         $parts = explode(Helpers::getCommitMessageSeparator(), $this->commitCommand);
@@ -52,7 +54,11 @@ class GroupsCommitMetadataTest extends ComposerUpdateIntegrationBase
         }
     }
 
-    public function handleExecutorReturnCallback(array $cmd, &$return)
+    /**
+     * @param array<string> $cmd
+     * @param mixed $return
+     */
+    public function handleExecutorReturnCallback(array $cmd, &$return): void
     {
         $command_parts = ['composer', 'update', 'psr/log', 'psr/cache'];
         if (count(array_intersect($command_parts, $cmd)) === count($command_parts)) {

@@ -36,6 +36,9 @@ trait GitCommandsTrait
         $this->execCommand(['git', 'clean', '-f', 'composer.*']);
     }
 
+    /**
+     * @param UpdateListItem|UpdateListItem[]|null $item
+     */
     protected function commitFiles($msg, $item = null, string $updateType = 'unknown')
     {
         $command = array_filter([
@@ -59,6 +62,10 @@ trait GitCommandsTrait
         $this->commitMessage = $msg;
     }
 
+    /**
+     * @param UpdateListItem|UpdateListItem[]|null $item
+     * @return array<string, mixed>
+     */
     protected function getCommitMetadata($item, string $updateType) : array
     {
         $metadata = [
@@ -106,6 +113,9 @@ trait GitCommandsTrait
         $this->commitFiles($msg, $item, 'package');
     }
 
+    /**
+     * @param UpdateListItem[] $update_list
+     */
     protected function commitFilesForGroup(string $group_name, Config $config, array $update_list = [])
     {
         $this->cleanRepoForCommit();

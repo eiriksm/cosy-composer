@@ -201,6 +201,100 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals('https://github.com/vendor/package', $url);
     }
 
+    public function testGetRepoUrlBitbucketSsh() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@bitbucket.org:vendor/package.git',
+                ],
+            ],
+        ]])));
+        $this->assertEquals('https://bitbucket.org/vendor/package', $url);
+    }
+
+    public function testGetRepoUrlGitlabSsh() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@gitlab.com:vendor/package.git',
+                ],
+            ],
+        ]])));
+        $this->assertEquals('https://gitlab.com/vendor/package', $url);
+    }
+
+    public function testChangeLogBitbucketSshUrl() : void
+    {
+        $c = $this->getMockCosy();
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
+            return 0;
+        });
+        $mock_executer->expects($this->once())
+            ->method('getLastOutput')
+            ->willReturn([
+                'stdout' => "112233 This is the first line",
+            ]);
+        $c->setExecuter($mock_executer);
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $log = $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@bitbucket.org:vendor/package.git',
+                ],
+            ],
+        ]])), 1, 2);
+        $this->assertStringContainsString('https://bitbucket.org/vendor/package/commits/112233', $log->getAsMarkdown());
+        $this->assertStringNotContainsString('git@bitbucket.org', $log->getAsMarkdown());
+    }
+
+    public function testChangeLogGitlabSshUrl() : void
+    {
+        $c = $this->getMockCosy();
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
+            return 0;
+        });
+        $mock_executer->expects($this->once())
+            ->method('getLastOutput')
+            ->willReturn([
+                'stdout' => "112233 This is the first line",
+            ]);
+        $c->setExecuter($mock_executer);
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $log = $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@gitlab.com:vendor/package.git',
+                ],
+            ],
+        ]])), 1, 2);
+        $this->assertStringContainsString('https://gitlab.com/vendor/package/-/commit/112233', $log->getAsMarkdown());
+        $this->assertStringNotContainsString('git@gitlab.com', $log->getAsMarkdown());
+    }
+
     public function testGetRepoUrlNoSource() : void
     {
         $c = $this->getMockCosy();
@@ -213,6 +307,38 @@ class CosyComposerChangelogTest extends TestCase
             ],
         ]])));
         $this->assertNull($url);
+    }
+
+    public function testChangeLogSshUrl() : void
+    {
+        $c = $this->getMockCosy();
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
+            return 0;
+        });
+        $mock_executer->expects($this->once())
+            ->method('getLastOutput')
+            ->willReturn([
+                'stdout' => "112233 This is the first line\n445566 This is the second line",
+            ]);
+        $c->setExecuter($mock_executer);
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        // Use an SSH git URL — the commit links in the markdown should still use HTTPS.
+        $log = $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@github.com:vendor/package.git',
+                ],
+            ],
+        ]])), 1, 2);
+        $this->assertStringContainsString('https://github.com/vendor/package/commit/112233', $log->getAsMarkdown());
+        $this->assertStringContainsString('https://github.com/vendor/package/commit/445566', $log->getAsMarkdown());
+        // Make sure it doesn't contain the SSH-style URL in the commit links.
+        $this->assertStringNotContainsString('git@github.com', $log->getAsMarkdown());
     }
 
     public function testChangeLogSuperLong() : void

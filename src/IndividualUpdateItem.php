@@ -14,32 +14,32 @@ class IndividualUpdateItem implements UpdateItemInterface
         $this->data = $data;
     }
 
-    public function getPackageName()
+    public function getPackageName() : string
     {
         return $this->data->name;
     }
 
-    public function getNewVersion()
+    public function getNewVersion() : string
     {
         return $this->data->latest;
     }
 
-    public function getVersion()
+    public function getVersion() : string
     {
         return $this->data->version;
     }
 
-    public function setNewVersion(string $version)
+    public function setNewVersion(string $version) : void
     {
         $this->data->latest = $version;
     }
 
-    public function getRawData()
+    public function getRawData() : \stdClass
     {
         return $this->data;
     }
 
-    public function setVersion(string $version)
+    public function setVersion(string $version) : void
     {
         $this->data->version = $version;
     }

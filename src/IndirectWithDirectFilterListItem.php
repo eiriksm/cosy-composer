@@ -4,11 +4,15 @@ namespace eiriksm\CosyComposer;
 
 class IndirectWithDirectFilterListItem
 {
-    private $name = '';
-    private $reason = [];
-    private $latestVersion = '';
+    private string $name = '';
+    /** @var array<mixed> */
+    private array $reason = [];
+    private string $latestVersion = '';
 
-    public function __construct($package_name, $indirect_list, $latest_version)
+    /**
+     * @param array<mixed> $indirect_list
+     */
+    public function __construct(string $package_name, array $indirect_list, string $latest_version)
     {
         $this->name = $package_name;
         $this->reason = $indirect_list;
@@ -20,6 +24,9 @@ class IndirectWithDirectFilterListItem
         return $this->latestVersion;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getReasons() : array
     {
         return  $this->reason;

@@ -1,0 +1,15 @@
+{
+    "require": {
+        "psr/log": "~1.1.3",
+        "psr/cache": "~1.0.0"
+    },
+    "extra": {
+        "violinist": {
+            "check_only_direct_dependencies": 0,
+            "always_allow_direct_dependencies": 1,
+            "allow_list": [
+                "psr/log"
+            ]
+        }
+    }
+}

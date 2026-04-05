@@ -761,6 +761,21 @@ class CosyComposer
             $this->cleanUp();
             return;
         }
+        // Build the list of truly outdated package names from the raw composer
+        // outdated output, before any config-based filtering (allow_list,
+        // block_list, etc.). This ensures closePrsForNoLongerRelevantPackages()
+        // won't close PRs for packages that are still outdated but simply
+        // excluded by the current config.
+        $all_outdated_package_names = [];
+        foreach ($data as $item) {
+            if (!isset($item->latest) || !isset($item->{'latest-status'})) {
+                continue;
+            }
+            if (isset($item->version) && ($item->latest === $item->version || $item->{'latest-status'} === 'up-to-date')) {
+                continue;
+            }
+            $all_outdated_package_names[] = $item->name;
+        }
         // Only update the ones in the allow list, if indicated.
         $handler = AllowListHandler::createFromConfig($config);
         // If we have an allow list, we should also make sure to include the
@@ -847,14 +862,11 @@ class CosyComposer
                 }
             }
         }
-        // Build the list of truly outdated package names after all cleanup
-        // (missing latest/latest-status, abandoned, allowlist, blocklist, etc.)
-        // so that closePrsForNoLongerRelevantPackages() doesn't skip packages
-        // that were in the raw composer outdated output but aren't actually
-        // outdated.
-        $all_outdated_package_names = array_map(function ($item) {
-            return $item->name;
-        }, $data);
+        // Note: $all_outdated_package_names was already built from the raw
+        // composer outdated output above (before config filtering) so that
+        // closePrsForNoLongerRelevantPackages() doesn't incorrectly close PRs
+        // for packages that are still outdated but excluded by config (e.g.
+        // allow_list, block_list).
         if (empty($data) && !self::shouldEnableCloseNoLongerRelevant()) {
             $this->log('No updates found. USE_CLOSE_NO_LONGER_RELEVANT is not enabled');
             $this->cleanUp();

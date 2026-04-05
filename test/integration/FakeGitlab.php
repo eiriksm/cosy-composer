@@ -24,6 +24,11 @@ class FakeGitlab extends Gitlab
         return 'abab';
     }
 
+    public function getDefaultBaseTimestamp(Slug $slug, string $default_branch) : ?string
+    {
+        return null;
+    }
+
     public function getPrsNamed(Slug $slug): NamedPrs
     {
         return NamedPrs::createFromArray([

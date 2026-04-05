@@ -121,6 +121,19 @@ class Gitlab implements ProviderInterface
         return $default_base;
     }
 
+    public function getDefaultBaseTimestamp(Slug $slug, string $default_branch) : ?string
+    {
+        $branches = $this->getBranches($slug);
+        foreach ($branches as $branch) {
+            if ($branch['name'] == $default_branch) {
+                if (!empty($branch['commit']['committed_date'])) {
+                    return $branch['commit']['committed_date'];
+                }
+            }
+        }
+        return null;
+    }
+
     public function createFork($user, $repo, $fork_user)
     {
         throw new \Exception('Gitlab integration only support creating PRs as the authenticated user.');

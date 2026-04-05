@@ -289,14 +289,13 @@ class IndividualUpdater extends BaseUpdater
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $config, $security_update);
             // If it failed validation because it already exists, we also want to make sure all outdated PRs are
             // closed.
-            $raw_item = $item->getData();
             if (!empty($prs_named[$branch_name]['number'])) {
-                // @todo: Count the PR and close outdated.
+                $this->countPR($item->getPackageName());
             }
         } catch (\Gitlab\Exception\RuntimeException $e) {
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $config, $security_update);
             if (!empty($prs_named[$branch_name]['number'])) {
-                // @todo: Count the PR and close outdated.
+                $this->countPR($item->getPackageName());
             }
         } catch (ComposerUpdateProcessFailedException $e) {
             $this->log('Caught an exception: ' . $e->getMessage(), 'error');

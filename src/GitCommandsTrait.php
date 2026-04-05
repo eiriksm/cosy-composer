@@ -36,7 +36,7 @@ trait GitCommandsTrait
         $this->execCommand(['git', 'clean', '-f', 'composer.*']);
     }
 
-    protected function commitFiles($msg, ?UpdateListItem $item = null, string $updateType = 'unknown')
+    protected function commitFiles($msg, $item = null, string $updateType = 'unknown')
     {
         $command = array_filter([
             'git', "commit",
@@ -59,7 +59,7 @@ trait GitCommandsTrait
         $this->commitMessage = $msg;
     }
 
-    protected function getCommitMetadata(?UpdateListItem $item, string $updateType) : array
+    protected function getCommitMetadata($item, string $updateType) : array
     {
         $metadata = [
             'violinist_metadata' => [
@@ -67,12 +67,20 @@ trait GitCommandsTrait
                 'type' => $updateType,
             ],
         ];
-        if ($item) {
+        if ($item instanceof UpdateListItem) {
             $metadata['update_data'] = [
                 'package' => $item->getPackageName(),
                 'from' => $item->getOldVersion(),
                 'to' => $item->getNewVersion(),
             ];
+        } elseif (is_array($item)) {
+            $metadata['update_data'] = array_map(function (UpdateListItem $update) {
+                return [
+                    'package' => $update->getPackageName(),
+                    'from' => $update->getOldVersion(),
+                    'to' => $update->getNewVersion(),
+                ];
+            }, $item);
         }
         return $metadata;
     }
@@ -98,12 +106,12 @@ trait GitCommandsTrait
         $this->commitFiles($msg, $item, 'package');
     }
 
-    protected function commitFilesForGroup(string $group_name, Config $config)
+    protected function commitFilesForGroup(string $group_name, Config $config, array $update_list = [])
     {
         $this->cleanRepoForCommit();
         $creator = $this->getCommitCreator($config);
         $msg = $creator->generateMessageForGroup($group_name);
-        $this->commitFiles($msg, null, 'group');
+        $this->commitFiles($msg, !empty($update_list) ? $update_list : null, 'group');
     }
 
     protected function pushCode($branch_name, $default_base, $lock_file_contents, string $default_branch)

@@ -7,7 +7,8 @@ use Symfony\Component\Yaml\Yaml;
 
 class GroupsCommitMetadataTest extends ComposerUpdateIntegrationBase
 {
-    private string $commitCommand = '';
+    /** @var string */
+    private $commitCommand = '';
     /** @var string */
     protected $composerAssetFiles = 'composer.tg';
     /** @var string */

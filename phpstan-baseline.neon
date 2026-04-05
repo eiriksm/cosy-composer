@@ -146,11 +146,6 @@ parameters:
 			path: src/CosyComposer.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\CosyComposer\\:\\:getCommitMetadata\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/CosyComposer.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\CosyComposer\\:\\:getPrParamsCreator\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: src/CosyComposer.php
@@ -2117,11 +2112,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Updater\\\\BaseUpdater\\:\\:execCommand\\(\\) has parameter \\$timeout with no type specified\\.$#"
-			count: 1
-			path: src/Updater/BaseUpdater.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Updater\\\\BaseUpdater\\:\\:getCommitMetadata\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Updater/BaseUpdater.php
 

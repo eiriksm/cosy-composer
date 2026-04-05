@@ -4,10 +4,12 @@ namespace eiriksm\CosyComposer;
 
 class IndirectWithDirectFilterListItem
 {
-    private string $name = '';
+    /** @var string */
+    private $name = '';
     /** @var array<mixed> */
-    private array $reason = [];
-    private string $latestVersion = '';
+    private $reason = [];
+    /** @var string */
+    private $latestVersion = '';
 
     /**
      * @param array<mixed> $indirect_list

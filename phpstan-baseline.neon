@@ -666,81 +666,6 @@ parameters:
 			path: src/Helpers.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:__construct\\(\\) has parameter \\$composer_json with no type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:__construct\\(\\) has parameter \\$composer_lock with no type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:create\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:create\\(\\) has parameter \\$composer_json with no type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:create\\(\\) has parameter \\$composer_lock with no type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:filter\\(\\) has parameter \\$list with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:filter\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:findRequiresForPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:findRequiresForPackage\\(\\) has parameter \\$initial_package with no type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:findRequiresForPackage\\(\\) has parameter \\$package_obj with no type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:getRequireTypeInComposerJsonForPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:getRequireTypeInComposerJsonForPackage\\(\\) has parameter \\$package_name with no type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:isInComposerJson\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:isInComposerJson\\(\\) has parameter \\$package_name with no type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposer\\\\ListFilterer\\\\DevDepsOnlyFilterer\\:\\:\\$scannedCache has no type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/DevDepsOnlyFilterer.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\FilterInterface\\:\\:filter\\(\\) has parameter \\$list with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/ListFilterer/FilterInterface.php
@@ -786,52 +711,12 @@ parameters:
 			path: src/ListFilterer/IndirectWithDirectFilterer.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\IndirectWithDirectFilterer\\:\\:findRequiresForPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/IndirectWithDirectFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\IndirectWithDirectFilterer\\:\\:findRequiresForPackage\\(\\) has parameter \\$initial_package with no type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/IndirectWithDirectFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\IndirectWithDirectFilterer\\:\\:findRequiresForPackage\\(\\) has parameter \\$package_obj with no type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/IndirectWithDirectFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\IndirectWithDirectFilterer\\:\\:getRequireTypeInComposerJsonForPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/IndirectWithDirectFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\IndirectWithDirectFilterer\\:\\:getRequireTypeInComposerJsonForPackage\\(\\) has parameter \\$package_name with no type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/IndirectWithDirectFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\IndirectWithDirectFilterer\\:\\:isInComposerJson\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/IndirectWithDirectFilterer.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\IndirectWithDirectFilterer\\:\\:isInComposerJson\\(\\) has parameter \\$package_name with no type specified\\.$#"
-			count: 1
-			path: src/ListFilterer/IndirectWithDirectFilterer.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\IndirectWithDirectFilterer\\:\\:mergeChildrenWithUpdates\\(\\) has parameter \\$list_of_lists with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/ListFilterer/IndirectWithDirectFilterer.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\ListFilterer\\\\IndirectWithDirectFilterer\\:\\:mergeChildrenWithUpdates\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/ListFilterer/IndirectWithDirectFilterer.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposer\\\\ListFilterer\\\\IndirectWithDirectFilterer\\:\\:\\$scannedCache has no type specified\\.$#"
 			count: 1
 			path: src/ListFilterer/IndirectWithDirectFilterer.php
 

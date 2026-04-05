@@ -424,6 +424,7 @@ class CosyComposer
         if (!$is_enabled) {
             return;
         }
+        $this->log('USE_CLOSE_NO_LONGER_RELEVANT flag is enabled, attempting to close no longer relevant PRs');
         $lock_package_names = [];
         foreach (['packages', 'packages-dev'] as $key) {
             if (!empty($composer_lock_data->{$key})) {
@@ -855,9 +856,12 @@ class CosyComposer
             return $item->name;
         }, $data);
         if (empty($data) && !self::shouldEnableCloseNoLongerRelevant()) {
-            $this->log('No updates found');
+            $this->log('No updates found. USE_CLOSE_NO_LONGER_RELEVANT is not enabled');
             $this->cleanUp();
             return;
+        }
+        if (empty($data)) {
+            $this->log('No updates found, but USE_CLOSE_NO_LONGER_RELEVANT flag is set, so continuing to attempt closing no longer relevant PRs');
         }
         // Try to see if we have already dealt with this (i.e already have a branch for all the updates.
         $branch_user = $this->forkUser;

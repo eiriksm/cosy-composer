@@ -73,3 +73,11 @@ jobs:
         uses: coverallsapp/github-action@v2
         with:
           parallel-finished: true
+
+  webhook:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify webhook
+        run: curl -X POST "${{ secrets.WEBHOOK_URL }}"

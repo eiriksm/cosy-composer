@@ -856,7 +856,7 @@ class CosyComposer
             return $item->name;
         }, $data);
         if (empty($data) && !self::shouldEnableCloseNoLongerRelevant()) {
-            $this->log('No updates found');
+            $this->log('No updates found. USE_CLOSE_NO_LONGER_RELEVANT is not enabled');
             $this->cleanUp();
             return;
         }

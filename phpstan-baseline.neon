@@ -81,6 +81,11 @@ parameters:
 			path: src/CosyComposer.php
 
 		-
+			message: "#^Method eiriksm\\\\CosyComposer\\\\CosyComposer\\:\\:commitFiles\\(\\) has parameter \\$item with no type specified\\.$#"
+			count: 1
+			path: src/CosyComposer.php
+
+		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\CosyComposer\\:\\:commitFiles\\(\\) has parameter \\$msg with no type specified\\.$#"
 			count: 1
 			path: src/CosyComposer.php
@@ -92,6 +97,11 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\CosyComposer\\:\\:commitFilesForGroup\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/CosyComposer.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposer\\\\CosyComposer\\:\\:commitFilesForGroup\\(\\) has parameter \\$update_list with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/CosyComposer.php
 
@@ -142,6 +152,11 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\CosyComposer\\:\\:exportEnvVars\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/CosyComposer.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposer\\\\CosyComposer\\:\\:getCommitMetadata\\(\\) has parameter \\$item with no type specified\\.$#"
 			count: 1
 			path: src/CosyComposer.php
 
@@ -2131,12 +2146,22 @@ parameters:
 			path: src/Updater/BaseUpdater.php
 
 		-
+			message: "#^Method eiriksm\\\\CosyComposer\\\\Updater\\\\BaseUpdater\\:\\:commitFiles\\(\\) has parameter \\$item with no type specified\\.$#"
+			count: 1
+			path: src/Updater/BaseUpdater.php
+
+		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Updater\\\\BaseUpdater\\:\\:commitFiles\\(\\) has parameter \\$msg with no type specified\\.$#"
 			count: 1
 			path: src/Updater/BaseUpdater.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Updater\\\\BaseUpdater\\:\\:commitFilesForGroup\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: src/Updater/BaseUpdater.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposer\\\\Updater\\\\BaseUpdater\\:\\:commitFilesForGroup\\(\\) has parameter \\$update_list with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Updater/BaseUpdater.php
 
@@ -2182,6 +2207,11 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Updater\\\\BaseUpdater\\:\\:execCommand\\(\\) has parameter \\$timeout with no type specified\\.$#"
+			count: 1
+			path: src/Updater/BaseUpdater.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposer\\\\Updater\\\\BaseUpdater\\:\\:getCommitMetadata\\(\\) has parameter \\$item with no type specified\\.$#"
 			count: 1
 			path: src/Updater/BaseUpdater.php
 
@@ -5516,6 +5546,41 @@ parameters:
 			path: test/integration/GroupsAutomergeMethodTest.php
 
 		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsCommitMetadataTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: test/integration/GroupsCommitMetadataTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsCommitMetadataTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: test/integration/GroupsCommitMetadataTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsCommitMetadataTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
+			count: 1
+			path: test/integration/GroupsCommitMetadataTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsCommitMetadataTest\\:\\:testGroupCommitMetadata\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: test/integration/GroupsCommitMetadataTest.php
+
+		-
+			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsCommitMetadataTest\\:\\:\\$commitCommand has no type specified\\.$#"
+			count: 1
+			path: test/integration/GroupsCommitMetadataTest.php
+
+		-
+			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsCommitMetadataTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
+			count: 1
+			path: test/integration/GroupsCommitMetadataTest.php
+
+		-
+			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsCommitMetadataTest\\:\\:\\$updateJson has no type specified\\.$#"
+			count: 1
+			path: test/integration/GroupsCommitMetadataTest.php
+
+		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsCorrectCommandTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/GroupsCorrectCommandTest.php
@@ -8369,7 +8434,6 @@ parameters:
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\PublicGithubWrapperTest\\:\\:testUpdatePullRequestWrongStatusCode\\(\\) has parameter \\$mock_response with no type specified\\.$#"
 			count: 1
 			path: test/unit/Providers/PublicGithubWrapperTest.php
-
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\PullRequestsTest\\:\\:testPullrequestTitle\\(\\) has no return type specified\\.$#"

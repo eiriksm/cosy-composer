@@ -5621,6 +5621,56 @@ parameters:
 			path: test/integration/GroupsPrExistsGitlabTest.php
 
 		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsConcurrentGitlabTest\\:\\:createPullRequest\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: test/integration/GroupsPrExistsConcurrentGitlabTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsConcurrentGitlabTest\\:\\:createPullRequest\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: test/integration/GroupsPrExistsConcurrentGitlabTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsConcurrentTest\\:\\:createPullRequest\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: test/integration/GroupsPrExistsConcurrentTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsConcurrentTest\\:\\:createPullRequest\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: test/integration/GroupsPrExistsConcurrentTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsConcurrentTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: test/integration/GroupsPrExistsConcurrentTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsConcurrentTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: test/integration/GroupsPrExistsConcurrentTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsConcurrentTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
+			count: 1
+			path: test/integration/GroupsPrExistsConcurrentTest.php
+
+		-
+			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsConcurrentTest\\:\\:testGroupPrExistsCountsConcurrent\\(\\) has no return type specified\\.$#"
+			count: 1
+			path: test/integration/GroupsPrExistsConcurrentTest.php
+
+		-
+			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsConcurrentTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
+			count: 1
+			path: test/integration/GroupsPrExistsConcurrentTest.php
+
+		-
+			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsConcurrentTest\\:\\:\\$updateJson has no type specified\\.$#"
+			count: 1
+			path: test/integration/GroupsPrExistsConcurrentTest.php
+
+		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsTest\\:\\:createPullRequest\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/GroupsPrExistsTest.php

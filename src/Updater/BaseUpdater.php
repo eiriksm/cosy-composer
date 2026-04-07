@@ -187,6 +187,12 @@ abstract class BaseUpdater implements UpdaterInterface
                 case 'git@github.com':
                     $git_url = sprintf('https://github.com/%s', $repo_parsed['path']);
                     break;
+                case 'git@bitbucket.org':
+                    $git_url = sprintf('https://bitbucket.org/%s', $repo_parsed['path']);
+                    break;
+                case 'git@gitlab.com':
+                    $git_url = sprintf('https://gitlab.com/%s', $repo_parsed['path']);
+                    break;
             }
         }
         return $git_url;

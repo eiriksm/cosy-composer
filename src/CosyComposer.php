@@ -917,6 +917,20 @@ class CosyComposer
         ]);
         if ($default_base && $default_branch) {
             $this->log(sprintf('Current commit SHA for %s is %s', $default_branch, $default_base));
+            $default_base_timestamp = null;
+            try {
+                if ($default_base_timestamp_upstream = $this->privateClient->getDefaultBaseTimestamp($this->slug, $default_branch)) {
+                    $default_base_timestamp = $default_base_timestamp_upstream;
+                }
+                if (!$default_base_timestamp) {
+                    $default_base_timestamp = $this->getPrClient()->getDefaultBaseTimestamp($branch_slug, $default_branch);
+                }
+            } catch (\Throwable $e) {
+                // Safe to ignore.
+            }
+            if ($default_base_timestamp) {
+                $this->log(sprintf('Current commit timestamp for %s is %s', $default_branch, $default_base_timestamp));
+            }
         }
         if ($config->shouldUpdateIndirectWithDirect()) {
             $filterer = IndirectWithDirectFilterer::create($composer_lock_after_installing, $composer_json_data);

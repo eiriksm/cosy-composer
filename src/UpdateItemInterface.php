@@ -4,5 +4,5 @@ namespace eiriksm\CosyComposer;
 
 interface UpdateItemInterface
 {
-    public function getPackageName();
+    public function getPackageName(): string;
 }

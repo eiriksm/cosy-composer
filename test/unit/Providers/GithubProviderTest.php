@@ -96,6 +96,71 @@ class GithubProviderTest extends ProvidersTestBase
         $this->assertEquals('abcd', $g->getDefaultBase($slug, 'master'));
     }
 
+    public function testDefaultBaseTimestamp(): void
+    {
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
+        $mock_repo_api = $this->createMock(Repo::class);
+        $mock_repo_api->expects($this->once())
+            ->method('branches')
+            ->with($slug->getUserName(), $slug->getUserRepo(), 'master')
+            ->willReturn([
+                'name' => 'master',
+                'commit' => [
+                    'sha' => 'abcd',
+                    'commit' => [
+                        'committer' => [
+                            'date' => '2025-01-15T10:30:00Z',
+                        ],
+                    ],
+                ],
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('api')
+            ->with('repo')
+            ->willReturn($mock_repo_api);
+        $g = new Github($mock_client);
+        $this->assertEquals('2025-01-15T10:30:00Z', $g->getDefaultBaseTimestamp($slug, 'master'));
+    }
+
+    public function testDefaultBaseTimestampReturnsNullOnMissingData(): void
+    {
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
+        $mock_repo_api = $this->createMock(Repo::class);
+        $mock_repo_api->expects($this->once())
+            ->method('branches')
+            ->with($slug->getUserName(), $slug->getUserRepo(), 'master')
+            ->willReturn([
+                'name' => 'master',
+                'commit' => [
+                    'sha' => 'abcd',
+                ],
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('api')
+            ->with('repo')
+            ->willReturn($mock_repo_api);
+        $g = new Github($mock_client);
+        $this->assertNull($g->getDefaultBaseTimestamp($slug, 'master'));
+    }
+
+    public function testDefaultBaseTimestampReturnsNullOnException(): void
+    {
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
+        $mock_repo_api = $this->createMock(Repo::class);
+        $mock_repo_api->expects($this->once())
+            ->method('branches')
+            ->willThrowException(new \RuntimeException('Not found'));
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('api')
+            ->with('repo')
+            ->willReturn($mock_repo_api);
+        $g = new Github($mock_client);
+        $this->assertNull($g->getDefaultBaseTimestamp($slug, 'master'));
+    }
+
     public function testCreateFork()
     {
         $user = 'testUser';

@@ -1880,7 +1880,6 @@ parameters:
 			count: 1
 			path: src/TokenChooser.php
 
-
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Updater\\\\BaseUpdater\\:\\:cleanRepoForCommit\\(\\) has no return type specified\\.$#"
 			count: 1
@@ -2522,22 +2521,12 @@ parameters:
 			path: test/integration/AllowListDirectDevTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectDevTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListDirectDevTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectDevTest\\:\\:\\$hasUpdatedConsole has no type specified\\.$#"
 			count: 1
 			path: test/integration/AllowListDirectDevTest.php
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectDevTest\\:\\:\\$hasUpdatedString has no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListDirectDevTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectDevTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/AllowListDirectDevTest.php
 
@@ -2587,22 +2576,12 @@ parameters:
 			path: test/integration/AllowListDirectTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListDirectTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTest\\:\\:\\$hasUpdatedConsole has no type specified\\.$#"
 			count: 1
 			path: test/integration/AllowListDirectTest.php
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTest\\:\\:\\$hasUpdatedString has no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListDirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/AllowListDirectTest.php
 
@@ -2652,22 +2631,12 @@ parameters:
 			path: test/integration/AllowListDirectTestNoOtherAllowListTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTestNoOtherAllowListTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListDirectTestNoOtherAllowListTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTestNoOtherAllowListTest\\:\\:\\$hasUpdatedConsole has no type specified\\.$#"
 			count: 1
 			path: test/integration/AllowListDirectTestNoOtherAllowListTest.php
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTestNoOtherAllowListTest\\:\\:\\$hasUpdatedString has no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListDirectTestNoOtherAllowListTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTestNoOtherAllowListTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/AllowListDirectTestNoOtherAllowListTest.php
 
@@ -2717,11 +2686,6 @@ parameters:
 			path: test/integration/AllowListTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListTest\\:\\:\\$hasPatchOnly has no type specified\\.$#"
 			count: 1
 			path: test/integration/AllowListTest.php
@@ -2733,11 +2697,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListTest\\:\\:\\$hasUpdatedPsrLog has no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/AllowListTest.php
 
@@ -2762,26 +2721,6 @@ parameters:
 			path: test/integration/AssigneesTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AssigneesTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/AssigneesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AssigneesTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AssigneesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AssigneesTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AssigneesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AssigneesTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AssigneesTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AuthExportTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/AuthExportTest.php
@@ -2802,11 +2741,6 @@ parameters:
 			path: test/integration/AuthExportTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AuthExportTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/AuthExportTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AuthExportTest\\:\\:\\$hasExportedBitbucket has no type specified\\.$#"
 			count: 1
 			path: test/integration/AuthExportTest.php
@@ -2823,11 +2757,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AuthExportTest\\:\\:\\$hasExportedGitlabSelfHosted has no type specified\\.$#"
-			count: 1
-			path: test/integration/AuthExportTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AuthExportTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/AuthExportTest.php
 
@@ -2882,11 +2811,6 @@ parameters:
 			path: test/integration/AutomergeMethodTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeMethodTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeMethodTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeMethodTest\\:\\:\\$hasAutoMerge has no type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeMethodTest.php
@@ -2902,27 +2826,7 @@ parameters:
 			path: test/integration/AutomergeMethodTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeMethodTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeMethodTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeMethodTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeMethodTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeMethodTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeMethodTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeSecurityNoUpdateTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeSecurityNoUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeSecurityNoUpdateTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeSecurityNoUpdateTest.php
 
@@ -2942,27 +2846,7 @@ parameters:
 			path: test/integration/AutomergeSecurityNoUpdateTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeSecurityNoUpdateTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeSecurityNoUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeSecurityNoUpdateTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeSecurityNoUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeSecurityNoUpdateTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeSecurityNoUpdateTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeSecurityUpdateTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeSecurityUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeSecurityUpdateTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeSecurityUpdateTest.php
 
@@ -2982,27 +2866,7 @@ parameters:
 			path: test/integration/AutomergeSecurityUpdateTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeSecurityUpdateTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeSecurityUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeSecurityUpdateTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeSecurityUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeSecurityUpdateTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeSecurityUpdateTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeTest.php
 
@@ -3022,21 +2886,6 @@ parameters:
 			path: test/integration/AutomergeTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecNoUpdateTest\\:\\:createExpectedCommandForPackage\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeUpdateAllSecNoUpdateTest.php
@@ -3052,11 +2901,6 @@ parameters:
 			path: test/integration/AutomergeUpdateAllSecNoUpdateTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecNoUpdateTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllSecNoUpdateTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecNoUpdateTest\\:\\:\\$hasAutoMerge has no type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeUpdateAllSecNoUpdateTest.php
@@ -3068,21 +2912,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecNoUpdateTest\\:\\:\\$hasUpdatedPsrLog has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllSecNoUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecNoUpdateTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllSecNoUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecNoUpdateTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllSecNoUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecNoUpdateTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeUpdateAllSecNoUpdateTest.php
 
@@ -3107,11 +2936,6 @@ parameters:
 			path: test/integration/AutomergeUpdateAllSecTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllSecTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecTest\\:\\:\\$hasAutoMerge has no type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeUpdateAllSecTest.php
@@ -3123,21 +2947,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecTest\\:\\:\\$hasUpdatedPsrLog has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllSecTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllSecTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllSecTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeUpdateAllSecTest.php
 
@@ -3162,11 +2971,6 @@ parameters:
 			path: test/integration/AutomergeUpdateAllTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllTest\\:\\:\\$hasAutoMerge has no type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeUpdateAllTest.php
@@ -3178,21 +2982,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllTest\\:\\:\\$hasUpdatedPsrLog has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeUpdateAllTest.php
 
@@ -3452,27 +3241,7 @@ parameters:
 			path: test/integration/BitbucketIntegrationTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BitbucketIntegrationTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/BitbucketIntegrationTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BitbucketIntegrationTest\\:\\:\\$foundMessage has no type specified\\.$#"
-			count: 1
-			path: test/integration/BitbucketIntegrationTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BitbucketIntegrationTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BitbucketIntegrationTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BitbucketIntegrationTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BitbucketIntegrationTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BitbucketIntegrationTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/BitbucketIntegrationTest.php
 
@@ -3522,47 +3291,12 @@ parameters:
 			path: test/integration/BlockListTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BlockListTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BlockListTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BlockListTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BlockListTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BlockListTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BlockListTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerTest\\:\\:testBranchPrefixUsed\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/BranchPrefixOnePerTest.php
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/BranchPrefixOnePerTest.php
 
@@ -3582,26 +3316,6 @@ parameters:
 			path: test/integration/BranchPrefixOnePerUnexpectedUpdateButNeedsUpdateTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateButNeedsUpdateTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerUnexpectedUpdateButNeedsUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateButNeedsUpdateTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerUnexpectedUpdateButNeedsUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateButNeedsUpdateTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerUnexpectedUpdateButNeedsUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateButNeedsUpdateTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerUnexpectedUpdateButNeedsUpdateTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateButdoesNotNeedUpdateTest\\:\\:createPullRequest\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/BranchPrefixOnePerUnexpectedUpdateButdoesNotNeedUpdateTest.php
@@ -3617,52 +3331,12 @@ parameters:
 			path: test/integration/BranchPrefixOnePerUnexpectedUpdateButdoesNotNeedUpdateTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateButdoesNotNeedUpdateTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerUnexpectedUpdateButdoesNotNeedUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateButdoesNotNeedUpdateTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerUnexpectedUpdateButdoesNotNeedUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateButdoesNotNeedUpdateTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerUnexpectedUpdateButdoesNotNeedUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateButdoesNotNeedUpdateTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerUnexpectedUpdateButdoesNotNeedUpdateTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateTest\\:\\:testBranchPrefixUsedAndOnePer\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/BranchPrefixOnePerUnexpectedUpdateTest.php
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerUnexpectedUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerUnexpectedUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerUnexpectedUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixOnePerUnexpectedUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixOnePerUnexpectedUpdateTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/BranchPrefixOnePerUnexpectedUpdateTest.php
 
@@ -3678,26 +3352,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/BranchPrefixTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BranchPrefixTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/BranchPrefixTest.php
 
@@ -3718,11 +3372,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\BundledPackagesPatternTest\\:\\:testWildcardBundledPackagesProduceSingleUpdateCommand\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/BundledPackagesPatternTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\BundledPackagesPatternTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/BundledPackagesPatternTest.php
 
@@ -3752,22 +3401,12 @@ parameters:
 			path: test/integration/CanNotUpdateFlagDoesNotPersistTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CanNotUpdateFlagDoesNotPersistTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/CanNotUpdateFlagDoesNotPersistTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CanNotUpdateFlagDoesNotPersistTest\\:\\:\\$updateJson has no type specified\\.$#"
 			count: 1
 			path: test/integration/CanNotUpdateFlagDoesNotPersistTest.php
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseAllPrsNoUpdatesTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseAllPrsNoUpdatesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseAllPrsNoUpdatesTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/CloseAllPrsNoUpdatesTest.php
 
@@ -3797,27 +3436,7 @@ parameters:
 			path: test/integration/CloseOutdatedNewPrCreatedTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedNewPrCreatedTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedNewPrCreatedTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedNewPrCreatedTest\\:\\:\\$expectedClosedPrs has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedNewPrCreatedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedNewPrCreatedTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedNewPrCreatedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedNewPrCreatedTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedNewPrCreatedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedNewPrCreatedTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/CloseOutdatedNewPrCreatedTest.php
 
@@ -3832,27 +3451,7 @@ parameters:
 			path: test/integration/CloseOutdatedNewPrSwitchedToOnePerTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedNewPrSwitchedToOnePerTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedNewPrSwitchedToOnePerTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedNewPrSwitchedToOnePerTest\\:\\:\\$expectedClosedPrs has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedNewPrSwitchedToOnePerTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedNewPrSwitchedToOnePerTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedNewPrSwitchedToOnePerTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedNewPrSwitchedToOnePerTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedNewPrSwitchedToOnePerTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedNewPrSwitchedToOnePerTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/CloseOutdatedNewPrSwitchedToOnePerTest.php
 
@@ -3862,27 +3461,7 @@ parameters:
 			path: test/integration/CloseOutdatedSkipExistingSwitchedToOnePerTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingSwitchedToOnePerTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedSkipExistingSwitchedToOnePerTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingSwitchedToOnePerTest\\:\\:\\$expectedClosedPrs has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedSkipExistingSwitchedToOnePerTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingSwitchedToOnePerTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedSkipExistingSwitchedToOnePerTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingSwitchedToOnePerTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedSkipExistingSwitchedToOnePerTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingSwitchedToOnePerTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/CloseOutdatedSkipExistingSwitchedToOnePerTest.php
 
@@ -3897,27 +3476,7 @@ parameters:
 			path: test/integration/CloseOutdatedSkipExistingTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedSkipExistingTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingTest\\:\\:\\$expectedClosedPrs has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedSkipExistingTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedSkipExistingTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedSkipExistingTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/CloseOutdatedSkipExistingTest.php
 
@@ -3932,27 +3491,7 @@ parameters:
 			path: test/integration/CloseOutdatedSkipExistingUnexpectedBranchTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingUnexpectedBranchTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedSkipExistingUnexpectedBranchTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingUnexpectedBranchTest\\:\\:\\$expectedClosedPrs has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedSkipExistingUnexpectedBranchTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingUnexpectedBranchTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedSkipExistingUnexpectedBranchTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingUnexpectedBranchTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedSkipExistingUnexpectedBranchTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedSkipExistingUnexpectedBranchTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/CloseOutdatedSkipExistingUnexpectedBranchTest.php
 
@@ -3962,27 +3501,7 @@ parameters:
 			path: test/integration/CloseOutdatedTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedTest\\:\\:\\$expectedClosedPrs has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/CloseOutdatedTest.php
 
@@ -4002,32 +3521,12 @@ parameters:
 			path: test/integration/CloseOutdatedUpdateBranchTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedUpdateBranchTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedUpdateBranchTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedUpdateBranchTest\\:\\:\\$exceptionClass has no type specified\\.$#"
 			count: 1
 			path: test/integration/CloseOutdatedUpdateBranchTest.php
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedUpdateBranchTest\\:\\:\\$expectedClosedPrs has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedUpdateBranchTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedUpdateBranchTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedUpdateBranchTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedUpdateBranchTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CloseOutdatedUpdateBranchTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CloseOutdatedUpdateBranchTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/CloseOutdatedUpdateBranchTest.php
 
@@ -4067,27 +3566,7 @@ parameters:
 			path: test/integration/ClosePrsIndirectNoLongerRelevantTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectNoLongerRelevantTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectNoLongerRelevantTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectNoLongerRelevantTest\\:\\:\\$expectedClosedPrs has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectNoLongerRelevantTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectNoLongerRelevantTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectNoLongerRelevantTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectNoLongerRelevantTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectNoLongerRelevantTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectNoLongerRelevantTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/ClosePrsIndirectNoLongerRelevantTest.php
 
@@ -4112,27 +3591,7 @@ parameters:
 			path: test/integration/ClosePrsIndirectStillRelevantTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectStillRelevantTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectStillRelevantTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectStillRelevantTest\\:\\:\\$expectedClosedPrs has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectStillRelevantTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectStillRelevantTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectStillRelevantTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectStillRelevantTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectStillRelevantTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectStillRelevantTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/ClosePrsIndirectStillRelevantTest.php
 
@@ -4153,11 +3612,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectWithDirectStillRelevantTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectWithDirectStillRelevantTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectWithDirectStillRelevantTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/ClosePrsIndirectWithDirectStillRelevantTest.php
 
@@ -4187,27 +3641,7 @@ parameters:
 			path: test/integration/ClosePrsNotTrulyOutdatedPackageTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsNotTrulyOutdatedPackageTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsNotTrulyOutdatedPackageTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsNotTrulyOutdatedPackageTest\\:\\:\\$expectedClosedPrs has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsNotTrulyOutdatedPackageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsNotTrulyOutdatedPackageTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsNotTrulyOutdatedPackageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsNotTrulyOutdatedPackageTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsNotTrulyOutdatedPackageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsNotTrulyOutdatedPackageTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/ClosePrsNotTrulyOutdatedPackageTest.php
 
@@ -4217,27 +3651,7 @@ parameters:
 			path: test/integration/ClosePrsRemovedPackageTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsRemovedPackageTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsRemovedPackageTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsRemovedPackageTest\\:\\:\\$expectedClosedPrs has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsRemovedPackageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsRemovedPackageTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsRemovedPackageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsRemovedPackageTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsRemovedPackageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsRemovedPackageTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/ClosePrsRemovedPackageTest.php
 
@@ -4262,27 +3676,7 @@ parameters:
 			path: test/integration/ClosePrsUpdatedPackageTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsUpdatedPackageTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsUpdatedPackageTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsUpdatedPackageTest\\:\\:\\$expectedClosedPrs has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsUpdatedPackageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsUpdatedPackageTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsUpdatedPackageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsUpdatedPackageTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsUpdatedPackageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsUpdatedPackageTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/ClosePrsUpdatedPackageTest.php
 
@@ -4292,17 +3686,7 @@ parameters:
 			path: test/integration/CommitMessageConventionalDevTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CommitMessageConventionalDevTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/CommitMessageConventionalDevTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\CommitMessageConventionalTest\\:\\:getCorrectCommit\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/CommitMessageConventionalTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CommitMessageConventionalTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/CommitMessageConventionalTest.php
 
@@ -4342,27 +3726,7 @@ parameters:
 			path: test/integration/CommitMessageTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CommitMessageTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/CommitMessageTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CommitMessageTest\\:\\:\\$hasCorrectCommit has no type specified\\.$#"
-			count: 1
-			path: test/integration/CommitMessageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CommitMessageTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CommitMessageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CommitMessageTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/CommitMessageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\CommitMessageTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/CommitMessageTest.php
 
@@ -4397,11 +3761,6 @@ parameters:
 			path: test/integration/ComposerUpdateExitOneForGroupTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateExitOneForGroupTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateExitOneForGroupTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateExitOneForGroupTest\\:\\:\\$updateJson has no type specified\\.$#"
 			count: 1
 			path: test/integration/ComposerUpdateExitOneForGroupTest.php
@@ -4423,26 +3782,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateFailsTest\\:\\:testUpdatesFoundButComposerUpdateFails\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateFailsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateFailsTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateFailsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateFailsTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateFailsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateFailsTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateFailsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateFailsTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/ComposerUpdateFailsTest.php
 
@@ -4492,32 +3831,12 @@ parameters:
 			path: test/integration/ComposerUpdateIntegrationBase.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateIntegrationBase\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateIntegrationBase.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateIntegrationBase\\:\\:\\$fakePrUrl has no type specified\\.$#"
 			count: 1
 			path: test/integration/ComposerUpdateIntegrationBase.php
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateIntegrationBase\\:\\:\\$hasAutoMerge has no type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateIntegrationBase.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateIntegrationBase\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateIntegrationBase.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateIntegrationBase\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateIntegrationBase.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateIntegrationBase\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/ComposerUpdateIntegrationBase.php
 
@@ -4617,21 +3936,6 @@ parameters:
 			path: test/integration/ConfigBranchOrderTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchOrderTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ConfigBranchOrderTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchOrderTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ConfigBranchOrderTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchOrderTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ConfigBranchOrderTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchTest\\:\\:getEnvVariations\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/ConfigBranchTest.php
@@ -4662,26 +3966,6 @@ parameters:
 			path: test/integration/ConfigBranchTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/ConfigBranchTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ConfigBranchTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ConfigBranchTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ConfigBranchTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\DefaultBranchTest\\:\\:defaultBranchProvider\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/DefaultBranchTest.php
@@ -4702,47 +3986,7 @@ parameters:
 			path: test/integration/DefaultBranchTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DefaultBranchTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/DefaultBranchTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DefaultBranchTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/DefaultBranchTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DefaultBranchTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/DefaultBranchTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DefaultBranchTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/DefaultBranchTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\DevDepsRemovedIndirectTest\\:\\:testDevNameNotFail\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/DevDepsRemovedIndirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DevDepsRemovedIndirectTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/DevDepsRemovedIndirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DevDepsRemovedIndirectTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/DevDepsRemovedIndirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DevDepsRemovedIndirectTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/DevDepsRemovedIndirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DevDepsRemovedIndirectTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/DevDepsRemovedIndirectTest.php
 
@@ -4757,47 +4001,7 @@ parameters:
 			path: test/integration/DevDepsRemovedTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DevDepsRemovedTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/DevDepsRemovedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DevDepsRemovedTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/DevDepsRemovedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DevDepsRemovedTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/DevDepsRemovedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DevDepsRemovedTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/DevDepsRemovedTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\DevMasterInUpdatedPackagesTest\\:\\:testUpdatesInPackagesUpdated\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/DevMasterInUpdatedPackagesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DevMasterInUpdatedPackagesTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/DevMasterInUpdatedPackagesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DevMasterInUpdatedPackagesTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/DevMasterInUpdatedPackagesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DevMasterInUpdatedPackagesTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/DevMasterInUpdatedPackagesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DevMasterInUpdatedPackagesTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/DevMasterInUpdatedPackagesTest.php
 
@@ -4822,11 +4026,6 @@ parameters:
 			path: test/integration/DrupalContribAndCoreWithAssigneesTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalContribAndCoreWithAssigneesTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/DrupalContribAndCoreWithAssigneesTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalContribAndCoreWithAssigneesTest\\:\\:\\$updateJson has no type specified\\.$#"
 			count: 1
 			path: test/integration/DrupalContribAndCoreWithAssigneesTest.php
@@ -4843,26 +4042,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalContribGroupRuleTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
-			count: 1
-			path: test/integration/DrupalContribGroupRuleTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalContribGroupRuleTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/DrupalContribGroupRuleTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalContribGroupRuleTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/DrupalContribGroupRuleTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalContribGroupRuleTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/DrupalContribGroupRuleTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalContribGroupRuleTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/DrupalContribGroupRuleTest.php
 
@@ -4987,26 +4166,6 @@ parameters:
 			path: test/integration/ErrorCommittingTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorCommittingTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/ErrorCommittingTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorCommittingTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ErrorCommittingTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorCommittingTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ErrorCommittingTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorCommittingTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ErrorCommittingTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorPushingTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/ErrorPushingTest.php
@@ -5027,26 +4186,6 @@ parameters:
 			path: test/integration/ErrorPushingTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorPushingTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/ErrorPushingTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorPushingTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ErrorPushingTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorPushingTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ErrorPushingTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorPushingTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ErrorPushingTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ExtendsMultipleLevelsTest\\:\\:createComposerFileFromFixtures\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/ExtendsMultipleLevelsTest.php
@@ -5063,26 +4202,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ExtendsMultipleLevelsTest\\:\\:testExtendsMultipleLevels\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/ExtendsMultipleLevelsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ExtendsMultipleLevelsTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/ExtendsMultipleLevelsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ExtendsMultipleLevelsTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ExtendsMultipleLevelsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ExtendsMultipleLevelsTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/ExtendsMultipleLevelsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ExtendsMultipleLevelsTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/ExtendsMultipleLevelsTest.php
 
@@ -5192,27 +4311,7 @@ parameters:
 			path: test/integration/GitlabIntegrationTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GitlabIntegrationTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/GitlabIntegrationTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GitlabIntegrationTest\\:\\:\\$foundMessage has no type specified\\.$#"
-			count: 1
-			path: test/integration/GitlabIntegrationTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GitlabIntegrationTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/GitlabIntegrationTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GitlabIntegrationTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/GitlabIntegrationTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GitlabIntegrationTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/GitlabIntegrationTest.php
 
@@ -5238,11 +4337,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsAutomergeMethodSecurityTest\\:\\:\\$autoMergeMethodsByHead has no type specified\\.$#"
-			count: 1
-			path: test/integration/GroupsAutomergeMethodSecurityTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsAutomergeMethodSecurityTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/GroupsAutomergeMethodSecurityTest.php
 
@@ -5282,11 +4376,6 @@ parameters:
 			path: test/integration/GroupsAutomergeMethodTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsAutomergeMethodTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/GroupsAutomergeMethodTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsAutomergeMethodTest\\:\\:\\$hasAutoMerge has no type specified\\.$#"
 			count: 1
 			path: test/integration/GroupsAutomergeMethodTest.php
@@ -5313,11 +4402,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsCorrectCommandTest\\:\\:testGroupAllPackages\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/GroupsCorrectCommandTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsCorrectCommandTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/GroupsCorrectCommandTest.php
 
@@ -5358,11 +4442,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsForDrupalCoreAndContribTest\\:\\:testUpdatesGroupedContribAndCore\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/GroupsForDrupalCoreAndContribTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsForDrupalCoreAndContribTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/GroupsForDrupalCoreAndContribTest.php
 
@@ -5432,11 +4511,6 @@ parameters:
 			path: test/integration/GroupsPrExistsTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/GroupsPrExistsTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsTest\\:\\:\\$prsUpdated has no type specified\\.$#"
 			count: 1
 			path: test/integration/GroupsPrExistsTest.php
@@ -5457,26 +4531,6 @@ parameters:
 			path: test/integration/IgnorePlatformRequirementsDisabledTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\IgnorePlatformRequirementsDisabledTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/IgnorePlatformRequirementsDisabledTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\IgnorePlatformRequirementsDisabledTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/IgnorePlatformRequirementsDisabledTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\IgnorePlatformRequirementsDisabledTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/IgnorePlatformRequirementsDisabledTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\IgnorePlatformRequirementsDisabledTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/IgnorePlatformRequirementsDisabledTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\IgnorePlatformRequirementsTest\\:\\:testIgnorePlatformRequirementsEnabled\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/IgnorePlatformRequirementsTest.php
@@ -5487,47 +4541,7 @@ parameters:
 			path: test/integration/IgnorePlatformRequirementsTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\IgnorePlatformRequirementsTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/IgnorePlatformRequirementsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\IgnorePlatformRequirementsTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/IgnorePlatformRequirementsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\IgnorePlatformRequirementsTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/IgnorePlatformRequirementsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\IgnorePlatformRequirementsTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/IgnorePlatformRequirementsTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\InvalidPackageTest\\:\\:testUpdatesFoundButInvalidPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/InvalidPackageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\InvalidPackageTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/InvalidPackageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\InvalidPackageTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/InvalidPackageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\InvalidPackageTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/InvalidPackageTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\InvalidPackageTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/InvalidPackageTest.php
 
@@ -5582,32 +4596,12 @@ parameters:
 			path: test/integration/LabelsNoUpdateTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\LabelsNoUpdateTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/LabelsNoUpdateTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\LabelsNoUpdateTest\\:\\:\\$hasUpdatedPsrCache has no type specified\\.$#"
 			count: 1
 			path: test/integration/LabelsNoUpdateTest.php
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\LabelsNoUpdateTest\\:\\:\\$hasUpdatedPsrLog has no type specified\\.$#"
-			count: 1
-			path: test/integration/LabelsNoUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\LabelsNoUpdateTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/LabelsNoUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\LabelsNoUpdateTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/LabelsNoUpdateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\LabelsNoUpdateTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/LabelsNoUpdateTest.php
 
@@ -5627,11 +4621,6 @@ parameters:
 			path: test/integration/LabelsTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\LabelsTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/LabelsTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\LabelsTest\\:\\:\\$expectedLabelAdding has no type specified\\.$#"
 			count: 1
 			path: test/integration/LabelsTest.php
@@ -5643,21 +4632,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\LabelsTest\\:\\:\\$hasUpdatedPsrLog has no type specified\\.$#"
-			count: 1
-			path: test/integration/LabelsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\LabelsTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/LabelsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\LabelsTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/LabelsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\LabelsTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/LabelsTest.php
 
@@ -5678,11 +4652,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\LaravelGroupsLabelsTest\\:\\:testGroupRulesApplyDifferentLabels\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/LaravelGroupsLabelsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\LaravelGroupsLabelsTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/LaravelGroupsLabelsTest.php
 
@@ -5717,32 +4686,7 @@ parameters:
 			path: test/integration/NativeCheckerTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\NativeCheckerTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/NativeCheckerTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\NativeCheckerTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/NativeCheckerTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\NativeCheckerTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/NativeCheckerTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\NativeCheckerTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/NativeCheckerTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\NoUpdateNoRemoteCallsWhenCloseDisabledTest\\:\\:testNoUpdateRunSkipsRemotePrLookupsWhenCleanupDisabled\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/NoUpdateNoRemoteCallsWhenCloseDisabledTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\NoUpdateNoRemoteCallsWhenCloseDisabledTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/NoUpdateNoRemoteCallsWhenCloseDisabledTest.php
 
@@ -5787,11 +4731,6 @@ parameters:
 			path: test/integration/NotUpdateDevDepsTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdateDevDepsTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/NotUpdateDevDepsTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdatedGroupsForDrupalCoreAndContribTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/NotUpdatedGroupsForDrupalCoreAndContribTest.php
@@ -5812,11 +4751,6 @@ parameters:
 			path: test/integration/NotUpdatedGroupsForDrupalCoreAndContribTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdatedGroupsForDrupalCoreAndContribTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/NotUpdatedGroupsForDrupalCoreAndContribTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdatedGroupsForDrupalCoreAndContribTest\\:\\:\\$updateJson has no type specified\\.$#"
 			count: 1
 			path: test/integration/NotUpdatedGroupsForDrupalCoreAndContribTest.php
@@ -5828,26 +4762,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdatedTest\\:\\:testNotUpdatedInComposerLock\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/NotUpdatedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdatedTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/NotUpdatedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdatedTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/NotUpdatedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdatedTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/NotUpdatedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdatedTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/NotUpdatedTest.php
 
@@ -5868,26 +4782,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\PackagesRemovedInUpdatesTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
-			count: 1
-			path: test/integration/PackagesRemovedInUpdatesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\PackagesRemovedInUpdatesTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/PackagesRemovedInUpdatesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\PackagesRemovedInUpdatesTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/PackagesRemovedInUpdatesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\PackagesRemovedInUpdatesTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/PackagesRemovedInUpdatesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\PackagesRemovedInUpdatesTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/PackagesRemovedInUpdatesTest.php
 
@@ -5917,27 +4811,7 @@ parameters:
 			path: test/integration/SelfHostedGitlabIntegrationTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SelfHostedGitlabIntegrationTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/SelfHostedGitlabIntegrationTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SelfHostedGitlabIntegrationTest\\:\\:\\$foundMessage has no type specified\\.$#"
-			count: 1
-			path: test/integration/SelfHostedGitlabIntegrationTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SelfHostedGitlabIntegrationTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/SelfHostedGitlabIntegrationTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SelfHostedGitlabIntegrationTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/SelfHostedGitlabIntegrationTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SelfHostedGitlabIntegrationTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/SelfHostedGitlabIntegrationTest.php
 
@@ -5957,26 +4831,6 @@ parameters:
 			path: test/integration/SemverInvalidTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SemverInvalidTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/SemverInvalidTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SemverInvalidTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/SemverInvalidTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SemverInvalidTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/SemverInvalidTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SemverInvalidTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/SemverInvalidTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\SymfonyGroupRulesTest\\:\\:testSymfonyGroupWithAutoMerge\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/SymfonyGroupRulesTest.php
@@ -5987,27 +4841,7 @@ parameters:
 			path: test/integration/SymfonyGroupRulesTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SymfonyGroupRulesTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/SymfonyGroupRulesTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SymfonyGroupRulesTest\\:\\:\\$hasAutoMerge has no type specified\\.$#"
-			count: 1
-			path: test/integration/SymfonyGroupRulesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SymfonyGroupRulesTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/SymfonyGroupRulesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SymfonyGroupRulesTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/SymfonyGroupRulesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\SymfonyGroupRulesTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/SymfonyGroupRulesTest.php
 
@@ -6023,26 +4857,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\TimeFrameTest\\:\\:testTimeFrameWrongFormat\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/TimeFrameTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\TimeFrameTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/TimeFrameTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\TimeFrameTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/TimeFrameTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\TimeFrameTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/TimeFrameTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\TimeFrameTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/TimeFrameTest.php
 
@@ -6072,27 +4886,7 @@ parameters:
 			path: test/integration/UpToDateRaceConditionTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpToDateRaceConditionTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpToDateRaceConditionTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpToDateRaceConditionTest\\:\\:\\$hasPushed has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpToDateRaceConditionTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpToDateRaceConditionTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpToDateRaceConditionTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpToDateRaceConditionTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpToDateRaceConditionTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpToDateRaceConditionTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpToDateRaceConditionTest.php
 
@@ -6297,26 +5091,6 @@ parameters:
 			path: test/integration/UpdateBranchTitleChangedPopulateTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateBranchTitleChangedPopulateTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateBranchTitleChangedPopulateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateBranchTitleChangedPopulateTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateBranchTitleChangedPopulateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateBranchTitleChangedPopulateTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateBranchTitleChangedPopulateTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateBranchTitleChangedPopulateTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateBranchTitleChangedPopulateTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateBranchTitleChangedTest\\:\\:getBranchesFlattened\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateBranchTitleChangedTest.php
@@ -6327,42 +5101,12 @@ parameters:
 			path: test/integration/UpdateBranchTitleChangedTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateBranchTitleChangedTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateBranchTitleChangedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateBranchTitleChangedTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateBranchTitleChangedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateBranchTitleChangedTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateBranchTitleChangedTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateBranchTitleChangedTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateBranchTitleChangedTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentAllowSecurityTest\\:\\:getBranchesFlattened\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateConcurrentAllowSecurityTest.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentAllowSecurityTest\\:\\:testUpdatesSecurityBeyondConcurrent\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateConcurrentAllowSecurityTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentAllowSecurityTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateConcurrentAllowSecurityTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentAllowSecurityTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateConcurrentAllowSecurityTest.php
 
@@ -6388,11 +5132,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentClosedStillRelevantTest\\:\\:testUpdateConcurrentWithOutdatedBranch\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateConcurrentClosedStillRelevantTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentClosedStillRelevantTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateConcurrentClosedStillRelevantTest.php
 
@@ -6443,11 +5182,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentOutdatedBranchTest\\:\\:testUpdateConcurrentWithUpToDateBranch\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateConcurrentOutdatedBranchTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentOutdatedBranchTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateConcurrentOutdatedBranchTest.php
 
@@ -6537,11 +5271,6 @@ parameters:
 			path: test/integration/UpdateConcurrentTwoTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentTwoTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateConcurrentTwoTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentTwoTest\\:\\:\\$sha has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateConcurrentTwoTest.php
@@ -6558,26 +5287,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateExistingWithAssigneesTest\\:\\:testPrUpdatedWhenConflict\\(\\) has parameter \\$exception_class with no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateExistingWithAssigneesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateExistingWithAssigneesTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateExistingWithAssigneesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateExistingWithAssigneesTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateExistingWithAssigneesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateExistingWithAssigneesTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateExistingWithAssigneesTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateExistingWithAssigneesTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateExistingWithAssigneesTest.php
 
@@ -6627,26 +5336,6 @@ parameters:
 			path: test/integration/UpdateIndirectActualProjectTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectActualProjectTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectActualProjectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectActualProjectTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectActualProjectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectActualProjectTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectActualProjectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectActualProjectTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectActualProjectTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectActualProjectTest\\:\\:\\$usesDirect has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateIndirectActualProjectTest.php
@@ -6658,26 +5347,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectButHasDirectTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectButHasDirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectButHasDirectTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectButHasDirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectButHasDirectTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectButHasDirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectButHasDirectTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectButHasDirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectButHasDirectTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateIndirectButHasDirectTest.php
 
@@ -6707,26 +5376,6 @@ parameters:
 			path: test/integration/UpdateIndirectSecondLevelTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectSecondLevelTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectSecondLevelTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectSecondLevelTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectSecondLevelTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectSecondLevelTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectSecondLevelTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectSecondLevelTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectSecondLevelTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectSecondLevelTest\\:\\:\\$usesDirect has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateIndirectSecondLevelTest.php
@@ -6748,26 +5397,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateIndirectTest.php
 
@@ -6812,26 +5441,6 @@ parameters:
 			path: test/integration/UpdateIndirectTwoAncestorsTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTwoAncestorsTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTwoAncestorsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTwoAncestorsTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTwoAncestorsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTwoAncestorsTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTwoAncestorsTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTwoAncestorsTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTwoAncestorsTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTwoAncestorsTest\\:\\:\\$usesDirect has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateIndirectTwoAncestorsTest.php
@@ -6867,22 +5476,12 @@ parameters:
 			path: test/integration/UpdateIndirectWithDirectTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectWithDirectTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectWithDirectTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectWithDirectTest\\:\\:\\$hasUpdatedPsrCache has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateIndirectWithDirectTest.php
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectWithDirectTest\\:\\:\\$hasUpdatedPsrLog has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectWithDirectTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectWithDirectTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateIndirectWithDirectTest.php
 
@@ -6898,26 +5497,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateInsideConstraintButOtherAvailableTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateInsideConstraintButOtherAvailableTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateInsideConstraintButOtherAvailableTest\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateInsideConstraintButOtherAvailableTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateInsideConstraintButOtherAvailableTest\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateInsideConstraintButOtherAvailableTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateInsideConstraintButOtherAvailableTest\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateInsideConstraintButOtherAvailableTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateInsideConstraintButOtherAvailableTest\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateInsideConstraintButOtherAvailableTest.php
 
@@ -6943,26 +5522,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue107Test\\:\\:\\$checkedOutAfterCommitError has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue107Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue107Test\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue107Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue107Test\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue107Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue107Test\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue107Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue107Test\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue107Test.php
 
@@ -7007,27 +5566,7 @@ parameters:
 			path: test/integration/issues/Issue145Test.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue145Test\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue145Test.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue145Test\\:\\:\\$numberOfIstalls has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue145Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue145Test\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue145Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue145Test\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue145Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue145Test\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue145Test.php
 
@@ -7037,47 +5576,7 @@ parameters:
 			path: test/integration/issues/Issue158Test.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue158Test\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue158Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue158Test\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue158Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue158Test\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue158Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue158Test\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue158Test.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue164Test\\:\\:testRequireDevAdded\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue164Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue164Test\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue164Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue164Test\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue164Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue164Test\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue164Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue164Test\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue164Test.php
 
@@ -7103,26 +5602,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue200Test\\:\\:testRequireDevAdded\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue200Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue200Test\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue200Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue200Test\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue200Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue200Test\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue200Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue200Test\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue200Test.php
 
@@ -7162,47 +5641,7 @@ parameters:
 			path: test/integration/issues/Issue211Test.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue211Test\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue211Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue211Test\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue211Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue211Test\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue211Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue211Test\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue211Test.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue238Test\\:\\:testDevNameNotFail\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue238Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue238Test\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue238Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue238Test\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue238Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue238Test\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue238Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue238Test\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue238Test.php
 
@@ -7228,26 +5667,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue90Test\\:\\:\\$called has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue90Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue90Test\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue90Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue90Test\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue90Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue90Test\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue90Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue90Test\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue90Test.php
 
@@ -7287,27 +5706,7 @@ parameters:
 			path: test/integration/issues/Issue92Test.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue92Test\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue92Test.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue92Test\\:\\:\\$errorOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue92Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue92Test\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue92Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue92Test\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue92Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue92Test\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue92Test.php
 
@@ -7333,26 +5732,6 @@ parameters:
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue98Test\\:\\:\\$calledCorrectly has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue98Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue98Test\\:\\:\\$composerAssetFiles has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue98Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue98Test\\:\\:\\$packageForUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue98Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue98Test\\:\\:\\$packageVersionForFromUpdateOutput has no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue98Test.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue98Test\\:\\:\\$packageVersionForToUpdateOutput has no type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue98Test.php
 
@@ -8150,7 +6529,6 @@ parameters:
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\PublicGithubWrapperTest\\:\\:testUpdatePullRequestWrongStatusCode\\(\\) has parameter \\$mock_response with no type specified\\.$#"
 			count: 1
 			path: test/unit/Providers/PublicGithubWrapperTest.php
-
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\PullRequestsTest\\:\\:testPullrequestTitle\\(\\) has no return type specified\\.$#"

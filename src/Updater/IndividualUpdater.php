@@ -239,7 +239,7 @@ class IndividualUpdater extends BaseUpdater
             $body = $pr_params_creator->createBodyForGroup($rule->name, $update_array);
             $title = sprintf('Update group `%s`', $rule->name);
             $pr_params = $pr_params_creator->getPrParamsForGroup($this->forkUser, $this->isPrivate, $this->slug, $branch_name, $body, $title, $default_branch, $item_config);
-            $this->commitFilesForGroup($rule->name, $config);
+            $this->commitFilesForGroup($rule->name, $config, $update_list);
             $this->runAuthExport($hostname);
             $this->pushCode($branch_name, $default_base, $lock_file_contents, $default_branch);
             $pullRequest = $this->createPullrequest($pr_params);
@@ -289,14 +289,13 @@ class IndividualUpdater extends BaseUpdater
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $config, $security_update);
             // If it failed validation because it already exists, we also want to make sure all outdated PRs are
             // closed.
-            $raw_item = $item->getData();
             if (!empty($prs_named[$branch_name]['number'])) {
-                // @todo: Count the PR and close outdated.
+                $this->countPR($item->getPackageName());
             }
         } catch (\Gitlab\Exception\RuntimeException $e) {
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $config, $security_update);
             if (!empty($prs_named[$branch_name]['number'])) {
-                // @todo: Count the PR and close outdated.
+                $this->countPR($item->getPackageName());
             }
         } catch (ComposerUpdateProcessFailedException $e) {
             $this->log('Caught an exception: ' . $e->getMessage(), 'error');

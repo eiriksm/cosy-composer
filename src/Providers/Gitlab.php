@@ -125,7 +125,7 @@ class Gitlab implements ProviderInterface
     {
         $branches = $this->getBranches($slug);
         foreach ($branches as $branch) {
-            if ($branch['name'] == $default_branch) {
+            if ($branch['name'] === $default_branch) {
                 if (!empty($branch['commit']['committed_date'])) {
                     return $branch['commit']['committed_date'];
                 }

@@ -150,7 +150,7 @@ class Bitbucket implements ProviderInterface
         $repo = $slug->getUserRepo();
         $branches = $this->getBranches($user, $repo);
         foreach ($branches as $branch) {
-            if ($branch['name'] == $default_branch) {
+            if ($branch['name'] === $default_branch) {
                 if (!empty($branch['target']['date'])) {
                     return $branch['target']['date'];
                 }

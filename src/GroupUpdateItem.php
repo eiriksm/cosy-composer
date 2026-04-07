@@ -12,7 +12,7 @@ class GroupUpdateItem implements UpdateItemInterface
     private $rule;
 
     /**
-     * @var array \stdClass
+     * @var array<int, \stdClass>
      */
     private $data = [];
 
@@ -28,7 +28,7 @@ class GroupUpdateItem implements UpdateItemInterface
         $this->config = $config;
     }
 
-    public function addData(\stdClass $data)
+    public function addData(\stdClass $data): void
     {
         $this->data[] = $data;
     }
@@ -38,17 +38,20 @@ class GroupUpdateItem implements UpdateItemInterface
         return $this->rule;
     }
 
+    /**
+     * @return array<int, \stdClass>
+     */
     public function getData() : array
     {
         return $this->data;
     }
 
-    public function getPackageName()
+    public function getPackageName(): string
     {
         return $this->rule->name;
     }
 
-    public function groupRuleMatches(string $package_name)
+    public function groupRuleMatches(string $package_name): bool
     {
         return $this->config->getMatcherFactory()->hasMatches($this->rule, $package_name);
     }

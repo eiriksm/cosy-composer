@@ -511,31 +511,6 @@ parameters:
 			path: src/CosyLogger.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\GroupUpdateItem\\:\\:addData\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/GroupUpdateItem.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\GroupUpdateItem\\:\\:getData\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/GroupUpdateItem.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\GroupUpdateItem\\:\\:getPackageName\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/GroupUpdateItem.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\GroupUpdateItem\\:\\:groupRuleMatches\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/GroupUpdateItem.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposer\\\\GroupUpdateItem\\:\\:\\$data type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/GroupUpdateItem.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Helpers\\:\\:createBranchName\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: src/Helpers.php
@@ -1905,10 +1880,6 @@ parameters:
 			count: 1
 			path: src/TokenChooser.php
 
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\UpdateItemInterface\\:\\:getPackageName\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/UpdateItemInterface.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Updater\\\\BaseUpdater\\:\\:cleanRepoForCommit\\(\\) has no return type specified\\.$#"

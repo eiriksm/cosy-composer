@@ -7,12 +7,16 @@ use Violinist\Slug\Slug;
 abstract class ComposerUpdateIntegrationBase extends Base
 {
 
+    /** @var ?string */
     protected $packageForUpdateOutput;
 
+    /** @var ?string */
     protected $packageVersionForFromUpdateOutput;
 
+    /** @var ?string */
     protected $packageVersionForToUpdateOutput;
 
+    /** @var ?string */
     protected $composerAssetFiles;
 
     protected $fakePrUrl = 'http://example.com/pr';

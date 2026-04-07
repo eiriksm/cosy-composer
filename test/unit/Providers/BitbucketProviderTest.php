@@ -9,6 +9,7 @@ use Violinist\Slug\Slug;
 
 class BitbucketProviderTest extends TestCase
 {
+    /** @param array<mixed> $branches */
     private function createBitbucketWithBranches(array $branches): Bitbucket
     {
         $mock = $this->getMockBuilder(Bitbucket::class)

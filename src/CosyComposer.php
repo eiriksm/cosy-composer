@@ -780,24 +780,29 @@ class CosyComposer
             $this->logConfigOverride($config, $item);
         }
         $data = $handler->applyToItems($data);
-        // Remove non-security packages, if indicated.
+        // Remove non-security packages, if indicated globally or per-package.
         if ($config->shouldOnlyUpdateSecurityUpdates()) {
-            $this->log('Project indicated that it should only receive security updates. Removing non-security related updates from queue');
-            foreach ($data as $delta => $item) {
-                try {
-                    $package_name_in_composer_json = Helpers::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
-                    if (isset($security_alerts[$package_name_in_composer_json])) {
-                        continue;
-                    }
-                } catch (\Exception $e) {
-                    // Totally fine. Let's check if it's there just by the name we have right here.
-                    if (isset($security_alerts[$item->name])) {
-                        continue;
-                    }
-                }
-                unset($data[$delta]);
-                $this->log(sprintf('Skipping update of %s because it is not indicated as a security update', $item->name));
+            $this->log('Global project config indicated that it should only receive security updates. Removing non-security related updates from queue');
+        }
+        foreach ($data as $delta => $item) {
+            $package_config = $config->getConfigForPackage($item->name);
+            if (!$package_config->shouldOnlyUpdateSecurityUpdates()) {
+                // We should not _only_ do security updates, so we do not remove.
+                continue;
             }
+            try {
+                $package_name_in_composer_json = Helpers::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
+                if (isset($security_alerts[$package_name_in_composer_json])) {
+                    continue;
+                }
+            } catch (\Exception $e) {
+                // Totally fine. Let's check if it's there just by the name we have right here.
+                if (isset($security_alerts[$item->name])) {
+                    continue;
+                }
+            }
+            unset($data[$delta]);
+            $this->log(sprintf('Skipping update of %s because it is not indicated as a security update and the config for the package suggested we should only do security updates', $item->name));
         }
         // Remove block listed packages.
         $block_list = $config->getBlockList();

@@ -782,11 +782,12 @@ class CosyComposer
         $data = $handler->applyToItems($data);
         // Remove non-security packages, if indicated globally or per-package.
         if ($config->shouldOnlyUpdateSecurityUpdates()) {
-            $this->log('Project indicated that it should only receive security updates. Removing non-security related updates from queue');
+            $this->log('Global project config indicated that it should only receive security updates. Removing non-security related updates from queue');
         }
         foreach ($data as $delta => $item) {
             $package_config = $config->getConfigForPackage($item->name);
             if (!$package_config->shouldOnlyUpdateSecurityUpdates()) {
+                // We should not _only_ do security updates, so we do not remove.
                 continue;
             }
             try {
@@ -801,7 +802,7 @@ class CosyComposer
                 }
             }
             unset($data[$delta]);
-            $this->log(sprintf('Skipping update of %s because it is not indicated as a security update', $item->name));
+            $this->log(sprintf('Skipping update of %s because it is not indicated as a security update and the config for the package suggested we should only do security updates', $item->name));
         }
         // Remove block listed packages.
         $block_list = $config->getBlockList();

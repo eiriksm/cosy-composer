@@ -178,7 +178,7 @@ class IndividualUpdater extends BaseUpdater
             if (!empty($array_copy)) {
                 $updater->setBundledPackages($array_copy);
             }
-            $updater->setWithUpdate($config->shouldUpdateWithDependencies());
+            $updater->setWithUpdate($item_config->shouldUpdateWithDependencies());
             $updater->setRunScripts($config->shouldRunScripts());
             if (!$lock_file_contents) {
                 throw new \Exception('The group update can not be run with composer require');

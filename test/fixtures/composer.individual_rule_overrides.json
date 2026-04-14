@@ -1,0 +1,49 @@
+{
+    "require": {
+        "psr/log": "^1.0",
+        "psr/cache": "^1.0"
+    },
+    "extra": {
+        "violinist": {
+            "security_updates_only": 1,
+            "check_only_direct_dependencies": 0,
+            "composer_outdated_flag": "major",
+            "update_with_dependencies": 0,
+            "one_pull_request_per_package": 1,
+            "branch_prefix": "security-update/",
+            "commit_message_convention": "conventional",
+            "rules": [
+                {
+                    "name": "PSR Log",
+                    "matchRules": [
+                        {
+                            "type": "names",
+                            "values": [
+                                "psr/log"
+                            ]
+                        }
+                    ],
+                    "config": {
+                        "security_updates_only": 0,
+                        "update_with_dependencies": 1
+                    }
+                },
+                {
+                    "name": "PSR Cache",
+                    "matchRules": [
+                        {
+                            "type": "names",
+                            "values": [
+                                "psr/cache"
+                            ]
+                        }
+                    ],
+                    "config": {
+                        "security_updates_only": 0,
+                        "update_with_dependencies": 1
+                    }
+                }
+            ]
+        }
+    }
+}

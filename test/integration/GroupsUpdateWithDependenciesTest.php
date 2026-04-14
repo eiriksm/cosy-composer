@@ -4,7 +4,7 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class GroupsUpdateWithDependenciesTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-groups-update-with-dependencies';
+    /** @var string */
     protected $updateJson = '{
     "installed": [
         {
@@ -26,15 +26,22 @@ class GroupsUpdateWithDependenciesTest extends ComposerUpdateIntegrationBase
     ]
 }';
 
+    protected $composerAssetFiles = 'composer-groups-update-with-dependencies';
+
+    /** @var bool */
     private $withDependenciesUsed = false;
 
-    public function testRuleOverridesGlobalUpdateWithDependencies()
+    public function testRuleOverridesGlobalUpdateWithDependencies(): void
     {
         $this->runtestExpectedOutput();
         self::assertFalse($this->withDependenciesUsed, 'Rule config update_with_dependencies=0 should override global value of 1');
     }
 
-    protected function handleExecutorReturnCallback(array $cmd, &$return)
+    /**
+     * @param array<string> $cmd
+     * @param int $return
+     */
+    public function handleExecutorReturnCallback(array $cmd, &$return): void
     {
         if (in_array('--with-dependencies', $cmd, true)) {
             $this->withDependenciesUsed = true;

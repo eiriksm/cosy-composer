@@ -5,6 +5,8 @@ namespace eiriksm\CosyComposerTest\integration;
 class IndividualRuleUpdateWithDependenciesTest extends ComposerUpdateIntegrationBase
 {
     protected $composerAssetFiles = 'composer.individual_rule_overrides';
+
+    /** @var string */
     protected $updateJson = '{
     "installed": [
         {
@@ -26,16 +28,21 @@ class IndividualRuleUpdateWithDependenciesTest extends ComposerUpdateIntegration
     ]
 }';
 
+    /** @var list<string> */
     private $packagesUpdatedWithDependencies = [];
 
-    public function testRuleOverridesGlobalUpdateWithDependenciesForIndividualPackages()
+    public function testRuleOverridesGlobalUpdateWithDependenciesForIndividualPackages(): void
     {
         $this->runtestExpectedOutput();
         self::assertContains('psr/log', $this->packagesUpdatedWithDependencies, 'psr/log rule should override global update_with_dependencies=0 to 1');
         self::assertContains('psr/cache', $this->packagesUpdatedWithDependencies, 'psr/cache rule should override global update_with_dependencies=0 to 1');
     }
 
-    protected function handleExecutorReturnCallback(array $cmd, &$return)
+    /**
+     * @param array<string> $cmd
+     * @param int $return
+     */
+    public function handleExecutorReturnCallback(array $cmd, &$return): void
     {
         if (!in_array('--with-dependencies', $cmd, true)) {
             return;

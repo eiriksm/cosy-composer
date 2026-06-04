@@ -193,14 +193,25 @@ class IndividualUpdater extends BaseUpdater
             $comparer = new LockDataComparer($lockdata, $new_lock_data);
             $package_lock_data = ComposerLockData::createFromString(json_encode($lockdata));
             $update_list = $comparer->getUpdateList();
-            $update_array = array_map(function (UpdateListItem $update) use ($lockdata, $package_lock_data, $post_update_lock) {
+            $update_array = array_map(function (UpdateListItem $update) use ($lockdata, $new_lock_data, $package_lock_data, $post_update_lock) {
                 $update_obj = new ViolinistUpdate();
                 $update_obj->setName($update->getPackageName());
                 $update_obj->setCurrentVersion($update->getOldVersion());
                 $update_obj->setNewVersion($update->getNewVersion());
                 $package_name = $update->getPackageName();
-                $pre_update_data = $package_lock_data->getPackageData($package_name);
-                $post_update_data = $post_update_lock->getPackageData($package_name);
+                // The package might be new (not in the pre-update lock) or
+                // removed (not in the post-update lock). Either is fine here:
+                // this data is only used for release links, which is optional.
+                $pre_update_data = null;
+                try {
+                    $pre_update_data = $package_lock_data->getPackageData($package_name);
+                } catch (\Exception $e) {
+                }
+                $post_update_data = null;
+                try {
+                    $post_update_data = $post_update_lock->getPackageData($package_name);
+                } catch (\Exception $e) {
+                }
                 $version_from = $update->getOldVersion();
                 $version_to = $update->getNewVersion();
                 $this->log('Trying to retrieve changelog for ' . $package_name);
@@ -213,7 +224,18 @@ class IndividualUpdater extends BaseUpdater
                 } catch (\Throwable $e) {
                     // If the changelog can not be retrieved, we can live with that.
                     $this->log('Exception for changelog: ' . $e->getMessage());
-                    $repo_url = $this->getRepoUrl($package_name, $lockdata);
+                    // A new package will not be present in the pre-update lock,
+                    // so fall back to the post-update lock for the repo URL.
+                    $repo_url = null;
+                    foreach ([$lockdata, $new_lock_data] as $repo_url_lock) {
+                        try {
+                            $repo_url = $this->getRepoUrl($package_name, $repo_url_lock);
+                            if ($repo_url) {
+                                break;
+                            }
+                        } catch (\Throwable $e) {
+                        }
+                    }
                     if ($repo_url) {
                         $update_obj->setChangelog(sprintf('Could not retrieve changelog. See the [project page](%s) for more information.', $repo_url));
                     }

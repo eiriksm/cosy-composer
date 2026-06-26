@@ -23,6 +23,7 @@
         "symfony/polyfill-php80": "^1.0",
         "symfony/process": "^5.4 || ^6 || ^7",
         "symfony/yaml": "^5.4 || ^6 || ^7",
+        "twig/twig": "3.11.3",
         "violinist-dev/allow-list-handler": "^1.0",
         "violinist-dev/commit-message-creator": "^2.1",
         "violinist-dev/composer-changelog-fetcher": "^5.2.0",

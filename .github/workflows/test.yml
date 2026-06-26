@@ -48,7 +48,7 @@ jobs:
         run: composer --verbose validate
 
       - name: Install dependencies
-        run: composer --verbose install    
+        run: composer --verbose install
 
       - name: Run tests
         run: composer test

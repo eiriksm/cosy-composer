@@ -49,6 +49,8 @@ jobs:
 
       - name: Install dependencies
         run: composer --verbose install
+        env:
+          COMPOSER_NO_AUDIT: 1
 
       - name: Run tests
         run: composer test

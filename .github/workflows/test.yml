@@ -48,10 +48,7 @@ jobs:
         run: composer --verbose validate
 
       - name: Install dependencies
-        run: composer --verbose install
-        env:
-          COMPOSER_NO_AUDIT: 1
-          COMPOSER_NO_BLOCKING: 1
+        run: composer --verbose install    
 
       - name: Run tests
         run: composer test

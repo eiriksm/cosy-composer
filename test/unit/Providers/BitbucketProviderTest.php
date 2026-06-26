@@ -64,4 +64,56 @@ class BitbucketProviderTest extends TestCase
         ]);
         $this->assertNull($provider->getDefaultBaseTimestamp($slug, 'main'));
     }
+
+    /**
+     * @dataProvider apiTokenProvider
+     */
+    public function testTokenIndicatesUserApiToken(string $token, bool $expected): void
+    {
+        $this->assertSame($expected, Bitbucket::tokenIndicatesUserApiToken($token));
+    }
+
+    /**
+     * @dataProvider apiTokenProvider
+     */
+    public function testGetApiTokenStripsAnyEmailPrefix(string $token, bool $isApiToken, string $expectedToken): void
+    {
+        $this->assertSame($expectedToken, Bitbucket::getApiToken($token));
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: bool, 2: string}>
+     */
+    public function apiTokenProvider(): array
+    {
+        // An API token starts with ATAT and is more than 100 chars.
+        $api_token = 'ATAT' . str_repeat('x', 100);
+        return [
+            'bare api token' => [
+                $api_token,
+                true,
+                $api_token,
+            ],
+            'api token with email prefix' => [
+                'me@example.com:' . $api_token,
+                true,
+                $api_token,
+            ],
+            'app password (user:pass) is not an api token' => [
+                'someuser:somepassword',
+                false,
+                'somepassword',
+            ],
+            'short ATAT token is not an api token' => [
+                'ATATshort',
+                false,
+                'ATATshort',
+            ],
+            'long token not starting with ATAT is not an api token' => [
+                str_repeat('x', 120),
+                false,
+                str_repeat('x', 120),
+            ],
+        ];
+    }
 }

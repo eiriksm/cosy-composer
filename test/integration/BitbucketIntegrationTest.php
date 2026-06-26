@@ -59,6 +59,52 @@ class BitbucketIntegrationTest extends ComposerUpdateIntegrationBase
         self::assertEquals(true, $has_passed_user_and_token);
     }
 
+    public function testUpdateApiToken(): void
+    {
+        $token = 'ATAT' . str_repeat('x', 100);
+        $this->commandStringToFind = sprintf(
+            'composer config --auth http-basic.bitbucket.org x-bitbucket-api-token-auth %s',
+            $token
+        );
+        $this->cosy->setAuthentication($token);
+        $this->cosy->setUrl('https://bitbucket.org/user/repo');
+        $has_passed_user_and_token = false;
+        $this->mockProvider->expects($this->exactly(2))
+            ->method('authenticate')
+            ->willReturnCallback(function ($user, $token_arg) use (&$has_passed_user_and_token, $token) {
+                if ($user === 'x-bitbucket-api-token-auth' && $token_arg === $token) {
+                    $has_passed_user_and_token = true;
+                }
+            });
+        $this->runtestExpectedOutput();
+        self::assertEquals(true, $this->foundMessage);
+        self::assertEquals(true, $has_passed_user_and_token);
+    }
+
+    public function testUpdateApiTokenWithEmail(): void
+    {
+        $api_token = 'ATAT' . str_repeat('x', 100);
+        $token = 'me@example.com:' . $api_token;
+        // The email prefix is discarded, the static username is always used.
+        $this->commandStringToFind = sprintf(
+            'composer config --auth http-basic.bitbucket.org x-bitbucket-api-token-auth %s',
+            $api_token
+        );
+        $this->cosy->setAuthentication($token);
+        $this->cosy->setUrl('https://bitbucket.org/user/repo');
+        $has_passed_user_and_token = false;
+        $this->mockProvider->expects($this->exactly(2))
+            ->method('authenticate')
+            ->willReturnCallback(function ($user, $token_arg) use (&$has_passed_user_and_token, $api_token) {
+                if ($user === 'x-bitbucket-api-token-auth' && $token_arg === $api_token) {
+                    $has_passed_user_and_token = true;
+                }
+            });
+        $this->runtestExpectedOutput();
+        self::assertEquals(true, $this->foundMessage);
+        self::assertEquals(true, $has_passed_user_and_token);
+    }
+
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
         if (!$this->commandStringToFind) {

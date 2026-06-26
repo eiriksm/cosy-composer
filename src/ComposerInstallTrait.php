@@ -82,6 +82,15 @@ trait ComposerInstallTrait
                         ['composer', 'config', '--auth', 'http-basic.bitbucket.org', $bitbucket_user, $app_password],
                         false
                     );
+                } elseif (Bitbucket::tokenIndicatesUserApiToken($token)) {
+                    $this->execCommand(
+                        [
+                            'composer', 'config', '--auth', 'http-basic.bitbucket.org',
+                            'x-bitbucket-api-token-auth',
+                            Bitbucket::getApiToken($token),
+                        ],
+                        false
+                    );
                 } else {
                     $this->execCommand(
                         ['composer', 'config', '--auth', 'http-basic.bitbucket.org', 'x-token-auth', $token],

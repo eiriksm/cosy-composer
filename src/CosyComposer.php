@@ -1207,6 +1207,12 @@ class CosyComposer
         Helpers::handleAutoMerge($this->getPrClient(), $this->getLogger(), $this->slug, $config, $pullRequest, $security_update);
     }
 
+    public static function maskToken(string $token): string
+    {
+        $keep = min(4, max(0, strlen($token) - 1));
+        return substr($token, 0, $keep) . str_repeat('x', strlen($token) - $keep);
+    }
+
     /**
      * Get the messages that are logged.
      *
@@ -1219,6 +1225,10 @@ class CosyComposer
         if (!$this->logger instanceof ArrayLogger) {
             return $msgs;
         }
+        $tokens_to_mask = array_filter(array_unique(array_merge(
+            [$this->userToken, $this->untouchedUserToken],
+            array_values($this->tokens)
+        )));
         /** @var ArrayLogger $my_logger */
         $my_logger = $this->logger;
         foreach ($my_logger->get() as $message) {
@@ -1230,6 +1240,15 @@ class CosyComposer
             if (isset($message['context']['command'])) {
                 $msg = new Message($msg->getMessage(), Message::COMMAND);
                 $msg->setContext($message['context']);
+            }
+            $message_text = $msg->getMessage();
+            foreach ($tokens_to_mask as $token) {
+                $message_text = str_replace($token, self::maskToken($token), $message_text);
+            }
+            if ($message_text !== $msg->getMessage()) {
+                $masked_msg = new Message($message_text, $msg->getType());
+                $masked_msg->setContext($msg->getContext());
+                $msg = $masked_msg;
             }
             $msgs[] = $msg;
         }

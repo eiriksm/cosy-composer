@@ -3,6 +3,7 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 use eiriksm\CosyComposer\CommandExecuter;
+use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\Message;
 
 class OutputFromUpdateTest extends Base
@@ -41,7 +42,7 @@ class OutputFromUpdateTest extends Base
         foreach ($c->getOutput() as $msg) {
             $this->assertStringNotContainsString($token, $msg->getMessage(), 'Token must not appear in output');
         }
-        $masked = substr($token, 0, 4) . 'xxx';
+        $masked = CosyComposer::maskToken($token);
         $this->assertOutputContainsMessage('Some message containing ' . $masked, $c);
         $this->assertOutputContainsMessage('https://x-token:' . $masked, $c);
     }

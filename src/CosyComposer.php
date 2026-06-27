@@ -1214,6 +1214,12 @@ class CosyComposer
         Helpers::handleAutoMerge($this->getPrClient(), $this->getLogger(), $this->slug, $config, $pullRequest, $security_update);
     }
 
+    public static function maskToken(string $token): string
+    {
+        $keep = min(4, max(0, strlen($token) - 1));
+        return substr($token, 0, $keep) . str_repeat('x', strlen($token) - $keep);
+    }
+
     /**
      * Get the messages that are logged.
      *
@@ -1244,9 +1250,7 @@ class CosyComposer
             }
             $message_text = $msg->getMessage();
             foreach ($tokens_to_mask as $token) {
-                if (strlen($token) > 4 && strpos($message_text, $token) !== false) {
-                    $message_text = str_replace($token, substr($token, 0, 4) . 'xxx', $message_text);
-                }
+                $message_text = str_replace($token, self::maskToken($token), $message_text);
             }
             if ($message_text !== $msg->getMessage()) {
                 $masked_msg = new Message($message_text, $msg->getType());

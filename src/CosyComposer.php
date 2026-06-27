@@ -1226,6 +1226,10 @@ class CosyComposer
         if (!$this->logger instanceof ArrayLogger) {
             return $msgs;
         }
+        $tokens_to_mask = array_filter(array_unique(array_merge(
+            [$this->userToken, $this->untouchedUserToken],
+            array_values($this->tokens)
+        )));
         /** @var ArrayLogger $my_logger */
         $my_logger = $this->logger;
         foreach ($my_logger->get() as $message) {
@@ -1237,6 +1241,17 @@ class CosyComposer
             if (isset($message['context']['command'])) {
                 $msg = new Message($msg->getMessage(), Message::COMMAND);
                 $msg->setContext($message['context']);
+            }
+            $message_text = $msg->getMessage();
+            foreach ($tokens_to_mask as $token) {
+                if (strlen($token) > 4 && strpos($message_text, $token) !== false) {
+                    $message_text = str_replace($token, substr($token, 0, 4) . 'xxx', $message_text);
+                }
+            }
+            if ($message_text !== $msg->getMessage()) {
+                $masked_msg = new Message($message_text, $msg->getType());
+                $masked_msg->setContext($msg->getContext());
+                $msg = $masked_msg;
             }
             $msgs[] = $msg;
         }

@@ -241,19 +241,10 @@ class Bitbucket implements ProviderInterface
 
     public static function tokenIndicatesUserApiToken(string $token): bool
     {
-        // The token can be passed either bare, or prefixed with the user (an
-        // email address) and a colon. Either way the actual API token part is
-        // what identifies it: it starts with ATAT and is more than 100 chars.
         $api_token = self::getApiToken($token);
-        return strlen($api_token) > 100 && strpos($api_token, 'ATAT') === 0;
+        return strlen($api_token) > 100 && str_starts_with($api_token, 'ATAT');
     }
 
-    /**
-     * Extracts the API token part from a possible "user:token" pair.
-     *
-     * The basic-auth username is always the static x-bitbucket-api-token-auth,
-     * so any user/email passed before the colon is discarded here.
-     */
     public static function getApiToken(string $token): string
     {
         if (strpos($token, ':') !== false) {

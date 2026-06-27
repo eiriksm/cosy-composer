@@ -552,15 +552,8 @@ class CosyComposer
         switch ($hostname) {
             case 'bitbucket.org':
                 $is_bitbucket = true;
-                if (Bitbucket::tokenIndicatesUserAppPassword($this->userToken)) {
-                    // The username will now be the thing before the colon.
+                if (Bitbucket::tokenIndicatesUserAppPassword($this->userToken) || Bitbucket::tokenIndicatesUserApiToken($this->userToken)) {
                     [$bitbucket_user, $this->userToken] = explode(':', $this->userToken);
-                } elseif (Bitbucket::tokenIndicatesUserApiToken($this->userToken)) {
-                    // API tokens are used as the password with a static
-                    // username. Any user/email passed before the colon is
-                    // discarded.
-                    $bitbucket_user = 'x-bitbucket-api-token-auth';
-                    $this->userToken = Bitbucket::getApiToken($this->userToken);
                 }
                 break;
 

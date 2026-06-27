@@ -31,7 +31,7 @@ class OutputFromUpdateTest extends Base
         $this->assertEquals(true, true);
     }
 
-    public function testTokenIsMaskedInOutput()
+    public function testTokenIsMaskedInOutput(): void
     {
         $c = $this->cosy;
         $token = 'user-token';

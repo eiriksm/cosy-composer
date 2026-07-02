@@ -803,28 +803,31 @@ class CosyComposer
             unset($data[$delta]);
             $this->log(sprintf('Skipping update of %s because it is not indicated as a security update and the config for the package suggested we should only do security updates', $item->name));
         }
-        // Remove block listed packages.
-        $block_list = $config->getBlockList();
-        if (!is_array($block_list)) {
-                $this->log('The format for the package block list was not correct. Expected an array, got ' . gettype($composer_json_data->extra->violinist->blacklist), Message::VIOLINIST_ERROR);
-        } else {
-            foreach ($data as $delta => $item) {
-                if (in_array($item->name, $block_list)) {
-                    $this->log(sprintf('Skipping update of %s because it is on the block list', $item->name), Message::BLACKLISTED, [
+        // Remove block listed packages. The block list is resolved per package,
+        // so that a group rule can override the block list for the packages it
+        // matches (for example un-blocking specific packages from a broader
+        // wildcard block list) through its own config->blocklist.
+        foreach ($data as $delta => $item) {
+            $block_list = $config->getConfigForPackage($item->name)->getBlockList();
+            if (!is_array($block_list)) {
+                $this->log('The format for the package block list was not correct. Expected an array, got ' . gettype($block_list), Message::VIOLINIST_ERROR);
+                continue;
+            }
+            if (in_array($item->name, $block_list)) {
+                $this->log(sprintf('Skipping update of %s because it is on the block list', $item->name), Message::BLACKLISTED, [
+                    'package' => $item->name,
+                ]);
+                unset($data[$delta]);
+                continue;
+            }
+            // Also try to match on wildcards.
+            foreach ($block_list as $block_list_item) {
+                if (fnmatch($block_list_item, $item->name)) {
+                    $this->log(sprintf('Skipping update of %s because it is on the block list by pattern %s', $item->name, $block_list_item), Message::BLACKLISTED, [
                         'package' => $item->name,
                     ]);
                     unset($data[$delta]);
-                    continue;
-                }
-                // Also try to match on wildcards.
-                foreach ($block_list as $block_list_item) {
-                    if (fnmatch($block_list_item, $item->name)) {
-                        $this->log(sprintf('Skipping update of %s because it is on the block list by pattern %s', $item->name, $block_list_item), Message::BLACKLISTED, [
-                            'package' => $item->name,
-                        ]);
-                        unset($data[$delta]);
-                        continue 2;
-                    }
+                    continue 2;
                 }
             }
         }

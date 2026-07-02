@@ -15,7 +15,7 @@ class GroupBlockListOverrideTest extends GroupsForDrupalCoreAndContribTest
 {
     protected $composerAssetFiles = 'composer-group-contrib-and-core-blocklist-override';
 
-    protected function placeInitialComposerLock()
+    protected function placeInitialComposerLock(): void
     {
         // The lock contents are identical to the base group fixture, so reuse
         // them instead of duplicating the (large) lock fixtures.

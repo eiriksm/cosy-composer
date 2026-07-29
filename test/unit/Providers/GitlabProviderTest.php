@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
+use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Gitlab;
 use Gitlab\Api\MergeRequests;
 use Gitlab\Api\Projects;
@@ -83,7 +84,7 @@ class GitlabProviderTest extends ProvidersTestBase
         $this->assertNull($provider->getDefaultBaseTimestamp($slug, 'main'));
     }
 
-    public function getProvider(object $client)
+    public function getProvider(object $client) : ProviderInterface
     {
         return new Gitlab($client);
     }
@@ -91,11 +92,6 @@ class GitlabProviderTest extends ProvidersTestBase
     public function getMockClient()
     {
         return $this->createMock(Client::class);
-    }
-
-    public function getBranchMethod()
-    {
-        return 'projects';
     }
 
     protected function getRepoClassName($context)

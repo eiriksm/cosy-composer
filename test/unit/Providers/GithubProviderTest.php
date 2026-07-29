@@ -2,10 +2,14 @@
 
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
+use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Github;
+use Github\Api\Issue;
+use Github\Api\Issue\Comments;
 use Github\Api\PullRequest;
 use Github\Api\Repo;
 use Github\Api\Repository\Forks;
+use Github\AuthMethod;
 use Github\Client;
 use Psr\Http\Message\ResponseInterface;
 use Violinist\Slug\Slug;
@@ -15,11 +19,11 @@ class GithubProviderTest extends ProvidersTestBase
     protected $repoClass = Repo::class;
 
     protected $authenticateArguments = [
-        'testUser', null, Client::AUTH_ACCESS_TOKEN,
+        'testUser', null, AuthMethod::ACCESS_TOKEN,
     ];
 
     protected $authenticatePrivateArguments = [
-        'testUser', null, Client::AUTH_ACCESS_TOKEN,
+        'testUser', null, AuthMethod::ACCESS_TOKEN,
     ];
 
     public function testRepoIsPrivate()
@@ -208,7 +212,7 @@ class GithubProviderTest extends ProvidersTestBase
     {
         list($user, $repo, $params) = $this->getPrData();
         $id = 42;
-        $slug = Slug::createFromUrl('http://github.com/' . $user . '/' . $repo);
+        $slug = Slug::createFromUrl("http://github.com/$user/$repo");
         $testresponse = 'testresponse';
         $mock_pr_api = $this->createMock(PullRequest::class);
         $mock_pr_api->expects($this->once())
@@ -224,7 +228,37 @@ class GithubProviderTest extends ProvidersTestBase
         $this->assertEquals($testresponse, $g->updatePullRequest($slug, $id, $params));
     }
 
-    public function getProvider(object $client)
+    public function testClosePullRequestWithComment()
+    {
+        list($user, $repo) = $this->getPrData();
+        $pr_id = 42;
+        $slug = Slug::createFromUrl("http://github.com/$user/$repo");
+        $mock_comments_api = $this->createMock(Comments::class);
+        $mock_comments_api->expects($this->once())
+            ->method('create')
+            ->with($user, $repo, $pr_id, [
+                'body' => 'comment'
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_issue_api = $this->createMock(Issue::class);
+        $mock_issue_api->expects($this->once())
+            ->method('comments')
+            ->willReturn($mock_comments_api);
+        $mock_pr_api = $this->createMock(PullRequest::class);
+        $mock_client->method('api')
+            ->willReturnCallback(function ($api) use ($mock_issue_api, $mock_pr_api) {
+                if ($api == 'issue') {
+                    return $mock_issue_api;
+                }
+                if ($api == 'pull_request') {
+                    return $mock_pr_api;
+                }
+            });
+        $g = new Github($mock_client);
+        $g->closePullRequestWithComment($slug, $pr_id, 'comment');
+    }
+
+    public function getProvider(object $client) : ProviderInterface
     {
         return new Github($client);
     }
@@ -233,10 +267,5 @@ class GithubProviderTest extends ProvidersTestBase
     public function getMockClient()
     {
         return $this->createMock(Client::class);
-    }
-
-    public function getBranchMethod()
-    {
-        return 'repo';
     }
 }

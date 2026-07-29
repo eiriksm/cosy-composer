@@ -3,12 +3,19 @@
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
 use Bitbucket\Client;
+use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Bitbucket;
-use PHPUnit\Framework\TestCase;
 use Violinist\Slug\Slug;
 
-class BitbucketProviderTest extends TestCase
+class BitbucketProviderTest extends ProvidersTestBase
 {
+    protected $authenticateArguments = [
+        Client::AUTH_HTTP_PASSWORD, 'testUser', 'testPassword'
+    ];
+
+    protected $authenticatePrivateArguments = [
+        Client::AUTH_OAUTH_TOKEN, 'testUser',
+    ];
     /** @param array<mixed> $branches */
     private function createBitbucketWithBranches(array $branches): Bitbucket
     {
@@ -19,6 +26,12 @@ class BitbucketProviderTest extends TestCase
         $mock->method('getBranches')
             ->willReturn($branches);
         return $mock;
+    }
+
+    public function testAutomerge()
+    {
+        // This does not apply to Bitbucket.
+        self::assertTrue(true);
     }
 
     public function testDefaultBaseTimestamp(): void
@@ -115,5 +128,16 @@ class BitbucketProviderTest extends TestCase
                 str_repeat('x', 120),
             ],
         ];
+    }
+
+    public function getProvider(object $client) : ProviderInterface
+    {
+        assert($client instanceof Client);
+        return new Bitbucket($client);
+    }
+
+    public function getMockClient()
+    {
+        return $this->createMock(Client::class);
     }
 }

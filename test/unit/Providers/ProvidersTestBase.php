@@ -16,8 +16,11 @@ use Violinist\Slug\Slug;
 
 abstract class ProvidersTestBase extends TestCase implements TestProviderInterface
 {
-    protected $authenticateArguments = [];
-    protected $authenticatePrivateArguments = [];
+    /** @var list<string|null> */
+    protected array $authenticateArguments = [];
+
+    /** @var list<string|null> */
+    protected array $authenticatePrivateArguments = [];
 
     public function testAuthenticate()
     {
@@ -45,7 +48,8 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
         $mock_repo_api = $this->createMock($this->getRepoClassName('show'));
-        $expects = $mock_repo_api->method('show');
+        $expects = $mock_repo_api->expects($this->once())
+            ->method('show');
         $mock_client = $this->getMockClient();
         switch (static::class) {
             case SelfHostedGitlabTest::class:
@@ -57,14 +61,12 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                 break;
 
             case BitbucketProviderTest::class:
-                $mock_workspace_api = $this->createMock(Workspaces::class);
-                $expects = $mock_workspace_api->method('show');
-                $mock_repo_api = $this->createMock(\Bitbucket\Api\Repositories::class);
-                $mock_repo_api->method('workspaces')
-                    ->willReturn($mock_workspace_api);
+                $mock_repositories = $this->createMock(\Bitbucket\Api\Repositories::class);
+                $mock_repositories->method('workspaces')
+                    ->willReturn($mock_repo_api);
                 $mock_client->expects($this->once())
                     ->method('repositories')
-                    ->willReturn($mock_repo_api);
+                    ->willReturn($mock_repositories);
                 break;
 
             default:
@@ -92,7 +94,8 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
         $mock_repo_api = $this->createMock($this->getRepoClassName('branches'));
-        $expects = $mock_repo_api->method('branches');
+        $expects = $mock_repo_api->expects($this->once())
+            ->method($this->getBranchesMethod());
 
         $mock_client = $this->getMockClient();
         $mock_response = [
@@ -113,20 +116,18 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                 break;
 
             case BitbucketProviderTest::class:
-                $mock_branches = $this->createMock(Workspaces\Refs\Branches::class);
-                $expects = $mock_branches->method('list');
-                $mockRefs = $this->createMock(Workspaces\Refs::class);
-                $mockRefs->method('branches')
-                    ->willReturn($mock_branches);
+                $mock_refs = $this->createMock(Workspaces\Refs::class);
+                $mock_refs->method('branches')
+                    ->willReturn($mock_repo_api);
                 $mock_workspace_api = $this->createMock(Workspaces::class);
                 $mock_workspace_api->method('refs')
-                    ->willReturn($mockRefs);
-                $mock_repo_api = $this->createMock(\Bitbucket\Api\Repositories::class);
-                $mock_repo_api->method('workspaces')
+                    ->willReturn($mock_refs);
+                $mock_repositories = $this->createMock(\Bitbucket\Api\Repositories::class);
+                $mock_repositories->method('workspaces')
                     ->willReturn($mock_workspace_api);
                 $mock_client->expects($this->once())
                     ->method('repositories')
-                    ->willReturn($mock_repo_api);
+                    ->willReturn($mock_repositories);
                 $mock_response = [
                     'values' => $mock_response,
                 ];
@@ -149,12 +150,12 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
             case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:
                 $mock_history = (new class {
-                    private $response;
-                    public function getLastResponse()
+                    private ?ResponseInterface $response = null;
+                    public function getLastResponse() : ?ResponseInterface
                     {
                         return $this->response;
                     }
-                    public function setResponse(ResponseInterface $response)
+                    public function setResponse(ResponseInterface $response) : void
                     {
                         $this->response = $response;
                     }
@@ -226,8 +227,8 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         $user = 'testUser';
         $repo = 'testRepo';
         $mock_pr = $this->createMock($this->getPrClassName());
-        $expects = $mock_pr
-            ->method('all');
+        $expects = $mock_pr->expects($this->once())
+            ->method($this->getPrListMethod());
         $mock_pr_response = [
             [
                 'head' => [
@@ -261,8 +262,6 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                 break;
 
             case BitbucketProviderTest::class:
-                $mock_pr = $this->createMock(Workspaces\PullRequests::class);
-                $expects = $mock_pr->method('list');
                 $mock_pr_response = array_map(function ($item) {
                     $item['state'] = Bitbucket::MERGE_REQUEST_STATE_OPEN;
                     $item['destination'] = [
@@ -292,11 +291,11 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                 $mock_workspace_api = $this->createMock(Workspaces::class);
                 $mock_workspace_api->method('pullRequests')
                     ->willReturn($mock_pr);
-                $mock_repos = $this->createMock(\Bitbucket\Api\Repositories::class);
-                $mock_repos->method('workspaces')
+                $mock_repositories = $this->createMock(\Bitbucket\Api\Repositories::class);
+                $mock_repositories->method('workspaces')
                     ->willReturn($mock_workspace_api);
                 $mock_client->method('repositories')
-                    ->willReturn($mock_repos);
+                    ->willReturn($mock_repositories);
                 break;
 
             default:
@@ -332,12 +331,12 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
             case SelfHostedGitlabTest::class:
             case GitlabProviderTest::class:
                 $mock_history = (new class {
-                    private $response;
-                    public function getLastResponse()
+                    private ?ResponseInterface $response = null;
+                    public function getLastResponse() : ?ResponseInterface
                     {
                         return $this->response;
                     }
-                    public function setResponse(ResponseInterface $response)
+                    public function setResponse(ResponseInterface $response) : void
                     {
                         $this->response = $response;
                     }
@@ -408,5 +407,21 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
     protected function getPrApiMethod()
     {
         return 'pr';
+    }
+
+    /**
+     * The method listing the branches, on the class from getRepoClassName('branches').
+     */
+    protected function getBranchesMethod()
+    {
+        return 'branches';
+    }
+
+    /**
+     * The method listing the pull requests, on the class from getPrClassName().
+     */
+    protected function getPrListMethod()
+    {
+        return 'all';
     }
 }

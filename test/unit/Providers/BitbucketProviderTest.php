@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
+use Bitbucket\Api\Repositories\Workspaces;
 use Bitbucket\Client;
 use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Bitbucket;
@@ -9,13 +10,16 @@ use Violinist\Slug\Slug;
 
 class BitbucketProviderTest extends ProvidersTestBase
 {
-    protected $authenticateArguments = [
+    /** @var list<string|null> */
+    protected array $authenticateArguments = [
         Client::AUTH_HTTP_PASSWORD, 'testUser', 'testPassword',
     ];
 
-    protected $authenticatePrivateArguments = [
+    /** @var list<string|null> */
+    protected array $authenticatePrivateArguments = [
         Client::AUTH_OAUTH_TOKEN, 'testUser',
     ];
+
     /** @param array<mixed> $branches */
     private function createBitbucketWithBranches(array $branches): Bitbucket
     {
@@ -28,7 +32,7 @@ class BitbucketProviderTest extends ProvidersTestBase
         return $mock;
     }
 
-    public function testAutomerge()
+    public function testAutomerge() : void
     {
         // This does not apply to Bitbucket.
         self::assertTrue(true);
@@ -139,5 +143,28 @@ class BitbucketProviderTest extends ProvidersTestBase
     public function getMockClient()
     {
         return $this->createMock(Client::class);
+    }
+
+    protected function getRepoClassName($context)
+    {
+        if ($context === 'branches') {
+            return Workspaces\Refs\Branches::class;
+        }
+        return Workspaces::class;
+    }
+
+    protected function getBranchesMethod()
+    {
+        return 'list';
+    }
+
+    protected function getPrClassName()
+    {
+        return Workspaces\PullRequests::class;
+    }
+
+    protected function getPrListMethod()
+    {
+        return 'list';
     }
 }

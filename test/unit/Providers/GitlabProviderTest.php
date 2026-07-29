@@ -12,12 +12,14 @@ use Violinist\Slug\Slug;
 
 class GitlabProviderTest extends ProvidersTestBase
 {
-    protected $authenticateArguments = [
+    /** @var list<string|null> */
+    protected array $authenticateArguments = [
         'testUser',
         Client::AUTH_OAUTH_TOKEN,
     ];
 
-    protected $authenticatePrivateArguments = [
+    /** @var list<string|null> */
+    protected array $authenticatePrivateArguments = [
         'testUser',
         Client::AUTH_OAUTH_TOKEN,
     ];

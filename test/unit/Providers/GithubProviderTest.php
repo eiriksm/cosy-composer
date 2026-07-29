@@ -18,11 +18,13 @@ class GithubProviderTest extends ProvidersTestBase
 {
     protected $repoClass = Repo::class;
 
-    protected $authenticateArguments = [
+    /** @var list<string|null> */
+    protected array $authenticateArguments = [
         'testUser', null, AuthMethod::ACCESS_TOKEN,
     ];
 
-    protected $authenticatePrivateArguments = [
+    /** @var list<string|null> */
+    protected array $authenticatePrivateArguments = [
         'testUser', null, AuthMethod::ACCESS_TOKEN,
     ];
 
@@ -228,7 +230,7 @@ class GithubProviderTest extends ProvidersTestBase
         $this->assertEquals($testresponse, $g->updatePullRequest($slug, $id, $params));
     }
 
-    public function testClosePullRequestWithComment()
+    public function testClosePullRequestWithComment() : void
     {
         list($user, $repo) = $this->getPrData();
         $pr_id = 42;

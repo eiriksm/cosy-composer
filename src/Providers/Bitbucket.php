@@ -9,6 +9,7 @@ use Violinist\Slug\Slug;
 
 class Bitbucket implements ProviderInterface
 {
+    const MERGE_REQUEST_STATE_OPEN = 'OPEN';
 
     private $cache;
 
@@ -24,9 +25,10 @@ class Bitbucket implements ProviderInterface
 
     public function authenticate($user, $token)
     {
-        $this->client->authenticate(Client::AUTH_OAUTH_TOKEN, $user);
         if ($user && $token) {
             $this->client->authenticate(Client::AUTH_HTTP_PASSWORD, $user, $token);
+        } else {
+            $this->client->authenticate(Client::AUTH_OAUTH_TOKEN, $user);
         }
     }
 

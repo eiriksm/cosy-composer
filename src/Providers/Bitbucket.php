@@ -104,7 +104,7 @@ class Bitbucket implements ProviderInterface
         ];
         $prs_named = new NamedPrs();
         foreach ($prs["values"] as $pr) {
-            if ($pr["state"] !== 'OPEN') {
+            if ($pr["state"] !== self::MERGE_REQUEST_STATE_OPEN) {
                 continue;
             }
             $data = [

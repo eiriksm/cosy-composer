@@ -282,7 +282,7 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
                     $item['source'] = [
                         'branch' => [
                             'name' => $item['head']['ref'],
-                        ]
+                        ],
                     ];
                     return $item;
                 }, $mock_pr_response);

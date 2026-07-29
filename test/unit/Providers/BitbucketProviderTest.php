@@ -10,7 +10,7 @@ use Violinist\Slug\Slug;
 class BitbucketProviderTest extends ProvidersTestBase
 {
     protected $authenticateArguments = [
-        Client::AUTH_HTTP_PASSWORD, 'testUser', 'testPassword'
+        Client::AUTH_HTTP_PASSWORD, 'testUser', 'testPassword',
     ];
 
     protected $authenticatePrivateArguments = [

@@ -237,7 +237,7 @@ class GithubProviderTest extends ProvidersTestBase
         $mock_comments_api->expects($this->once())
             ->method('create')
             ->with($user, $repo, $pr_id, [
-                'body' => 'comment'
+                'body' => 'comment',
             ]);
         $mock_client = $this->getMockClient();
         $mock_issue_api = $this->createMock(Issue::class);

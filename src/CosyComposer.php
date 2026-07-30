@@ -13,8 +13,8 @@ use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\CosyComposer\Updater\IndividualUpdater;
 use GuzzleHttp\Psr7\Request;
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
-use Http\Client\HttpClient;
 use League\Flysystem\FilesystemAdapter;
+use Psr\Http\Client\ClientInterface;
 use Symfony\Component\Process\Process;
 use Violinist\AllowListHandler\AllowListHandler;
 use Violinist\ComposerLockData\ComposerLockData;
@@ -99,7 +99,7 @@ class CosyComposer
     protected $project;
 
     /**
-     * @var HttpClient
+     * @var ClientInterface|null
      */
     protected $httpClient;
 
@@ -189,21 +189,15 @@ class CosyComposer
         $this->logger = $logger;
     }
 
-    /**
-     * @return HttpClient
-     */
-    public function getHttpClient()
+    public function getHttpClient() : ClientInterface
     {
-        if (!$this->httpClient instanceof HttpClient) {
+        if (!$this->httpClient instanceof ClientInterface) {
             $this->httpClient = new GuzzleClient();
         }
         return $this->httpClient;
     }
 
-    /**
-     * @param HttpClient $httpClient
-     */
-    public function setHttpClient(HttpClient $httpClient)
+    public function setHttpClient(ClientInterface $httpClient) : void
     {
         $this->httpClient = $httpClient;
     }
@@ -682,7 +676,7 @@ class CosyComposer
         $this->lockFileContents = $initial_composer_lock_data;
         if ($config->shouldAlwaysUpdateAll() && !$initial_composer_lock_data) {
             $this->log('Update all enabled, but no lock file present. This is not supported');
-            $this->cleanUp();
+            $this->cleanUp($config);
             return;
         }
         $this->doComposerInstall($config);
@@ -757,7 +751,7 @@ class CosyComposer
               'data' => $raw_data,
               'data_guessed' => $data,
             ]);
-            $this->cleanUp();
+            $this->cleanUp($config);
             return;
         }
         // Only update the ones in the allow list, if indicated.
@@ -864,7 +858,7 @@ class CosyComposer
         }, $data);
         if (empty($data) && !self::shouldEnableCloseNoLongerRelevant()) {
             $this->log('No updates found.');
-            $this->cleanUp();
+            $this->cleanUp($config);
             return;
         }
         if (empty($data)) {
@@ -904,7 +898,7 @@ class CosyComposer
             // actually have open violinist PRs, then we should for sure close
             // them all.
             $this->closePrsForNoLongerRelevantPackages($prs_named, $all_outdated_package_names, $composer_lock_after_installing, $default_branch);
-            $this->cleanUp();
+            $this->cleanUp($config);
             return;
         }
         // Try to log what updates are found.
@@ -1018,7 +1012,7 @@ class CosyComposer
         }
         if (!count($data)) {
             $this->log('No updates that have not already been pushed.');
-            $this->cleanUp();
+            $this->cleanUp($config);
             return;
         }
 
@@ -1071,7 +1065,7 @@ class CosyComposer
                 break;
         }
         // Clean up.
-        $this->cleanUp();
+        $this->cleanUp($config);
     }
 
     protected function getPrParamsCreator()
@@ -1261,10 +1255,10 @@ class CosyComposer
     /**
      * Cleans up after the run.
      */
-    private function cleanUp()
+    private function cleanUp(Config $config)
     {
         // Run composer install again, so we can get rid of newly installed updates for next run.
-        $this->execCommand(['composer', 'install', '--no-ansi', '-n'], false, 1200);
+        $this->doComposerInstall($config);
         $this->chdir('/tmp');
         $this->log('Cleaning up after update check.');
         $this->execCommand(['rm', '-rf', $this->tmpDir], false, 300);

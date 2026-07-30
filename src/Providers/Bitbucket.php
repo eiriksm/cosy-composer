@@ -23,7 +23,7 @@ class Bitbucket implements ProviderInterface
         $this->client = $client;
     }
 
-    public function authenticate(string $user, ?string $token)
+    public function authenticate(string $user, ?string $token) : void
     {
         if ($user && $token) {
             $this->client->authenticate(Client::AUTH_HTTP_PASSWORD, $user, $token);
@@ -32,7 +32,7 @@ class Bitbucket implements ProviderInterface
         }
     }
 
-    public function authenticatePrivate(string $user, ?string $token)
+    public function authenticatePrivate(string $user, ?string $token) : void
     {
         $this->client->authenticate(Client::AUTH_OAUTH_TOKEN, $user);
     }

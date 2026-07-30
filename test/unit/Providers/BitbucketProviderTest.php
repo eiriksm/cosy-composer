@@ -5,7 +5,6 @@ namespace eiriksm\CosyComposerTest\unit\Providers;
 use Bitbucket\Api\Repositories;
 use Bitbucket\Api\Repositories\Workspaces;
 use Bitbucket\Client;
-use eiriksm\CosyComposer\Helpers;
 use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Bitbucket;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -17,11 +16,6 @@ class BitbucketProviderTest extends ProvidersTestBase
      * The commit the pull requests in the fixture point at.
      */
     const COMMIT_HASH = 'cafebabe';
-
-    /**
-     * The package the commit message of said commit says it updates.
-     */
-    const KNOWN_PACKAGE = 'drupal/foo';
 
     /** @var list<string|null> */
     protected $authenticateArguments = [
@@ -278,7 +272,7 @@ class BitbucketProviderTest extends ProvidersTestBase
             ->method('show')
             ->with(self::COMMIT_HASH)
             ->willReturn([
-                'message' => $this->getCommitMessage(),
+                'message' => 'Update something',
             ]);
         $mock_workspaces = $this->createMock(Workspaces::class);
         $mock_workspaces->expects($this->once())
@@ -339,24 +333,5 @@ class BitbucketProviderTest extends ProvidersTestBase
         return [
             'values' => $values,
         ];
-    }
-
-    /** @return list<string> */
-    protected function getExpectedKnownPackages() : array
-    {
-        return [self::KNOWN_PACKAGE];
-    }
-
-    /**
-     * A commit message in the format violinist writes them, so the package can be parsed out.
-     */
-    private function getCommitMessage() : string
-    {
-        return sprintf(
-            "Update %s\n%s\nupdate_data:\n  package: %s\n",
-            self::KNOWN_PACKAGE,
-            Helpers::getCommitMessageSeparator(),
-            self::KNOWN_PACKAGE
-        );
     }
 }

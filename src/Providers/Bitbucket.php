@@ -226,7 +226,7 @@ class Bitbucket implements ProviderInterface
         return false;
     }
 
-    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment)
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void
     {
         $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->comments($pr_id)->create([
             'content' => [

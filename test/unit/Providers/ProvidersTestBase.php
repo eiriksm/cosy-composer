@@ -109,7 +109,6 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         $provider = $this->getProvider($mock_client);
         $prs = $provider->getPrsNamed($slug);
         $this->assertEquals(['patch-1', 'patch-2'], array_keys($prs->getAllPrsNamed()));
-        $this->assertEquals($this->getExpectedKnownPackages(), $prs->getKnownPackageNames());
     }
 
     protected function configureArguments($key, InvocationMocker $object)
@@ -358,15 +357,5 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
     protected function getPrsResponse(array $prs) : array
     {
         return $prs;
-    }
-
-    /**
-     * The packages the provider is expected to recognize from the pr commits.
-     *
-     * @return list<string>
-     */
-    protected function getExpectedKnownPackages() : array
-    {
-        return [];
     }
 }

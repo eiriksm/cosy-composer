@@ -1346,11 +1346,6 @@ parameters:
 			path: src/Providers/Github.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:closePullRequestWithComment\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Providers/Github.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:closePullRequestWithComment\\(\\) has parameter \\$comment with no type specified\\.$#"
 			count: 1
 			path: src/Providers/Github.php
@@ -6156,21 +6151,6 @@ parameters:
 			path: test/unit/Providers/GithubProviderTest.php
 
 		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\GithubProviderTest\\:\\:\\$authenticateArguments has no type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/GithubProviderTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\GithubProviderTest\\:\\:\\$authenticatePrivateArguments has no type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/GithubProviderTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\GithubProviderTest\\:\\:\\$repoClass has no type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/GithubProviderTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\GitlabProviderTest\\:\\:getPrApiMethod\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/unit/Providers/GitlabProviderTest.php
@@ -6194,36 +6174,6 @@ parameters:
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\GitlabProviderTest\\:\\:testRepoIsPrivate\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/unit/Providers/GitlabProviderTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\GitlabProviderTest\\:\\:\\$authenticateArguments has no type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/GitlabProviderTest.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\GitlabProviderTest\\:\\:\\$authenticatePrivateArguments has no type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/GitlabProviderTest.php
-
-		-
-			message: "#^Method class@anonymous/test/unit/Providers/ProvidersTestBase\\.php\\:115\\:\\:getLastResponse\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/ProvidersTestBase.php
-
-		-
-			message: "#^Method class@anonymous/test/unit/Providers/ProvidersTestBase\\.php\\:115\\:\\:setResponse\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/ProvidersTestBase.php
-
-		-
-			message: "#^Method class@anonymous/test/unit/Providers/ProvidersTestBase\\.php\\:255\\:\\:getLastResponse\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/ProvidersTestBase.php
-
-		-
-			message: "#^Method class@anonymous/test/unit/Providers/ProvidersTestBase\\.php\\:255\\:\\:setResponse\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/ProvidersTestBase.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\ProvidersTestBase\\:\\:configureArguments\\(\\) has no return type specified\\.$#"
@@ -6302,21 +6252,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\ProvidersTestBase\\:\\:testPrsNamed\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/ProvidersTestBase.php
-
-		-
-			message: "#^Property class@anonymous/test/unit/Providers/ProvidersTestBase\\.php\\:115\\:\\:\\$response has no type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/ProvidersTestBase.php
-
-		-
-			message: "#^Property class@anonymous/test/unit/Providers/ProvidersTestBase\\.php\\:255\\:\\:\\$response has no type specified\\.$#"
-			count: 1
-			path: test/unit/Providers/ProvidersTestBase.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposerTest\\\\unit\\\\Providers\\\\ProvidersTestBase\\:\\:\\$authenticateArguments has no type specified\\.$#"
 			count: 1
 			path: test/unit/Providers/ProvidersTestBase.php
 

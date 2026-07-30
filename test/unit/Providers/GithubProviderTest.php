@@ -16,15 +16,13 @@ use Violinist\Slug\Slug;
 
 class GithubProviderTest extends ProvidersTestBase
 {
-    protected $repoClass = Repo::class;
-
     /** @var list<string|null> */
-    protected array $authenticateArguments = [
+    protected $authenticateArguments = [
         'testUser', null, AuthMethod::ACCESS_TOKEN,
     ];
 
     /** @var list<string|null> */
-    protected array $authenticatePrivateArguments = [
+    protected $authenticatePrivateArguments = [
         'testUser', null, AuthMethod::ACCESS_TOKEN,
     ];
 
@@ -247,6 +245,11 @@ class GithubProviderTest extends ProvidersTestBase
             ->method('comments')
             ->willReturn($mock_comments_api);
         $mock_pr_api = $this->createMock(PullRequest::class);
+        $mock_pr_api->expects($this->once())
+            ->method('update')
+            ->with($user, $repo, $pr_id, [
+                'state' => 'closed',
+            ]);
         $mock_client->method('api')
             ->willReturnCallback(function ($api) use ($mock_issue_api, $mock_pr_api) {
                 if ($api == 'issue') {
@@ -255,6 +258,7 @@ class GithubProviderTest extends ProvidersTestBase
                 if ($api == 'pull_request') {
                     return $mock_pr_api;
                 }
+                $this->fail("Unexpected api requested: $api");
             });
         $g = new Github($mock_client);
         $g->closePullRequestWithComment($slug, $pr_id, 'comment');
@@ -264,7 +268,6 @@ class GithubProviderTest extends ProvidersTestBase
     {
         return new Github($client);
     }
-
 
     public function getMockClient()
     {

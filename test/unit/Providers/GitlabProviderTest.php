@@ -8,18 +8,19 @@ use Gitlab\Api\MergeRequests;
 use Gitlab\Api\Projects;
 use Gitlab\Api\Repositories;
 use Gitlab\Client;
+use PHPUnit\Framework\MockObject\MockObject;
 use Violinist\Slug\Slug;
 
 class GitlabProviderTest extends ProvidersTestBase
 {
     /** @var list<string|null> */
-    protected array $authenticateArguments = [
+    protected $authenticateArguments = [
         'testUser',
         Client::AUTH_OAUTH_TOKEN,
     ];
 
     /** @var list<string|null> */
-    protected array $authenticatePrivateArguments = [
+    protected $authenticatePrivateArguments = [
         'testUser',
         Client::AUTH_OAUTH_TOKEN,
     ];
@@ -112,5 +113,66 @@ class GitlabProviderTest extends ProvidersTestBase
     protected function getPrApiMethod()
     {
         return 'mr';
+    }
+
+    protected function configureShowClient(MockObject $client, MockObject $show_api, string $user, string $repo) : void
+    {
+        $client->expects($this->once())
+            ->method('projects')
+            ->willReturn($show_api);
+    }
+
+    /** @return list<string> */
+    protected function getShowArguments(string $user, string $repo) : array
+    {
+        return ["$user/$repo"];
+    }
+
+    protected function configureBranchesClient(
+        MockObject $client,
+        MockObject $branches_api,
+        string $user,
+        string $repo
+    ) : void {
+        $client->expects($this->once())
+            ->method('repositories')
+            ->willReturn($branches_api);
+    }
+
+    /** @return list<string> */
+    protected function getBranchesArguments(string $user, string $repo) : array
+    {
+        return ["$user/$repo"];
+    }
+
+    protected function configureLastResponse(MockObject $client) : void
+    {
+        // Gitlab paginates through its own response history, so there is no last
+        // response on the client to stub.
+    }
+
+    protected function configureAutomergeClient(MockObject $client) : void
+    {
+        $mock_merge_requests = $this->createMock(MergeRequests::class);
+        $mock_merge_requests->method('merge')
+            ->willReturn([
+                'merge_when_pipeline_succeeds' => true,
+            ]);
+        $client->method('mergeRequests')
+            ->willReturn($mock_merge_requests);
+    }
+
+    protected function configurePrsClient(MockObject $client, MockObject $prs_api, string $user, string $repo) : void
+    {
+        $client->method('mergeRequests')
+            ->willReturn($prs_api);
+        $client->method('repositories')
+            ->willReturn($this->createMock(Repositories::class));
+    }
+
+    /** @return list<string> */
+    protected function getPrsArguments(string $user, string $repo) : array
+    {
+        return ["$user/$repo"];
     }
 }

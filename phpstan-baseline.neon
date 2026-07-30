@@ -6257,7 +6257,7 @@ parameters:
 
 		-
 			message: "#^Unable to resolve the template type T in call to method PHPUnit\\\\Framework\\\\TestCase\\:\\:createMock\\(\\)$#"
-			count: 4
+			count: 3
 			path: test/unit/Providers/ProvidersTestBase.php
 
 		-

@@ -676,7 +676,7 @@ class CosyComposer
         $this->lockFileContents = $initial_composer_lock_data;
         if ($config->shouldAlwaysUpdateAll() && !$initial_composer_lock_data) {
             $this->log('Update all enabled, but no lock file present. This is not supported');
-            $this->cleanUp();
+            $this->cleanUp($config);
             return;
         }
         $this->doComposerInstall($config);
@@ -751,7 +751,7 @@ class CosyComposer
               'data' => $raw_data,
               'data_guessed' => $data,
             ]);
-            $this->cleanUp();
+            $this->cleanUp($config);
             return;
         }
         // Only update the ones in the allow list, if indicated.
@@ -858,7 +858,7 @@ class CosyComposer
         }, $data);
         if (empty($data) && !self::shouldEnableCloseNoLongerRelevant()) {
             $this->log('No updates found.');
-            $this->cleanUp();
+            $this->cleanUp($config);
             return;
         }
         if (empty($data)) {
@@ -898,7 +898,7 @@ class CosyComposer
             // actually have open violinist PRs, then we should for sure close
             // them all.
             $this->closePrsForNoLongerRelevantPackages($prs_named, $all_outdated_package_names, $composer_lock_after_installing, $default_branch);
-            $this->cleanUp();
+            $this->cleanUp($config);
             return;
         }
         // Try to log what updates are found.
@@ -1012,7 +1012,7 @@ class CosyComposer
         }
         if (!count($data)) {
             $this->log('No updates that have not already been pushed.');
-            $this->cleanUp();
+            $this->cleanUp($config);
             return;
         }
 
@@ -1065,7 +1065,7 @@ class CosyComposer
                 break;
         }
         // Clean up.
-        $this->cleanUp();
+        $this->cleanUp($config);
     }
 
     protected function getPrParamsCreator()
@@ -1255,10 +1255,10 @@ class CosyComposer
     /**
      * Cleans up after the run.
      */
-    private function cleanUp()
+    private function cleanUp(Config $config)
     {
         // Run composer install again, so we can get rid of newly installed updates for next run.
-        $this->execCommand(['composer', 'install', '--no-ansi', '-n'], false, 1200);
+        $this->doComposerInstall($config);
         $this->chdir('/tmp');
         $this->log('Cleaning up after update check.');
         $this->execCommand(['rm', '-rf', $this->tmpDir], false, 300);

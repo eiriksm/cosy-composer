@@ -1006,36 +1006,6 @@ parameters:
 			path: src/ProviderInterface.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ProviderInterface\\:\\:authenticate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/ProviderInterface.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ProviderInterface\\:\\:authenticate\\(\\) has parameter \\$token with no type specified\\.$#"
-			count: 1
-			path: src/ProviderInterface.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ProviderInterface\\:\\:authenticate\\(\\) has parameter \\$user with no type specified\\.$#"
-			count: 1
-			path: src/ProviderInterface.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ProviderInterface\\:\\:authenticatePrivate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/ProviderInterface.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ProviderInterface\\:\\:authenticatePrivate\\(\\) has parameter \\$token with no type specified\\.$#"
-			count: 1
-			path: src/ProviderInterface.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\ProviderInterface\\:\\:authenticatePrivate\\(\\) has parameter \\$user with no type specified\\.$#"
-			count: 1
-			path: src/ProviderInterface.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\ProviderInterface\\:\\:closePullRequestWithComment\\(\\) has parameter \\$comment with no type specified\\.$#"
 			count: 1
 			path: src/ProviderInterface.php
@@ -1127,36 +1097,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:addLabels\\(\\) has parameter \\$pr_data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Providers/Bitbucket.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:authenticate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Providers/Bitbucket.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:authenticate\\(\\) has parameter \\$token with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Bitbucket.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:authenticate\\(\\) has parameter \\$user with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Bitbucket.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:authenticatePrivate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Providers/Bitbucket.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:authenticatePrivate\\(\\) has parameter \\$token with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Bitbucket.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:authenticatePrivate\\(\\) has parameter \\$user with no type specified\\.$#"
 			count: 1
 			path: src/Providers/Bitbucket.php
 
@@ -1301,36 +1241,6 @@ parameters:
 			path: src/Providers/Github.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:authenticate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Providers/Github.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:authenticate\\(\\) has parameter \\$token with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Github.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:authenticate\\(\\) has parameter \\$user with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Github.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:authenticatePrivate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Providers/Github.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:authenticatePrivate\\(\\) has parameter \\$token with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Github.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:authenticatePrivate\\(\\) has parameter \\$user with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Github.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:closePullRequestWithComment\\(\\) has parameter \\$comment with no type specified\\.$#"
 			count: 1
 			path: src/Providers/Github.php
@@ -1451,21 +1361,6 @@ parameters:
 			path: src/Providers/Gitlab.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Gitlab\\:\\:authenticate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Providers/Gitlab.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Gitlab\\:\\:authenticate\\(\\) has parameter \\$token with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Gitlab.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Gitlab\\:\\:authenticate\\(\\) has parameter \\$user with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Gitlab.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Gitlab\\:\\:authenticatePersonalAccessToken\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: src/Providers/Gitlab.php
@@ -1477,21 +1372,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Gitlab\\:\\:authenticatePersonalAccessToken\\(\\) has parameter \\$user with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Gitlab.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Gitlab\\:\\:authenticatePrivate\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Providers/Gitlab.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Gitlab\\:\\:authenticatePrivate\\(\\) has parameter \\$token with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Gitlab.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Gitlab\\:\\:authenticatePrivate\\(\\) has parameter \\$user with no type specified\\.$#"
 			count: 1
 			path: src/Providers/Gitlab.php
 

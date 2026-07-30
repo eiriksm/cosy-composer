@@ -6,15 +6,19 @@ use eiriksm\CosyComposer\ProviderInterface;
 use Github\Api\GraphQL;
 use Github\Api\PullRequest;
 use Github\Api\Repo;
-use Gitlab\Api\Repositories;
 use PHPUnit\Framework\MockObject\Builder\InvocationMocker;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Violinist\Slug\Slug;
 
 abstract class ProvidersTestBase extends TestCase implements TestProviderInterface
 {
+    /** @var list<string|null> */
     protected $authenticateArguments = [];
+
+    /** @var list<string|null> */
+    protected $authenticatePrivateArguments = [];
 
     public function testAuthenticate()
     {
@@ -41,31 +45,13 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
-        $mock_repo_api = $this->createMock($this->getRepoClassName('show'));
-        $expects = $mock_repo_api->expects($this->once())
-            ->method('show');
+        $mock_show_api = $this->createMock($this->getRepoClassName('show'));
+        $mock_show_api->expects($this->once())
+            ->method('show')
+            ->with(...$this->getShowArguments($user, $repo))
+            ->willReturn($this->getShowResponse());
         $mock_client = $this->getMockClient();
-        switch (static::class) {
-            case SelfHostedGitlabTest::class:
-            case GitlabProviderTest::class:
-                $expects = $expects->with("$user/$repo");
-                $mock_client->expects($this->once())
-                    ->method('projects')
-                    ->willReturn($mock_repo_api);
-                break;
-
-            default:
-                $mock_client->expects($this->once())
-                    ->method('api')
-                    ->willReturn($mock_repo_api);
-                $expects = $expects->with($user, $repo);
-                break;
-        }
-
-        $expects->willReturn([
-            'default_branch' => 'master',
-        ]);
-
+        $this->configureShowClient($mock_client, $mock_show_api, $user, $repo);
         $provider = $this->getProvider($mock_client);
         $this->assertEquals('master', $provider->getDefaultBranch($slug));
     }
@@ -75,63 +61,21 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
-        $mock_repo_api = $this->createMock($this->getRepoClassName('branches'));
-        $expects = $mock_repo_api->expects($this->once())
-            ->method('branches');
-
-        $mock_client = $this->getMockClient();
-        switch (static::class) {
-            case SelfHostedGitlabTest::class:
-            case GitlabProviderTest::class:
-                $mock_client->expects($this->once())
-                    ->method('repositories')
-                    ->willReturn($mock_repo_api);
-                $expects = $expects->with("$user/$repo");
-                break;
-
-            default:
-                $mock_client->expects($this->once())
-                    ->method('api')
-                    ->with('repo')
-                    ->willReturn($mock_repo_api);
-                $expects = $expects->with($user, $repo);
-                break;
-        }
-        $expects->willReturn([
+        $mock_branches_api = $this->createMock($this->getRepoClassName('branches'));
+        $mock_branches_api->expects($this->once())
+            ->method($this->getBranchesMethod())
+            ->with(...$this->getBranchesArguments($user, $repo))
+            ->willReturn($this->getBranchesResponse([
                 [
                     'name' => 'master',
                 ],
                 [
                     'name' => 'develop',
                 ],
-            ]);
-
-        $mock_response = $this->createMock(ResponseInterface::class);
-        $mock_response->method('getHeader')
-            ->willReturn([]);
-        switch (static::class) {
-            case SelfHostedGitlabTest::class:
-            case GitlabProviderTest::class:
-                $mock_history = (new class {
-                    private $response;
-                    public function getLastResponse()
-                    {
-                        return $this->response;
-                    }
-                    public function setResponse(ResponseInterface $response)
-                    {
-                        $this->response = $response;
-                    }
-                });
-                $mock_history->setResponse($mock_response);
-                break;
-
-            default:
-                $mock_client->expects($this->once())
-                    ->method('getLastResponse')
-                    ->willReturn($mock_response);
-                break;
-        }
+            ]));
+        $mock_client = $this->getMockClient();
+        $this->configureBranchesClient($mock_client, $mock_branches_api, $user, $repo);
+        $this->configureLastResponse($mock_client);
         $provider = $this->getProvider($mock_client);
         $this->assertEquals(['master', 'develop'], $provider->getBranchesFlattened($slug));
     }
@@ -140,48 +84,13 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
     {
         $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
         $mock_client = $this->getMockClient();
-        $mock_pr = $this->createMock($this->getPrClassName());
-        $merge_params = [];
-        switch (static::class) {
-            case SelfHostedGitlabTest::class:
-            case GitlabProviderTest::class:
-                $mock_pr->method('merge')
-                    ->willReturnCallback(function ($project_id, $mr_id, $data) use (&$merge_params) {
-                        $merge_params = $data;
-                        return [
-                            'merge_when_pipeline_succeeds' => true,
-                        ];
-                    });
-                $mock_client->method('mergeRequests')
-                    ->willReturn($mock_pr);
-                break;
-
-            case GithubProviderTest::class:
-                $mock_g = $this->createMock(GraphQL::class);
-                $mock_g->method('execute')
-                    ->willReturn([
-                        'data' => [
-                            'repository' => [
-                                'pullRequest' => [
-                                    'merge' => [
-                                        'pullRequest' => [
-                                            'state' => 'MERGED',
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ]);
-                $mock_client->method('api')
-                    ->willReturn($mock_g);
-                break;
-        }
+        $this->configureAutomergeClient($mock_client);
         $provider = $this->getProvider($mock_client);
         $result = $provider->enableAutomerge([
             'node_id' => 12345,
             'number' => 12345,
         ], $slug);
-        self::assertEquals(true, $result);
+        self::assertSame($this->getExpectedAutomergeResult(), $result);
     }
 
     public function testPrsNamed()
@@ -189,94 +98,17 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
         $user = 'testUser';
         $repo = 'testRepo';
-        $mock_pr = $this->createMock($this->getPrClassName());
-        $expects = $mock_pr->expects($this->once())
-            ->method('all');
-        switch (static::class) {
-            case SelfHostedGitlabTest::class:
-            case GitlabProviderTest::class:
-                $expects = $expects->with("$user/$repo");
-                break;
-
-            default:
-                $expects = $expects->with($user, $repo);
-                break;
-        }
-
-        $expects->willReturn([
-                [
-                    'head' => [
-                        'ref' => 'patch-1',
-                    ],
-                    'state' => 'opened',
-                    'source_branch' => 'patch-1',
-                    'target_branch' => 'master',
-                    'title' => 'Patch 1',
-                    'iid' => 123,
-                    'sha' => 'abab',
-                ],
-                [
-                    'head' => [
-                        'ref' => 'patch-2',
-                    ],
-                    'state' => 'opened',
-                    'source_branch' => 'patch-2',
-                    'target_branch' => 'master',
-                    'title' => 'Patch 2',
-                    'iid' => 456,
-                    'sha' => 'fefe',
-                ],
-            ]);
-        /** @var \PHPUnit\Framework\MockObject\MockObject $mock_client */
+        $mock_prs_api = $this->createMock($this->getPrClassName());
+        $mock_prs_api->expects($this->once())
+            ->method($this->getPrListMethod())
+            ->with(...$this->getPrsArguments($user, $repo))
+            ->willReturn($this->getPrsResponse($this->getPrsFixture()));
         $mock_client = $this->getMockClient();
-        switch (static::class) {
-            case SelfHostedGitlabTest::class:
-            case GitlabProviderTest::class:
-                $mock_repo = $this->createMock(Repositories::class);
-                $mock_client->method('mergeRequests')
-                    ->willReturn($mock_pr);
-                $mock_client->method('repositories')
-                    ->willReturn($mock_repo);
-                break;
-
-            default:
-                $client_expects = $mock_client->expects($this->any());
-                $client_expects->method('api')
-                    ->with($this->getPrApiMethod())
-                    ->willReturn($mock_pr);
-                break;
-        }
-        $mock_response = $this->createMock(ResponseInterface::class);
-        $mock_response->method('getHeader')
-            ->willReturn([]);
-        switch (static::class) {
-            case SelfHostedGitlabTest::class:
-            case GitlabProviderTest::class:
-                $mock_history = (new class {
-                    private $response;
-                    public function getLastResponse()
-                    {
-                        return $this->response;
-                    }
-                    public function setResponse(ResponseInterface $response)
-                    {
-                        $this->response = $response;
-                    }
-                });
-                $mock_history->setResponse($mock_response);
-                break;
-
-            default:
-                $mock_client->expects($this->once())
-                    ->method('getLastResponse')
-                    ->willReturn($mock_response);
-                break;
-        }
-        /** @var ProviderInterface $provider */
+        $this->configurePrsClient($mock_client, $mock_prs_api, $user, $repo);
+        $this->configureLastResponse($mock_client);
         $provider = $this->getProvider($mock_client);
         $prs = $provider->getPrsNamed($slug);
-        $named_array = $prs->getAllPrsNamed();
-        $this->assertEquals(['patch-1', 'patch-2'], array_keys($named_array));
+        $this->assertEquals(['patch-1', 'patch-2'], array_keys($prs->getAllPrsNamed()));
     }
 
     protected function configureArguments($key, InvocationMocker $object)
@@ -329,5 +161,201 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
     protected function getPrApiMethod()
     {
         return 'pr';
+    }
+
+    /**
+     * The method listing the branches, on the class from getRepoClassName('branches').
+     */
+    protected function getBranchesMethod() : string
+    {
+        return 'branches';
+    }
+
+    /**
+     * The method listing the pull requests, on the class from getPrClassName().
+     */
+    protected function getPrListMethod() : string
+    {
+        return 'all';
+    }
+
+    /**
+     * Points the client at the api object showing a single repo.
+     */
+    protected function configureShowClient(MockObject $client, MockObject $show_api, string $user, string $repo) : void
+    {
+        $client->expects($this->once())
+            ->method('api')
+            ->willReturn($show_api);
+    }
+
+    /**
+     * The arguments the show method is expected to be called with.
+     *
+     * @return list<string>
+     */
+    protected function getShowArguments(string $user, string $repo) : array
+    {
+        return [$user, $repo];
+    }
+
+    /**
+     * The repo data returned by the show method, with master as default branch.
+     *
+     * @return array<string, mixed>
+     */
+    protected function getShowResponse() : array
+    {
+        return [
+            'default_branch' => 'master',
+        ];
+    }
+
+    /**
+     * Points the client at the api object listing the branches.
+     */
+    protected function configureBranchesClient(
+        MockObject $client,
+        MockObject $branches_api,
+        string $user,
+        string $repo
+    ) : void {
+        $client->expects($this->once())
+            ->method('api')
+            ->with('repo')
+            ->willReturn($branches_api);
+    }
+
+    /**
+     * The arguments the branches method is expected to be called with.
+     *
+     * @return list<string>
+     */
+    protected function getBranchesArguments(string $user, string $repo) : array
+    {
+        return [$user, $repo];
+    }
+
+    /**
+     * Shapes the branch list the way this provider returns it.
+     *
+     * @param list<array<string, mixed>> $branches
+     *
+     * @return array<mixed>
+     */
+    protected function getBranchesResponse(array $branches) : array
+    {
+        return $branches;
+    }
+
+    /**
+     * Stubs the response the provider paginates with, without any next page.
+     */
+    protected function configureLastResponse(MockObject $client) : void
+    {
+        $mock_response = $this->createMock(ResponseInterface::class);
+        $mock_response->method('getHeader')
+            ->willReturn([]);
+        $client->expects($this->once())
+            ->method('getLastResponse')
+            ->willReturn($mock_response);
+    }
+
+    /**
+     * Stubs whatever api the provider merges through.
+     */
+    protected function configureAutomergeClient(MockObject $client) : void
+    {
+        $mock_graphql = $this->createMock(GraphQL::class);
+        $mock_graphql->method('execute')
+            ->willReturn([
+                'data' => [
+                    'repository' => [
+                        'pullRequest' => [
+                            'merge' => [
+                                'pullRequest' => [
+                                    'state' => 'MERGED',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+        $client->method('api')
+            ->willReturn($mock_graphql);
+    }
+
+    /**
+     * Whether this provider supports enabling automerge at all.
+     */
+    protected function getExpectedAutomergeResult() : bool
+    {
+        return true;
+    }
+
+    /**
+     * Points the client at the api object listing the pull requests.
+     */
+    protected function configurePrsClient(MockObject $client, MockObject $prs_api, string $user, string $repo) : void
+    {
+        $client->expects($this->any())
+            ->method('api')
+            ->with($this->getPrApiMethod())
+            ->willReturn($prs_api);
+    }
+
+    /**
+     * The arguments the pull request listing method is expected to be called with.
+     *
+     * @return list<string>
+     */
+    protected function getPrsArguments(string $user, string $repo) : array
+    {
+        return [$user, $repo];
+    }
+
+    /**
+     * Two open pull requests, in the shape the github api returns them.
+     *
+     * @return list<array<string, mixed>>
+     */
+    protected function getPrsFixture() : array
+    {
+        return [
+            [
+                'head' => [
+                    'ref' => 'patch-1',
+                ],
+                'state' => 'opened',
+                'source_branch' => 'patch-1',
+                'target_branch' => 'master',
+                'title' => 'Patch 1',
+                'iid' => 123,
+                'sha' => 'abab',
+            ],
+            [
+                'head' => [
+                    'ref' => 'patch-2',
+                ],
+                'state' => 'opened',
+                'source_branch' => 'patch-2',
+                'target_branch' => 'master',
+                'title' => 'Patch 2',
+                'iid' => 456,
+                'sha' => 'fefe',
+            ],
+        ];
+    }
+
+    /**
+     * Shapes the pull request list the way this provider returns it.
+     *
+     * @param list<array<string, mixed>> $prs
+     *
+     * @return array<mixed>
+     */
+    protected function getPrsResponse(array $prs) : array
+    {
+        return $prs;
     }
 }

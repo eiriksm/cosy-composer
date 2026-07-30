@@ -9,6 +9,7 @@ use Violinist\Slug\Slug;
 
 class Bitbucket implements ProviderInterface
 {
+    const MERGE_REQUEST_STATE_OPEN = 'OPEN';
 
     private $cache;
 
@@ -24,9 +25,10 @@ class Bitbucket implements ProviderInterface
 
     public function authenticate($user, $token)
     {
-        $this->client->authenticate(Client::AUTH_OAUTH_TOKEN, $user);
         if ($user && $token) {
             $this->client->authenticate(Client::AUTH_HTTP_PASSWORD, $user, $token);
+        } else {
+            $this->client->authenticate(Client::AUTH_OAUTH_TOKEN, $user);
         }
     }
 
@@ -102,7 +104,7 @@ class Bitbucket implements ProviderInterface
         ];
         $prs_named = new NamedPrs();
         foreach ($prs["values"] as $pr) {
-            if ($pr["state"] !== 'OPEN') {
+            if ($pr["state"] !== self::MERGE_REQUEST_STATE_OPEN) {
                 continue;
             }
             $data = [
@@ -224,7 +226,7 @@ class Bitbucket implements ProviderInterface
         return false;
     }
 
-    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment)
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void
     {
         $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->comments($pr_id)->create([
             'content' => [

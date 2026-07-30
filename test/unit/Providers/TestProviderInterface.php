@@ -2,6 +2,8 @@
 
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
+use eiriksm\CosyComposer\ProviderInterface;
+
 interface TestProviderInterface
 {
     /**
@@ -9,13 +11,5 @@ interface TestProviderInterface
      */
     public function getMockClient();
 
-    /**
-     * @return \eiriksm\CosyComposer\ProviderInterface
-     */
-    public function getProvider(object $client);
-
-    /**
-     * @return string
-     */
-    public function getBranchMethod();
+    public function getProvider(object $client) : ProviderInterface;
 }

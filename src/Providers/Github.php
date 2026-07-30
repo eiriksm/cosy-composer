@@ -213,9 +213,9 @@ class Github implements ProviderInterface
         return $this->client->api('pull_request')->update($user_name, $user_repo, $id, $params);
     }
 
-    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment)
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void
     {
-        $this->client->issue()->comments()->create($slug->getUserName(), $slug->getUserRepo(), $pr_id, [
+        $this->client->api('issue')->comments()->create($slug->getUserName(), $slug->getUserRepo(), $pr_id, [
             'body' => $comment,
         ]);
         $this->client->api('pull_request')->update($slug->getUserName(), $slug->getUserRepo(), $pr_id, [

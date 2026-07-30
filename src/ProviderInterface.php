@@ -15,9 +15,9 @@ interface ProviderInterface
 
     public function enableAutomerge(array $pr_data, Slug $slug, $merge_method = self::MERGE_METHOD_MERGE) : bool;
 
-    public function authenticate($user, $token);
+    public function authenticate(string $user, ?string $token);
 
-    public function authenticatePrivate($user, $token);
+    public function authenticatePrivate(string $user, ?string $token);
 
     public function repoIsPrivate(Slug $slug);
 

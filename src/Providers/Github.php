@@ -67,12 +67,12 @@ class Github implements ProviderInterface
         return true;
     }
 
-    public function authenticate($user, $token)
+    public function authenticate(string $user, ?string $token)
     {
         $this->client->authenticate($user, null, AuthMethod::ACCESS_TOKEN);
     }
 
-    public function authenticatePrivate($user, $token)
+    public function authenticatePrivate(string $user, ?string $token)
     {
         $this->client->authenticate($user, null, AuthMethod::ACCESS_TOKEN);
     }

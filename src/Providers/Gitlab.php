@@ -19,12 +19,12 @@ class Gitlab implements ProviderInterface
         $this->client = $client;
     }
 
-    public function authenticate($user, $token)
+    public function authenticate(string $user, ?string $token)
     {
         $this->client->authenticate($user, Client::AUTH_OAUTH_TOKEN);
     }
 
-    public function authenticatePrivate($user, $token)
+    public function authenticatePrivate(string $user, ?string $token)
     {
         $this->client->authenticate($user, Client::AUTH_OAUTH_TOKEN);
     }

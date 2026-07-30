@@ -29,18 +29,8 @@ class IndividualUpdateItem implements UpdateItemInterface
         return $this->data->version;
     }
 
-    public function setNewVersion(string $version) : void
-    {
-        $this->data->latest = $version;
-    }
-
     public function getRawData() : \stdClass
     {
         return $this->data;
-    }
-
-    public function setVersion(string $version) : void
-    {
-        $this->data->version = $version;
     }
 }

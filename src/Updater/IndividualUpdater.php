@@ -350,8 +350,8 @@ class IndividualUpdater extends BaseUpdater
         try {
             $package_lock_data = ComposerLockData::createFromString(json_encode($lockdata));
             $pre_update_data = $package_lock_data->getPackageData($package_name);
-            $version_from = $item->version;
-            $version_to = $item->latest;
+            $version_from = $item_object->getVersion();
+            $version_to = $item_object->getNewVersion();
             // See where this package is.
             try {
                 $package_name_in_composer_json = Helpers::getComposerJsonName($cdata, $package_name, $this->composerJsonDir);

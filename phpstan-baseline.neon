@@ -356,11 +356,6 @@ parameters:
 			path: src/CosyComposer.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\CosyComposer\\:\\:setHttpClient\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/CosyComposer.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\CosyComposer\\:\\:setLogger\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: src/CosyComposer.php

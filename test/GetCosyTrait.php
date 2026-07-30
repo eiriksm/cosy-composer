@@ -7,7 +7,7 @@ use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\ProviderInterface;
 use GuzzleHttp\Psr7\Response;
-use Http\Client\HttpClient;
+use Psr\Http\Client\ClientInterface;
 use Violinist\ProjectData\ProjectData;
 use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
@@ -32,7 +32,7 @@ trait GetCosyTrait
         $fixturesDir = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR;
         $emptyXml = '<?xml version="1.0" encoding="utf-8"?>
 <project xmlns:dc="http://purl.org/dc/elements/1.1/"><releases></releases></project>';
-        $client = $this->createMock(HttpClient::class);
+        $client = $this->createMock(ClientInterface::class);
         $client->method('sendRequest')
             ->willReturnCallback(function ($request) use ($fixturesDir, $emptyXml) {
                 $url = (string) $request->getUri();

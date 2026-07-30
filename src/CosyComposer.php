@@ -13,8 +13,8 @@ use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use eiriksm\CosyComposer\Updater\IndividualUpdater;
 use GuzzleHttp\Psr7\Request;
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
-use Http\Client\HttpClient;
 use League\Flysystem\FilesystemAdapter;
+use Psr\Http\Client\ClientInterface;
 use Symfony\Component\Process\Process;
 use Violinist\AllowListHandler\AllowListHandler;
 use Violinist\ComposerLockData\ComposerLockData;
@@ -99,7 +99,7 @@ class CosyComposer
     protected $project;
 
     /**
-     * @var HttpClient
+     * @var ClientInterface|null
      */
     protected $httpClient;
 
@@ -189,21 +189,15 @@ class CosyComposer
         $this->logger = $logger;
     }
 
-    /**
-     * @return HttpClient
-     */
-    public function getHttpClient()
+    public function getHttpClient() : ClientInterface
     {
-        if (!$this->httpClient instanceof HttpClient) {
+        if (!$this->httpClient instanceof ClientInterface) {
             $this->httpClient = new GuzzleClient();
         }
         return $this->httpClient;
     }
 
-    /**
-     * @param HttpClient $httpClient
-     */
-    public function setHttpClient(HttpClient $httpClient)
+    public function setHttpClient(ClientInterface $httpClient) : void
     {
         $this->httpClient = $httpClient;
     }

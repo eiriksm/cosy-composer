@@ -135,6 +135,57 @@ class HelperTest extends TestCase
                 Config::createFromComposerData((object) []),
                 'slug',
             ],
+            // A branch_prefix set in the group rule config takes precedence
+            // over the global branch_prefix.
+            [
+                (object) [
+                    'name' => 'test',
+                    'slug' => 'slug',
+                    'config' => (object) [
+                        'branch_prefix' => 'group-',
+                    ],
+                ],
+                Config::createFromComposerData((object) [
+                    'extra' => (object) [
+                        'violinist' => (object) [
+                            'branch_prefix' => 'test-',
+                        ],
+                    ],
+                ]),
+                'group-slug',
+            ],
+            // A branch_prefix in the group rule config also works when there
+            // is no global branch_prefix.
+            [
+                (object) [
+                    'name' => 'test',
+                    'slug' => '',
+                    'config' => (object) [
+                        'branch_prefix' => 'group-',
+                    ],
+                ],
+                Config::createFromComposerData((object) []),
+                'group-test',
+            ],
+            // When the group rule config does not set a branch_prefix, the
+            // global branch_prefix is still used.
+            [
+                (object) [
+                    'name' => 'test',
+                    'slug' => 'slug',
+                    'config' => (object) [
+                        'default_branch' => 'some-branch',
+                    ],
+                ],
+                Config::createFromComposerData((object) [
+                    'extra' => (object) [
+                        'violinist' => (object) [
+                            'branch_prefix' => 'test-',
+                        ],
+                    ],
+                ]),
+                'test-slug',
+            ],
         ];
     }
 

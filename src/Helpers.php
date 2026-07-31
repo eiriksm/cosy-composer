@@ -17,13 +17,18 @@ class Helpers
 
     public static function createBranchNameForGroup(\stdClass $rule, Config $config) : string
     {
+        // Resolve the config for this group rule, so that a branch_prefix set
+        // in the group rule's own config takes precedence over the global one.
+        // If the rule does not set a branch_prefix, this falls back to the
+        // global branch_prefix.
+        $rule_config = $config->getConfigForRuleObject($rule);
         if (!empty($rule->slug)) {
-            return self::createBranchNameFromNameAndConfig($rule->slug, $config);
+            return self::createBranchNameFromNameAndConfig($rule->slug, $rule_config);
         }
         // Create a slug based on the name. To do that, we lowercase it, and
         // remove all the characters that are not a-z.
         $name = preg_replace('/[^a-z]+/', '', strtolower($rule->name));
-        return self::createBranchNameFromNameAndConfig($name, $config);
+        return self::createBranchNameFromNameAndConfig($name, $rule_config);
     }
 
     public static function createComposerOutdatedCommandFromConfig(Config $config, bool $direct_only = false) : array

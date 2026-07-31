@@ -44,6 +44,9 @@ class BitbucketIntegrationTest extends ComposerUpdateIntegrationBase
     {
         $token = 'user:verysecret';
         $this->commandStringToFind = 'https://user:verysecret@bitbucket.org/user/repo.git';
+        $reflection = new \ReflectionProperty($this->cosy, 'untouchedUserToken');
+        $reflection->setAccessible(true);
+        $reflection->setValue($this->cosy, null);
         $this->cosy->setAuthentication($token);
         $this->cosy->setUrl('https://bitbucket.org/user/repo');
         $has_passed_user_and_token = false;
@@ -57,6 +60,25 @@ class BitbucketIntegrationTest extends ComposerUpdateIntegrationBase
         $this->runtestExpectedOutput();
         self::assertEquals(true, $this->foundMessage);
         self::assertEquals(true, $has_passed_user_and_token);
+    }
+
+    public function testComposerConfigAppPassword() : void
+    {
+        $user = 'user';
+        $password = 'verysecret';
+        $token = "$user:$password";
+        $this->commandStringToFind = sprintf(
+            'composer config --auth http-basic.bitbucket.org %s %s',
+            $user,
+            $password,
+        );
+        $reflection = new \ReflectionProperty($this->cosy, 'untouchedUserToken');
+        $reflection->setAccessible(true);
+        $reflection->setValue($this->cosy, null);
+        $this->cosy->setAuthentication($token);
+        $this->cosy->setUrl('https://bitbucket.org/user/repo');
+        $this->runtestExpectedOutput();
+        self::assertEquals(true, $this->foundMessage);
     }
 
     public function testUpdateApiTokenWithEmail(): void

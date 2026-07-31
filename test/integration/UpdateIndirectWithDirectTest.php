@@ -25,10 +25,10 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class UpdateIndirectWithDirectTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer.indirect.direct.multiple_options';
+    protected ?string $composerAssetFiles = 'composer.indirect.direct.multiple_options';
     protected $hasUpdatedPsrLog = false;
     protected $hasUpdatedPsrCache = false;
-    protected $packageForUpdateOutput = 'drupal/recaptcha';
+    protected ?string $packageForUpdateOutput = 'drupal/recaptcha';
     protected $usesDirect = false;
     protected $checkPrUrl = true;
 

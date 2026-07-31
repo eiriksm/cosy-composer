@@ -10,8 +10,7 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class UpdateConsecutiveNoLockTest extends ComposerUpdateIntegrationBase
 {
-    /** @var string */
-    protected $composerAssetFiles = 'composer.consecutive.nolock';
+    protected ?string $composerAssetFiles = 'composer.consecutive.nolock';
 
     /** @var bool */
     protected $removedLockFile = false;

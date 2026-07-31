@@ -5,7 +5,7 @@ namespace eiriksm\CosyComposerTest\integration;
 class GroupsCorrectCommandTest extends ComposerUpdateIntegrationBase
 {
     private $correctCommand = false;
-    protected $composerAssetFiles = 'composer.tg';
+    protected ?string $composerAssetFiles = 'composer.tg';
     protected $updateJson = '{
     "installed": [
         {

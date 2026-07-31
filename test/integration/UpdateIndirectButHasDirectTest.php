@@ -4,10 +4,10 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class UpdateIndirectButHasDirectTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'symfony/polyfill-mbstring';
-    protected $packageVersionForFromUpdateOutput = 'v1.23.0';
-    protected $packageVersionForToUpdateOutput = 'v1.24.0';
-    protected $composerAssetFiles = 'composer.indirect.direct';
+    protected ?string $packageForUpdateOutput = 'symfony/polyfill-mbstring';
+    protected ?string $packageVersionForFromUpdateOutput = 'v1.23.0';
+    protected ?string $packageVersionForToUpdateOutput = 'v1.24.0';
+    protected ?string $composerAssetFiles = 'composer.indirect.direct';
     protected $usesDirect = false;
     protected $checkPrUrl = true;
 

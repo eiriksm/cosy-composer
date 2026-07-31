@@ -7,7 +7,7 @@ use Violinist\Slug\Slug;
 
 class LaravelGroupsLabelsTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-laravel-groups-labels';
+    protected ?string $composerAssetFiles = 'composer-laravel-groups-labels';
     protected $updateJson = <<<JSON
 {
     "installed": [

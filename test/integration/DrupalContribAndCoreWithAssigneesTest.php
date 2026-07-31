@@ -6,7 +6,7 @@ use Violinist\ProjectData\ProjectData;
 
 class DrupalContribAndCoreWithAssigneesTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'drupal-contrib';
+    protected ?string $composerAssetFiles = 'drupal-contrib';
     protected $updateJson = '{"installed": [{"name": "drupal/core-recommended", "version": "11.0.0", "latest": "11.0.1", "latest-status": "semver-safe-update"},{"name": "drupal/coffee", "version": "2.0.0", "latest": "2.0.1", "latest-status": "semver-safe-update"}]}';
 
     public function testDrupalContribGetAssigneesButCoreDoesNot()

@@ -9,7 +9,7 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class NotUpdateDevDepsTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-not-update-dev-deps';
+    protected ?string $composerAssetFiles = 'composer-not-update-dev-deps';
     protected $checkPrUrl = true;
 
     public function setUp() : void

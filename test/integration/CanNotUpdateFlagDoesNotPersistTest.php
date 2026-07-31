@@ -13,7 +13,7 @@ use Violinist\ComposerUpdater\Exception\NotUpdatedException;
  */
 class CanNotUpdateFlagDoesNotPersistTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-not-update-flag-persist';
+    protected ?string $composerAssetFiles = 'composer-not-update-flag-persist';
 
     /**
      * The update JSON with two packages:

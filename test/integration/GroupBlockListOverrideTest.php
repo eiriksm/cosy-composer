@@ -13,7 +13,7 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class GroupBlockListOverrideTest extends GroupsForDrupalCoreAndContribTest
 {
-    protected $composerAssetFiles = 'composer-group-contrib-and-core-blocklist-override';
+    protected ?string $composerAssetFiles = 'composer-group-contrib-and-core-blocklist-override';
 
     protected function placeInitialComposerLock(): void
     {

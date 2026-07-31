@@ -26,7 +26,7 @@ class GroupsUpdateWithDependenciesTest extends ComposerUpdateIntegrationBase
     ]
 }';
 
-    protected $composerAssetFiles = 'composer-groups-update-with-dependencies';
+    protected ?string $composerAssetFiles = 'composer-groups-update-with-dependencies';
 
     /** @var bool */
     private $withDependenciesUsed = false;

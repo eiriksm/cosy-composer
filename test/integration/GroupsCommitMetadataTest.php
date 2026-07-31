@@ -9,8 +9,7 @@ class GroupsCommitMetadataTest extends ComposerUpdateIntegrationBase
 {
     /** @var string */
     private $commitCommand = '';
-    /** @var string */
-    protected $composerAssetFiles = 'composer.tg';
+    protected ?string $composerAssetFiles = 'composer.tg';
     /** @var string */
     protected $updateJson = '{
     "installed": [

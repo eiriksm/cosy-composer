@@ -10,12 +10,12 @@ use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
  */
 class AutomergeUpdateAllSecTest extends AutoMergeBase
 {
-    protected $composerAssetFiles = 'composer.automerge_update_all_sec';
+    protected ?string $composerAssetFiles = 'composer.automerge_update_all_sec';
     protected $hasUpdatedPsrLog = false;
     protected $hasUpdatedPsrCache = false;
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.1.3';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.1.3';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
     protected $hasAutoMerge = true;
     protected $checkPrUrl = true;
     protected $usesDirect = false;

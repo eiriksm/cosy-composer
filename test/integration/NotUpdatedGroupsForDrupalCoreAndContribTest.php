@@ -6,7 +6,7 @@ use Violinist\ComposerUpdater\Exception\NotUpdatedException;
 
 class NotUpdatedGroupsForDrupalCoreAndContribTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-group-contrib-and-core';
+    protected ?string $composerAssetFiles = 'composer-group-contrib-and-core';
     protected $updateJson = '{
     "installed": [
         {

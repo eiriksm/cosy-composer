@@ -4,10 +4,10 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class UpdateIndirectSecondLevelTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'psr/container';
-    protected $packageVersionForFromUpdateOutput = '1.1.1';
-    protected $packageVersionForToUpdateOutput = '1.1.2';
-    protected $composerAssetFiles = 'composer.indirect.second';
+    protected ?string $packageForUpdateOutput = 'psr/container';
+    protected ?string $packageVersionForFromUpdateOutput = '1.1.1';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.2';
+    protected ?string $composerAssetFiles = 'composer.indirect.second';
     protected $usesDirect = false;
     protected $checkPrUrl = true;
 

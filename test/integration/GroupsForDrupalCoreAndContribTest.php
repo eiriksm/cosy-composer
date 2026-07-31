@@ -8,7 +8,7 @@ class GroupsForDrupalCoreAndContribTest extends ComposerUpdateIntegrationBase
     private $foundCoreMessage = false;
     private $stdout = '';
     private $errorOutput = '';
-    protected $composerAssetFiles = 'composer-group-contrib-and-core';
+    protected ?string $composerAssetFiles = 'composer-group-contrib-and-core';
     protected $updateJson = '{
     "installed": [
         {

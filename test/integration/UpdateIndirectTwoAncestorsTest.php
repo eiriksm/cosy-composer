@@ -29,10 +29,10 @@ class UpdateIndirectTwoAncestorsTest extends ComposerUpdateIntegrationBase
         self::assertCount(0, $branch_pr_messages, 'All expected messages was not found in the output');
     }
 
-    protected function createExpectedCommandForPackage($package)
+    protected function createExpectedCommandForPackage(string $package) : array
     {
         // We are actually updating the required package which depends on this one.
-        return 'bogus flippin bogus';
+        return ['bogus flippin bogus'];
     }
 
     protected function handleExecutorReturnCallback($cmd, &$return)

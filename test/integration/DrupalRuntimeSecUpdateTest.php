@@ -49,7 +49,7 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
         self::assertEquals($sec, strpos($this->prParams["title"], '[SECURITY]') === 0);
     }
 
-    protected function createExpectedCommandForRequiredPackage($package, $new_version)
+    protected function createExpectedCommandForRequiredPackage(string $package, string $new_version) : array
     {
         return ["composer", "require", '-n', '--no-ansi', "$package:$new_version", '--update-with-dependencies'];
     }

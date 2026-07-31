@@ -51,7 +51,7 @@ abstract class Base extends TestCase
         $this->cosy = $c;
     }
 
-    protected function createExpectedCommandForPackage($package)
+    protected function createExpectedCommandForPackage(string $package) : array
     {
         return ["composer", 'update', '-n', '--no-ansi', $package, '--with-dependencies'];
     }

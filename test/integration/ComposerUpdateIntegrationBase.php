@@ -48,9 +48,11 @@ abstract class ComposerUpdateIntegrationBase extends Base
         $mock_executer = $this->getMockExecuterWithReturnCallback(
             function ($cmd) {
                 $return = 0;
-                $expected_command = $this->createExpectedCommandForPackage($this->packageForUpdateOutput);
-                if ($cmd == $expected_command) {
-                    $this->placeUpdatedComposerLock();
+                if ($this->packageForUpdateOutput) {
+                    $expected_command = $this->createExpectedCommandForPackage($this->packageForUpdateOutput);
+                    if ($cmd == $expected_command) {
+                        $this->placeUpdatedComposerLock();
+                    }
                 }
                 $this->handleExecutorReturnCallback($cmd, $return);
                 $this->lastCommand = $cmd;

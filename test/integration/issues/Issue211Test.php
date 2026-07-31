@@ -21,7 +21,7 @@ class Issue211Test extends ComposerUpdateIntegrationBase
         self::assertEquals('psrlog100113', $this->prParams["head"]);
     }
 
-    protected function createExpectedCommandForPackage($package)
+    protected function createExpectedCommandForPackage(string $package) : array
     {
         return ['composer', 'require', '--dev', '-n', '--no-ansi', "$package:1.1.3", '--update-with-dependencies'];
     }

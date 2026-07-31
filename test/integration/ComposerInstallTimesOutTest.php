@@ -8,30 +8,30 @@ use Symfony\Component\Process\Process;
 
 class ComposerInstallTimesOutTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.0.1';
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $composerAssetFiles = 'composer-psr-log-with-no-scripts';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.0.1';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $composerAssetFiles = 'composer-psr-log-with-no-scripts';
     protected string $superDistinctCommandName = 'my-special-command-we-will-use-in-searching-the-logs';
 
-    public function testNoScriptsPassed()
+    public function testNoScriptsPassed() : void
     {
         self::expectException(ComposerInstallException::class);
         self::expectExceptionMessageMatches(sprintf('/.*%s.*timeout.*/', $this->superDistinctCommandName));
         $this->runtestExpectedOutput();
     }
 
-    protected function placeInitialComposerLock()
+    protected function placeInitialComposerLock() : void
     {
         $this->placeComposerLockContentsFromFixture('composer-psr-log.lock', $this->dir);
     }
 
-    protected function placeUpdatedComposerLock()
+    protected function placeUpdatedComposerLock() : void
     {
         $this->placeComposerLockContentsFromFixture('composer-psr-log.lock.updated', $this->dir);
     }
 
-    protected function handleExecutorReturnCallback(array $cmd, &$return)
+    protected function handleExecutorReturnCallback(array $cmd, &$return) : void
     {
         $asString = implode(' ', $cmd);
         if (str_starts_with($asString, 'composer install')) {

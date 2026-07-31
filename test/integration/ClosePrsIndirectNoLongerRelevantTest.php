@@ -13,10 +13,10 @@ use eiriksm\CosyComposer\Providers\NamedPrs;
  */
 class ClosePrsIndirectNoLongerRelevantTest extends CloseOutdatedBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.1.3';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
-    protected $composerAssetFiles = 'composer.close.indirect_still_relevant';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.1.3';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $composerAssetFiles = 'composer.close.indirect_still_relevant';
     protected $checkPrUrl = true;
     protected $expectedClosedPrs = [789];
 

@@ -10,10 +10,10 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class BranchPrefixOnePerUnexpectedUpdateTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.1.3';
-    protected $composerAssetFiles = 'composerbranch.one_per';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.3';
+    protected ?string $composerAssetFiles = 'composerbranch.one_per';
     protected $checkPrUrl = true;
 
     public function testBranchPrefixUsedAndOnePer()

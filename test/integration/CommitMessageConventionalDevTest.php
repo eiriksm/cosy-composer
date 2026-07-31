@@ -7,7 +7,7 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class CommitMessageConventionalDevTest extends CommitMessageTest
 {
-    protected $composerAssetFiles = 'composer-conventional-dev';
+    protected ?string $composerAssetFiles = 'composer-conventional-dev';
 
     protected function getCorrectCommit()
     {

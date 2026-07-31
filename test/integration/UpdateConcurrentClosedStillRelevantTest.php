@@ -6,7 +6,7 @@ use eiriksm\CosyComposer\Providers\NamedPrs;
 
 class UpdateConcurrentClosedStillRelevantTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer.concurrent.update_branch';
+    protected ?string $composerAssetFiles = 'composer.concurrent.update_branch';
     private $sha;
 
     public function setUp() : void

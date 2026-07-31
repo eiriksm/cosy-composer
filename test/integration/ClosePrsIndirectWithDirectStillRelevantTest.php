@@ -14,7 +14,7 @@ use eiriksm\CosyComposer\Providers\NamedPrs;
  */
 class ClosePrsIndirectWithDirectStillRelevantTest extends CloseOutdatedBase
 {
-    protected $composerAssetFiles = 'composer.close.indirect_with_direct';
+    protected ?string $composerAssetFiles = 'composer.close.indirect_with_direct';
     protected $checkPrUrl = false;
     protected $expectedClosedPrs = [];
 

@@ -8,10 +8,10 @@ namespace eiriksm\CosyComposerTest\integration;
 class DevDepsRemovedIndirectTest extends ComposerUpdateIntegrationBase
 {
     protected $usesDirect = false;
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.1';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
-    protected $composerAssetFiles = 'composer-filter-dev-indirect';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.1';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $composerAssetFiles = 'composer-filter-dev-indirect';
 
     public function testDevNameNotFail()
     {

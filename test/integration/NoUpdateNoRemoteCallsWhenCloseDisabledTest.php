@@ -8,7 +8,7 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class NoUpdateNoRemoteCallsWhenCloseDisabledTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-non-dev';
+    protected ?string $composerAssetFiles = 'composer-non-dev';
 
     public function setUp() : void
     {

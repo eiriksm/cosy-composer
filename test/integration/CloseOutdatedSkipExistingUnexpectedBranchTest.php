@@ -9,10 +9,10 @@ use eiriksm\CosyComposer\Providers\NamedPrs;
  */
 class CloseOutdatedSkipExistingUnexpectedBranchTest extends CloseOutdatedBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.1.5';
-    protected $composerAssetFiles = 'composer.close.outdated';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.5';
+    protected ?string $composerAssetFiles = 'composer.close.outdated';
     protected $expectedClosedPrs = [123, 124, 125];
 
     public function testOutdatedClosed()

@@ -13,11 +13,11 @@ use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
 class Issue98Test extends ComposerUpdateIntegrationBase
 {
 
-    protected $packageForUpdateOutput = 'eirik/private-pack';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.0.2';
+    protected ?string $packageForUpdateOutput = 'eirik/private-pack';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.0.2';
     protected $calledCorrectly = false;
-    protected $composerAssetFiles = 'composer-json-private';
+    protected ?string $composerAssetFiles = 'composer-json-private';
 
     public function testIssue98()
     {

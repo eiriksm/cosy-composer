@@ -8,8 +8,7 @@ use Violinist\Slug\Slug;
 
 class GroupsPrExistsConcurrentTest extends ComposerUpdateIntegrationBase
 {
-    /** @var string */
-    protected $composerAssetFiles = 'composer-group-contrib-and-core-concurrent';
+    protected ?string $composerAssetFiles = 'composer-group-contrib-and-core-concurrent';
     /** @var string */
     protected $updateJson = '{
     "installed": [

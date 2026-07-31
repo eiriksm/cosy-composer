@@ -9,10 +9,10 @@ use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
  */
 class Issue200Test extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'fzaninotto/faker';
-    protected $packageVersionForFromUpdateOutput = 'v1.9.2';
-    protected $packageVersionForToUpdateOutput = 'v.1.9.2';
-    protected $composerAssetFiles = 'composer164';
+    protected ?string $packageForUpdateOutput = 'fzaninotto/faker';
+    protected ?string $packageVersionForFromUpdateOutput = 'v1.9.2';
+    protected ?string $packageVersionForToUpdateOutput = 'v.1.9.2';
+    protected ?string $composerAssetFiles = 'composer164';
 
     protected function createUpdateJsonFromData($package, $version, $new_version)
     {

@@ -6,10 +6,10 @@ use Violinist\ProjectData\ProjectData;
 
 class DrupalContribGroupRuleTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'drupal-contrib';
-    protected $packageForUpdateOutput = 'drupal/coffee';
-    protected $packageVersionForFromUpdateOutput = '2.0.0';
-    protected $packageVersionForToUpdateOutput = '2.0.1';
+    protected ?string $composerAssetFiles = 'drupal-contrib';
+    protected ?string $packageForUpdateOutput = 'drupal/coffee';
+    protected ?string $packageVersionForFromUpdateOutput = '2.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '2.0.1';
     protected $checkPrUrl = true;
 
     public function testDrupalContribGroup()

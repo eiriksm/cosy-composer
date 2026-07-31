@@ -7,8 +7,8 @@ use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 class UpdateConcurrentAllowSecurityTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer.concurrent.security';
-    protected $packageForUpdateOutput = 'psr/http-factory';
+    protected ?string $composerAssetFiles = 'composer.concurrent.security';
+    protected ?string $packageForUpdateOutput = 'psr/http-factory';
 
     public function setUp(): void
     {

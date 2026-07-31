@@ -4,7 +4,7 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class IndividualRuleUpdateWithDependenciesTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer.individual_rule_overrides';
+    protected ?string $composerAssetFiles = 'composer.individual_rule_overrides';
 
     /** @var string */
     protected $updateJson = '{

@@ -13,10 +13,10 @@ use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
  */
 class Issue158Test extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-default_branch';
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.2';
-    protected $packageVersionForToUpdateOutput = '1.1.3';
+    protected ?string $composerAssetFiles = 'composer-default_branch';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.2';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.3';
 
     public function testIssue158()
     {

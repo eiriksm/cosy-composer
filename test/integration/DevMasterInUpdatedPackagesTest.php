@@ -7,10 +7,10 @@ use Violinist\Slug\Slug;
 class DevMasterInUpdatedPackagesTest extends ComposerUpdateIntegrationBase
 {
 
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = 'dev-master 2b71ffb';
-    protected $packageVersionForToUpdateOutput = 'dev-master dd738d0';
-    protected $composerAssetFiles = 'composer-dev-master';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = 'dev-master 2b71ffb';
+    protected ?string $packageVersionForToUpdateOutput = 'dev-master dd738d0';
+    protected ?string $composerAssetFiles = 'composer-dev-master';
 
     public function testUpdatesInPackagesUpdated()
     {

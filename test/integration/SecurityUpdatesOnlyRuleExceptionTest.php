@@ -5,14 +5,10 @@ namespace eiriksm\CosyComposerTest\integration;
 class SecurityUpdatesOnlyRuleExceptionTest extends ComposerUpdateIntegrationBase
 {
 
-    /** @var string */
-    protected $composerAssetFiles = 'composer.security_updates_only_rule_exception';
-    /** @var string */
-    protected $packageForUpdateOutput = 'psr/log';
-    /** @var string */
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    /** @var string */
-    protected $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $composerAssetFiles = 'composer.security_updates_only_rule_exception';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
 
     public function testPackageWithRuleExceptionIsUpdatedWithoutSecurityAdvisory(): void
     {

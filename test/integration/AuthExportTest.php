@@ -18,8 +18,8 @@ class AuthExportTest extends ComposerUpdateIntegrationBase
     private $hasExportedGitlabSelfHosted = false;
 
     // Let's just reuse another asset file.
-    protected $composerAssetFiles = 'composer.allow';
-    protected $packageForUpdateOutput = 'psr/cache';
+    protected ?string $composerAssetFiles = 'composer.allow';
+    protected ?string $packageForUpdateOutput = 'psr/cache';
 
     public function testTokensAuthExported()
     {

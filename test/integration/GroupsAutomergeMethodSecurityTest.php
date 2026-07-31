@@ -7,7 +7,7 @@ use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 class GroupsAutomergeMethodSecurityTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-groups-automerge-method-security';
+    protected ?string $composerAssetFiles = 'composer-groups-automerge-method-security';
     protected $updateJson = <<<JSON
 {
     "installed": [

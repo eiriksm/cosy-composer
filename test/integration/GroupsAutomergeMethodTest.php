@@ -6,7 +6,7 @@ use Violinist\ProjectData\ProjectData;
 
 class GroupsAutomergeMethodTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-groups-automerge-method';
+    protected ?string $composerAssetFiles = 'composer-groups-automerge-method';
     protected $updateJson = <<<JSON
 {
     "installed": [

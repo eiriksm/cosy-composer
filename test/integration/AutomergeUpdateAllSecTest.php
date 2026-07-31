@@ -50,6 +50,9 @@ class AutomergeUpdateAllSecTest extends AutoMergeBase
         ]);
     }
 
+    /**
+     * @return array<int, string>
+     */
     protected function createExpectedCommandForPackage(string $package) : array
     {
         return ['composer', 'update'];

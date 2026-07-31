@@ -17,6 +17,9 @@ class UpdateIndirectTest extends ComposerUpdateIntegrationBase
         self::assertEquals('Update dependencies of symfony/var-dumper', $this->prParams["title"]);
     }
 
+    /**
+     * @return array<int, string>
+     */
     protected function createExpectedCommandForPackage(string $package) : array
     {
         // We are actually updating the required package which depends on this one.

@@ -2361,16 +2361,6 @@ parameters:
 			path: test/integration/AllowListDirectDevTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectDevTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListDirectDevTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectDevTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListDirectDevTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectDevTest\\:\\:testAllowList\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/AllowListDirectDevTest.php
@@ -2412,16 +2402,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListDirectTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListDirectTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/AllowListDirectTest.php
 
@@ -2471,16 +2451,6 @@ parameters:
 			path: test/integration/AllowListDirectTestNoOtherAllowListTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTestNoOtherAllowListTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListDirectTestNoOtherAllowListTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTestNoOtherAllowListTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListDirectTestNoOtherAllowListTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListDirectTestNoOtherAllowListTest\\:\\:testAllowList\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/AllowListDirectTestNoOtherAllowListTest.php
@@ -2526,16 +2496,6 @@ parameters:
 			path: test/integration/AllowListTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/AllowListTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AllowListTest\\:\\:testAllowList\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/AllowListTest.php
@@ -2577,16 +2537,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AuthExportTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/AuthExportTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AuthExportTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/AuthExportTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AuthExportTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/AuthExportTest.php
 
@@ -3031,16 +2981,6 @@ parameters:
 			path: test/integration/BitbucketIntegrationTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\BitbucketIntegrationTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/BitbucketIntegrationTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\BitbucketIntegrationTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/BitbucketIntegrationTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\BitbucketIntegrationTest\\:\\:testUpdateAppPass\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/BitbucketIntegrationTest.php
@@ -3176,16 +3116,6 @@ parameters:
 			path: test/integration/BundledPackagesPatternTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\BundledPackagesPatternTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: test/integration/BundledPackagesPatternTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\BundledPackagesPatternTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/BundledPackagesPatternTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\BundledPackagesPatternTest\\:\\:testWildcardBundledPackagesProduceSingleUpdateCommand\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/BundledPackagesPatternTest.php
@@ -3197,16 +3127,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\CanNotUpdateFlagDoesNotPersistTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/CanNotUpdateFlagDoesNotPersistTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\CanNotUpdateFlagDoesNotPersistTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: test/integration/CanNotUpdateFlagDoesNotPersistTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\CanNotUpdateFlagDoesNotPersistTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/CanNotUpdateFlagDoesNotPersistTest.php
 
@@ -3366,16 +3286,6 @@ parameters:
 			path: test/integration/ClosePrsIndirectNoLongerRelevantTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectNoLongerRelevantTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectNoLongerRelevantTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectNoLongerRelevantTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectNoLongerRelevantTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectNoLongerRelevantTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
 			count: 1
 			path: test/integration/ClosePrsIndirectNoLongerRelevantTest.php
@@ -3387,16 +3297,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectStillRelevantTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectStillRelevantTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectStillRelevantTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectStillRelevantTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectStillRelevantTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/ClosePrsIndirectStillRelevantTest.php
 
@@ -3416,16 +3316,6 @@ parameters:
 			path: test/integration/ClosePrsIndirectWithDirectStillRelevantTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectWithDirectStillRelevantTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectWithDirectStillRelevantTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectWithDirectStillRelevantTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsIndirectWithDirectStillRelevantTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsIndirectWithDirectStillRelevantTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
 			count: 1
 			path: test/integration/ClosePrsIndirectWithDirectStillRelevantTest.php
@@ -3437,16 +3327,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsNotTrulyOutdatedPackageTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsNotTrulyOutdatedPackageTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsNotTrulyOutdatedPackageTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsNotTrulyOutdatedPackageTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsNotTrulyOutdatedPackageTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/ClosePrsNotTrulyOutdatedPackageTest.php
 
@@ -3472,16 +3352,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsUpdatedPackageTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsUpdatedPackageTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsUpdatedPackageTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/ClosePrsUpdatedPackageTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ClosePrsUpdatedPackageTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/ClosePrsUpdatedPackageTest.php
 
@@ -3516,16 +3386,6 @@ parameters:
 			path: test/integration/CommitMessageTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\CommitMessageTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/CommitMessageTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\CommitMessageTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/CommitMessageTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\CommitMessageTest\\:\\:testCommitMessage\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/CommitMessageTest.php
@@ -3547,16 +3407,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateExitOneForGroupTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateExitOneForGroupTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateExitOneForGroupTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateExitOneForGroupTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateExitOneForGroupTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/ComposerUpdateExitOneForGroupTest.php
 
@@ -3586,16 +3436,6 @@ parameters:
 			path: test/integration/ComposerUpdateFailsTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateFailsTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateFailsTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateFailsTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateFailsTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateFailsTest\\:\\:testUpdatesFoundButComposerUpdateFails\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/ComposerUpdateFailsTest.php
@@ -3612,16 +3452,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateIntegrationBase\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateIntegrationBase.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateIntegrationBase\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateIntegrationBase.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateIntegrationBase\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/ComposerUpdateIntegrationBase.php
 
@@ -3667,16 +3497,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateUpdateTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateUpdateTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateUpdateTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/ComposerUpdateUpdateTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ComposerUpdateUpdateTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/ComposerUpdateUpdateTest.php
 
@@ -3731,16 +3551,6 @@ parameters:
 			path: test/integration/ConfigBranchOrderTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchOrderTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/ConfigBranchOrderTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchOrderTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/ConfigBranchOrderTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchOrderTest\\:\\:placeInitialComposerLock\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/ConfigBranchOrderTest.php
@@ -3757,16 +3567,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/ConfigBranchTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/ConfigBranchTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ConfigBranchTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/ConfigBranchTest.php
 
@@ -3822,16 +3622,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalContribAndCoreWithAssigneesTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/DrupalContribAndCoreWithAssigneesTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalContribAndCoreWithAssigneesTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: test/integration/DrupalContribAndCoreWithAssigneesTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalContribAndCoreWithAssigneesTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/DrupalContribAndCoreWithAssigneesTest.php
 
@@ -3951,32 +3741,12 @@ parameters:
 			path: test/integration/ErrorCommittingTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorCommittingTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/ErrorCommittingTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorCommittingTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/ErrorCommittingTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorCommittingTest\\:\\:testUpdatesRunButErrorCommiting\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/ErrorCommittingTest.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorPushingTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/ErrorPushingTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorPushingTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/ErrorPushingTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\ErrorPushingTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/ErrorPushingTest.php
 
@@ -4096,16 +3866,6 @@ parameters:
 			path: test/integration/GitlabIntegrationTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GitlabIntegrationTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/GitlabIntegrationTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GitlabIntegrationTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/GitlabIntegrationTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GitlabIntegrationTest\\:\\:testUpdateToken\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/GitlabIntegrationTest.php
@@ -4117,16 +3877,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsAutomergeMethodSecurityTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/GroupsAutomergeMethodSecurityTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsAutomergeMethodSecurityTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: test/integration/GroupsAutomergeMethodSecurityTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsAutomergeMethodSecurityTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/GroupsAutomergeMethodSecurityTest.php
 
@@ -4156,16 +3906,6 @@ parameters:
 			path: test/integration/GroupsAutomergeMethodTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsAutomergeMethodTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: test/integration/GroupsAutomergeMethodTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsAutomergeMethodTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/GroupsAutomergeMethodTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsAutomergeMethodTest\\:\\:testGroupRulesApplyDifferentAutoMergeMethods\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/GroupsAutomergeMethodTest.php
@@ -4191,16 +3931,6 @@ parameters:
 			path: test/integration/GroupsCorrectCommandTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsCorrectCommandTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: test/integration/GroupsCorrectCommandTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsCorrectCommandTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/GroupsCorrectCommandTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsCorrectCommandTest\\:\\:testGroupAllPackages\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/GroupsCorrectCommandTest.php
@@ -4217,16 +3947,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsForDrupalCoreAndContribTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/GroupsForDrupalCoreAndContribTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsForDrupalCoreAndContribTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: test/integration/GroupsForDrupalCoreAndContribTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsForDrupalCoreAndContribTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/GroupsForDrupalCoreAndContribTest.php
 
@@ -4292,16 +4012,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/GroupsPrExistsTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: test/integration/GroupsPrExistsTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\GroupsPrExistsTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/GroupsPrExistsTest.php
 
@@ -4441,16 +4151,6 @@ parameters:
 			path: test/integration/LaravelGroupsLabelsTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\LaravelGroupsLabelsTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: test/integration/LaravelGroupsLabelsTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\LaravelGroupsLabelsTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/LaravelGroupsLabelsTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\LaravelGroupsLabelsTest\\:\\:testGroupRulesApplyDifferentLabels\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/LaravelGroupsLabelsTest.php
@@ -4511,16 +4211,6 @@ parameters:
 			path: test/integration/NotUpdateDevDepsTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdateDevDepsTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/NotUpdateDevDepsTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdateDevDepsTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/NotUpdateDevDepsTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdateDevDepsTest\\:\\:testDevDepsNotUpdated\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/NotUpdateDevDepsTest.php
@@ -4532,16 +4222,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdatedGroupsForDrupalCoreAndContribTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/NotUpdatedGroupsForDrupalCoreAndContribTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdatedGroupsForDrupalCoreAndContribTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: test/integration/NotUpdatedGroupsForDrupalCoreAndContribTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\NotUpdatedGroupsForDrupalCoreAndContribTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/NotUpdatedGroupsForDrupalCoreAndContribTest.php
 
@@ -4592,16 +4272,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\SelfHostedGitlabIntegrationTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/SelfHostedGitlabIntegrationTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\SelfHostedGitlabIntegrationTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/SelfHostedGitlabIntegrationTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\SelfHostedGitlabIntegrationTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/SelfHostedGitlabIntegrationTest.php
 
@@ -4667,16 +4337,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpToDateRaceConditionTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/UpToDateRaceConditionTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpToDateRaceConditionTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/UpToDateRaceConditionTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpToDateRaceConditionTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/UpToDateRaceConditionTest.php
 
@@ -4921,16 +4581,6 @@ parameters:
 			path: test/integration/UpdateConcurrentClosedStillRelevantTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentClosedStillRelevantTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateConcurrentClosedStillRelevantTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentClosedStillRelevantTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateConcurrentClosedStillRelevantTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentClosedStillRelevantTest\\:\\:testUpdateConcurrentWithOutdatedBranch\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateConcurrentClosedStillRelevantTest.php
@@ -4957,16 +4607,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentOutdatedBranchTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateConcurrentOutdatedBranchTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentOutdatedBranchTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateConcurrentOutdatedBranchTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentOutdatedBranchTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateConcurrentOutdatedBranchTest.php
 
@@ -5011,16 +4651,6 @@ parameters:
 			path: test/integration/UpdateConcurrentTwoInConfigBranchTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentTwoInConfigBranchTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateConcurrentTwoInConfigBranchTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentTwoInConfigBranchTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateConcurrentTwoInConfigBranchTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentTwoInConfigBranchTest\\:\\:testUpdateConcurrentWithOutdatedBranch\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateConcurrentTwoInConfigBranchTest.php
@@ -5047,16 +4677,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentTwoTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateConcurrentTwoTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentTwoTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateConcurrentTwoTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateConcurrentTwoTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateConcurrentTwoTest.php
 
@@ -5191,16 +4811,6 @@ parameters:
 			path: test/integration/UpdateIndirectTwoAncestorsTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTwoAncestorsTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTwoAncestorsTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTwoAncestorsTest\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTwoAncestorsTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTwoAncestorsTest\\:\\:testUpdateIndirectSeveral\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateIndirectTwoAncestorsTest.php
@@ -5276,16 +4886,6 @@ parameters:
 			path: test/integration/issues/Issue107Test.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue107Test\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue107Test.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue107Test\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue107Test.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue107Test\\:\\:testCheckoutAfterCommitError\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue107Test.php
@@ -5317,16 +4917,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue145Test\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue145Test.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue145Test\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue145Test.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue145Test\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue145Test.php
 
@@ -5381,16 +4971,6 @@ parameters:
 			path: test/integration/issues/Issue211Test.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue211Test\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue211Test.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue211Test\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue211Test.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue211Test\\:\\:testLockDataNotFailed\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue211Test.php
@@ -5411,16 +4991,6 @@ parameters:
 			path: test/integration/issues/Issue90Test.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue90Test\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue90Test.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue90Test\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue90Test.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue90Test\\:\\:testChangelogCalledWithReference\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue90Test.php
@@ -5432,16 +5002,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue92Test\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue92Test.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue92Test\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue92Test.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue92Test\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue92Test.php
 
@@ -5472,16 +5032,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue98Test\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue98Test.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue98Test\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$cmd with no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue98Test.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue98Test\\:\\:handleExecutorReturnCallback\\(\\) has parameter \\$return with no type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue98Test.php
 
@@ -6279,4 +5829,3 @@ parameters:
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\TokenChooserTest\\:\\:tokenChooserProvider\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/unit/TokenChooserTest.php
-

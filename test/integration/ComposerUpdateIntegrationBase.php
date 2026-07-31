@@ -94,6 +94,10 @@ abstract class ComposerUpdateIntegrationBase extends Base
         $this->placeComposerLockContentsFromFixture(sprintf('%s.lock.updated', $this->composerAssetFiles), $this->dir);
     }
 
+    /**
+     * @param string[] $cmd
+     * @param mixed $return
+     */
     protected function handleExecutorReturnCallback(array $cmd, &$return)
     {
     }

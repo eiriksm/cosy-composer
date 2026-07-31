@@ -12,7 +12,7 @@ class ComposerInstallTimesOutTest extends ComposerUpdateIntegrationBase
     protected $packageVersionForToUpdateOutput = '1.0.1';
     protected $packageForUpdateOutput = 'psr/log';
     protected $composerAssetFiles = 'composer-psr-log-with-no-scripts';
-    protected $superDistinctCommandName = 'my-special-command-we-will-use-in-searching-the-logs';
+    protected string $superDistinctCommandName = 'my-special-command-we-will-use-in-searching-the-logs';
 
     public function testNoScriptsPassed()
     {

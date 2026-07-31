@@ -59,11 +59,14 @@ class SecurityGroupInstallsNewPackageTest extends ComposerUpdateIntegrationBase
      */
     public function handleExecutorReturnCallback(array $cmd, &$return): void
     {
-        // When the group update for the module is executed, swap in the lock
-        // file that reflects the bumped module plus the newly installed library.
+        // The latest version (2.0.0) is outside of the constraint in
+        // composer.json (^1.0), and updates beyond the constraint are allowed,
+        // so the group is updated with a composer require that bumps the
+        // constraint. When that happens, swap in the lock file that reflects the
+        // bumped module plus the newly installed library.
         if (in_array('composer', $cmd, true)
-            && in_array('update', $cmd, true)
-            && in_array('dummyvendor/base-module', $cmd, true)) {
+            && in_array('require', $cmd, true)
+            && in_array('dummyvendor/base-module:^2.0.0', $cmd, true)) {
             $this->placeComposerLockContentsFromFixture('composer.security_group_installs_new_package.lock.updated', $this->dir);
         }
     }

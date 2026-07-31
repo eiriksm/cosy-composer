@@ -4,7 +4,7 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class ComposerUpdateExitOneForGroupTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-group-contrib-and-core';
+    protected ?string $composerAssetFiles = 'composer-group-contrib-and-core';
     protected $updateJson = '{
     "installed": [
         {

@@ -9,10 +9,10 @@ use eiriksm\CosyComposer\Providers\NamedPrs;
  */
 class CloseOutdatedNewPrSwitchedToOnePerTest extends CloseOutdatedBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
-    protected $composerAssetFiles = 'composer.close.outdated.one_per';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $composerAssetFiles = 'composer.close.outdated.one_per';
     protected $expectedClosedPrs = [356, 123, 124, 125];
     protected $checkPrUrl = true;
 

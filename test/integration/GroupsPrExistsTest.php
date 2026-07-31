@@ -9,7 +9,7 @@ use Violinist\Slug\Slug;
 class GroupsPrExistsTest extends ComposerUpdateIntegrationBase
 {
     private $prsUpdated = [];
-    protected $composerAssetFiles = 'composer-group-contrib-and-core';
+    protected ?string $composerAssetFiles = 'composer-group-contrib-and-core';
     protected $updateJson = '{
     "installed": [
         {

@@ -4,10 +4,10 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class UpdateIndirectTwoAncestorsTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'symfony/polyfill-mbstring';
-    protected $packageVersionForFromUpdateOutput = '1.1.1';
-    protected $packageVersionForToUpdateOutput = '1.1.2';
-    protected $composerAssetFiles = 'composer.indirect.multi_ancestors';
+    protected ?string $packageForUpdateOutput = 'symfony/polyfill-mbstring';
+    protected ?string $packageVersionForFromUpdateOutput = '1.1.1';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.2';
+    protected ?string $composerAssetFiles = 'composer.indirect.multi_ancestors';
     protected $usesDirect = false;
     protected $checkPrUrl = true;
 

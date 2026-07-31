@@ -13,8 +13,7 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class SecurityGroupInstallsNewPackageTest extends ComposerUpdateIntegrationBase
 {
-    /** @var string */
-    protected $composerAssetFiles = 'composer.security_group_installs_new_package';
+    protected ?string $composerAssetFiles = 'composer.security_group_installs_new_package';
 
     /** @var string */
     protected $updateJson = '{

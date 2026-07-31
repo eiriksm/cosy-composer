@@ -11,10 +11,10 @@ use Violinist\Slug\Slug;
 class UpdateExistingWithAssigneesTest extends ComposerUpdateIntegrationBase
 {
 
-    protected $packageForUpdateOutput = 'drush/drush';
-    protected $packageVersionForFromUpdateOutput = '9.7.2';
-    protected $packageVersionForToUpdateOutput = '10.3.6';
-    protected $composerAssetFiles = 'composer.update_assignees';
+    protected ?string $packageForUpdateOutput = 'drush/drush';
+    protected ?string $packageVersionForFromUpdateOutput = '9.7.2';
+    protected ?string $packageVersionForToUpdateOutput = '10.3.6';
+    protected ?string $composerAssetFiles = 'composer.update_assignees';
 
     /**
      * @dataProvider exceptionDataProvider

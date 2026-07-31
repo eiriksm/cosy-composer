@@ -9,10 +9,10 @@ use Http\Client\HttpClient;
 class UpdateBranchTitleChangedTest extends ComposerUpdateIntegrationBase
 {
 
-    protected $composerAssetFiles = 'composer.drupal1021';
-    protected $packageForUpdateOutput = 'drupal/core-recommended';
-    protected $packageVersionForFromUpdateOutput = '10.2.1';
-    protected $packageVersionForToUpdateOutput = '10.2.2';
+    protected ?string $composerAssetFiles = 'composer.drupal1021';
+    protected ?string $packageForUpdateOutput = 'drupal/core-recommended';
+    protected ?string $packageVersionForFromUpdateOutput = '10.2.1';
+    protected ?string $packageVersionForToUpdateOutput = '10.2.2';
 
     public function setUp() : void
     {

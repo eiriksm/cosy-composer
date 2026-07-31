@@ -7,12 +7,12 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class LabelsTest extends LabelTestBase
 {
-    protected $composerAssetFiles = 'composer.labels';
+    protected ?string $composerAssetFiles = 'composer.labels';
     protected $hasUpdatedPsrLog = false;
     protected $hasUpdatedPsrCache = false;
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.1.3';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.1.3';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
     protected $checkPrUrl = true;
 
     protected $expectedLabelAdding = true;

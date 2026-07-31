@@ -7,11 +7,11 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class AllowListTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer.allow';
+    protected ?string $composerAssetFiles = 'composer.allow';
     protected $hasUpdatedPsrLog = false;
     protected $hasUpdatedPsrCache = false;
     protected $hasPatchOnly = false;
-    protected $packageForUpdateOutput = 'psr/cache';
+    protected ?string $packageForUpdateOutput = 'psr/cache';
 
     public function testAllowList()
     {

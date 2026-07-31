@@ -7,7 +7,7 @@ use eiriksm\CosyComposer\Providers\NamedPrs;
 class UpdateConcurrentTwoTest extends ComposerUpdateIntegrationBase
 {
     protected $sha;
-    protected $composerAssetFiles = 'composer.concurrent.two';
+    protected ?string $composerAssetFiles = 'composer.concurrent.two';
 
     public function setUp() : void
     {

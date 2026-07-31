@@ -7,12 +7,12 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class AutomergeSecurityNoUpdateTest extends AutoMergeBase
 {
-    protected $composerAssetFiles = 'composer.automerge_sec_no_update';
+    protected ?string $composerAssetFiles = 'composer.automerge_sec_no_update';
     protected $hasUpdatedPsrLog = false;
     protected $hasUpdatedPsrCache = false;
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.1.3';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.1.3';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
     protected $hasAutoMerge = false;
     protected $checkPrUrl = true;
 }

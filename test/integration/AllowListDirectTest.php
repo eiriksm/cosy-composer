@@ -7,11 +7,11 @@ namespace eiriksm\CosyComposerTest\integration;
  */
 class AllowListDirectTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer.always_allow_direct_dependencies';
+    protected ?string $composerAssetFiles = 'composer.always_allow_direct_dependencies';
     protected $hasUpdatedConsole = false;
     protected $hasUpdatedString = false;
     protected $usesDirect = false;
-    protected $packageForUpdateOutput = 'psr/cache';
+    protected ?string $packageForUpdateOutput = 'psr/cache';
 
     public function testAllowList()
     {

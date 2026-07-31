@@ -4,9 +4,9 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class BlockListTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'eiriksm/fake-package';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.0.1';
+    protected ?string $packageForUpdateOutput = 'eiriksm/fake-package';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.0.1';
 
     /**
      * Test that block list works.

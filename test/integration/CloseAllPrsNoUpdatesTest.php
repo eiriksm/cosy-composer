@@ -9,7 +9,7 @@ use eiriksm\CosyComposer\Providers\NamedPrs;
  */
 class CloseAllPrsNoUpdatesTest extends CloseOutdatedBase
 {
-    protected $composerAssetFiles = 'composer.close.outdated';
+    protected ?string $composerAssetFiles = 'composer.close.outdated';
     protected $checkPrUrl = false;
     protected $expectedClosedPrs = [101, 102];
 

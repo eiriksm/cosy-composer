@@ -6,10 +6,10 @@ use eiriksm\CosyComposer\Providers\NamedPrs;
 
 class UpToDateRaceConditionTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-psr-log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.0.2';
-    protected $packageForUpdateOutput = 'psr/log';
+    protected ?string $composerAssetFiles = 'composer-psr-log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.0.2';
+    protected ?string $packageForUpdateOutput = 'psr/log';
 
     private $hasPushed = false;
     private $prsNamedCount = 0;

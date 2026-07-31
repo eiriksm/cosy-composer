@@ -9,10 +9,10 @@ use Violinist\ProjectData\ProjectData;
  */
 class AssigneesTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer.assignees';
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $composerAssetFiles = 'composer.assignees';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
     protected $checkPrUrl = true;
 
     public function testAssignees()

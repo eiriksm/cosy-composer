@@ -4,10 +4,10 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class UpdateIndirectActualProjectTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'composer/composer';
-    protected $packageVersionForFromUpdateOutput = '2.2.16';
-    protected $packageVersionForToUpdateOutput = '2.3.9';
-    protected $composerAssetFiles = 'composer.actual_project';
+    protected ?string $packageForUpdateOutput = 'composer/composer';
+    protected ?string $packageVersionForFromUpdateOutput = '2.2.16';
+    protected ?string $packageVersionForToUpdateOutput = '2.3.9';
+    protected ?string $composerAssetFiles = 'composer.actual_project';
     protected $usesDirect = false;
 
     protected function createUpdateJsonFromData($package, $version, $new_version)

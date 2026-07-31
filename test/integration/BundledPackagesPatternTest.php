@@ -4,7 +4,7 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class BundledPackagesPatternTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-bundled-pattern';
+    protected ?string $composerAssetFiles = 'composer-bundled-pattern';
 
     protected $updateJson = '{
     "installed": [

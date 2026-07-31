@@ -4,10 +4,10 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class InvalidPackageTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-psr-log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.0.1';
-    protected $packageForUpdateOutput = 'eiriksm/fake-package';
+    protected ?string $composerAssetFiles = 'composer-psr-log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.0.1';
+    protected ?string $packageForUpdateOutput = 'eiriksm/fake-package';
 
     public function testUpdatesFoundButInvalidPackage()
     {

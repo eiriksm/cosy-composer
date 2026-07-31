@@ -5,10 +5,10 @@ namespace eiriksm\CosyComposerTest\integration;
 class PackagesRemovedInUpdatesTest extends ComposerUpdateIntegrationBase
 {
 
-    protected $packageForUpdateOutput = 'drush/drush';
-    protected $packageVersionForFromUpdateOutput = '9.7.2';
-    protected $packageVersionForToUpdateOutput = '10.3.6';
-    protected $composerAssetFiles = 'composer192';
+    protected ?string $packageForUpdateOutput = 'drush/drush';
+    protected ?string $packageVersionForFromUpdateOutput = '9.7.2';
+    protected ?string $packageVersionForToUpdateOutput = '10.3.6';
+    protected ?string $composerAssetFiles = 'composer192';
     protected $checkPrUrl = true;
 
     public function testRemovalsInPackagesUpdated()

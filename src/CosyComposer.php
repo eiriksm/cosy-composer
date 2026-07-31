@@ -472,11 +472,11 @@ class CosyComposer
     }
 
     /**
-     * @throws \eiriksm\CosyComposer\Exceptions\ChdirException
-     * @throws \eiriksm\CosyComposer\Exceptions\GitCloneException
-     * @throws \InvalidArgumentException
-     * @throws \Exception
-     * @throws \Throwable
+     * The actual main method, which we will call from the update wrapper script.
+     *
+     * Callers of this method is responsible for using this class with appropriate dependency injection frameworks,
+     * capturing the output (and log or store this), and of course catch the exceptions that would qualify as a failed
+     * run, with whatever exit code they want to deem appropriate.
      */
     public function run()
     {

@@ -2741,16 +2741,6 @@ parameters:
 			path: test/integration/AutomergeTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecNoUpdateTest\\:\\:createExpectedCommandForPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllSecNoUpdateTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecNoUpdateTest\\:\\:createExpectedCommandForPackage\\(\\) has parameter \\$package with no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllSecNoUpdateTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecNoUpdateTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeUpdateAllSecNoUpdateTest.php
@@ -2776,16 +2766,6 @@ parameters:
 			path: test/integration/AutomergeUpdateAllSecNoUpdateTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecTest\\:\\:createExpectedCommandForPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllSecTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecTest\\:\\:createExpectedCommandForPackage\\(\\) has parameter \\$package with no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllSecTest.php
-
-		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeUpdateAllSecTest.php
@@ -2809,16 +2789,6 @@ parameters:
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllSecTest\\:\\:\\$usesDirect has no type specified\\.$#"
 			count: 1
 			path: test/integration/AutomergeUpdateAllSecTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllTest\\:\\:createExpectedCommandForPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllTest\\:\\:createExpectedCommandForPackage\\(\\) has parameter \\$package with no type specified\\.$#"
-			count: 1
-			path: test/integration/AutomergeUpdateAllTest.php
 
 		-
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\AutomergeUpdateAllTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
@@ -2872,16 +2842,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\Base\\:\\:createComposerFileFromFixtures\\(\\) has parameter \\$filename with no type specified\\.$#"
-			count: 1
-			path: test/integration/Base.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\Base\\:\\:createExpectedCommandForPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/Base.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\Base\\:\\:createExpectedCommandForPackage\\(\\) has parameter \\$package with no type specified\\.$#"
 			count: 1
 			path: test/integration/Base.php
 
@@ -3899,21 +3859,6 @@ parameters:
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalContribGroupRuleTest\\:\\:\\$checkPrUrl has no type specified\\.$#"
 			count: 1
 			path: test/integration/DrupalContribGroupRuleTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalRuntimeSecUpdateTest\\:\\:createExpectedCommandForRequiredPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/DrupalRuntimeSecUpdateTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalRuntimeSecUpdateTest\\:\\:createExpectedCommandForRequiredPackage\\(\\) has parameter \\$new_version with no type specified\\.$#"
-			count: 1
-			path: test/integration/DrupalRuntimeSecUpdateTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalRuntimeSecUpdateTest\\:\\:createExpectedCommandForRequiredPackage\\(\\) has parameter \\$package with no type specified\\.$#"
-			count: 1
-			path: test/integration/DrupalRuntimeSecUpdateTest.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\DrupalRuntimeSecUpdateTest\\:\\:getDrupalUpdatesAndSec\\(\\) has no return type specified\\.$#"
@@ -5211,16 +5156,6 @@ parameters:
 			path: test/integration/UpdateIndirectButHasDirectTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectSecondLevelTest\\:\\:createExpectedCommandForPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectSecondLevelTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectSecondLevelTest\\:\\:createExpectedCommandForPackage\\(\\) has parameter \\$package with no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectSecondLevelTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectSecondLevelTest\\:\\:testUpdateIndirectSecond\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateIndirectSecondLevelTest.php
@@ -5236,16 +5171,6 @@ parameters:
 			path: test/integration/UpdateIndirectSecondLevelTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTest\\:\\:createExpectedCommandForPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTest\\:\\:createExpectedCommandForPackage\\(\\) has parameter \\$package with no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTest\\:\\:testUpdateIndirect\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateIndirectTest.php
@@ -5259,16 +5184,6 @@ parameters:
 			message: "#^Property eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTest\\:\\:\\$usesDirect has no type specified\\.$#"
 			count: 1
 			path: test/integration/UpdateIndirectTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTwoAncestorsTest\\:\\:createExpectedCommandForPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTwoAncestorsTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTwoAncestorsTest\\:\\:createExpectedCommandForPackage\\(\\) has parameter \\$package with no type specified\\.$#"
-			count: 1
-			path: test/integration/UpdateIndirectTwoAncestorsTest.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\UpdateIndirectTwoAncestorsTest\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"
@@ -5459,16 +5374,6 @@ parameters:
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue200Test\\:\\:testRequireDevAdded\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/issues/Issue200Test.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue211Test\\:\\:createExpectedCommandForPackage\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue211Test.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue211Test\\:\\:createExpectedCommandForPackage\\(\\) has parameter \\$package with no type specified\\.$#"
-			count: 1
-			path: test/integration/issues/Issue211Test.php
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\issues\\\\Issue211Test\\:\\:handleExecutorReturnCallback\\(\\) has no return type specified\\.$#"

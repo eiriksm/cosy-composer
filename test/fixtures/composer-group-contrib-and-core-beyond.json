@@ -23,7 +23,7 @@
         "drupal/core-recommended": "^11.1.4",
         "drupal/gin": "4.0.5",
         "drupal/metatag": "^2.1.0",
-        "drupal/pathauto": "^1.13"
+        "drupal/pathauto": ">=1.13"
     },
     "conflict": {
         "drupal/drupal": "*"

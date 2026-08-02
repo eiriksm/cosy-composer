@@ -15,8 +15,7 @@ use Violinist\ComposerUpdater\Updater;
 class GroupUpdater extends Updater
 {
     /**
-     * Map of package name to the version string to require, including any
-     * leading constraint operator (for example "^2.0.1").
+     * Map of package name to the constraint to require (for example "^2.0.1").
      *
      * @var array<string, string>
      */
@@ -41,13 +40,19 @@ class GroupUpdater extends Updater
         foreach ($this->requirePackages as $name => $version_string) {
             $packages[] = sprintf('%s:%s', $name, $version_string);
         }
+        // Note that composer require would move the packages into the section
+        // (require or require-dev) indicated by the presence of the --dev flag.
+        // Which means the packages we are requiring here all have to belong to
+        // the same section. It is the responsibility of the caller to make sure
+        // of that.
         return [
-            array_merge([
+            array_merge(array_filter([
                 'composer',
                 'require',
+                $this->isDevPackage() ? '--dev' : '',
                 '-n',
                 '--no-ansi',
-            ], $packages),
+            ]), $packages),
         ];
     }
 }

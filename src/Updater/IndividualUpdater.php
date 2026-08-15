@@ -179,7 +179,7 @@ class IndividualUpdater extends BaseUpdater
                 $updater->setBundledPackages($array_copy);
             }
             $updater->setWithUpdate($item_config->shouldUpdateWithDependencies());
-            $updater->setRunScripts($item_config->shouldRunScripts());
+            $updater->setRunScripts($config->shouldRunScripts());
             if (!$lock_file_contents) {
                 throw new \Exception('The group update can not be run with composer require');
             } else {
@@ -308,14 +308,14 @@ class IndividualUpdater extends BaseUpdater
             }
         } catch (ValidationFailedException $e) {
             // @todo: Do some better checking. Could be several things, this.
-            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $item_config, $security_update);
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $config, $security_update);
             // If it failed validation because it already exists, we also want to make sure all outdated PRs are
             // closed.
             if (!empty($prs_named[$branch_name]['number'])) {
                 $this->countPR($item->getPackageName());
             }
         } catch (\Gitlab\Exception\RuntimeException $e) {
-            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $item_config, $security_update);
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $config, $security_update);
             if (!empty($prs_named[$branch_name]['number'])) {
                 $this->countPR($item->getPackageName());
             }

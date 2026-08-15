@@ -1,0 +1,28 @@
+{
+    "require": {
+        "psr/log": "^1.0",
+        "psr/cache": "^1.0"
+    },
+    "extra": {
+        "violinist": {
+            "run_scripts": 1,
+            "rules": [
+                {
+                    "name": "PSR group",
+                    "slug": "pee-ess-arr",
+                    "matchRules": [
+                        {
+                            "type": "names",
+                            "values": [
+                                "psr/*"
+                            ]
+                        }
+                    ],
+                    "config": {
+                        "run_scripts": 0
+                    }
+                }
+            ]
+        }
+    }
+}

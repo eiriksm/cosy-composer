@@ -204,7 +204,7 @@ class IndividualUpdater extends BaseUpdater
                 $updater->setRequirePackages($require_beyond);
                 $updater->setDevPackage($require_section === 'require-dev');
                 $updater->setWithUpdate($item_config->shouldUpdateWithDependencies());
-                $updater->setRunScripts($config->shouldRunScripts());
+                $updater->setRunScripts($item_config->shouldRunScripts());
                 $this->log(sprintf('Running composer require to update the group beyond the constraint for the following packages: %s', implode(', ', array_keys($require_beyond))));
                 $updater->executeRequire('');
             } else {
@@ -215,7 +215,7 @@ class IndividualUpdater extends BaseUpdater
                     $updater->setBundledPackages($array_copy);
                 }
                 $updater->setWithUpdate($item_config->shouldUpdateWithDependencies());
-                $updater->setRunScripts($config->shouldRunScripts());
+                $updater->setRunScripts($item_config->shouldRunScripts());
                 $this->log('Running composer update for package ' . $package_name);
                 $updater->executeUpdate();
             }
@@ -341,14 +341,14 @@ class IndividualUpdater extends BaseUpdater
             }
         } catch (ValidationFailedException $e) {
             // @todo: Do some better checking. Could be several things, this.
-            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $config, $security_update);
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $item_config, $security_update);
             // If it failed validation because it already exists, we also want to make sure all outdated PRs are
             // closed.
             if (!empty($prs_named[$branch_name]['number'])) {
                 $this->countPR($item->getPackageName());
             }
         } catch (\Gitlab\Exception\RuntimeException $e) {
-            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $config, $security_update);
+            $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $item_config, $security_update);
             if (!empty($prs_named[$branch_name]['number'])) {
                 $this->countPR($item->getPackageName());
             }

@@ -172,17 +172,50 @@ class IndividualUpdater extends BaseUpdater
             // Now let's update them.
             $array_copy = $package_matches;
             $package_name = reset($package_matches);
-            $updater = $this->getUpdater($package_name);
-            $updater->setPackagesToCheckHasUpdated($package_matches);
-            array_shift($array_copy);
-            if (!empty($array_copy)) {
-                $updater->setBundledPackages($array_copy);
+            // If the rule allows updating beyond the constraint, figure out if
+            // any of the packages in the group actually have a new version
+            // available outside of their current constraint. If so, we have to
+            // use a "composer require" to bump the constraints, since a
+            // "composer update" would never move a package beyond its
+            // constraint.
+            $require_beyond = [];
+            $require_section = '';
+            if ($item_config->shouldAllowUpdatesBeyondConstraint()) {
+                $require_beyond = $this->getGroupRequireBeyondConstraint($item, $composer_json, $package_matches);
             }
-            $updater->setWithUpdate($item_config->shouldUpdateWithDependencies());
-            $updater->setRunScripts($item_config->shouldRunScripts());
+            if (!empty($require_beyond)) {
+                // A composer require would move all of the packages into the
+                // same section of composer.json. So if the packages we are about
+                // to require are spread over both require and require-dev, we
+                // can not do this in one single command, and we would rather
+                // update inside the constraint than move a dev requirement into
+                // the production requirements.
+                $require_section = $this->getCommonRequireSection($composer_json, array_keys($require_beyond));
+                if ($require_section === '') {
+                    $this->log('The packages that need to go beyond their constraint are spread over both require and require-dev. Since a composer require would move them all into the same section, the group will be updated inside the constraint instead.');
+                    $require_beyond = [];
+                }
+            }
             if (!$lock_file_contents) {
-                throw new \Exception('The group update can not be run with composer require');
+                throw new \Exception('The group update can not be run without a lock file');
+            } elseif (!empty($require_beyond)) {
+                $updater = $this->getGroupUpdater($package_name);
+                $updater->setPackagesToCheckHasUpdated($package_matches);
+                $updater->setRequirePackages($require_beyond);
+                $updater->setDevPackage($require_section === 'require-dev');
+                $updater->setWithUpdate($item_config->shouldUpdateWithDependencies());
+                $updater->setRunScripts($item_config->shouldRunScripts());
+                $this->log(sprintf('Running composer require to update the group beyond the constraint for the following packages: %s', implode(', ', array_keys($require_beyond))));
+                $updater->executeRequire('');
             } else {
+                $updater = $this->getUpdater($package_name);
+                $updater->setPackagesToCheckHasUpdated($package_matches);
+                array_shift($array_copy);
+                if (!empty($array_copy)) {
+                    $updater->setBundledPackages($array_copy);
+                }
+                $updater->setWithUpdate($item_config->shouldUpdateWithDependencies());
+                $updater->setRunScripts($item_config->shouldRunScripts());
                 $this->log('Running composer update for package ' . $package_name);
                 $updater->executeUpdate();
             }
@@ -330,6 +363,152 @@ class IndividualUpdater extends BaseUpdater
             $this->log('Caught an exception: ' . $e->getMessage(), 'error');
         }
         $this->executePostUpdateStep($default_branch, $lock_file_contents, $config);
+    }
+
+    /**
+     * Figures out which packages in a group should be required beyond their
+     * current constraint.
+     *
+     * The returned list contains all of the packages in the group that have an
+     * update available, mapped to the constraint to require them with, but only
+     * when at least one of them actually needs to move beyond its constraint. If
+     * no package needs to go beyond, an empty array is returned, and the group
+     * can be updated with a regular "composer update" instead.
+     *
+     * The packages that need to go beyond are mapped to their new constraint,
+     * including the leading operator (for example "^2.0.1"). The rest of them
+     * are mapped to the constraint they already have, since they only need to be
+     * part of the require command for composer to actually update them.
+     *
+     * @param GroupUpdateItem $item
+     * @param \stdClass $composer_json
+     * @param string[] $package_matches
+     *
+     * @return array<string, string>
+     */
+    protected function getGroupRequireBeyondConstraint(GroupUpdateItem $item, \stdClass $composer_json, array $package_matches) : array
+    {
+        // Map the packages in the group to the latest version available.
+        $latest_versions = [];
+        foreach ($item->getData() as $data_item) {
+            if (!empty($data_item->name) && !empty($data_item->latest)) {
+                $latest_versions[$data_item->name] = $data_item->latest;
+            }
+        }
+        $require = [];
+        $has_beyond = false;
+        foreach ($package_matches as $package_name) {
+            if (empty($latest_versions[$package_name])) {
+                // No new version available for this package.
+                continue;
+            }
+            $latest = $latest_versions[$package_name];
+            $req_item = $this->getConstraintFromComposerJson($composer_json, $package_name);
+            if ($req_item === '' || strpos($req_item, 'dev') !== false) {
+                // We can not reason about dev (or missing) constraints, so leave
+                // those to the regular update path.
+                continue;
+            }
+            try {
+                $satisfies = Semver::satisfies($latest, $req_item);
+            } catch (\Exception $e) {
+                // A constraint semver can not parse. Leave it to the regular
+                // update path.
+                continue;
+            }
+            if (!$satisfies) {
+                $has_beyond = true;
+                $require[$package_name] = $this->getConstraintOperator($req_item) . $latest;
+            } else {
+                // This package can reach its latest version without going
+                // beyond its constraint. It still has to be part of the require
+                // command, since composer would not update it otherwise, but we
+                // keep the constraint exactly as it is. That way composer.json is
+                // left untouched for it, and we avoid narrowing down constraints
+                // we can not express with an operator (for example turning
+                // ">=1.13" into an exact version).
+                $require[$package_name] = $req_item;
+            }
+        }
+        // Only go beyond the constraint if at least one of the packages actually
+        // needs it. Otherwise a regular "composer update" handles the group.
+        if (!$has_beyond) {
+            return [];
+        }
+        return $require;
+    }
+
+    protected function getConstraintFromComposerJson(\stdClass $composer_json, string $package_name) : string
+    {
+        $section = $this->getRequireSection($composer_json, $package_name);
+        if ($section === '') {
+            return '';
+        }
+        return trim((string) $composer_json->{$section}->{$package_name});
+    }
+
+    /**
+     * Finds the section of composer.json a package is required in.
+     *
+     * @param \stdClass $composer_json
+     * @param string $package_name
+     *
+     * @return string
+     *   Either "require" or "require-dev", or an empty string if the package is
+     *   not required in either of them.
+     */
+    protected function getRequireSection(\stdClass $composer_json, string $package_name) : string
+    {
+        if (isset($composer_json->require->{$package_name})) {
+            return 'require';
+        }
+        if (isset($composer_json->{'require-dev'}->{$package_name})) {
+            return 'require-dev';
+        }
+        return '';
+    }
+
+    /**
+     * Finds the section of composer.json all of the packages are required in.
+     *
+     * @param \stdClass $composer_json
+     * @param string[] $package_names
+     *
+     * @return string
+     *   Either "require" or "require-dev", or an empty string if the packages
+     *   are not all required in the same section (in which case they can not be
+     *   required in one single composer require).
+     */
+    protected function getCommonRequireSection(\stdClass $composer_json, array $package_names) : string
+    {
+        $sections = [];
+        foreach ($package_names as $package_name) {
+            $sections[$this->getRequireSection($composer_json, $package_name)] = true;
+        }
+        if (count($sections) !== 1) {
+            return '';
+        }
+        // The single key here is either "require", "require-dev" or an empty
+        // string, if we did not find the package at all. Which means returning it
+        // as it is also covers the case of not knowing where the package is.
+        return (string) array_key_first($sections);
+    }
+
+    protected function getConstraintOperator(string $constraint) : string
+    {
+        if (empty($constraint[0])) {
+            return '';
+        }
+        switch ($constraint[0]) {
+            case '^':
+                return '^';
+
+            case '~':
+                return '~';
+
+            default:
+                return '';
+        }
     }
 
     protected function handleUpdateItem(UpdateItemInterface $item_object, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, NamedPrs $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
@@ -742,7 +921,23 @@ class IndividualUpdater extends BaseUpdater
 
     protected function getUpdater(string $package_name) : Updater
     {
-        $updater = new Updater($this->getCwd(), $package_name);
+        return $this->configureUpdater(new Updater($this->getCwd(), $package_name));
+    }
+
+    protected function getGroupUpdater(string $package_name) : GroupUpdater
+    {
+        return $this->configureUpdater(new GroupUpdater($this->getCwd(), $package_name));
+    }
+
+    /**
+     * @template T of Updater
+     *
+     * @param T $updater
+     *
+     * @return T
+     */
+    private function configureUpdater(Updater $updater) : Updater
+    {
         $cosy_logger = new CosyLogger();
         $cosy_factory_wrapper = new ProcessFactoryWrapper();
         $cosy_factory_wrapper->setExecutor($this->executer);

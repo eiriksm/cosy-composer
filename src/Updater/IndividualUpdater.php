@@ -132,7 +132,6 @@ class IndividualUpdater extends BaseUpdater
     protected function handleGroup(GroupUpdateItem $item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, NamedPrs $prs_named_object, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
     {
         $prs_named = $prs_named_object->getAllPrsNamed();
-        // @todo: This should rather take the config from the rule.
         $config = $global_config;
         $item_config = $config->getConfigForRuleObject($item->getRule());
         // Alright, its a group. Let's gather all the package names that are in

@@ -43,8 +43,7 @@ interface ProviderInterface
      *   - head (I think the branch name to pull in?)
      *   - title (PR title)
      *   - body (PR body)
-     *   - assignees (an array of usernames (github) or user ids (gitlab). Gitlab only supports one assignee, so only
-     *   the first element of the array will be used.
+     *   - assignees (an array of usernames (github) or user ids (gitlab)).
      *
      * @return mixed
      */

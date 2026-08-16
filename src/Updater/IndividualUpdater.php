@@ -159,7 +159,8 @@ class IndividualUpdater extends BaseUpdater
         $branch_name = '';
         $pr_params = [];
         try {
-            // Create a branch. This should be specified in the rule config, yeah?
+            // Create a branch. The name (and its prefix) can be specified in
+            // the rule config; see Helpers::createBranchNameForGroup().
             $rule = $item->getRule();
             if (empty($rule->name)) {
                 throw new \RuntimeException('The group rule does not have a name');

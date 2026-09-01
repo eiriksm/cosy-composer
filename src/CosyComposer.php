@@ -414,11 +414,6 @@ class CosyComposer
 
     protected function closePrsForNoLongerRelevantPackages(NamedPrs $prs_named, array $all_outdated_package_names, $composer_lock_data, $default_branch)
     {
-        $is_enabled = self::shouldEnableCloseNoLongerRelevant();
-        if (!$is_enabled) {
-            return;
-        }
-        $this->log('USE_CLOSE_NO_LONGER_RELEVANT flag is enabled, attempting to close no longer relevant PRs');
         $lock_package_names = [];
         foreach (['packages', 'packages-dev'] as $key) {
             if (!empty($composer_lock_data->{$key})) {
@@ -856,14 +851,7 @@ class CosyComposer
         $all_outdated_package_names = array_map(function ($item) {
             return $item->name;
         }, $data);
-        if (empty($data) && !self::shouldEnableCloseNoLongerRelevant()) {
-            $this->log('No updates found.');
-            $this->cleanUp($config);
-            return;
-        }
-        if (empty($data)) {
-            $this->log('No updates found, but USE_CLOSE_NO_LONGER_RELEVANT flag is set, so continuing to attempt closing no longer relevant PRs');
-        }
+
         // Try to see if we have already dealt with this (i.e already have a branch for all the updates.
         $branch_user = $this->forkUser;
         if ($this->isPrivate) {
@@ -1517,10 +1505,5 @@ class CosyComposer
     public static function shouldEnablePublicGithubWrapper() : bool
     {
         return !empty(getenv('USE_GITHUB_PUBLIC_WRAPPER'));
-    }
-
-    public static function shouldEnableCloseNoLongerRelevant() : bool
-    {
-        return !empty(getenv('USE_CLOSE_NO_LONGER_RELEVANT'));
     }
 }

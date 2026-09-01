@@ -4186,11 +4186,6 @@ parameters:
 			path: test/integration/NativeCheckerTest.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\NoUpdateNoRemoteCallsWhenCloseDisabledTest\\:\\:testNoUpdateRunSkipsRemotePrLookupsWhenCleanupDisabled\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/integration/NoUpdateNoRemoteCallsWhenCloseDisabledTest.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\integration\\\\NoUpdatesTest\\:\\:testNoUpdates\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: test/integration/NoUpdatesTest.php
@@ -5177,21 +5172,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerUnitTest\\:\\:testSetUrl\\(\\) has parameter \\$user with no type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerUnitTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerUnitTest\\:\\:testShouldEnableCloseNoLongerRelevant\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerUnitTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerUnitTest\\:\\:testShouldEnableCloseNoLongerRelevant\\(\\) has parameter \\$env_var with no type specified\\.$#"
-			count: 1
-			path: test/unit/CosyComposerUnitTest.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposerTest\\\\unit\\\\CosyComposerUnitTest\\:\\:testShouldEnableCloseNoLongerRelevant\\(\\) has parameter \\$expected with no type specified\\.$#"
 			count: 1
 			path: test/unit/CosyComposerUnitTest.php
 

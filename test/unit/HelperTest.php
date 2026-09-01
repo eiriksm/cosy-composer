@@ -3,9 +3,12 @@
 namespace eiriksm\CosyComposerTest\unit;
 
 use eiriksm\CosyComposer\Helpers;
+use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\NamedPrs;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Violinist\Config\Config;
+use Violinist\Slug\Slug;
 
 class HelperTest extends TestCase
 {
@@ -272,6 +275,29 @@ class HelperTest extends TestCase
                 false,
             ],
         ];
+    }
+
+    public function testHandleAutoMergeDoesNotPropagateExceptionFromProvider(): void
+    {
+        $config = Config::createFromComposerData((object) [
+            'extra' => (object) [
+                'violinist' => (object) [
+                    'automerge' => 1,
+                ],
+            ],
+        ]);
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
+        $client = $this->createMock(ProviderInterface::class);
+        $client->expects(self::once())
+            ->method('enableAutomerge')
+            ->willThrowException(new \RuntimeException('Network error'));
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::atLeastOnce())
+            ->method('log')
+            ->with('info', self::isType('string'));
+
+        // This should not throw, even though the provider does.
+        Helpers::handleAutoMerge($client, $logger, $slug, $config, ['number' => 1]);
     }
 
     public static function composerOutdatedCommandProvider()

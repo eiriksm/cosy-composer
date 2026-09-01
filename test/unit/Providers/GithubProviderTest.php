@@ -4,6 +4,7 @@ namespace eiriksm\CosyComposerTest\unit\Providers;
 
 use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Github;
+use Github\Api\GraphQL;
 use Github\Api\Issue;
 use Github\Api\Issue\Comments;
 use Github\Api\PullRequest;
@@ -262,6 +263,23 @@ class GithubProviderTest extends ProvidersTestBase
             });
         $g = new Github($mock_client);
         $g->closePullRequestWithComment($slug, $pr_id, 'comment');
+    }
+
+    public function testAutomergeReturnsFalseOnException(): void
+    {
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
+        $mock_graphql = $this->createMock(GraphQL::class);
+        $mock_graphql->method('execute')
+            ->willThrowException(new \RuntimeException('API error'));
+        $mock_client = $this->getMockClient();
+        $mock_client->method('api')
+            ->willReturn($mock_graphql);
+        $g = new Github($mock_client);
+        $result = $g->enableAutomerge([
+            'node_id' => 12345,
+            'number' => 12345,
+        ], $slug);
+        $this->assertFalse($result);
     }
 
     public function getProvider(object $client) : ProviderInterface

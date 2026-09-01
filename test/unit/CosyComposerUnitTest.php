@@ -164,5 +164,4 @@ class CosyComposerUnitTest extends TestCase
             ['derp', true],
         ];
     }
-
 }

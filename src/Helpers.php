@@ -188,7 +188,12 @@ class Helpers
     {
         if ($config->shouldAutoMerge($security_update)) {
             $logger->log('info', 'Config indicated automerge should be enabled, Trying to enable automerge');
-            $result = $client->enableAutomerge($pullRequest, $slug, $config->getAutomergeMethod($security_update));
+            try {
+                $result = $client->enableAutomerge($pullRequest, $slug, $config->getAutomergeMethod($security_update));
+            } catch (\Throwable $e) {
+                $logger->log('info', sprintf('Enabling automerge failed with an exception: %s', $e->getMessage()));
+                return;
+            }
             if (!$result) {
                 $logger->log('info', 'Enabling automerge failed.');
             }

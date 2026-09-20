@@ -389,7 +389,9 @@ class CosyComposerChangelogTest extends TestCase
         $updater->setSlug($c->getSlug());
         $updater->setAuthentication($c->getUntouchedUserToken());
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('The changelog string was empty for package drupal/core-recommended');
+        // The package name in the exception is the mapped/resolved one (drupal/core), since that is
+        // the package actually looked up in the lockfile and fetched from.
+        $this->expectExceptionMessage('The changelog string was empty for package drupal/core');
         // The lockfile only has drupal/core, not drupal/core-recommended. This only resolves
         // (and gets far enough to hit the empty-changelog exception) because the default
         // changelog package map maps drupal/core-recommended to drupal/core.

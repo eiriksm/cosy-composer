@@ -17,8 +17,7 @@ class ChangelogPackageAliasesTest extends ComposerUpdateIntegrationBase
     protected ?string $packageForUpdateOutput = 'drupal/core-recommended';
     protected ?string $packageVersionForFromUpdateOutput = '10.2.1';
     protected ?string $packageVersionForToUpdateOutput = '10.2.2';
-    protected $checkPrUrl = true;
-    protected $stdout = '';
+    protected string $stdout = '';
 
     // The clone path composer-changelog-fetcher uses is /tmp/md5($package_name).
     // Since the alias resolves drupal/core-recommended to drupal/core, the
@@ -30,7 +29,13 @@ class ChangelogPackageAliasesTest extends ComposerUpdateIntegrationBase
     private const VERSION_FROM = 'e4809a6155daf96eb927f59d44e9f26fb5607dbe';
     private const VERSION_TO = 'd8cb769d86449af5ad763f3517c7f3c0e226ed60';
 
-    public function testChangelogIsFetchedFromAliasedPackage()
+    public function setUp() : void
+    {
+        parent::setUp();
+        $this->checkPrUrl = true;
+    }
+
+    public function testChangelogIsFetchedFromAliasedPackage() : void
     {
         $this->runtestExpectedOutput();
         $this->assertStringContainsString(
@@ -41,7 +46,7 @@ class ChangelogPackageAliasesTest extends ComposerUpdateIntegrationBase
         $this->assertStringNotContainsString('drupal/core-recommended/commit', $this->prParams['body']);
     }
 
-    public function testChangelogIsNotFetchedFromAliasedPackageWithoutConfig()
+    public function testChangelogIsNotFetchedFromAliasedPackageWithoutConfig() : void
     {
         // Same fixture data, but without the changelog_package_aliases config,
         // so the changelog is looked up (and fails) for drupal/core-recommended
@@ -52,7 +57,7 @@ class ChangelogPackageAliasesTest extends ComposerUpdateIntegrationBase
         $this->assertStringContainsString('Could not retrieve changelog', $this->prParams['body']);
     }
 
-    protected function handleExecutorReturnCallback(array $cmd, &$return)
+    protected function handleExecutorReturnCallback(array $cmd, &$return) : void
     {
         $this->stdout = '';
         $cmd_string = implode(' ', $cmd);
@@ -68,7 +73,10 @@ class ChangelogPackageAliasesTest extends ComposerUpdateIntegrationBase
         }
     }
 
-    protected function processLastOutput(array &$output)
+    /**
+     * @param array<string, string> $output
+     */
+    protected function processLastOutput(array &$output) : void
     {
         if (!empty($this->stdout)) {
             $output['stdout'] = $this->stdout;

@@ -2,7 +2,6 @@
   "name": "company/wordpress-project",
   "require": {
     "wpackagist-plugin/akismet": "^5.3",
-    "wpackagist-plugin/wordfence": "^7.11",
     "wpackagist-plugin/query-monitor": "^3.0"
   },
   "extra": {

@@ -9,10 +9,10 @@ use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
  */
 class Issue211Test extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.1.3';
-    protected $composerAssetFiles = 'composer-no-lock';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.3';
+    protected ?string $composerAssetFiles = 'composer-no-lock';
     protected $checkPrUrl = true;
 
     public function testLockDataNotFailed()
@@ -21,7 +21,10 @@ class Issue211Test extends ComposerUpdateIntegrationBase
         self::assertEquals('psrlog100113', $this->prParams["head"]);
     }
 
-    protected function createExpectedCommandForPackage($package)
+    /**
+     * @return array<int, string>
+     */
+    protected function createExpectedCommandForPackage(string $package) : array
     {
         return ['composer', 'require', '--dev', '-n', '--no-ansi', "$package:1.1.3", '--update-with-dependencies'];
     }

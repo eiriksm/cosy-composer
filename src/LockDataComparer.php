@@ -19,7 +19,7 @@ class LockDataComparer
     /**
      * @return UpdateListItem[]
      */
-    public function getUpdateList()
+    public function getUpdateList() : array
     {
         $list = [];
         $package_types = [

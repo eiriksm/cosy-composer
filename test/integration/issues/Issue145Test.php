@@ -2,15 +2,14 @@
 
 namespace eiriksm\CosyComposerTest\integration\issues;
 
-use eiriksm\ArrayOutput\ArrayOutput;
 use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
 
 class Issue145Test extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.1.3';
-    protected $composerAssetFiles = 'composer145';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.3';
+    protected ?string $composerAssetFiles = 'composer145';
     private $numberOfIstalls = 0;
 
     public function testIssue145()
@@ -42,7 +41,7 @@ class Issue145Test extends ComposerUpdateIntegrationBase
 
             case ['composer', 'install', '--no-ansi', '-n']:
                 $this->numberOfIstalls++;
-                if ($this->numberOfIstalls === 3) {
+                if ($this->numberOfIstalls === 5) {
                     $return = 1;
                 }
                 break;

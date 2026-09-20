@@ -5,6 +5,7 @@ namespace eiriksm\CosyComposerTest\integration;
 use eiriksm\CosyComposer\CosyComposer;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\Providers\Github;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
 use PHPUnit\Framework\TestCase;
@@ -37,6 +38,8 @@ abstract class Base extends TestCase
 
     protected $automergeEnabled = false;
 
+    protected $autoMergeParams = [];
+
     protected $lastCommand = [];
 
     public function setUp() : void
@@ -48,7 +51,10 @@ abstract class Base extends TestCase
         $this->cosy = $c;
     }
 
-    protected function createExpectedCommandForPackage($package)
+    /**
+     * @return array<int, string>
+     */
+    protected function createExpectedCommandForPackage(string $package) : array
     {
         return ["composer", 'update', '-n', '--no-ansi', $package, '--with-dependencies'];
     }
@@ -73,7 +79,7 @@ abstract class Base extends TestCase
                 return $this->getDefaultSha();
             });
         $mock_provider->method('getPrsNamed')
-            ->willReturn([]);
+            ->willReturn(NamedPrs::createFromArray([]));
         $mock_provider_factory->method('createFromHost')
             ->willReturn($mock_provider);
         /** @var CosyComposer $c */
@@ -116,13 +122,6 @@ abstract class Base extends TestCase
             return;
         }
         file_put_contents("$dir/composer.lock", $composer_lock_contents);
-    }
-
-    protected function placeComposerContentsFromFixture($filename, $dir)
-    {
-        $composer_contents = file_get_contents(__DIR__ . '/../fixtures/' . $filename);
-        $composer_file = "$dir/composer.json";
-        file_put_contents($composer_file, $composer_contents);
     }
 
     protected function createComposerFileFromFixtures($dir, $filename)
@@ -184,8 +183,13 @@ abstract class Base extends TestCase
                 return $this->getPrsNamed();
             });
         $mock_provider->method('enableAutomerge')
-            ->willReturnCallback(function () {
+            ->willReturnCallback(function ($pr_data, $slug, $merge_method) {
                 $this->automergeEnabled = true;
+                $this->autoMergeParams = [
+                    'pr_data' => $pr_data,
+                    'slug' => $slug,
+                    'merge_method' => $merge_method,
+                ];
                 return true;
             });
         $mock_provider_factory = $this->getMockProviderFactory();
@@ -197,12 +201,12 @@ abstract class Base extends TestCase
 
     protected function getBranchesFlattened()
     {
-        return [];
+        return array_keys($this->getPrsNamed()->getAllPrsNamed());
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [];
+        return NamedPrs::createFromArray([]);
     }
 
     protected function getMockOutputWithUpdate($package, $version_from, $version_to)

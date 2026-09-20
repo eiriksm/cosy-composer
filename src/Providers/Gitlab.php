@@ -3,7 +3,6 @@
 namespace eiriksm\CosyComposer\Providers;
 
 use eiriksm\CosyComposer\ProviderInterface;
-use Gitlab\Api\MergeRequests;
 use Gitlab\Client;
 use Gitlab\ResultPager;
 use Violinist\Slug\Slug;
@@ -20,12 +19,12 @@ class Gitlab implements ProviderInterface
         $this->client = $client;
     }
 
-    public function authenticate($user, $token)
+    public function authenticate(string $user, ?string $token) : void
     {
         $this->client->authenticate($user, Client::AUTH_OAUTH_TOKEN);
     }
 
-    public function authenticatePrivate($user, $token)
+    public function authenticatePrivate(string $user, ?string $token) : void
     {
         $this->client->authenticate($user, Client::AUTH_OAUTH_TOKEN);
     }
@@ -72,7 +71,7 @@ class Gitlab implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed(Slug $slug) : array
+    public function getPrsNamed(Slug $slug) : NamedPrs
     {
         $pager = new ResultPager($this->client);
         $api = $this->client->mergeRequests();
@@ -80,7 +79,7 @@ class Gitlab implements ProviderInterface
         $prs = $pager->fetchAll($api, $method, [self::getProjectId($slug->getUrl()), [
             'state' => 'opened',
         ]]);
-        $prs_named = [];
+        $prs_named = new NamedPrs();
         foreach ($prs as $pr) {
             if ($pr['state'] !== 'opened') {
                 continue;
@@ -89,7 +88,7 @@ class Gitlab implements ProviderInterface
             $commits = $this->client->repositories()->commits(self::getProjectId($slug->getUrl()), [
                 'ref_name' => $pr['source_branch'],
             ]);
-            $prs_named[$pr['source_branch']] = [
+            $data = [
                 'title' => $pr['title'],
                 'body' => !empty($pr['description']) ? $pr['description'] : '',
                 'html_url' => !empty($pr['web_url']) ? $pr['web_url'] : '',
@@ -98,9 +97,32 @@ class Gitlab implements ProviderInterface
                     'sha' => !empty($commits[1]["id"]) ? $commits[1]["id"] : $pr['sha'],
                     'ref' => $pr["target_branch"],
                 ],
+                'user' => [
+                    'login' => !empty($pr['author']['username']) ? $pr['author']['username'] : null,
+                ],
+                'head' => [
+                    'ref' => $pr['source_branch'],
+                ],
             ];
+            $prs_named->addFromPrData($data);
+            if (!empty($commits[0]["id"]) && !empty($commits[0]["message"])) {
+                $prs_named->addFromCommit($commits[0]["message"], $data);
+            }
         }
         return $prs_named;
+    }
+
+    public function getAuthenticatedUsername() : ?string
+    {
+        if (!isset($this->cache['authenticated_username'])) {
+            try {
+                $user = $this->client->users()->me();
+                $this->cache['authenticated_username'] = $user['username'] ?? null;
+            } catch (\Throwable $e) {
+                return null;
+            }
+        }
+        return $this->cache['authenticated_username'];
     }
 
     public function getDefaultBase(Slug $slug, $default_branch)
@@ -115,12 +137,25 @@ class Gitlab implements ProviderInterface
         return $default_base;
     }
 
+    public function getDefaultBaseTimestamp(Slug $slug, string $default_branch) : ?string
+    {
+        $branches = $this->getBranches($slug);
+        foreach ($branches as $branch) {
+            if ($branch['name'] === $default_branch) {
+                if (!empty($branch['commit']['committed_date'])) {
+                    return $branch['commit']['committed_date'];
+                }
+            }
+        }
+        return null;
+    }
+
     public function createFork($user, $repo, $fork_user)
     {
         throw new \Exception('Gitlab integration only support creating PRs as the authenticated user.');
     }
 
-    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment)
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void
     {
         $this->client->mergeRequests()->addNote(self::getProjectId($slug->getUrl()), $pr_id, $comment);
         $this->client->mergeRequests()->update(self::getProjectId($slug->getUrl()), $pr_id, [
@@ -130,10 +165,10 @@ class Gitlab implements ProviderInterface
 
     public function createPullRequest(Slug $slug, $params)
     {
-        /** @var MergeRequests $mr */
+        /** @var \Gitlab\Api\MergeRequests $mr */
         $mr = $this->client->mergeRequests();
         $data = $mr->create(self::getProjectId($slug->getUrl()), $params['head'], $params['base'], $params['title'], [
-            'description' => $params['body']
+            'description' => $params['body'],
         ]);
         if (!empty($data['web_url'])) {
             $data['html_url'] = $data['web_url'];
@@ -168,6 +203,9 @@ class Gitlab implements ProviderInterface
     public static function getProjectId($url)
     {
         $url = parse_url($url);
+        if (empty($url['path'])) {
+            $url['path'] = '/';
+        }
         return ltrim($url['path'], '/');
     }
 
@@ -190,24 +228,38 @@ class Gitlab implements ProviderInterface
         if (empty($pr_data['number']) && !empty($pr_data["iid"])) {
             $pr_data['number'] = $pr_data["iid"];
         }
+        if ($merge_method === self::MERGE_METHOD_REBASE) {
+            // Not supported on gitlab.
+            return false;
+        }
         $data = [
             'merge_when_pipeline_succeeds' => true,
         ];
+        if ($merge_method === self::MERGE_METHOD_SQUASH) {
+            $data['squash'] = true;
+        }
         $project_id = self::getProjectId($slug->getUrl());
         $retries = 0;
+        $mr = $this->client->mergeRequests();
         while (true) {
             try {
-                $result = $this->client->mergeRequests()->merge($project_id, $pr_data["number"], $data);
+                $result = $mr->merge($project_id, $pr_data["number"], $data);
                 if (!empty($result["merge_when_pipeline_succeeds"])) {
                     return true;
                 }
             } catch (\Throwable $e) {
             }
             $retries++;
-            if ($retries > 10) {
+            if ($retries > 20) {
                 return false;
             }
-            usleep($retries * 100);
+            // Sleep for 40 ms with a linear backoff. Max sleep time will be 800
+            // ms. We want to keep it under 1 second because as it says in the
+            // PHP documentation:
+            // "Note: Values larger than 1000000 (i.e. sleeping for more than a
+            // second) may not be supported by the operating system. Use sleep()
+            // instead."
+            usleep($retries * (1000 * 40));
         }
     }
 }

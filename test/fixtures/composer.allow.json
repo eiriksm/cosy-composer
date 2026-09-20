@@ -7,7 +7,8 @@
         "violinist": {
             "allow_list": [
                 "psr/cache"
-            ]
+            ],
+            "composer_outdated_flag": "patch"
         }
     }
 }

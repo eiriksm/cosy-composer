@@ -3,49 +3,51 @@
 namespace eiriksm\CosyComposerTest\unit;
 
 use eiriksm\CosyComposer\ComposerFileGetter;
-use League\Flysystem\AdapterInterface;
+use League\Flysystem\FilesystemAdapter;
 use PHPUnit\Framework\TestCase;
 
 class ComposerFileGetterTest extends TestCase
 {
-    public function testHasComposerFile()
+    public function testHasComposerFile(): void
     {
-        $adapter = $this->createMock(AdapterInterface::class);
+        $adapter = $this->createMock(FilesystemAdapter::class);
         $adapter->expects($this->once())
-            ->method('has')
+            ->method('fileExists')
             ->with('composer.json')
             ->willReturn(false);
         $getter = new ComposerFileGetter($adapter);
         $this->assertEquals(false, $getter->hasComposerFile());
     }
 
-    public function testBadJsonData()
+    public function testBadJsonData(): void
     {
-        $adapter = $this->createMock(AdapterInterface::class);
+        $adapter = $this->createMock(FilesystemAdapter::class);
         $adapter->expects($this->once())
-            ->method('has')
+            ->method('fileExists')
             ->with('composer.json')
             ->willReturn(true);
         $adapter->expects($this->once())
             ->method('read')
             ->with('composer.json')
-            ->willReturn(false);
+            ->willReturn('');
         $getter = new ComposerFileGetter($adapter);
+        $this->assertEquals(true, $getter->hasComposerFile());
         $this->assertEquals(false, $getter->getComposerJsonData());
     }
 
-    public function testReadComposerJsonContents()
+    public function testReadComposerJsonContents(): void
     {
-        $adapter = $this->createMock(AdapterInterface::class);
+        $adapter = $this->createMock(FilesystemAdapter::class);
         $adapter->expects($this->once())
-            ->method('has')
+            ->method('fileExists')
             ->with('composer.json')
             ->willReturn(true);
         $adapter->expects($this->once())
             ->method('read')
             ->with('composer.json')
-            ->willReturn(['contents' => '{"data": "yes"}']);
+            ->willReturn('{"data": "yes"}');
         $getter = new ComposerFileGetter($adapter);
+        $this->assertEquals(true, $getter->hasComposerFile());
         $this->assertEquals((object) ['data' => 'yes'], $getter->getComposerJsonData());
     }
 }

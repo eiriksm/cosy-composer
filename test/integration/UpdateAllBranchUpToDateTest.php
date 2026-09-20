@@ -2,8 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Violinist\Slug\Slug;
-use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 
 class UpdateAllBranchUpToDateTest extends UpdateAllBase
 {
@@ -20,9 +19,9 @@ class UpdateAllBranchUpToDateTest extends UpdateAllBase
         self::assertEquals($this->foundBranch, true);
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        return NamedPrs::createFromArray([
             'violinistall' => [
                 'base' => [
                     // The dummy API response will return 123 as the SHA.
@@ -41,12 +40,15 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 
 ### Working with this branch
 
-If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/#branches).
+If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/introduction/branches/).
 
 ***
 This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).
 ',
+                'head' => [
+                    'ref' => 'violinistall',
+                ],
             ],
-        ];
+        ]);
     }
 }

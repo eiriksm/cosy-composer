@@ -2,7 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Gitlab\Client;
 use Violinist\ProjectData\ProjectData;
 
 class UpdateGitlabAssigneesTest extends UpdateExistingWithAssigneesTest

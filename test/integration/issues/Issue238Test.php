@@ -9,10 +9,10 @@ use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
  */
 class Issue238Test extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.1.3';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
-    protected $composerAssetFiles = 'composer-238';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.1.3';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $composerAssetFiles = 'composer-238';
 
     public function testDevNameNotFail()
     {

@@ -1,0 +1,11 @@
+{
+    "require": {
+        "psr/log": "^1.0.0"
+    },
+    "extra": {
+        "violinist": {
+            "default_branch": "main-which-we-use-for-the-tests",
+            "default_branch_security": "other-main-which-we-use-for-security-tests"
+        }
+    }
+}

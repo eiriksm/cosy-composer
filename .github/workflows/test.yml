@@ -6,7 +6,7 @@ on:
 jobs:
   test:
     name: Run tests
-    runs-on: 'ubuntu-20.04'
+    runs-on: ubuntu-latest
     env:
       PRIVATE_REPO_GITHUB: ${{ secrets.PRIVATE_REPO_GITHUB }}
       PRIVATE_USER_TOKEN_GITHUB: ${{ secrets.PRIVATE_USER_TOKEN_GITHUB }}
@@ -14,15 +14,15 @@ jobs:
       fail-fast: false
       matrix:
         php-version:
-          - "7.2"
-          - "7.3"
           - "7.4"
           - "8.0"
           - "8.1"
           - "8.2"
           - "8.3"
+          - "8.4"
+          - "8.5"
+          - "8.6"
         composer-version:
-          - "1"
           - "2"
     steps:
       - name: Dump matrix context
@@ -31,10 +31,10 @@ jobs:
         run: echo "$MATRIX_CONTEXT"
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: ${{ matrix.php-version }}
 
@@ -62,14 +62,14 @@ jobs:
           php vendor/bin/php-coveralls -v
 
       - name: Run phpstan
-        if: matrix.php-version != 7.0
-        run: composer phpstan
+        run: |
+          composer phpstan
         
   finish:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Close parallel build
-        uses: coverallsapp/github-action@v1
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2
         with:
           parallel-finished: true

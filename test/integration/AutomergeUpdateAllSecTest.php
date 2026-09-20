@@ -2,8 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Github\Exception\ValidationFailedException;
-use Violinist\Slug\Slug;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 /**
@@ -11,12 +10,12 @@ use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
  */
 class AutomergeUpdateAllSecTest extends AutoMergeBase
 {
-    protected $composerAssetFiles = 'composer.automerge_update_all_sec';
+    protected ?string $composerAssetFiles = 'composer.automerge_update_all_sec';
     protected $hasUpdatedPsrLog = false;
     protected $hasUpdatedPsrCache = false;
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.1.3';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.1.3';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
     protected $hasAutoMerge = true;
     protected $checkPrUrl = true;
     protected $usesDirect = false;
@@ -32,23 +31,29 @@ class AutomergeUpdateAllSecTest extends AutoMergeBase
         $this->cosy->getCheckerFactory()->setChecker($checker);
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
         if (!$this->isUpdate) {
-            return [];
+            return NamedPrs::createFromArray([]);
         }
-        return [
+        return NamedPrs::createFromArray([
             'violinistall' => [
                 'base' => [
                     'sha' => 456,
                 ],
+                'head' => [
+                    'ref' => 'violinistall',
+                ],
                 'title' => 'not the same as the other',
                 'number' => 666,
             ],
-        ];
+        ]);
     }
 
-    protected function createExpectedCommandForPackage($package)
+    /**
+     * @return array<int, string>
+     */
+    protected function createExpectedCommandForPackage(string $package) : array
     {
         return ['composer', 'update'];
     }

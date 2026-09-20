@@ -3,20 +3,22 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 /**
- * Test for a default commit message.
+ * Test for allow list filtering.
  */
 class AllowListTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer.allow';
+    protected ?string $composerAssetFiles = 'composer.allow';
     protected $hasUpdatedPsrLog = false;
     protected $hasUpdatedPsrCache = false;
-    protected $packageForUpdateOutput = 'psr/cache';
+    protected $hasPatchOnly = false;
+    protected ?string $packageForUpdateOutput = 'psr/cache';
 
     public function testAllowList()
     {
         $this->runtestExpectedOutput();
         self::assertEquals($this->hasUpdatedPsrLog, false);
         self::assertEquals($this->hasUpdatedPsrCache, true);
+        self::assertEquals($this->hasPatchOnly, true);
     }
 
     protected function createUpdateJsonFromData($package, $version, $new_version)
@@ -32,6 +34,11 @@ class AllowListTest extends ComposerUpdateIntegrationBase
         }
         if (strpos($cmd_string, 'psr/cache') !== false) {
             $this->hasUpdatedPsrCache = true;
+        }
+        // This project also just randomly has the composer outdated flag set to
+        // patch, so we should do the assertions for that in here as well.
+        if (strpos($cmd_string, '--patch-only') !== false) {
+            $this->hasPatchOnly = true;
         }
     }
 }

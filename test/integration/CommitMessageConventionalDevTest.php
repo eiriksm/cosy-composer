@@ -3,11 +3,11 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 /**
- * Test for commit message type coventional commits.
+ * Test for commit message type conventional commits for dev dependencies.
  */
 class CommitMessageConventionalDevTest extends CommitMessageTest
 {
-    protected $composerAssetFiles = 'composer-conventional-dev';
+    protected ?string $composerAssetFiles = 'composer-conventional-dev';
 
     protected function getCorrectCommit()
     {

@@ -1,0 +1,31 @@
+{
+  "name": "company/project",
+  "require": {
+    "psr/log": "^1.0",
+    "psr/cache": "^1.0",
+    "symfony/console": "^5.0"
+  },
+  "extra": {
+    "violinist": {
+      "automerge": 1,
+      "automerge_method": "merge",
+      "rules": [
+        {
+          "name": "PSR Packages",
+          "matchRules": [
+            {
+              "type": "names",
+              "values": [
+                "psr/*"
+              ]
+            }
+          ],
+          "config": {
+            "automerge": 1,
+            "automerge_method": "squash"
+          }
+        }
+      ]
+    }
+  }
+}

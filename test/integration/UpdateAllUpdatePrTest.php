@@ -2,11 +2,11 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Github\Exception\ValidationFailedException;
 use Gitlab\Exception\RuntimeException;
 use Violinist\ProjectData\ProjectData;
 use Violinist\Slug\Slug;
-use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
 
 class UpdateAllUpdatePrTest extends UpdateAllBase
 {
@@ -57,18 +57,21 @@ class UpdateAllUpdatePrTest extends UpdateAllBase
             ],
             [
                 RuntimeException::class,
-            ]
+            ],
         ];
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        return NamedPrs::createFromArray([
             'violinistall' => [
                 'number' => 123,
                 'title' => 'Update all composer dependencies',
                 'body' => 'Totally not the same body',
+                'head' => [
+                    'ref' => 'violinistall',
+                ],
             ],
-        ];
+        ]);
     }
 }

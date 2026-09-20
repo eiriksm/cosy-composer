@@ -4,10 +4,10 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class UpdateIndirectTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'symfony/polyfill-mbstring';
-    protected $packageVersionForFromUpdateOutput = 'v1.23.0';
-    protected $packageVersionForToUpdateOutput = 'v1.24.0';
-    protected $composerAssetFiles = 'composer.indirect';
+    protected ?string $packageForUpdateOutput = 'symfony/polyfill-mbstring';
+    protected ?string $packageVersionForFromUpdateOutput = 'v1.23.0';
+    protected ?string $packageVersionForToUpdateOutput = 'v1.24.0';
+    protected ?string $composerAssetFiles = 'composer.indirect';
     protected $usesDirect = false;
     protected $checkPrUrl = true;
 
@@ -17,7 +17,10 @@ class UpdateIndirectTest extends ComposerUpdateIntegrationBase
         self::assertEquals('Update dependencies of symfony/var-dumper', $this->prParams["title"]);
     }
 
-    protected function createExpectedCommandForPackage($package)
+    /**
+     * @return array<int, string>
+     */
+    protected function createExpectedCommandForPackage(string $package) : array
     {
         // We are actually updating the required package which depends on this one.
         return ['composer', 'update', '-n', '--no-ansi', 'symfony/var-dumper', '--with-dependencies'];

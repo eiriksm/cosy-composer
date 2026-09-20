@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\unit;
 
+use eiriksm\CosyComposer\Updater\IndividualUpdater;
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
 use PHPUnit\Framework\TestCase;
@@ -11,28 +12,34 @@ class CosyComposerChangelogTest extends TestCase
     use GetExecuterTrait;
     use GetCosyTrait;
 
-    public function testChangeLogPackageNotFound()
+    public function testChangeLogPackageNotFound() : void
     {
         $c = $this->getMockCosy();
         // Of course this should not be possible, but what does one do for coverage, eh?
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Did not find the requested package (vendor/package) in the lockfile. This is probably an error');
-        $c->retrieveChangeLog('vendor/package', (object) ['packages' => [], 'packages-dev' => []], 1, 2);
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $updater->retrieveChangeLog('vendor/package', (object) ['packages' => [], 'packages-dev' => []], 1, 2);
     }
 
-    public function testChangeLogRepoUnknownSource()
+    public function testChangeLogRepoUnknownSource() : void
     {
         $c = $this->getMockCosy();
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Unknown source or non-git source found for vendor/package. Aborting.');
-        $c->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
             [
                 'name' => 'vendor/package',
             ],
         ]])), 1, 2);
     }
 
-    public function testChangeLogRepoCloneError()
+    public function testChangeLogRepoCloneError() : void
     {
         $c = $this->getMockCosy();
         $called = false;
@@ -44,9 +51,13 @@ class CosyComposerChangelogTest extends TestCase
             return 0;
         });
         $c->setExecuter($mock_executer);
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('The changelog string was empty for package vendor/package');
-        $c->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+        $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
             [
                 'name' => 'vendor/package',
                 'source' => [
@@ -58,7 +69,7 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals(true, $called);
     }
 
-    public function testChangeLogRegular()
+    public function testChangeLogRegular() : void
     {
         $c = $this->getMockCosy();
         $called = false;
@@ -72,10 +83,14 @@ class CosyComposerChangelogTest extends TestCase
         $mock_executer->expects($this->once())
             ->method('getLastOutput')
             ->willReturn([
-                'stdout' => "112233 This is the first line\n445566 This is the second line"
+                'stdout' => "112233 This is the first line\n445566 This is the second line",
                 ]);
         $c->setExecuter($mock_executer);
-        $log = $c->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $log = $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
             [
                 'name' => 'vendor/package',
                 'source' => [
@@ -90,7 +105,243 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals(true, $called);
     }
 
-    public function testChangeLogSuperLong()
+    public function testChangeLogDotGitSuffix() : void
+    {
+        $c = $this->getMockCosy();
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
+            return 0;
+        });
+        $mock_executer->expects($this->once())
+            ->method('getLastOutput')
+            ->willReturn([
+                'stdout' => "112233 This is the first line",
+            ]);
+        $c->setExecuter($mock_executer);
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        // URL ends with .git — should be stripped so commit links use the base URL.
+        $log = $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'https://github.com/vendor/package.git',
+                ],
+            ],
+        ]])), 1, 2);
+        $this->assertStringContainsString('https://github.com/vendor/package/commit/112233', $log->getAsMarkdown());
+        // Make sure the commit URL does not incorrectly include the ".git" suffix.
+        $this->assertStringNotContainsString('https://github.com/vendor/package.git/commit/', $log->getAsMarkdown());
+    }
+
+    public function testChangeLogNonDotGitSuffixNotStripped() : void
+    {
+        $c = $this->getMockCosy();
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
+            return 0;
+        });
+        $mock_executer->expects($this->once())
+            ->method('getLastOutput')
+            ->willReturn([
+                'stdout' => "112233 This is the first line",
+            ]);
+        $c->setExecuter($mock_executer);
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        // URL ends with "-git" (not ".git") — should NOT be stripped.
+        $log = $updater->retrieveChangeLog('vendor/package-git', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package-git',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'https://github.com/vendor/package-git',
+                ],
+            ],
+        ]])), 1, 2);
+        $this->assertStringContainsString('https://github.com/vendor/package-git/commit/112233', $log->getAsMarkdown());
+    }
+
+    public function testGetRepoUrlHttps() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'https://github.com/vendor/package.git',
+                ],
+            ],
+        ]])));
+        $this->assertEquals('https://github.com/vendor/package', $url);
+    }
+
+    public function testGetRepoUrlSsh() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@github.com:vendor/package.git',
+                ],
+            ],
+        ]])));
+        $this->assertEquals('https://github.com/vendor/package', $url);
+    }
+
+    public function testGetRepoUrlBitbucketSsh() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@bitbucket.org:vendor/package.git',
+                ],
+            ],
+        ]])));
+        $this->assertEquals('https://bitbucket.org/vendor/package', $url);
+    }
+
+    public function testGetRepoUrlGitlabSsh() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@gitlab.com:vendor/package.git',
+                ],
+            ],
+        ]])));
+        $this->assertEquals('https://gitlab.com/vendor/package', $url);
+    }
+
+    public function testChangeLogBitbucketSshUrl() : void
+    {
+        $c = $this->getMockCosy();
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
+            return 0;
+        });
+        $mock_executer->expects($this->once())
+            ->method('getLastOutput')
+            ->willReturn([
+                'stdout' => "112233 This is the first line",
+            ]);
+        $c->setExecuter($mock_executer);
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $log = $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@bitbucket.org:vendor/package.git',
+                ],
+            ],
+        ]])), 1, 2);
+        $this->assertStringContainsString('https://bitbucket.org/vendor/package/commits/112233', $log->getAsMarkdown());
+        $this->assertStringNotContainsString('git@bitbucket.org', $log->getAsMarkdown());
+    }
+
+    public function testChangeLogGitlabSshUrl() : void
+    {
+        $c = $this->getMockCosy();
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
+            return 0;
+        });
+        $mock_executer->expects($this->once())
+            ->method('getLastOutput')
+            ->willReturn([
+                'stdout' => "112233 This is the first line",
+            ]);
+        $c->setExecuter($mock_executer);
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $log = $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@gitlab.com:vendor/package.git',
+                ],
+            ],
+        ]])), 1, 2);
+        $this->assertStringContainsString('https://gitlab.com/vendor/package/-/commit/112233', $log->getAsMarkdown());
+        $this->assertStringNotContainsString('git@gitlab.com', $log->getAsMarkdown());
+    }
+
+    public function testGetRepoUrlNoSource() : void
+    {
+        $c = $this->getMockCosy();
+        $updater = new IndividualUpdater();
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $url = $updater->getRepoUrl('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+            ],
+        ]])));
+        $this->assertNull($url);
+    }
+
+    public function testChangeLogSshUrl() : void
+    {
+        $c = $this->getMockCosy();
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
+            return 0;
+        });
+        $mock_executer->expects($this->once())
+            ->method('getLastOutput')
+            ->willReturn([
+                'stdout' => "112233 This is the first line\n445566 This is the second line",
+            ]);
+        $c->setExecuter($mock_executer);
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        // Use an SSH git URL — the commit links in the markdown should still use HTTPS.
+        $log = $updater->retrieveChangeLog('vendor/package', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'git@github.com:vendor/package.git',
+                ],
+            ],
+        ]])), 1, 2);
+        $this->assertStringContainsString('https://github.com/vendor/package/commit/112233', $log->getAsMarkdown());
+        $this->assertStringContainsString('https://github.com/vendor/package/commit/445566', $log->getAsMarkdown());
+        // Make sure it doesn't contain the SSH-style URL in the commit links.
+        $this->assertStringNotContainsString('git@github.com', $log->getAsMarkdown());
+    }
+
+    public function testChangeLogSuperLong() : void
     {
         $c = $this->getMockCosy();
         $called = false;
@@ -109,7 +360,11 @@ class CosyComposerChangelogTest extends TestCase
                 'stdout' => $one_line_example_output,
             ]);
         $c->setExecuter($mock_executer);
-        $log = $c->retrieveChangeLog('drupal/core', json_decode(json_encode(['packages' => [
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $log = $updater->retrieveChangeLog('drupal/core', json_decode(json_encode(['packages' => [
             [
                 'name' => 'drupal/core',
                 'source' => [
@@ -122,21 +377,22 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals(true, $called);
     }
 
-    public function testChangeLogPackageMapDefault()
+    public function testChangeLogPackageMapDefault() : void
     {
         $c = $this->getMockCosy();
-        $requested_package = null;
-        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) use (&$requested_package) {
-            $command = implode(' ', $command_array);
-            if (strpos($command, 'git clone') === 0) {
-                $requested_package = $command_array[2];
-            }
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
             return 0;
         });
-        $c->setExecuter($mock_executer);
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('The changelog string was empty for package drupal/core-recommended');
-        $c->retrieveChangeLog('drupal/core-recommended', json_decode(json_encode(['packages' => [
+        // The lockfile only has drupal/core, not drupal/core-recommended. This only resolves
+        // (and gets far enough to hit the empty-changelog exception) because the default
+        // changelog package map maps drupal/core-recommended to drupal/core.
+        $updater->retrieveChangeLog('drupal/core-recommended', json_decode(json_encode(['packages' => [
             [
                 'name' => 'drupal/core',
                 'source' => [
@@ -147,12 +403,9 @@ class CosyComposerChangelogTest extends TestCase
         ]])), 1, 2);
     }
 
-    public function testChangeLogPackageMapConfigurable()
+    public function testChangeLogPackageMapConfigurable() : void
     {
         $c = $this->getMockCosy();
-        $c->setChangelogPackageMap([
-            'vendor/package-metapackage' => 'vendor/package',
-        ]);
         $called = false;
         $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) use (&$called) {
             $command = implode(' ', $command_array);
@@ -166,8 +419,14 @@ class CosyComposerChangelogTest extends TestCase
             ->willReturn([
                 'stdout' => "112233 This is the first line",
                 ]);
-        $c->setExecuter($mock_executer);
-        $log = $c->retrieveChangeLog('vendor/package-metapackage', json_decode(json_encode(['packages' => [
+        $updater = new IndividualUpdater();
+        $updater->setExecuter($mock_executer);
+        $updater->setSlug($c->getSlug());
+        $updater->setAuthentication($c->getUntouchedUserToken());
+        $updater->setChangelogPackageMap([
+            'vendor/package-metapackage' => 'vendor/package',
+        ]);
+        $log = $updater->retrieveChangeLog('vendor/package-metapackage', json_decode(json_encode(['packages' => [
             [
                 'name' => 'vendor/package',
                 'source' => [
@@ -181,6 +440,6 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals(true, $called);
         $this->assertEquals([
             'vendor/package-metapackage' => 'vendor/package',
-        ], $c->getChangelogPackageMap());
+        ], $updater->getChangelogPackageMap());
     }
 }

@@ -2,15 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Bitbucket\Api\Repositories;
-use Bitbucket\Client;
-use eiriksm\CosyComposer\CommandExecuter;
-use eiriksm\CosyComposer\CosyComposer;
-use eiriksm\CosyComposer\ProviderFactory;
-use eiriksm\CosyComposer\Providers\Bitbucket;
-use eiriksm\CosyComposer\Providers\Github;
-use eiriksm\CosyComposerTest\integration\Base;
-use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Github\Exception\ValidationFailedException;
 use Gitlab\Exception\RuntimeException;
 use Violinist\Slug\Slug;
@@ -20,10 +12,10 @@ use Violinist\Slug\Slug;
  */
 class CloseOutdatedUpdateBranchTest extends CloseOutdatedBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
-    protected $composerAssetFiles = 'composer.close.outdated';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $composerAssetFiles = 'composer.close.outdated';
     protected $expectedClosedPrs = [123, 124, 125];
     private $exceptionClass = ValidationFailedException::class;
 
@@ -47,25 +39,41 @@ class CloseOutdatedUpdateBranchTest extends CloseOutdatedBase
         throw new $this->exceptionClass('for real');
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        return NamedPrs::createFromArray([
             'psrlog100114' => [
                 'number' => 456,
                 'title' => 'Test update',
+                'base' => [
+                    'ref' => 'master',
+                    'sha' => 123,
+                ],
+                'head' => [
+                    'ref' => 'psrlog100114',
+                ],
             ],
             'psrlog100113' => [
                 'number' => 123,
                 'title' => 'Test update',
+                'head' => [
+                    'ref' => 'psrlog100113',
+                ],
             ],
             'psrlog100112' => [
                 'number' => 124,
                 'title' => 'Test update',
+                'head' => [
+                    'ref' => 'psrlog100112',
+                ],
             ],
             'psrlog100111' => [
                 'number' => 125,
                 'title' => 'Test update',
-            ]
-        ];
+                'head' => [
+                    'ref' => 'psrlog100111',
+                ],
+            ],
+        ]);
     }
 }

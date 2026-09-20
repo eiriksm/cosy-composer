@@ -2,14 +2,14 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use eiriksm\ArrayOutput\ArrayOutput;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Github\Exception\ValidationFailedException;
 use Gitlab\Exception\RuntimeException;
 use Violinist\Slug\Slug;
 
 class UpdateConcurrentOutdatedBranchTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer.concurrent.update_branch';
+    protected ?string $composerAssetFiles = 'composer.concurrent.update_branch';
     private $sha;
 
     public function setUp() : void
@@ -76,17 +76,20 @@ class UpdateConcurrentOutdatedBranchTest extends ComposerUpdateIntegrationBase
         }
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        return NamedPrs::createFromArray([
             'psrcache100101' => [
                 'base' => [
                     'sha' => $this->sha,
                 ],
                 'number' => 123,
                 'title' => 'Update psr/cache from 1.0.0 to 1.0.1',
+                'head' => [
+                    'ref' => 'psrcache100101',
+                ],
             ],
-        ];
+        ]);
     }
 
     protected function getBranchesFlattened()

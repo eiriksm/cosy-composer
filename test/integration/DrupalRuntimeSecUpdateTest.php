@@ -2,19 +2,10 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use eiriksm\ArrayOutput\ArrayOutput;
-use eiriksm\CosyComposer\CosyComposer;
-use Http\Adapter\Guzzle7\Client;
 use Violinist\Slug\Slug;
 
 class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
 {
-
-    public function setUp() : void
-    {
-        parent::setUp();
-        $this->cosy->setHttpClient(new Client());
-    }
 
     /**
      * @dataProvider getDrupalUpdatesAndSec
@@ -58,7 +49,10 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
         self::assertEquals($sec, strpos($this->prParams["title"], '[SECURITY]') === 0);
     }
 
-    protected function createExpectedCommandForRequiredPackage($package, $new_version)
+    /**
+     * @return array<int, string>
+     */
+    protected function createExpectedCommandForRequiredPackage(string $package, string $new_version) : array
     {
         return ["composer", "require", '-n', '--no-ansi', "$package:$new_version", '--update-with-dependencies'];
     }
@@ -138,12 +132,12 @@ class DrupalRuntimeSecUpdateTest extends ComposerUpdateIntegrationBase
             [
                 '7.212',
                 'drupal/core',
-                false
+                false,
             ],
             [
                 '7.0',
                 'drupal/core',
-                true
+                true,
             ],
             [
                 '10.9.8',

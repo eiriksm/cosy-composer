@@ -2,23 +2,28 @@
 
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
+use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Gitlab;
 use Gitlab\Api\MergeRequests;
 use Gitlab\Api\Projects;
 use Gitlab\Api\Repositories;
+use Gitlab\Api\Users;
 use Gitlab\Client;
+use PHPUnit\Framework\MockObject\MockObject;
 use Violinist\Slug\Slug;
 
 class GitlabProviderTest extends ProvidersTestBase
 {
+    /** @var list<string|null> */
     protected $authenticateArguments = [
         'testUser',
-        Client::AUTH_OAUTH_TOKEN
+        Client::AUTH_OAUTH_TOKEN,
     ];
 
+    /** @var list<string|null> */
     protected $authenticatePrivateArguments = [
         'testUser',
-        Client::AUTH_OAUTH_TOKEN
+        Client::AUTH_OAUTH_TOKEN,
     ];
 
     public function testRepoIsPrivate()
@@ -29,7 +34,88 @@ class GitlabProviderTest extends ProvidersTestBase
         $this->assertEquals(true, $provider->repoIsPrivate($slug));
     }
 
-    public function getProvider($client)
+    public function testGetAuthenticatedUsername(): void
+    {
+        $mock_users_api = $this->createMock(Users::class);
+        $mock_users_api->expects($this->once())
+            ->method('me')
+            ->willReturn([
+                'username' => 'violinist-bot',
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('users')
+            ->willReturn($mock_users_api);
+        $g = new Gitlab($mock_client);
+        $this->assertEquals('violinist-bot', $g->getAuthenticatedUsername());
+        // A second call should be served from cache, not hit the api again.
+        $this->assertEquals('violinist-bot', $g->getAuthenticatedUsername());
+    }
+
+    public function testGetAuthenticatedUsernameReturnsNullOnException(): void
+    {
+        $mock_client = $this->getMockClient();
+        $mock_client->method('users')
+            ->willThrowException(new \RuntimeException('API error'));
+        $g = new Gitlab($mock_client);
+        $this->assertNull($g->getAuthenticatedUsername());
+    }
+
+    public function testDefaultBaseTimestamp(): void
+    {
+        $slug = Slug::createFromUrl('http://gitlab.com/testUser/testRepo');
+        $mock_repo_api = $this->createMock(Repositories::class);
+        $mock_repo_api->expects($this->once())
+            ->method('branches')
+            ->with('testUser/testRepo')
+            ->willReturn([
+                [
+                    'name' => 'main',
+                    'commit' => [
+                        'id' => 'abcd',
+                        'committed_date' => '2025-01-15T10:30:00.000+00:00',
+                    ],
+                ],
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('repositories')
+            ->willReturn($mock_repo_api);
+        $mock_response = $this->createMock(\Psr\Http\Message\ResponseInterface::class);
+        $mock_response->method('getHeader')
+            ->willReturn([]);
+        $provider = new Gitlab($mock_client);
+        $this->assertEquals('2025-01-15T10:30:00.000+00:00', $provider->getDefaultBaseTimestamp($slug, 'main'));
+    }
+
+    public function testDefaultBaseTimestampReturnsNullForMissingBranch(): void
+    {
+        $slug = Slug::createFromUrl('http://gitlab.com/testUser/testRepo');
+        $mock_repo_api = $this->createMock(Repositories::class);
+        $mock_repo_api->expects($this->once())
+            ->method('branches')
+            ->with('testUser/testRepo')
+            ->willReturn([
+                [
+                    'name' => 'other',
+                    'commit' => [
+                        'id' => 'abcd',
+                        'committed_date' => '2025-01-15T10:30:00.000+00:00',
+                    ],
+                ],
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('repositories')
+            ->willReturn($mock_repo_api);
+        $mock_response = $this->createMock(\Psr\Http\Message\ResponseInterface::class);
+        $mock_response->method('getHeader')
+            ->willReturn([]);
+        $provider = new Gitlab($mock_client);
+        $this->assertNull($provider->getDefaultBaseTimestamp($slug, 'main'));
+    }
+
+    public function getProvider(object $client) : ProviderInterface
     {
         return new Gitlab($client);
     }
@@ -37,11 +123,6 @@ class GitlabProviderTest extends ProvidersTestBase
     public function getMockClient()
     {
         return $this->createMock(Client::class);
-    }
-
-    public function getBranchMethod()
-    {
-        return 'projects';
     }
 
     protected function getRepoClassName($context)
@@ -60,5 +141,66 @@ class GitlabProviderTest extends ProvidersTestBase
     protected function getPrApiMethod()
     {
         return 'mr';
+    }
+
+    protected function configureShowClient(MockObject $client, MockObject $show_api, string $user, string $repo) : void
+    {
+        $client->expects($this->once())
+            ->method('projects')
+            ->willReturn($show_api);
+    }
+
+    /** @return list<string> */
+    protected function getShowArguments(string $user, string $repo) : array
+    {
+        return ["$user/$repo"];
+    }
+
+    protected function configureBranchesClient(
+        MockObject $client,
+        MockObject $branches_api,
+        string $user,
+        string $repo
+    ) : void {
+        $client->expects($this->once())
+            ->method('repositories')
+            ->willReturn($branches_api);
+    }
+
+    /** @return list<string> */
+    protected function getBranchesArguments(string $user, string $repo) : array
+    {
+        return ["$user/$repo"];
+    }
+
+    protected function configureLastResponse(MockObject $client) : void
+    {
+        // Gitlab paginates through its own response history, so there is no last
+        // response on the client to stub.
+    }
+
+    protected function configureAutomergeClient(MockObject $client) : void
+    {
+        $mock_merge_requests = $this->createMock(MergeRequests::class);
+        $mock_merge_requests->method('merge')
+            ->willReturn([
+                'merge_when_pipeline_succeeds' => true,
+            ]);
+        $client->method('mergeRequests')
+            ->willReturn($mock_merge_requests);
+    }
+
+    protected function configurePrsClient(MockObject $client, MockObject $prs_api, string $user, string $repo) : void
+    {
+        $client->method('mergeRequests')
+            ->willReturn($prs_api);
+        $client->method('repositories')
+            ->willReturn($this->createMock(Repositories::class));
+    }
+
+    /** @return list<string> */
+    protected function getPrsArguments(string $user, string $repo) : array
+    {
+        return ["$user/$repo"];
     }
 }

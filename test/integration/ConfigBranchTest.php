@@ -2,14 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Bitbucket\Api\Repositories;
-use Bitbucket\Client;
-use eiriksm\CosyComposer\CommandExecuter;
-use eiriksm\CosyComposer\CosyComposer;
-use eiriksm\CosyComposer\ProviderFactory;
-use eiriksm\CosyComposer\Providers\Bitbucket;
-use eiriksm\CosyComposer\Providers\Github;
-use eiriksm\CosyComposerTest\integration\Base;
 use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
 use Violinist\ProjectData\ProjectData;
 
@@ -18,10 +10,10 @@ use Violinist\ProjectData\ProjectData;
  */
 class ConfigBranchTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
-    protected $composerAssetFiles = 'empty';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $composerAssetFiles = 'empty';
 
     public function tearDown() : void
     {
@@ -59,12 +51,12 @@ config_branch=config'],
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
         $cmd_string = implode(' ', $cmd);
-        if (!preg_match('/git clone --depth=1 https:\/\/user-token:@github.com\/a\/b .* config/', $cmd_string, $output_array)) {
+        if (!preg_match('/git clone --depth=1 https:\/\/x-access-token:user-token@github.com\/a\/b .* config/', $cmd_string, $output_array)) {
             return;
         }
         // Now retrieve the dir.
-        $dir = str_replace(' -b config', '', str_replace('git clone --depth=1 https://user-token:@github.com/a/b ', '', $cmd_string));
+        $dir = str_replace(' -b config', '', str_replace('git clone --depth=1 https://x-access-token:user-token@github.com/a/b ', '', $cmd_string));
         mkdir($dir);
-        $this->placeComposerContentsFromFixture('empty.json', $dir);
+        $this->createComposerFileFromFixtures($dir, 'empty.json');
     }
 }

@@ -4,7 +4,8 @@
     },
     "extra": {
         "violinist": {
-            "automerge": 1
+            "automerge": 1,
+            "automerge_method": "squash"
         }
     }
 }

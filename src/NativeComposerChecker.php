@@ -33,7 +33,12 @@ class NativeComposerChecker extends SecurityChecker
         if (!is_array($json)) {
             throw new \Exception('Invalid JSON found from parsing the security check data');
         }
-        $bc_result = [];
+        // This is called a backwards compatible result because we have to make
+        // sure the format of the output matches the one we would have gotten
+        // from the one we use on composer 1. Which is kind of a shame, I guess,
+        // since the new composer audit command actually is producing JSON that
+        // would be totally usable for our case.
+        $backwards_compatible_result = [];
         foreach ($json as $type => $packages) {
             foreach ($packages as $package => $items) {
                 // If the type is "abandoned" the items will be a string. like so:
@@ -46,18 +51,18 @@ class NativeComposerChecker extends SecurityChecker
                 if (empty($items)) {
                     continue;
                 }
-                if (empty($bc_result[$package])) {
-                    $bc_result[$package] = [];
+                if (empty($backwards_compatible_result[$package])) {
+                    $backwards_compatible_result[$package] = [];
                 }
-                if (empty($bc_result[$package][$type])) {
-                    $bc_result[$package][$type] = [];
+                if (empty($backwards_compatible_result[$package][$type])) {
+                    $backwards_compatible_result[$package][$type] = [];
                 }
                 foreach ($items as $item) {
-                    $bc_result[$package][$type][] = $item;
+                    $backwards_compatible_result[$package][$type][] = $item;
                 }
             }
         }
-        return $bc_result;
+        return $backwards_compatible_result;
     }
 
     protected function getProcess(array $command)

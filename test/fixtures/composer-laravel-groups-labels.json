@@ -1,0 +1,60 @@
+{
+  "name": "company/project",
+  "require": {
+    "laravel/framework": "^10.0",
+    "laravel/telescope": "^4.0",
+    "spatie/laravel-permission": "^5.10"
+  },
+  "extra": {
+    "violinist": {
+      "rules": [
+        {
+          "name": "Laravel Core Packages",
+          "matchRules": [
+            {
+              "type": "names",
+              "values": [
+                "laravel/framework",
+                "laravel/sanctum",
+                "laravel/tinker"
+              ]
+            }
+          ],
+          "config": {
+            "labels": ["laravel-core", "dependencies"]
+          }
+        },
+        {
+          "name": "Laravel Development Tools",
+          "matchRules": [
+            {
+              "type": "names",
+              "values": [
+                "laravel/telescope",
+                "laravel/horizon",
+                "barryvdh/*"
+              ]
+            }
+          ],
+          "config": {
+            "labels": ["laravel-dev", "dependencies"]
+          }
+        },
+        {
+          "name": "Spatie Laravel Packages",
+          "matchRules": [
+            {
+              "type": "names",
+              "values": [
+                "spatie/laravel-*"
+              ]
+            }
+          ],
+          "config": {
+            "labels": ["spatie", "laravel", "dependencies"]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -4,10 +4,10 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class ErrorCommittingTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer-psr-log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.0.2';
-    protected $packageForUpdateOutput = 'psr/log';
+    protected ?string $composerAssetFiles = 'composer-psr-log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.0.2';
+    protected ?string $packageForUpdateOutput = 'psr/log';
 
     public function testUpdatesRunButErrorCommiting()
     {
@@ -17,7 +17,8 @@ class ErrorCommittingTest extends ComposerUpdateIntegrationBase
 
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
-        if ($cmd == ['git', 'commit', 'composer.json', 'composer.lock', '-m', 'Update psr/log']) {
+        $command_string = implode(' ', $cmd);
+        if (strpos($command_string, 'git commit composer.json composer.lock -m Update psr/log') === 0) {
             $return = 1;
         }
     }

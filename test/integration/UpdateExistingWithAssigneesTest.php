@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Github\Exception\ValidationFailedException;
 use Gitlab\Exception\RuntimeException;
 use Violinist\ProjectData\ProjectData;
@@ -10,10 +11,10 @@ use Violinist\Slug\Slug;
 class UpdateExistingWithAssigneesTest extends ComposerUpdateIntegrationBase
 {
 
-    protected $packageForUpdateOutput = 'drush/drush';
-    protected $packageVersionForFromUpdateOutput = '9.7.2';
-    protected $packageVersionForToUpdateOutput = '10.3.6';
-    protected $composerAssetFiles = 'composer.update_assignees';
+    protected ?string $packageForUpdateOutput = 'drush/drush';
+    protected ?string $packageVersionForFromUpdateOutput = '9.7.2';
+    protected ?string $packageVersionForToUpdateOutput = '10.3.6';
+    protected ?string $composerAssetFiles = 'composer.update_assignees';
 
     /**
      * @dataProvider exceptionDataProvider
@@ -47,17 +48,23 @@ class UpdateExistingWithAssigneesTest extends ComposerUpdateIntegrationBase
             ],
             [
                 RuntimeException::class,
-            ]
+            ],
         ];
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        return NamedPrs::createFromArray([
             'drushdrush9721036' => [
+                'base' => [
+                    'sha' => '123',
+                ],
                 'number' => 123,
                 'title' => 'Not update drush, thats for sure. This will trigger an update of the PR',
-            ]
-        ];
+                'head' => [
+                    'ref' => 'drushdrush9721036',
+                ],
+            ],
+        ]);
     }
 }

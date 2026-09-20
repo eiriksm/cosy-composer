@@ -3,8 +3,6 @@
 namespace eiriksm\CosyComposer\Providers;
 
 use eiriksm\CosyComposer\ProviderInterface;
-use Github\Api\Issue;
-use Github\Api\PullRequest;
 use Github\AuthMethod;
 use Github\Client;
 use Github\ResultPager;
@@ -51,30 +49,34 @@ class Github implements ProviderInterface
         if ($merge_method === self::MERGE_METHOD_SQUASH) {
             $api_merge_method = 'SQUASH';
         }
-        $data = $this->client->graphql()->execute('mutation MyMutation ($input: EnablePullRequestAutoMergeInput!) {
+        try {
+            $data = $this->client->api('graphql')->execute('mutation MyMutation ($input: EnablePullRequestAutoMergeInput!) {
   enablePullRequestAutoMerge(input: $input) {
     pullRequest {
       id
     }
   }
 }', [
-        'input' => [
-            'pullRequestId' => $pr_data['node_id'],
-            'mergeMethod' => $api_merge_method,
-        ]
-        ]);
+            'input' => [
+                'pullRequestId' => $pr_data['node_id'],
+                'mergeMethod' => $api_merge_method,
+            ],
+            ]);
+        } catch (\Throwable $e) {
+            return false;
+        }
         if (!empty($data["errors"])) {
             return false;
         }
         return true;
     }
 
-    public function authenticate($user, $token)
+    public function authenticate(string $user, ?string $token) : void
     {
         $this->client->authenticate($user, null, AuthMethod::ACCESS_TOKEN);
     }
 
-    public function authenticatePrivate($user, $token)
+    public function authenticatePrivate(string $user, ?string $token) : void
     {
         $this->client->authenticate($user, null, AuthMethod::ACCESS_TOKEN);
     }
@@ -123,7 +125,7 @@ class Github implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed(Slug $slug) : array
+    public function getPrsNamed(Slug $slug) : NamedPrs
     {
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
@@ -131,11 +133,35 @@ class Github implements ProviderInterface
         $api = $this->client->api('pr');
         $method = 'all';
         $prs = $pager->fetchAll($api, $method, [$user, $repo]);
-        $prs_named = [];
+        $prs_named = new NamedPrs();
         foreach ($prs as $pr) {
-            $prs_named[$pr['head']['ref']] = $pr;
+            $prs_named->addFromPrData($pr);
+            // Attempt to retrieve the actual commit.
+            try {
+                /** @var \Github\Api\Repository\Commits $commits */
+                $commits = $this->client->api('repo')->commits();
+                $commit = $commits->show($user, $repo, $pr['head']['sha']);
+                if (!empty($commit["commit"]["message"])) {
+                    $prs_named->addFromCommit($commit["commit"]["message"], $pr);
+                }
+            } catch (\Exception $e) {
+                // If the commit is not found, we just skip it.
+            }
         }
         return $prs_named;
+    }
+
+    public function getAuthenticatedUsername() : ?string
+    {
+        if (!isset($this->cache['authenticated_username'])) {
+            try {
+                $user = $this->client->api('current_user')->show();
+                $this->cache['authenticated_username'] = $user['login'] ?? null;
+            } catch (\Throwable $e) {
+                return null;
+            }
+        }
+        return $this->cache['authenticated_username'];
     }
 
     public function getDefaultBase(Slug $slug, $default_branch)
@@ -152,6 +178,21 @@ class Github implements ProviderInterface
         return $default_base;
     }
 
+    public function getDefaultBaseTimestamp(Slug $slug, string $default_branch) : ?string
+    {
+        $user = $slug->getUserName();
+        $repo = $slug->getUserRepo();
+        try {
+            $branch = $this->client->api('repo')->branches($user, $repo, $default_branch);
+            if (!empty($branch['commit']['commit']['committer']['date'])) {
+                return $branch['commit']['commit']['committer']['date'];
+            }
+        } catch (\Exception $e) {
+            // If the branch is not found, we just return null.
+        }
+        return null;
+    }
+
     public function createFork($user, $repo, $fork_user)
     {
         return $this->client->api('repo')->forks()->create($user, $repo, [
@@ -163,13 +204,13 @@ class Github implements ProviderInterface
     {
         $user_name = $slug->getUserName();
         $user_repo = $slug->getUserRepo();
-        /** @var PullRequest $prs */
+        /** @var \Github\Api\PullRequest $prs */
         $prs = $this->client->api('pull_request');
         $data = $prs->create($user_name, $user_repo, $params);
         if (!empty($params['assignees'])) {
             // Now try to update it with assignees.
             try {
-                /** @var Issue $issues */
+                /** @var \Github\Api\Issue $issues */
                 $issues = $this->client->api('issues');
                 $issues->update($user_name, $user_repo, $data['number'], [
                     'assignees' => $params['assignees'],
@@ -189,9 +230,9 @@ class Github implements ProviderInterface
         return $this->client->api('pull_request')->update($user_name, $user_repo, $id, $params);
     }
 
-    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment)
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void
     {
-        $this->client->issue()->comments()->create($slug->getUserName(), $slug->getUserRepo(), $pr_id, [
+        $this->client->api('issue')->comments()->create($slug->getUserName(), $slug->getUserRepo(), $pr_id, [
             'body' => $comment,
         ]);
         $this->client->api('pull_request')->update($slug->getUserName(), $slug->getUserRepo(), $pr_id, [

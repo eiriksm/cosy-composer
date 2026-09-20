@@ -2,25 +2,17 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Bitbucket\Api\Repositories;
-use Bitbucket\Client;
-use eiriksm\CosyComposer\CommandExecuter;
-use eiriksm\CosyComposer\CosyComposer;
-use eiriksm\CosyComposer\ProviderFactory;
-use eiriksm\CosyComposer\Providers\Bitbucket;
-use eiriksm\CosyComposer\Providers\Github;
-use eiriksm\CosyComposerTest\integration\Base;
 use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
 
 /**
- * Test for issue 164.
+ * Test for branch prefix.
  */
 class BranchPrefixTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
-    protected $composerAssetFiles = 'composerbranch';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $composerAssetFiles = 'composerbranch';
     protected $checkPrUrl = true;
 
     public function testBranchPrefixUsed()

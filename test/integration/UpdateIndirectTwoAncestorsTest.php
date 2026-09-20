@@ -4,10 +4,10 @@ namespace eiriksm\CosyComposerTest\integration;
 
 class UpdateIndirectTwoAncestorsTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'symfony/polyfill-mbstring';
-    protected $packageVersionForFromUpdateOutput = '1.1.1';
-    protected $packageVersionForToUpdateOutput = '1.1.2';
-    protected $composerAssetFiles = 'composer.indirect.multi_ancestors';
+    protected ?string $packageForUpdateOutput = 'symfony/polyfill-mbstring';
+    protected ?string $packageVersionForFromUpdateOutput = '1.1.1';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.2';
+    protected ?string $composerAssetFiles = 'composer.indirect.multi_ancestors';
     protected $usesDirect = false;
     protected $checkPrUrl = true;
 
@@ -29,10 +29,13 @@ class UpdateIndirectTwoAncestorsTest extends ComposerUpdateIntegrationBase
         self::assertCount(0, $branch_pr_messages, 'All expected messages was not found in the output');
     }
 
-    protected function createExpectedCommandForPackage($package)
+    /**
+     * @return array<int, string>
+     */
+    protected function createExpectedCommandForPackage(string $package) : array
     {
         // We are actually updating the required package which depends on this one.
-        return 'bogus flippin bogus';
+        return ['bogus flippin bogus'];
     }
 
     protected function handleExecutorReturnCallback($cmd, &$return)

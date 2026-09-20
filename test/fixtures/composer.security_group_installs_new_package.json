@@ -1,0 +1,31 @@
+{
+    "require": {
+        "dummyvendor/base-module": "^1.0"
+    },
+    "extra": {
+        "violinist": {
+            "security_updates_only": 1,
+            "check_only_direct_dependencies": 0,
+            "composer_outdated_flag": "major",
+            "update_with_dependencies": 0,
+            "commit_message_convention": "conventional",
+            "rules": [
+                {
+                    "name": "Dummy Vendor Base Module",
+                    "matchRules": [
+                        {
+                            "type": "names",
+                            "values": [
+                                "dummyvendor/base-module"
+                            ]
+                        }
+                    ],
+                    "config": {
+                        "security_updates_only": 0,
+                        "update_with_dependencies": 1
+                    }
+                }
+            ]
+        }
+    }
+}

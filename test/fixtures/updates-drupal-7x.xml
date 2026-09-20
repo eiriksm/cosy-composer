@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns:dc="http://purl.org/dc/elements/1.1/">
+<title>Drupal core</title>
+<short_name>drupal</short_name>
+<dc:creator>Drupal</dc:creator>
+<type>project_core</type>
+<supported_branches>7.</supported_branches>
+<project_status>published</project_status>
+<link>https://www.drupal.org/project/drupal</link>
+<terms><term><name>Projects</name><value>Drupal core</value></term></terms>
+<releases>
+<release><name>drupal 7.1</name><version>7.1</version><tag>7.1</tag><status>published</status><release_link>https://www.drupal.org/project/drupal/releases/7.1</release_link><download_link>https://ftp.drupal.org/files/projects/drupal-7.1.tar.gz</download_link><date>1300000000</date><files><file><url>https://ftp.drupal.org/files/projects/drupal-7.1.tar.gz</url><archive_type>tar.gz</archive_type><md5>ghi123</md5><size>10000000</size><filedate>1300000000</filedate></file></files><terms><term><name>Release type</name><value>Security update</value></term></terms></release>
+<release><name>drupal 7.213</name><version>7.213</version><tag>7.213</tag><status>published</status><release_link>https://www.drupal.org/project/drupal/releases/7.213</release_link><download_link>https://ftp.drupal.org/files/projects/drupal-7.213.tar.gz</download_link><date>1630000000</date><files><file><url>https://ftp.drupal.org/files/projects/drupal-7.213.tar.gz</url><archive_type>tar.gz</archive_type><md5>ghi456</md5><size>10000000</size><filedate>1630000000</filedate></file></files><terms><term><name>Release type</name><value>Bug fixes</value></term></terms></release>
+</releases>
+</project>

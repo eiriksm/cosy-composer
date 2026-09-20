@@ -2,7 +2,7 @@
 
 namespace eiriksm\CosyComposer;
 
-use League\Flysystem\AdapterInterface;
+use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Filesystem;
 
 class ComposerFileGetter
@@ -13,16 +13,19 @@ class ComposerFileGetter
      */
     protected $fs;
 
-    public function __construct(AdapterInterface $adapter)
+    public function __construct(FilesystemAdapter $adapter)
     {
         $this->fs = new Filesystem($adapter);
     }
 
-    public function hasComposerFile()
+    public function hasComposerFile(): bool
     {
-        return $this->fs->has('composer.json');
+        return $this->fs->fileExists('composer.json');
     }
 
+    /**
+     * @return object|false
+     */
     public function getComposerJsonData()
     {
         $data = $this->fs->read('composer.json');

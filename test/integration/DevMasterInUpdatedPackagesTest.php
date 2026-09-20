@@ -7,10 +7,10 @@ use Violinist\Slug\Slug;
 class DevMasterInUpdatedPackagesTest extends ComposerUpdateIntegrationBase
 {
 
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = 'dev-master 2b71ffb';
-    protected $packageVersionForToUpdateOutput = 'dev-master dd738d0';
-    protected $composerAssetFiles = 'composer-dev-master';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = 'dev-master 2b71ffb';
+    protected ?string $packageVersionForToUpdateOutput = 'dev-master dd738d0';
+    protected ?string $composerAssetFiles = 'composer-dev-master';
 
     public function testUpdatesInPackagesUpdated()
     {
@@ -20,7 +20,7 @@ class DevMasterInUpdatedPackagesTest extends ComposerUpdateIntegrationBase
             ->willReturnCallback(function (Slug $slug, array $params) use (&$pr_params, $fake_pr_url) {
                 $pr_params = $params;
                 return [
-                    'html_url' => $fake_pr_url
+                    'html_url' => $fake_pr_url,
                 ];
             });
         $this->runtestExpectedOutput();
@@ -35,13 +35,17 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - psr/log: dev-master#dd738d0b4491f32725492cf345f6b501f5922fec (updated from dev-master#2b71ffbefcc3a1ccb610294835bcfde8f594f8e7)
 
 
+### Changelog
+
+Here is a list of changes between the version you use, and the version this pull request updates to:
+
+Could not retrieve changelog. See the [project page](https://github.com/php-fig/log) for more information.
 
 ### Working with this branch
 
-If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/#branches).
+If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/introduction/branches/).
 
 ***
-This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).
-', $pr_params["body"]);
+This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).', trim($pr_params["body"]));
     }
 }

@@ -2,9 +2,9 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use eiriksm\ArrayOutput\ArrayOutput;
 use eiriksm\CosyComposer\CommandExecuter;
-use eiriksm\CosyComposer\Exceptions\ChdirException;
+use eiriksm\CosyComposer\CosyComposer;
+use eiriksm\CosyComposer\Message;
 
 class OutputFromUpdateTest extends Base
 {
@@ -16,7 +16,7 @@ class OutputFromUpdateTest extends Base
         $c = $this->cosy;
         $dir = $this->dir;
         $this->getMockOutputWithUpdate('eirik/private-pack', '1.0.0', '1.0.2');
-        $this->placeComposerContentsFromFixture('composer-json-private.json', $dir);
+        $this->createComposerFileFromFixtures($dir, 'composer-json-private.json');
         $mock_executer = $this->createMock(CommandExecuter::class);
         $mock_executer->method('executeCommand')
             ->willReturnCallback(function ($cmd) {
@@ -30,5 +30,20 @@ class OutputFromUpdateTest extends Base
         $c->run();
         $this->assertOutputContainsMessage('Creating command composer update -n --no-ansi eirik/private-pack --with-dependencies', $c);
         $this->assertEquals(true, true);
+    }
+
+    public function testTokenIsMaskedInOutput(): void
+    {
+        $c = $this->cosy;
+        $token = 'user-token';
+        $c->setAuthentication($token);
+        $c->getLogger()->log('info', new Message('Some message containing ' . $token . ' in the middle'));
+        $c->getLogger()->log('info', new Message('Command with token https://x-token:' . $token . '@github.com/a/b', Message::COMMAND));
+        foreach ($c->getOutput() as $msg) {
+            $this->assertStringNotContainsString($token, $msg->getMessage(), 'Token must not appear in output');
+        }
+        $masked = CosyComposer::maskToken($token);
+        $this->assertOutputContainsMessage('Some message containing ' . $masked, $c);
+        $this->assertOutputContainsMessage('https://x-token:' . $masked, $c);
     }
 }

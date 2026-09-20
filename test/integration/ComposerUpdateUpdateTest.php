@@ -5,9 +5,11 @@ namespace eiriksm\CosyComposerTest\integration;
 use eiriksm\CosyComposer\Message;
 use eiriksm\CosyComposer\ProviderFactory;
 use eiriksm\CosyComposer\Providers\Github;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use eiriksm\CosyComposer\Providers\PublicGithubWrapper;
 use Github\Exception\RuntimeException;
 use Violinist\ProjectData\ProjectData;
+use Violinist\Slug\Slug;
 
 class ComposerUpdateUpdateTest extends ComposerUpdateIntegrationBase
 {
@@ -64,10 +66,15 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - psr/log: 1.0.2#changed (updated from 1.0.2#4ebe3a8bf773a19edfe0a84b6585ba3d401b724d)
 
 
+### Changelog
+
+Here is a list of changes between the version you use, and the version this pull request updates to:
+
+Could not retrieve changelog. See the [project page](https://github.com/php-fig/log) for more information.
 
 ### Working with this branch
 
-If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/#branches).
+If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/introduction/branches/).
 
 ***
 a custom message
@@ -78,11 +85,16 @@ a custom message
         $project->setCustomPrMessage('a custom message');
         $this->cosy->setProject($project);
         $this->runtestExpectedOutput();
+        // Let's trim the body.
+        $pr_params["body"] = trim($pr_params["body"]);
+        // And the actual body.
+        $this->prParams["body"] = trim($this->prParams["body"]);
         self::assertEquals($pr_params, $this->prParams);
     }
 
     public function testEndToEndNotPrivate()
     {
+        putenv('USE_GITHUB_PUBLIC_WRAPPER=true');
         $this->packageForUpdateOutput = 'psr/log';
         $this->packageVersionForFromUpdateOutput = '1.0.0';
         $this->packageVersionForToUpdateOutput = '1.0.2';
@@ -94,11 +106,15 @@ a custom message
         $mock_provider_factory = $this->createMock(ProviderFactory::class);
         $mock_provider = $this->createMock(PublicGithubWrapper::class);
         $fake_pr_url = 'http://example.com/pr';
+        $fork_head_used = null;
         $mock_provider->expects($this->once())
             ->method('createPullRequest')
-            ->willReturn([
-                'html_url' => $fake_pr_url,
-            ]);
+            ->willReturnCallback(function (Slug $slug, $params) use ($fake_pr_url, &$fork_head_used) {
+                $fork_head_used = $params["head"];
+                return [
+                    'html_url' => $fake_pr_url,
+                ];
+            });
         $mock_provider->method('repoIsPrivate')
             ->willReturn(false);
         $mock_provider->method('getDefaultBranch')
@@ -109,15 +125,17 @@ a custom message
         $mock_provider->method('getDefaultBase')
             ->willReturn($default_sha);
         $mock_provider->method('getPrsNamed')
-            ->willReturn([]);
+            ->willReturn(NamedPrs::createFromArray([]));
         $mock_provider_factory->method('createFromHost')
             ->willReturn($mock_provider);
 
         $this->cosy->setProviderFactory($mock_provider_factory);
-        $this->cosy->setGithubAuth('test', 'pass');
+        $this->cosy->setAuthentication('pass');
+        $this->cosy->setForkUser('fork-user');
         $this->runtestExpectedOutput();
         $this->assertOutputContainsMessage($fake_pr_url, $this->cosy);
         $this->assertEquals(Message::PR_URL, $this->findMessage($fake_pr_url, $this->cosy)->getType());
+        self::assertEquals('fork-user:psrlog100102', $fork_head_used);
     }
 
     public function testUpdatesFoundButNotSemverValidButStillAllowed()
@@ -163,10 +181,15 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - drupal/core: 8.4.8 (updated from 8.4.7)
 
 
+### Changelog
+
+Here is a list of changes between the version you use, and the version this pull request updates to:
+
+Could not retrieve changelog. See the [project page](https://github.com/drupal/core) for more information.
 
 ### Working with this branch
 
-If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/#branches).
+If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/introduction/branches/).
 
 ***
 This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).
@@ -176,6 +199,9 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
         $this->checkPrUrl = true;
         $this->setUp();
         $this->runtestExpectedOutput();
+        // Trim both the expected and the actual body.
+        $expected_pr["body"] = trim($expected_pr["body"]);
+        $this->prParams["body"] = trim($this->prParams["body"]);
         self::assertEquals($expected_pr, $this->prParams);
     }
 
@@ -188,6 +214,7 @@ This is an automated pull request from [Violinist](https://violinist.io/): Conti
         $this->checkPrUrl = true;
         $this->setUp();
         $this->runtestExpectedOutput();
+        $this->prParams['body'] = trim($this->prParams["body"]);
         self::assertEquals([
             'base' => 'master',
             'head' => 'drupalcore880893',
@@ -210,14 +237,18 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - laminas/laminas-zendframework-bridge: 1.1.0 (new package, previously not installed)
 
 
+### Changelog
+
+Here is a list of changes between the version you use, and the version this pull request updates to:
+
+Could not retrieve changelog. See the [project page](https://github.com/drupal/core) for more information.
 
 ### Working with this branch
 
-If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/#branches).
+If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/introduction/branches/).
 
 ***
-This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).
-',
+This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).',
             'assignees' => [],
         ], $this->prParams);
     }

@@ -2,24 +2,30 @@
 
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
+use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Github;
+use Github\Api\CurrentUser;
+use Github\Api\GraphQL;
+use Github\Api\Issue;
+use Github\Api\Issue\Comments;
 use Github\Api\PullRequest;
 use Github\Api\Repo;
 use Github\Api\Repository\Forks;
+use Github\AuthMethod;
 use Github\Client;
 use Psr\Http\Message\ResponseInterface;
 use Violinist\Slug\Slug;
 
 class GithubProviderTest extends ProvidersTestBase
 {
-    protected $repoClass = Repo::class;
-
+    /** @var list<string|null> */
     protected $authenticateArguments = [
-        'testUser', null, Client::AUTH_ACCESS_TOKEN,
+        'testUser', null, AuthMethod::ACCESS_TOKEN,
     ];
 
+    /** @var list<string|null> */
     protected $authenticatePrivateArguments = [
-        'testUser', null, Client::AUTH_ACCESS_TOKEN
+        'testUser', null, AuthMethod::ACCESS_TOKEN,
     ];
 
     public function testRepoIsPrivate()
@@ -78,7 +84,7 @@ class GithubProviderTest extends ProvidersTestBase
                     'name' => 'develop',
                     'commit' => [
                         'sha' => '1234',
-                    ]
+                    ],
                 ],
             ]);
         $mock_client = $this->getMockClient();
@@ -94,6 +100,71 @@ class GithubProviderTest extends ProvidersTestBase
             ->willReturn($mock_response);
         $g = new Github($mock_client);
         $this->assertEquals('abcd', $g->getDefaultBase($slug, 'master'));
+    }
+
+    public function testDefaultBaseTimestamp(): void
+    {
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
+        $mock_repo_api = $this->createMock(Repo::class);
+        $mock_repo_api->expects($this->once())
+            ->method('branches')
+            ->with($slug->getUserName(), $slug->getUserRepo(), 'master')
+            ->willReturn([
+                'name' => 'master',
+                'commit' => [
+                    'sha' => 'abcd',
+                    'commit' => [
+                        'committer' => [
+                            'date' => '2025-01-15T10:30:00Z',
+                        ],
+                    ],
+                ],
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('api')
+            ->with('repo')
+            ->willReturn($mock_repo_api);
+        $g = new Github($mock_client);
+        $this->assertEquals('2025-01-15T10:30:00Z', $g->getDefaultBaseTimestamp($slug, 'master'));
+    }
+
+    public function testDefaultBaseTimestampReturnsNullOnMissingData(): void
+    {
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
+        $mock_repo_api = $this->createMock(Repo::class);
+        $mock_repo_api->expects($this->once())
+            ->method('branches')
+            ->with($slug->getUserName(), $slug->getUserRepo(), 'master')
+            ->willReturn([
+                'name' => 'master',
+                'commit' => [
+                    'sha' => 'abcd',
+                ],
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('api')
+            ->with('repo')
+            ->willReturn($mock_repo_api);
+        $g = new Github($mock_client);
+        $this->assertNull($g->getDefaultBaseTimestamp($slug, 'master'));
+    }
+
+    public function testDefaultBaseTimestampReturnsNullOnException(): void
+    {
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
+        $mock_repo_api = $this->createMock(Repo::class);
+        $mock_repo_api->expects($this->once())
+            ->method('branches')
+            ->willThrowException(new \RuntimeException('Not found'));
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('api')
+            ->with('repo')
+            ->willReturn($mock_repo_api);
+        $g = new Github($mock_client);
+        $this->assertNull($g->getDefaultBaseTimestamp($slug, 'master'));
     }
 
     public function testCreateFork()
@@ -143,7 +214,7 @@ class GithubProviderTest extends ProvidersTestBase
     {
         list($user, $repo, $params) = $this->getPrData();
         $id = 42;
-        $slug = Slug::createFromUrl('http://github.com/' . $user . '/' . $repo);
+        $slug = Slug::createFromUrl("http://github.com/$user/$repo");
         $testresponse = 'testresponse';
         $mock_pr_api = $this->createMock(PullRequest::class);
         $mock_pr_api->expects($this->once())
@@ -159,19 +230,94 @@ class GithubProviderTest extends ProvidersTestBase
         $this->assertEquals($testresponse, $g->updatePullRequest($slug, $id, $params));
     }
 
-    public function getProvider($client)
+    public function testClosePullRequestWithComment() : void
+    {
+        list($user, $repo) = $this->getPrData();
+        $pr_id = 42;
+        $slug = Slug::createFromUrl("http://github.com/$user/$repo");
+        $mock_comments_api = $this->createMock(Comments::class);
+        $mock_comments_api->expects($this->once())
+            ->method('create')
+            ->with($user, $repo, $pr_id, [
+                'body' => 'comment',
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_issue_api = $this->createMock(Issue::class);
+        $mock_issue_api->expects($this->once())
+            ->method('comments')
+            ->willReturn($mock_comments_api);
+        $mock_pr_api = $this->createMock(PullRequest::class);
+        $mock_pr_api->expects($this->once())
+            ->method('update')
+            ->with($user, $repo, $pr_id, [
+                'state' => 'closed',
+            ]);
+        $mock_client->method('api')
+            ->willReturnCallback(function ($api) use ($mock_issue_api, $mock_pr_api) {
+                if ($api == 'issue') {
+                    return $mock_issue_api;
+                }
+                if ($api == 'pull_request') {
+                    return $mock_pr_api;
+                }
+                $this->fail("Unexpected api requested: $api");
+            });
+        $g = new Github($mock_client);
+        $g->closePullRequestWithComment($slug, $pr_id, 'comment');
+    }
+
+    public function testGetAuthenticatedUsername(): void
+    {
+        $mock_current_user_api = $this->createMock(CurrentUser::class);
+        $mock_current_user_api->expects($this->once())
+            ->method('show')
+            ->willReturn([
+                'login' => 'violinist-bot',
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('api')
+            ->with('current_user')
+            ->willReturn($mock_current_user_api);
+        $g = new Github($mock_client);
+        $this->assertEquals('violinist-bot', $g->getAuthenticatedUsername());
+        // A second call should be served from cache, not hit the api again.
+        $this->assertEquals('violinist-bot', $g->getAuthenticatedUsername());
+    }
+
+    public function testGetAuthenticatedUsernameReturnsNullOnException(): void
+    {
+        $mock_client = $this->getMockClient();
+        $mock_client->method('api')
+            ->willThrowException(new \RuntimeException('API error'));
+        $g = new Github($mock_client);
+        $this->assertNull($g->getAuthenticatedUsername());
+    }
+
+    public function testAutomergeReturnsFalseOnException(): void
+    {
+        $slug = Slug::createFromUrl('http://github.com/testUser/testRepo');
+        $mock_graphql = $this->createMock(GraphQL::class);
+        $mock_graphql->method('execute')
+            ->willThrowException(new \RuntimeException('API error'));
+        $mock_client = $this->getMockClient();
+        $mock_client->method('api')
+            ->willReturn($mock_graphql);
+        $g = new Github($mock_client);
+        $result = $g->enableAutomerge([
+            'node_id' => 12345,
+            'number' => 12345,
+        ], $slug);
+        $this->assertFalse($result);
+    }
+
+    public function getProvider(object $client) : ProviderInterface
     {
         return new Github($client);
     }
 
-
     public function getMockClient()
     {
         return $this->createMock(Client::class);
-    }
-
-    public function getBranchMethod()
-    {
-        return 'repo';
     }
 }

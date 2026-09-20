@@ -2,42 +2,46 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use Github\Exception\ValidationFailedException;
-use Violinist\Slug\Slug;
-use Violinist\SymfonyCloudSecurityChecker\SecurityChecker;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 
 /**
- * Test for automerge being enabled.
+ * Test for automerge being enabled, even when using update all.
  */
 class AutomergeUpdateAllTest extends AutoMergeBase
 {
-    protected $composerAssetFiles = 'composer.update_all_automerge';
+    protected ?string $composerAssetFiles = 'composer.update_all_automerge';
     protected $hasUpdatedPsrLog = false;
     protected $hasUpdatedPsrCache = false;
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.1.3';
-    protected $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.1.3';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
     protected $hasAutoMerge = true;
     protected $checkPrUrl = true;
     protected $usesDirect = false;
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
         if (!$this->isUpdate) {
-            return [];
+            return NamedPrs::createFromArray([]);
         }
-        return [
+        return NamedPrs::createFromArray([
             'violinistall' => [
                 'base' => [
                     'sha' => 456,
                 ],
+                'head' => [
+                    'ref' => 'violinistall',
+                ],
                 'title' => 'not the same as the other',
                 'number' => 666,
             ],
-        ];
+        ]);
     }
 
-    protected function createExpectedCommandForPackage($package)
+    /**
+     * @return array<int, string>
+     */
+    protected function createExpectedCommandForPackage(string $package) : array
     {
         return ['composer', 'update'];
     }

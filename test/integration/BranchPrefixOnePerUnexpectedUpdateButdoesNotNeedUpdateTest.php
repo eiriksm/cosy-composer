@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Github\Exception\ValidationFailedException;
 use Violinist\Slug\Slug;
 
@@ -13,10 +14,10 @@ use Violinist\Slug\Slug;
  */
 class BranchPrefixOnePerUnexpectedUpdateButdoesNotNeedUpdateTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.1.3';
-    protected $composerAssetFiles = 'composerbranch.one_per';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.3';
+    protected ?string $composerAssetFiles = 'composerbranch.one_per';
 
     public function testBranchPrefixUsedAndOnePer()
     {
@@ -29,11 +30,14 @@ class BranchPrefixOnePerUnexpectedUpdateButdoesNotNeedUpdateTest extends Compose
         throw new ValidationFailedException();
     }
 
-    protected function getPrsNamed()
+    protected function getPrsNamed() : NamedPrs
     {
-        return [
+        return NamedPrs::createFromArray([
             'my_prefixviolinistpsrlog' => [
                 'number' => 12345,
+                'head' => [
+                    'ref' => 'my_prefixviolinistpsrlog',
+                ],
                 'base' => [
                     'sha' => 123,
                 ],
@@ -47,15 +51,20 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - psr/log: 1.1.4 (updated from 1.0.0)
 
 
+### Changelog
+
+Here is a list of changes between the version you use, and the version this pull request updates to:
+
+Could not retrieve changelog. See the [project page](https://github.com/php-fig/log) for more information.
 
 ### Working with this branch
 
-If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/#branches).
+If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/introduction/branches/).
 
 ***
 This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).
 ',
-            ]
-        ];
+            ],
+        ]);
     }
 }

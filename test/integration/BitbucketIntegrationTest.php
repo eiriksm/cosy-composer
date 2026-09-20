@@ -1,0 +1,118 @@
+<?php
+
+namespace eiriksm\CosyComposerTest\integration;
+
+use eiriksm\CosyComposer\Providers\Bitbucket;
+
+class BitbucketIntegrationTest extends ComposerUpdateIntegrationBase
+{
+
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.4';
+    protected ?string $composerAssetFiles = 'composer.close.outdated';
+
+    private $foundMessage = false;
+    private $commandStringToFind = null;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->foundMessage = false;
+        $this->commandStringToFind = null;
+    }
+
+    protected function getMockProvider()
+    {
+        if (!$this->mockProvider) {
+            $this->mockProvider = $this->createMock(Bitbucket::class);
+        }
+        return $this->mockProvider;
+    }
+
+    public function testUpdateOauthToken()
+    {
+        $token = 'verysecret';
+        $this->commandStringToFind = 'https://x-token-auth:verysecret@bitbucket.org/user/repo.git';
+        $this->cosy->setAuthentication($token);
+        $this->cosy->setUrl('https://bitbucket.org/user/repo');
+        $this->runtestExpectedOutput();
+        self::assertEquals(true, $this->foundMessage);
+    }
+
+    public function testUpdateAppPass()
+    {
+        $token = 'user:verysecret';
+        $this->commandStringToFind = 'https://user:verysecret@bitbucket.org/user/repo.git';
+        $reflection = new \ReflectionProperty($this->cosy, 'untouchedUserToken');
+        $reflection->setAccessible(true);
+        $reflection->setValue($this->cosy, null);
+        $this->cosy->setAuthentication($token);
+        $this->cosy->setUrl('https://bitbucket.org/user/repo');
+        $has_passed_user_and_token = false;
+        $this->mockProvider->expects($this->exactly(2))
+            ->method('authenticate')
+            ->willReturnCallback(function ($user, $token) use (&$has_passed_user_and_token) {
+                if ($user === 'user' && $token === 'verysecret') {
+                    $has_passed_user_and_token = true;
+                }
+            });
+        $this->runtestExpectedOutput();
+        self::assertEquals(true, $this->foundMessage);
+        self::assertEquals(true, $has_passed_user_and_token);
+    }
+
+    public function testComposerConfigAppPassword() : void
+    {
+        $user = 'user';
+        $password = 'verysecret';
+        $token = "$user:$password";
+        $this->commandStringToFind = sprintf(
+            'composer config --auth http-basic.bitbucket.org %s %s',
+            $user,
+            $password,
+        );
+        $reflection = new \ReflectionProperty($this->cosy, 'untouchedUserToken');
+        $reflection->setAccessible(true);
+        $reflection->setValue($this->cosy, null);
+        $this->cosy->setAuthentication($token);
+        $this->cosy->setUrl('https://bitbucket.org/user/repo');
+        $this->runtestExpectedOutput();
+        self::assertEquals(true, $this->foundMessage);
+    }
+
+    public function testUpdateApiTokenWithEmail(): void
+    {
+        $api_token = 'ATAT' . str_repeat('x', 100);
+        $token = 'me@example.com:' . $api_token;
+        // The email prefix is discarded, the static username is always used.
+        $this->commandStringToFind = sprintf(
+            'composer config --auth http-basic.bitbucket.org x-bitbucket-api-token-auth %s',
+            $api_token
+        );
+        $this->cosy->setAuthentication($token);
+        $this->cosy->setUrl('https://bitbucket.org/user/repo');
+        $has_passed_user_and_token = false;
+        $this->mockProvider->expects($this->exactly(2))
+            ->method('authenticate')
+            ->willReturnCallback(function ($user, $token_arg) use (&$has_passed_user_and_token, $api_token) {
+                if ($user === 'me@example.com' && $token_arg === $api_token) {
+                    $has_passed_user_and_token = true;
+                }
+            });
+        $this->runtestExpectedOutput();
+        self::assertEquals(true, $this->foundMessage);
+        self::assertEquals(true, $has_passed_user_and_token);
+    }
+
+    protected function handleExecutorReturnCallback($cmd, &$return)
+    {
+        if (!$this->commandStringToFind) {
+            return;
+        }
+        $command_string = implode(' ', $cmd);
+        if (strpos($command_string, $this->commandStringToFind) !== false) {
+            $this->foundMessage = true;
+        }
+    }
+}

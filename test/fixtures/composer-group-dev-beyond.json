@@ -1,0 +1,33 @@
+{
+    "name": "violinist/group-dev-beyond",
+    "description": "A project where all of the packages in a group rule are dev requirements",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "require-dev": {
+        "filp/whoops": "^2.14",
+        "psr/log": "^1.0"
+    },
+    "extra": {
+        "violinist": {
+            "allow_updates_beyond_constraint": 0,
+            "rules": [
+                {
+                    "name": "Dev tools",
+                    "slug": "dev-tools",
+                    "matchRules": [
+                        {
+                            "type": "names",
+                            "values": [
+                                "filp/whoops",
+                                "psr/log"
+                            ]
+                        }
+                    ],
+                    "config": {
+                        "allow_updates_beyond_constraint": 1
+                    }
+                }
+            ]
+        }
+    }
+}

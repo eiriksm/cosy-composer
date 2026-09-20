@@ -1,0 +1,34 @@
+{
+    "name": "violinist/group-mixed-dev-beyond",
+    "description": "A project where a group rule matches both a require and a require-dev package",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "psr/cache": "~1.0.0"
+    },
+    "require-dev": {
+        "psr/log": "~1.1.3"
+    },
+    "extra": {
+        "violinist": {
+            "allow_updates_beyond_constraint": 0,
+            "rules": [
+                {
+                    "name": "All the psr",
+                    "slug": "all-the-psr",
+                    "matchRules": [
+                        {
+                            "type": "names",
+                            "values": [
+                                "psr/*"
+                            ]
+                        }
+                    ],
+                    "config": {
+                        "allow_updates_beyond_constraint": 1
+                    }
+                }
+            ]
+        }
+    }
+}

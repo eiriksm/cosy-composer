@@ -4,18 +4,23 @@ namespace eiriksm\CosyComposerTest\unit;
 
 use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\CosyComposer;
+use eiriksm\CosyComposer\Helpers;
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
-use GuzzleHttp\Psr7\Response;
-use Http\Adapter\Guzzle6\Client;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Violinist\Slug\Slug;
 
 class CosyComposerUnitTest extends TestCase
 {
     use GetCosyTrait;
     use GetExecuterTrait;
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        // Make sure we clear out the env var USE_GITHUB_PUBLIC_WRAPPER.
+        putenv('USE_GITHUB_PUBLIC_WRAPPER');
+    }
 
     public function testSetLogger()
     {
@@ -25,14 +30,6 @@ class CosyComposerUnitTest extends TestCase
         $this->assertEquals($test_logger, $c->getLogger());
     }
 
-    public function testCacheDir()
-    {
-        $c = $this->getMockCosy();
-        $bogus_dir = uniqid();
-        $c->setCacheDir($bogus_dir);
-        $this->assertEquals($bogus_dir, $c->getCacheDir());
-    }
-
     public function testLastStdOut()
     {
         $c = $this->getMockCosy();
@@ -40,7 +37,7 @@ class CosyComposerUnitTest extends TestCase
         $mock_exec->expects($this->once())
             ->method('getLastOutput')
             ->willReturn([
-                'stdout' => 'output'
+                'stdout' => 'output',
             ]);
         $c->setExecuter($mock_exec);
         $this->assertEquals('output', $c->getLastStdOut());
@@ -59,7 +56,7 @@ class CosyComposerUnitTest extends TestCase
         $url_property->setAccessible(true);
         $mock_cosy = $this->getMockCosy();
         $mock_cosy->setUrl($url);
-        /** @var Slug $value */
+        /** @var \Violinist\Slug\Slug $value */
         $value = $property->getValue($mock_cosy);
         $this->assertEquals($user, $value->getUserName());
         $this->assertEquals($repo, $value->getUserRepo());
@@ -100,10 +97,10 @@ class CosyComposerUnitTest extends TestCase
      */
     public function testGetComposerJsonName($json, $input, $expected)
     {
-        $this->assertEquals($expected, CosyComposer::getComposerJsonName($json, $input, '/tmp/derp'));
+        $this->assertEquals($expected, Helpers::getComposerJsonName($json, $input, '/tmp/derp'));
     }
 
-    public function getComposerJsonVariations()
+    public static function getComposerJsonVariations()
     {
         $standard_json = (object) [
             'require' => (object) [
@@ -126,6 +123,45 @@ class CosyComposerUnitTest extends TestCase
             [$standard_json, 'camelcaseDev/other', 'camelCaseDev/other'],
             [$standard_json, 'regulardev/case', 'regulardev/case'],
             [$standard_json, 'UPPERDEV/case', 'UPPERDEV/CASE'],
+        ];
+    }
+
+    public function testDeprecatedAuth()
+    {
+        $c = new CosyComposer($this->createMock(CommandExecuter::class));
+        $c->setGithubAuth('token', 'not-relevant');
+        $reflected_cosy = new \ReflectionClass($c);
+        $prop = $reflected_cosy->getProperty('untouchedUserToken');
+        $prop->setAccessible(true);
+        self::assertEquals($prop->getValue($c), 'token');
+        // Now let's do the same with the other thing.
+        $c = new CosyComposer($this->createMock(CommandExecuter::class));
+        $reflected_cosy = new \ReflectionClass($c);
+        $prop = $reflected_cosy->getProperty('untouchedUserToken');
+        $prop->setAccessible(true);
+        $c->setUserToken('another-one-token');
+        self::assertEquals($prop->getValue($c), 'another-one-token');
+    }
+
+    /**
+     * Test that a special flag gives us the correct answer of a method.
+     *
+     * @dataProvider getEnvVariations
+     */
+    public function testshouldEnablePublicGithubWrapper($env_var, $expected)
+    {
+        putenv('USE_GITHUB_PUBLIC_WRAPPER=' . $env_var);
+        $this->assertEquals($expected, CosyComposer::shouldEnablePublicGithubWrapper());
+    }
+
+    public function getEnvVariations()
+    {
+        return [
+            ['true', true],
+            ['TRUE', true],
+            ['1', true],
+            ['0', false],
+            ['derp', true],
         ];
     }
 }

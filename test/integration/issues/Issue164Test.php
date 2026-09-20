@@ -2,14 +2,6 @@
 
 namespace eiriksm\CosyComposerTest\integration\issues;
 
-use Bitbucket\Api\Repositories;
-use Bitbucket\Client;
-use eiriksm\CosyComposer\CommandExecuter;
-use eiriksm\CosyComposer\CosyComposer;
-use eiriksm\CosyComposer\ProviderFactory;
-use eiriksm\CosyComposer\Providers\Bitbucket;
-use eiriksm\CosyComposer\Providers\Github;
-use eiriksm\CosyComposerTest\integration\Base;
 use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
 
 /**
@@ -17,10 +9,10 @@ use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
  */
 class Issue164Test extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.1.3';
-    protected $composerAssetFiles = 'composer164';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.1.3';
+    protected ?string $composerAssetFiles = 'composer164';
 
     public function testRequireDevAdded()
     {

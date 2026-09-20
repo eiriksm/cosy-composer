@@ -9,6 +9,7 @@ use Violinist\Slug\Slug;
 
 class Bitbucket implements ProviderInterface
 {
+    const MERGE_REQUEST_STATE_OPEN = 'OPEN';
 
     private $cache;
 
@@ -22,12 +23,16 @@ class Bitbucket implements ProviderInterface
         $this->client = $client;
     }
 
-    public function authenticate($user, $token)
+    public function authenticate(string $user, ?string $token) : void
     {
-        $this->client->authenticate(Client::AUTH_OAUTH_TOKEN, $user);
+        if ($user && $token) {
+            $this->client->authenticate(Client::AUTH_HTTP_PASSWORD, $user, $token);
+        } else {
+            $this->client->authenticate(Client::AUTH_OAUTH_TOKEN, $user);
+        }
     }
 
-    public function authenticatePrivate($user, $token)
+    public function authenticatePrivate(string $user, ?string $token) : void
     {
         $this->client->authenticate(Client::AUTH_OAUTH_TOKEN, $user);
     }
@@ -87,7 +92,7 @@ class Bitbucket implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed(Slug $slug) : array
+    public function getPrsNamed(Slug $slug) : NamedPrs
     {
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
@@ -97,12 +102,12 @@ class Bitbucket implements ProviderInterface
         $prs = [
             'values' => $paginator->fetchAll($prs_client, 'list'),
         ];
-        $prs_named = [];
+        $prs_named = new NamedPrs();
         foreach ($prs["values"] as $pr) {
-            if ($pr["state"] !== 'OPEN') {
+            if ($pr["state"] !== self::MERGE_REQUEST_STATE_OPEN) {
                 continue;
             }
-            $prs_named[$pr["source"]["branch"]["name"]] = [
+            $data = [
                 'base' => [
                     'sha' => $pr["destination"]["commit"]["hash"],
                     'ref' => $pr["destination"]["branch"]["name"],
@@ -110,7 +115,21 @@ class Bitbucket implements ProviderInterface
                 'html_url' => $pr["links"]["html"]["href"],
                 'number' => $pr["id"],
                 'title' => $pr["title"],
+                'user' => [
+                    'login' => !empty($pr["author"]["uuid"]) ? $pr["author"]["uuid"] : null,
+                ],
+                'head' => [
+                    'ref' => $pr["source"]["branch"]["name"],
+                ],
             ];
+            $prs_named->addFromPrData($data);
+            try {
+                // See if we can retrieve the commit as well.
+                $commit = $api_repo->workspaces($user)->commit($repo)->show($pr["source"]["commit"]["hash"]);
+                $prs_named->addFromCommit($commit["message"], $data);
+            } catch (\Throwable $e) {
+                // If the commit is not found, we just skip it.
+            }
         }
         return $prs_named;
     }
@@ -130,6 +149,34 @@ class Bitbucket implements ProviderInterface
         return substr($default_base, 0, 12);
     }
 
+    public function getAuthenticatedUsername() : ?string
+    {
+        if (!isset($this->cache['authenticated_username'])) {
+            try {
+                $user = $this->client->currentUser()->show();
+                $this->cache['authenticated_username'] = $user['uuid'] ?? null;
+            } catch (\Throwable $e) {
+                return null;
+            }
+        }
+        return $this->cache['authenticated_username'];
+    }
+
+    public function getDefaultBaseTimestamp(Slug $slug, string $default_branch) : ?string
+    {
+        $user = $slug->getUserName();
+        $repo = $slug->getUserRepo();
+        $branches = $this->getBranches($user, $repo);
+        foreach ($branches as $branch) {
+            if ($branch['name'] === $default_branch) {
+                if (!empty($branch['target']['date'])) {
+                    return $branch['target']['date'];
+                }
+            }
+        }
+        return null;
+    }
+
     public function createFork($user, $repo, $fork_user)
     {
         throw new \Exception('Bitbucket integration only support creating PRs as the authenticated user.');
@@ -144,7 +191,7 @@ class Bitbucket implements ProviderInterface
             'source' => [
                 'branch' => [
                     'name' => $params["head"],
-                ]
+                ],
             ],
             'destination' => [
                 'branch' => [
@@ -195,13 +242,33 @@ class Bitbucket implements ProviderInterface
         return false;
     }
 
-    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment)
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void
     {
         $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->comments($pr_id)->create([
             'content' => [
                 'raw' => $comment,
-            ]
+            ],
         ]);
         $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->decline($pr_id);
+    }
+
+    public static function tokenIndicatesUserAppPassword($token)
+    {
+        return strlen($token) < 50 && strpos($token, ':') !== false;
+    }
+
+    public static function tokenIndicatesUserApiToken(string $token): bool
+    {
+        $api_token = self::getApiToken($token);
+        return strlen($api_token) > 100 && str_starts_with($api_token, 'ATAT');
+    }
+
+    public static function getApiToken(string $token): string
+    {
+        if (strpos($token, ':') !== false) {
+            [, $api_token] = explode(':', $token, 2);
+            return $api_token;
+        }
+        return $token;
     }
 }

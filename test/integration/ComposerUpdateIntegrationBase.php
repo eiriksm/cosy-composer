@@ -2,19 +2,18 @@
 
 namespace eiriksm\CosyComposerTest\integration;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use Violinist\Slug\Slug;
 
 abstract class ComposerUpdateIntegrationBase extends Base
 {
 
-    protected $packageForUpdateOutput;
+    protected ?string $packageForUpdateOutput = null;
 
-    protected $packageVersionForFromUpdateOutput;
+    protected ?string $packageVersionForFromUpdateOutput = null;
 
-    protected $packageVersionForToUpdateOutput;
+    protected ?string $packageVersionForToUpdateOutput = null;
 
-    protected $composerAssetFiles;
+    protected ?string $composerAssetFiles = null;
 
     protected $fakePrUrl = 'http://example.com/pr';
 
@@ -22,12 +21,14 @@ abstract class ComposerUpdateIntegrationBase extends Base
 
     protected $prParams = [];
 
+    protected $prParamsArray = [];
+
     protected $hasAutoMerge = false;
 
     /**
-     * @var MockObject
+     * @var ?\PHPUnit\Framework\MockObject\MockObject
      */
-    protected $mockProvider;
+    protected $mockProvider = null;
 
     public function setUp() : void
     {
@@ -43,9 +44,11 @@ abstract class ComposerUpdateIntegrationBase extends Base
         $mock_executer = $this->getMockExecuterWithReturnCallback(
             function ($cmd) {
                 $return = 0;
-                $expected_command = $this->createExpectedCommandForPackage($this->packageForUpdateOutput);
-                if ($cmd == $expected_command) {
-                    $this->placeUpdatedComposerLock();
+                if ($this->packageForUpdateOutput) {
+                    $expected_command = $this->createExpectedCommandForPackage($this->packageForUpdateOutput);
+                    if ($cmd == $expected_command) {
+                        $this->placeUpdatedComposerLock();
+                    }
                 }
                 $this->handleExecutorReturnCallback($cmd, $return);
                 $this->lastCommand = $cmd;
@@ -65,9 +68,16 @@ abstract class ComposerUpdateIntegrationBase extends Base
         }
     }
 
+    public function tearDown(): void
+    {
+        parent::tearDown();
+        putenv('USE_GITHUB_PUBLIC_WRAPPER');
+    }
+
     protected function createPullRequest(Slug $slug, array $params)
     {
         $this->prParams = $params;
+        $this->prParamsArray[] = $params;
         return [
             'number' => 456,
             'html_url' => $this->fakePrUrl,
@@ -84,7 +94,11 @@ abstract class ComposerUpdateIntegrationBase extends Base
         $this->placeComposerLockContentsFromFixture(sprintf('%s.lock.updated', $this->composerAssetFiles), $this->dir);
     }
 
-    protected function handleExecutorReturnCallback($cmd, &$return)
+    /**
+     * @param string[] $cmd
+     * @param mixed $return
+     */
+    protected function handleExecutorReturnCallback(array $cmd, &$return)
     {
     }
 

@@ -1,0 +1,26 @@
+{
+    "require": {
+        "psr/log": "^1.0.0"
+    },
+    "extra": {
+        "violinist": {
+            "security_updates_only": 1,
+            "rules": [
+                {
+                    "name": "PSR Log",
+                    "matchRules": [
+                        {
+                            "type": "names",
+                            "values": [
+                                "psr/log"
+                            ]
+                        }
+                    ],
+                    "config": {
+                        "security_updates_only": 0
+                    }
+                }
+            ]
+        }
+    }
+}

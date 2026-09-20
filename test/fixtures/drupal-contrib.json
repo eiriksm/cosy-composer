@@ -1,0 +1,31 @@
+{
+  "name": "company/project",
+  "require": {
+    "drupal/core-recommended": "^11.0",
+    "drupal/coffee": "^2.0"
+  },
+  "extra": {
+    "violinist": {
+      "rules": [
+        {
+          "name": "Drupal Contrib Modules",
+          "slug": "drupal-contrib",
+          "matchRules": [
+            {
+              "type": "names",
+              "values": [
+                "drupal/*",
+                "!drupal/core-composer-scaffold",
+                "!drupal/core-project-message",
+                "!drupal/core-recommended"
+              ]
+            }
+          ],
+          "config": {
+            "assignees": ["drupal-team-lead"]
+          }
+        }
+      ]
+    }
+  }
+}

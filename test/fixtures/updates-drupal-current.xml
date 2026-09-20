@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns:dc="http://purl.org/dc/elements/1.1/">
+<title>Drupal core</title>
+<short_name>drupal</short_name>
+<dc:creator>Drupal</dc:creator>
+<type>project_core</type>
+<supported_branches>9.1.,9.2.,9.99.,10.9.</supported_branches>
+<project_status>published</project_status>
+<link>https://www.drupal.org/project/drupal</link>
+<terms><term><name>Projects</name><value>Drupal core</value></term></terms>
+<releases>
+<release><name>drupal 9.2.5</name><version>9.2.5</version><tag>9.2.5</tag><status>published</status><release_link>https://www.drupal.org/project/drupal/releases/9.2.5</release_link><download_link>https://ftp.drupal.org/files/projects/drupal-9.2.5.tar.gz</download_link><date>1630534729</date><files><file><url>https://ftp.drupal.org/files/projects/drupal-9.2.5.tar.gz</url><archive_type>tar.gz</archive_type><md5>130b60f00d5876e1d05ec66be7ee0cf4</md5><size>18859934</size><filedate>1630534729</filedate></file></files><terms><term><name>Release type</name><value>Bug fixes</value></term></terms></release>
+<release><name>drupal 9.1.3</name><version>9.1.3</version><tag>9.1.3</tag><status>published</status><release_link>https://www.drupal.org/project/drupal/releases/9.1.3</release_link><download_link>https://ftp.drupal.org/files/projects/drupal-9.1.3.tar.gz</download_link><date>1610560000</date><files><file><url>https://ftp.drupal.org/files/projects/drupal-9.1.3.tar.gz</url><archive_type>tar.gz</archive_type><md5>abc123</md5><size>18000000</size><filedate>1610560000</filedate></file></files><terms><term><name>Release type</name><value>Security update</value></term></terms></release>
+<release><name>drupal 9.99.7</name><version>9.99.7</version><tag>9.99.7</tag><status>published</status><release_link>https://www.drupal.org/project/drupal/releases/9.99.7</release_link><download_link>https://ftp.drupal.org/files/projects/drupal-9.99.7.tar.gz</download_link><date>1610560000</date><files><file><url>https://ftp.drupal.org/files/projects/drupal-9.99.7.tar.gz</url><archive_type>tar.gz</archive_type><md5>abc456</md5><size>18000000</size><filedate>1610560000</filedate></file></files><terms><term><name>Release type</name><value>Bug fixes</value></term></terms></release>
+<release><name>drupal 10.9.9</name><version>10.9.9</version><tag>10.9.9</tag><status>published</status><release_link>https://www.drupal.org/project/drupal/releases/10.9.9</release_link><download_link>https://ftp.drupal.org/files/projects/drupal-10.9.9.tar.gz</download_link><date>1610560000</date><files><file><url>https://ftp.drupal.org/files/projects/drupal-10.9.9.tar.gz</url><archive_type>tar.gz</archive_type><md5>abc789</md5><size>18000000</size><filedate>1610560000</filedate></file></files><terms><term><name>Release type</name><value>Bug fixes</value></term></terms></release>
+</releases>
+</project>

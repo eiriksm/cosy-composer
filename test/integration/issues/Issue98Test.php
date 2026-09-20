@@ -13,18 +13,18 @@ use eiriksm\CosyComposerTest\integration\ComposerUpdateIntegrationBase;
 class Issue98Test extends ComposerUpdateIntegrationBase
 {
 
-    protected $packageForUpdateOutput = 'eirik/private-pack';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.0.2';
+    protected ?string $packageForUpdateOutput = 'eirik/private-pack';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.0.2';
     protected $calledCorrectly = false;
-    protected $composerAssetFiles = 'composer-json-private';
+    protected ?string $composerAssetFiles = 'composer-json-private';
 
     public function testIssue98()
     {
         self::assertEquals(false, $this->calledCorrectly);
         $this->placeComposerLockContentsFromFixture('composer-lock-private.lock', $this->dir);
         $this->runtestExpectedOutput();
-        $this->assertEquals($this->calledCorrectly, $this->calledCorrectly);
+        $this->assertEquals(true, $this->calledCorrectly);
     }
 
     protected function handleExecutorReturnCallback($cmd, &$return)
@@ -32,8 +32,14 @@ class Issue98Test extends ComposerUpdateIntegrationBase
         if ($cmd == $this->createExpectedCommandForPackage('eirik/private-pack')) {
             $this->placeComposerLockContentsFromFixture('composer-lock-private.updated', $this->dir);
         }
-        if ($cmd === ["git", "clone", 'https://user-token:x-oauth-basic@github.com/eiriksm/private-pack.git', '/tmp/9f7527992e178cafad06d558b8f32ce8']) {
+        if ($cmd === ["git", "clone", 'https://x-access-token:user-token@github.com/eiriksm/private-pack.git', '/tmp/9f7527992e178cafad06d558b8f32ce8']) {
             $this->calledCorrectly = true;
+        }
+        $string = implode(' ', $cmd);
+        if (strpos($string, 'git clone git@github.com:eiriksm/private-pack.git') === 0) {
+            // Attempted to clone without auth. Let's indicate we are not able
+            // to.
+            $return = 1;
         }
     }
 }

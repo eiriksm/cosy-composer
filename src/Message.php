@@ -2,7 +2,7 @@
 
 namespace eiriksm\CosyComposer;
 
-class Message
+class Message implements \Stringable
 {
 
     /**
@@ -79,5 +79,10 @@ class Message
     public function getType()
     {
         return $this->type;
+    }
+
+    public function __toString() : string
+    {
+        return $this->message;
     }
 }

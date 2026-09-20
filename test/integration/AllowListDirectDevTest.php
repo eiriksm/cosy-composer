@@ -3,15 +3,15 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 /**
- * Test for a default commit message.
+ * Test for allow list with direct dev dependencies.
  */
 class AllowListDirectDevTest extends ComposerUpdateIntegrationBase
 {
-    protected $composerAssetFiles = 'composer.always_allow_direct_dependencies2';
+    protected ?string $composerAssetFiles = 'composer.always_allow_direct_dependencies2';
     protected $hasUpdatedConsole = false;
     protected $hasUpdatedString = false;
     protected $usesDirect = false;
-    protected $packageForUpdateOutput = 'psr/cache';
+    protected ?string $packageForUpdateOutput = 'psr/cache';
 
     public function testAllowList()
     {

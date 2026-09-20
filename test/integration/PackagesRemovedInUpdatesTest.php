@@ -5,10 +5,10 @@ namespace eiriksm\CosyComposerTest\integration;
 class PackagesRemovedInUpdatesTest extends ComposerUpdateIntegrationBase
 {
 
-    protected $packageForUpdateOutput = 'drush/drush';
-    protected $packageVersionForFromUpdateOutput = '9.7.2';
-    protected $packageVersionForToUpdateOutput = '10.3.6';
-    protected $composerAssetFiles = 'composer192';
+    protected ?string $packageForUpdateOutput = 'drush/drush';
+    protected ?string $packageVersionForFromUpdateOutput = '9.7.2';
+    protected ?string $packageVersionForToUpdateOutput = '10.3.6';
+    protected ?string $composerAssetFiles = 'composer192';
     protected $checkPrUrl = true;
 
     public function testRemovalsInPackagesUpdated()
@@ -45,13 +45,17 @@ Some times an update also needs new or updated dependencies to be installed. Eve
 - symfony/yaml: v4.4.18 (updated from v3.4.47)
 
 
+### Changelog
+
+Here is a list of changes between the version you use, and the version this pull request updates to:
+
+Could not retrieve changelog. See the [project page](https://github.com/drush-ops/drush) for more information.
 
 ### Working with this branch
 
-If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/#branches).
+If you find you need to update the codebase to be able to merge this branch (for example update some tests or rebuild some assets), please note that violinist will force push to this branch to keep it up to date. This means you should not work on this branch directly, since you might lose your work. [Read more about branches created by violinist.io here](https://docs.violinist.io/introduction/branches/).
 
 ***
-This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).
-', $this->prParams["body"]);
+This is an automated pull request from [Violinist](https://violinist.io/): Continuously and automatically monitor and update your composer dependencies. Have ideas on how to improve this message? All violinist messages are open-source, and [can be improved here](https://github.com/violinist-dev/violinist-messages).', trim($this->prParams["body"]));
     }
 }

@@ -30,19 +30,19 @@ class ProviderFactoryTest extends TestCase
         return [
             [
                 'https://github.com/eiriksm/cosy-composer',
-                Github::class
+                Github::class,
             ],
             [
                 'https://gitlab.com/eiriksm/cosy-composer',
-                Gitlab::class
+                Gitlab::class,
             ],
             [
                 'https://bitbucket.org/eiriksm/cosy-composer',
-                Bitbucket::class
+                Bitbucket::class,
             ],
             [
                 'https://example.com/eiriksm/cosy-composer',
-                SelfHostedGitlab::class
+                SelfHostedGitlab::class,
             ],
         ];
     }

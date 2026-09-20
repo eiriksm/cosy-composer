@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposer;
 
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use Violinist\Slug\Slug;
 
 interface ProviderInterface
@@ -14,9 +15,9 @@ interface ProviderInterface
 
     public function enableAutomerge(array $pr_data, Slug $slug, $merge_method = self::MERGE_METHOD_MERGE) : bool;
 
-    public function authenticate($user, $token);
+    public function authenticate(string $user, ?string $token) : void;
 
-    public function authenticatePrivate($user, $token);
+    public function authenticatePrivate(string $user, ?string $token) : void;
 
     public function repoIsPrivate(Slug $slug);
 
@@ -24,17 +25,20 @@ interface ProviderInterface
 
     public function getBranchesFlattened(Slug $slug);
 
+    public function getPrsNamed(Slug $slug) : NamedPrs;
+
     /**
-     * @param Slug $slug
-     * @return array
+     * The username/identifier of the currently authenticated user, if it can be determined.
      */
-    public function getPrsNamed(Slug $slug) : array;
+    public function getAuthenticatedUsername() : ?string;
 
     public function getDefaultBase(Slug $slug, $default_branch);
 
+    public function getDefaultBaseTimestamp(Slug $slug, string $default_branch) : ?string;
+
     public function createFork($user, $repo, $fork_user);
 
-    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment);
+    public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void;
 
     /**
      * @param Slug $slug

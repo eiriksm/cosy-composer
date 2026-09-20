@@ -3,13 +3,13 @@
 namespace eiriksm\CosyComposerTest\integration;
 
 /**
- * Test for a default commit message.
+ * Test for running composer commands on default branch.
  */
 class ConfigBranchOrderTest extends ComposerUpdateIntegrationBase
 {
-    protected $packageForUpdateOutput = 'psr/log';
-    protected $packageVersionForFromUpdateOutput = '1.0.0';
-    protected $packageVersionForToUpdateOutput = '1.0.2';
+    protected ?string $packageForUpdateOutput = 'psr/log';
+    protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
+    protected ?string $packageVersionForToUpdateOutput = '1.0.2';
 
     public function setUp() : void
     {

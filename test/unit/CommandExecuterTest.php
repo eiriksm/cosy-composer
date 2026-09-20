@@ -6,13 +6,12 @@ use eiriksm\CosyComposer\CommandExecuter;
 use eiriksm\CosyComposer\Message;
 use eiriksm\CosyComposer\ProcessFactory;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Process\Process;
 
 class CommandExecuterTest extends TestCase
 {
-    public function testExecuteCommand()
+    public function testExecuteCommand(): void
     {
         $process_mock = $this->createMock(ProcessFactory::class);
         $logger_mock = $this->createMock(LoggerInterface::class);
@@ -50,5 +49,62 @@ class CommandExecuterTest extends TestCase
         $this->assertEquals('STDOUT', $output['stdout']);
         $this->assertEquals('STDERR', $output['stderr']);
         $this->assertEquals(true, $called_correctly);
+    }
+
+    public function testSetIgnorePlatformRequirementsTrue(): void
+    {
+        $process_mock = $this->createMock(ProcessFactory::class);
+        $logger_mock = $this->createMock(LoggerInterface::class);
+        $ce = new CommandExecuter($logger_mock, $process_mock);
+
+        $captured_env = null;
+        $process = $this->createMock(Process::class);
+        $process->method('setTimeout');
+        $process->method('run');
+        $process->method('getOutput')->willReturn('');
+        $process->method('getErrorOutput')->willReturn('');
+        $process->method('getExitCode')->willReturn(0);
+
+        $process_mock->expects($this->once())
+            ->method('getProcess')
+            ->willReturnCallback(function ($command, $cwd, $env) use (&$captured_env, $process) {
+                $captured_env = $env;
+                return $process;
+            });
+
+        $ce->setIgnorePlatformRequirements(true);
+        $ce->executeCommand(['composer', 'update'], false);
+
+        $this->assertArrayHasKey('COMPOSER_IGNORE_PLATFORM_REQS', $captured_env);
+        $this->assertEquals('1', $captured_env['COMPOSER_IGNORE_PLATFORM_REQS']);
+    }
+
+    public function testSetIgnorePlatformRequirementsFalse(): void
+    {
+        $process_mock = $this->createMock(ProcessFactory::class);
+        $logger_mock = $this->createMock(LoggerInterface::class);
+        $ce = new CommandExecuter($logger_mock, $process_mock);
+
+        $captured_env = null;
+        $process = $this->createMock(Process::class);
+        $process->method('setTimeout');
+        $process->method('run');
+        $process->method('getOutput')->willReturn('');
+        $process->method('getErrorOutput')->willReturn('');
+        $process->method('getExitCode')->willReturn(0);
+
+        $process_mock->expects($this->once())
+            ->method('getProcess')
+            ->willReturnCallback(function ($command, $cwd, $env) use (&$captured_env, $process) {
+                $captured_env = $env;
+                return $process;
+            });
+
+        // First enable, then disable
+        $ce->setIgnorePlatformRequirements(true);
+        $ce->setIgnorePlatformRequirements(false);
+        $ce->executeCommand(['composer', 'update'], false);
+
+        $this->assertArrayNotHasKey('COMPOSER_IGNORE_PLATFORM_REQS', $captured_env);
     }
 }

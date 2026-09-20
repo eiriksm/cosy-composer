@@ -6,7 +6,7 @@ class WordpressPluginBundledPatternTest extends ComposerUpdateIntegrationBase
 {
     protected ?string $composerAssetFiles = 'composer-wordpress-plugin-pattern';
 
-    protected $updateJson = '{
+    protected string $updateJson = '{
     "installed": [
         {
             "name": "wpackagist-plugin/akismet",
@@ -44,7 +44,7 @@ class WordpressPluginBundledPatternTest extends ComposerUpdateIntegrationBase
      */
     private $targetPackages = ['wpackagist-plugin/akismet', 'wpackagist-plugin/wordfence'];
 
-    public function testWildcardBundledPluginsProduceSingleUpdateCommand()
+    public function testWildcardBundledPluginsProduceSingleUpdateCommand(): void
     {
         $this->runtestExpectedOutput();
         $matchingCommands = array_filter($this->composerUpdateCommands, function (array $command): bool {
@@ -64,7 +64,7 @@ class WordpressPluginBundledPatternTest extends ComposerUpdateIntegrationBase
         }
     }
 
-    protected function handleExecutorReturnCallback(array $cmd, &$return)
+    protected function handleExecutorReturnCallback(array $cmd, &$return): void
     {
         if (isset($cmd[0], $cmd[1]) && $cmd[0] === 'composer' && $cmd[1] === 'update') {
             if (array_intersect($this->targetPackages, $cmd)) {

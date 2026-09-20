@@ -8,9 +8,9 @@ class WordpressPluginGroupRuleTest extends ComposerUpdateIntegrationBase
     protected ?string $packageForUpdateOutput = 'wpackagist-plugin/akismet';
     protected ?string $packageVersionForFromUpdateOutput = '5.3';
     protected ?string $packageVersionForToUpdateOutput = '5.3.1';
-    protected $checkPrUrl = true;
+    protected bool $checkPrUrl = true;
 
-    public function testWordpressPluginGroup()
+    public function testWordpressPluginGroup(): void
     {
         $this->runtestExpectedOutput();
         self::assertEquals('wordpress-plugins', $this->prParams['head']);

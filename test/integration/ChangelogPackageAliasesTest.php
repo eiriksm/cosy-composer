@@ -9,7 +9,10 @@ namespace eiriksm\CosyComposerTest\integration;
  * is the package that gets updated, but does not itself have a usable
  * changelog. With the changelog_package_aliases config pointing
  * drupal/core-recommended to drupal/core, the changelog should instead be
- * fetched (and linked) using the drupal/core package/repo.
+ * fetched (and linked) using the drupal/core package/repo, including using
+ * drupal/core's OWN before/after commit references, since drupal/core and
+ * drupal/core-recommended are different git repositories with unrelated
+ * commit history.
  */
 class ChangelogPackageAliasesTest extends ComposerUpdateIntegrationBase
 {
@@ -24,10 +27,13 @@ class ChangelogPackageAliasesTest extends ComposerUpdateIntegrationBase
     // clone (and the git log command) happens against md5('drupal/core').
     private const CLONE_PATH_FOR_ALIASED_PACKAGE = '/tmp/87801c9c4f0c265caa83fffca9901e08';
 
-    // The source references are drupal/core-recommended's own, since those are
-    // what gets looked up before the alias is applied.
-    private const VERSION_FROM = 'e4809a6155daf96eb927f59d44e9f26fb5607dbe';
-    private const VERSION_TO = 'd8cb769d86449af5ad763f3517c7f3c0e226ed60';
+    // drupal/core-recommended and drupal/core are different git repositories with
+    // unrelated commit history, so the SHAs used for the changelog range have to be
+    // drupal/core's OWN before/after references (from its own lock entries), not
+    // drupal/core-recommended's. These are drupal/core's references in
+    // composer.drupal1021-changelog-alias.lock(.updated).
+    private const VERSION_FROM = '0050280087b8ed1fb145fcf22e01ad53c85931db';
+    private const VERSION_TO = 'fc9abad1ab687635a5eddec00aa1a5f2a29a23bd';
 
     public function setUp() : void
     {
@@ -39,7 +45,7 @@ class ChangelogPackageAliasesTest extends ComposerUpdateIntegrationBase
     {
         $this->runtestExpectedOutput();
         $this->assertStringContainsString(
-            '[d8cb769](https://github.com/drupal/core/commit/d8cb769)',
+            '[fc9abad](https://github.com/drupal/core/commit/fc9abad)',
             $this->prParams['body']
         );
         $this->assertStringNotContainsString('Could not retrieve changelog', $this->prParams['body']);
@@ -68,7 +74,7 @@ class ChangelogPackageAliasesTest extends ComposerUpdateIntegrationBase
             self::VERSION_TO
         );
         if ($cmd_string === $expected_log_command) {
-            $this->stdout = 'd8cb769 Drupal 10.2.2
+            $this->stdout = 'fc9abad Drupal 10.2.2
 ';
         }
     }

@@ -378,8 +378,12 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals(true, $called);
     }
 
-    public function testChangeLogPackageAliasesWithoutConfig() : void
+    public function testChangeLogDoesNotAliasPackageNameItself() : void
     {
+        // retrieveChangeLog() never resolves changelog_package_aliases on its own:
+        // that is resolveChangelogAlias()'s job, called by the updater before
+        // retrieveChangeLog(). So looking up drupal/core-recommended in a lockfile
+        // that only has drupal/core fails here, regardless of any alias config.
         $c = $this->getMockCosy();
         $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
             return 0;
@@ -389,8 +393,6 @@ class CosyComposerChangelogTest extends TestCase
         $updater->setSlug($c->getSlug());
         $updater->setAuthentication($c->getUntouchedUserToken());
         $this->expectException(\Exception::class);
-        // Without a config being passed, no aliasing happens, so we fail to find
-        // drupal/core-recommended in a lockfile that only has drupal/core.
         $this->expectExceptionMessage('Did not find the requested package (drupal/core-recommended) in the lockfile. This is probably an error');
         $updater->retrieveChangeLog('drupal/core-recommended', json_decode(json_encode(['packages' => [
             [
@@ -403,26 +405,91 @@ class CosyComposerChangelogTest extends TestCase
         ], 'packages-dev' => []])), 1, 2);
     }
 
-    public function testChangeLogPackageAliasesFromConfig() : void
+    /**
+     * @param mixed ...$args
+     * @return mixed
+     */
+    private function invokeResolveChangelogAlias(IndividualUpdater $updater, ...$args)
     {
-        $c = $this->getMockCosy();
-        $called = false;
-        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) use (&$called) {
-            $command = implode(' ', $command_array);
-            if (strpos($command, 'log 1..2 --oneline') > 0) {
-                $called = true;
-            }
-            return 0;
-        });
-        $mock_executer->expects($this->once())
-            ->method('getLastOutput')
-            ->willReturn([
-                'stdout' => "112233 This is the first line",
-                ]);
+        $method = new \ReflectionMethod($updater, 'resolveChangelogAlias');
+        $method->setAccessible(true);
+        return $method->invoke($updater, ...$args);
+    }
+
+    public function testResolveChangelogAliasWithoutConfigReturnsOriginal() : void
+    {
         $updater = new IndividualUpdater();
-        $updater->setExecuter($mock_executer);
-        $updater->setSlug($c->getSlug());
-        $updater->setAuthentication($c->getUntouchedUserToken());
+        $pre_data = (object) ['source' => (object) ['reference' => 'aaa']];
+        $post_data = (object) ['source' => (object) ['reference' => 'bbb']];
+        $result = $this->invokeResolveChangelogAlias(
+            $updater,
+            'vendor/package',
+            (object) ['packages' => [], 'packages-dev' => []],
+            (object) ['packages' => [], 'packages-dev' => []],
+            $pre_data,
+            $post_data,
+            null
+        );
+        $this->assertSame(['vendor/package', $pre_data, $post_data], $result);
+    }
+
+    public function testResolveChangelogAliasUsesAliasedPackageOwnReferences() : void
+    {
+        // drupal/core-recommended and drupal/core are different git repositories.
+        // The SHAs looked up for the ORIGINAL (unaliased) package must not be reused
+        // for the aliased one: its own before/after references have to be looked up
+        // instead, since the original package's SHAs would not resolve in the
+        // aliased package's repository.
+        $updater = new IndividualUpdater();
+        $config = Config::createFromComposerData(json_decode(json_encode([
+            'extra' => [
+                'violinist' => [
+                    'changelog_package_aliases' => [
+                        'drupal/core-recommended' => 'drupal/core',
+                    ],
+                ],
+            ],
+        ])));
+        $lockdata = json_decode(json_encode(['packages' => [
+            [
+                'name' => 'drupal/core-recommended',
+                'source' => ['type' => 'git', 'url' => 'https://github.com/drupal/core-recommended', 'reference' => 'recommended-before'],
+            ],
+            [
+                'name' => 'drupal/core',
+                'source' => ['type' => 'git', 'url' => 'https://github.com/drupal/core', 'reference' => 'core-before'],
+            ],
+        ], 'packages-dev' => []]));
+        $new_lockdata = json_decode(json_encode(['packages' => [
+            [
+                'name' => 'drupal/core-recommended',
+                'source' => ['type' => 'git', 'url' => 'https://github.com/drupal/core-recommended', 'reference' => 'recommended-after'],
+            ],
+            [
+                'name' => 'drupal/core',
+                'source' => ['type' => 'git', 'url' => 'https://github.com/drupal/core', 'reference' => 'core-after'],
+            ],
+        ], 'packages-dev' => []]));
+        // What the caller would have looked up for the updated (unaliased) package itself.
+        $original_pre_data = (object) ['source' => (object) ['reference' => 'recommended-before']];
+        $original_post_data = (object) ['source' => (object) ['reference' => 'recommended-after']];
+        [$resolved_name, $resolved_pre, $resolved_post] = $this->invokeResolveChangelogAlias(
+            $updater,
+            'drupal/core-recommended',
+            $lockdata,
+            $new_lockdata,
+            $original_pre_data,
+            $original_post_data,
+            $config
+        );
+        $this->assertEquals('drupal/core', $resolved_name);
+        $this->assertEquals('core-before', $resolved_pre->source->reference);
+        $this->assertEquals('core-after', $resolved_post->source->reference);
+    }
+
+    public function testResolveChangelogAliasFallsBackWhenAliasedPackageMissing() : void
+    {
+        $updater = new IndividualUpdater();
         $config = Config::createFromComposerData(json_decode(json_encode([
             'extra' => [
                 'violinist' => [
@@ -432,17 +499,20 @@ class CosyComposerChangelogTest extends TestCase
                 ],
             ],
         ])));
-        $log = $updater->retrieveChangeLog('vendor/package-metapackage', json_decode(json_encode(['packages' => [
-            [
-                'name' => 'vendor/package',
-                'source' => [
-                    'type' => 'git',
-                    'url' => 'https://github.com/vendor/package',
-                ],
-            ],
-        ]])), 1, 2, $config);
-        $this->assertEquals('- [112233](https://github.com/vendor/package/commit/112233) `This is the first line`
-', $log->getAsMarkdown());
-        $this->assertEquals(true, $called);
+        // Neither lock file actually has vendor/package.
+        $lockdata = json_decode(json_encode(['packages' => [], 'packages-dev' => []]));
+        $new_lockdata = json_decode(json_encode(['packages' => [], 'packages-dev' => []]));
+        $pre_data = (object) ['source' => (object) ['reference' => 'aaa']];
+        $post_data = (object) ['source' => (object) ['reference' => 'bbb']];
+        $result = $this->invokeResolveChangelogAlias(
+            $updater,
+            'vendor/package-metapackage',
+            $lockdata,
+            $new_lockdata,
+            $pre_data,
+            $post_data,
+            $config
+        );
+        $this->assertSame(['vendor/package-metapackage', $pre_data, $post_data], $result);
     }
 }

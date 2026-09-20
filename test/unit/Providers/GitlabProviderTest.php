@@ -7,6 +7,7 @@ use eiriksm\CosyComposer\Providers\Gitlab;
 use Gitlab\Api\MergeRequests;
 use Gitlab\Api\Projects;
 use Gitlab\Api\Repositories;
+use Gitlab\Api\Users;
 use Gitlab\Client;
 use PHPUnit\Framework\MockObject\MockObject;
 use Violinist\Slug\Slug;
@@ -31,6 +32,33 @@ class GitlabProviderTest extends ProvidersTestBase
         $client = $this->getMockClient();
         $provider = $this->getProvider($client);
         $this->assertEquals(true, $provider->repoIsPrivate($slug));
+    }
+
+    public function testGetAuthenticatedUsername(): void
+    {
+        $mock_users_api = $this->createMock(Users::class);
+        $mock_users_api->expects($this->once())
+            ->method('me')
+            ->willReturn([
+                'username' => 'violinist-bot',
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('users')
+            ->willReturn($mock_users_api);
+        $g = new Gitlab($mock_client);
+        $this->assertEquals('violinist-bot', $g->getAuthenticatedUsername());
+        // A second call should be served from cache, not hit the api again.
+        $this->assertEquals('violinist-bot', $g->getAuthenticatedUsername());
+    }
+
+    public function testGetAuthenticatedUsernameReturnsNullOnException(): void
+    {
+        $mock_client = $this->getMockClient();
+        $mock_client->method('users')
+            ->willThrowException(new \RuntimeException('API error'));
+        $g = new Gitlab($mock_client);
+        $this->assertNull($g->getAuthenticatedUsername());
     }
 
     public function testDefaultBaseTimestamp(): void

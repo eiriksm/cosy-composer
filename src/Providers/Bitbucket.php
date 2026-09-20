@@ -115,6 +115,9 @@ class Bitbucket implements ProviderInterface
                 'html_url' => $pr["links"]["html"]["href"],
                 'number' => $pr["id"],
                 'title' => $pr["title"],
+                'user' => [
+                    'login' => !empty($pr["author"]["uuid"]) ? $pr["author"]["uuid"] : null,
+                ],
                 'head' => [
                     'ref' => $pr["source"]["branch"]["name"],
                 ],
@@ -144,6 +147,19 @@ class Bitbucket implements ProviderInterface
         }
         // Since the branches only gives us 12 characters, we need to trim the default base to the same.
         return substr($default_base, 0, 12);
+    }
+
+    public function getAuthenticatedUsername() : ?string
+    {
+        if (!isset($this->cache['authenticated_username'])) {
+            try {
+                $user = $this->client->currentUser()->show();
+                $this->cache['authenticated_username'] = $user['uuid'] ?? null;
+            } catch (\Throwable $e) {
+                return null;
+            }
+        }
+        return $this->cache['authenticated_username'];
     }
 
     public function getDefaultBaseTimestamp(Slug $slug, string $default_branch) : ?string

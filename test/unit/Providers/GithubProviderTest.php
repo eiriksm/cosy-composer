@@ -4,6 +4,7 @@ namespace eiriksm\CosyComposerTest\unit\Providers;
 
 use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Github;
+use Github\Api\CurrentUser;
 use Github\Api\GraphQL;
 use Github\Api\Issue;
 use Github\Api\Issue\Comments;
@@ -263,6 +264,34 @@ class GithubProviderTest extends ProvidersTestBase
             });
         $g = new Github($mock_client);
         $g->closePullRequestWithComment($slug, $pr_id, 'comment');
+    }
+
+    public function testGetAuthenticatedUsername(): void
+    {
+        $mock_current_user_api = $this->createMock(CurrentUser::class);
+        $mock_current_user_api->expects($this->once())
+            ->method('show')
+            ->willReturn([
+                'login' => 'violinist-bot',
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('api')
+            ->with('current_user')
+            ->willReturn($mock_current_user_api);
+        $g = new Github($mock_client);
+        $this->assertEquals('violinist-bot', $g->getAuthenticatedUsername());
+        // A second call should be served from cache, not hit the api again.
+        $this->assertEquals('violinist-bot', $g->getAuthenticatedUsername());
+    }
+
+    public function testGetAuthenticatedUsernameReturnsNullOnException(): void
+    {
+        $mock_client = $this->getMockClient();
+        $mock_client->method('api')
+            ->willThrowException(new \RuntimeException('API error'));
+        $g = new Github($mock_client);
+        $this->assertNull($g->getAuthenticatedUsername());
     }
 
     public function testAutomergeReturnsFalseOnException(): void

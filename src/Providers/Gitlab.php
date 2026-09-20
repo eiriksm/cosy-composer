@@ -97,6 +97,9 @@ class Gitlab implements ProviderInterface
                     'sha' => !empty($commits[1]["id"]) ? $commits[1]["id"] : $pr['sha'],
                     'ref' => $pr["target_branch"],
                 ],
+                'user' => [
+                    'login' => !empty($pr['author']['username']) ? $pr['author']['username'] : null,
+                ],
                 'head' => [
                     'ref' => $pr['source_branch'],
                 ],
@@ -107,6 +110,19 @@ class Gitlab implements ProviderInterface
             }
         }
         return $prs_named;
+    }
+
+    public function getAuthenticatedUsername() : ?string
+    {
+        if (!isset($this->cache['authenticated_username'])) {
+            try {
+                $user = $this->client->users()->me();
+                $this->cache['authenticated_username'] = $user['username'] ?? null;
+            } catch (\Throwable $e) {
+                return null;
+            }
+        }
+        return $this->cache['authenticated_username'];
     }
 
     public function getDefaultBase(Slug $slug, $default_branch)

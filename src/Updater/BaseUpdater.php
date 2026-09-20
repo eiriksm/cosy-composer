@@ -83,6 +83,10 @@ abstract class BaseUpdater implements UpdaterInterface
      */
     protected $forkUser;
 
+    protected ?string $authenticatedUsername = null;
+
+    protected bool $authenticatedUsernameFetched = false;
+
     public function setForkUser(string $user)
     {
         $this->forkUser = $user;
@@ -101,6 +105,19 @@ abstract class BaseUpdater implements UpdaterInterface
     protected function getPrClient() : ProviderInterface
     {
         return $this->client;
+    }
+
+    protected function getAuthenticatedUsername() : ?string
+    {
+        if (!$this->authenticatedUsernameFetched) {
+            $this->authenticatedUsernameFetched = true;
+            try {
+                $this->authenticatedUsername = $this->getPrClient()->getAuthenticatedUsername();
+            } catch (\Throwable $e) {
+                $this->authenticatedUsername = null;
+            }
+        }
+        return $this->authenticatedUsername;
     }
 
     public function setClient(ProviderInterface $client)
@@ -350,6 +367,14 @@ abstract class BaseUpdater implements UpdaterInterface
             // two scenarios are both scenarios we want to handle in such a way that we are closing this PR that
             // is matching.
             if (strpos($branch_name, $branch_name_prefix) === false) {
+                continue;
+            }
+            $pr_author = $pr['user']['login'] ?? null;
+            $authenticated_username = $this->getAuthenticatedUsername();
+            if ($pr_author !== null && $authenticated_username !== null && $pr_author !== $authenticated_username) {
+                // The branch name matches, but this pull request was not opened by us. Someone else's pull
+                // request just happening to use the same branch naming convention is not "ours" to close.
+                $this->getLogger()->log('info', new Message("Not closing PR number {$pr['number']}, since it was not opened by us (opened by $pr_author)"));
                 continue;
             }
             $comment = $this->messageFactory->getPullRequestClosedMessage($pr_id);

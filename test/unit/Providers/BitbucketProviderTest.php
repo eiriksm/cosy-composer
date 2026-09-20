@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
+use Bitbucket\Api\CurrentUser;
 use Bitbucket\Api\Repositories;
 use Bitbucket\Api\Repositories\Workspaces;
 use Bitbucket\Client;
@@ -50,6 +51,33 @@ class BitbucketProviderTest extends ProvidersTestBase
             ->with(Client::AUTH_OAUTH_TOKEN, 'testUser');
         $provider = $this->getProvider($mock_client);
         $provider->authenticate('testUser', null);
+    }
+
+    public function testGetAuthenticatedUsername(): void
+    {
+        $mock_current_user_api = $this->createMock(CurrentUser::class);
+        $mock_current_user_api->expects($this->once())
+            ->method('show')
+            ->willReturn([
+                'uuid' => '{some-uuid}',
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('currentUser')
+            ->willReturn($mock_current_user_api);
+        $g = new Bitbucket($mock_client);
+        $this->assertEquals('{some-uuid}', $g->getAuthenticatedUsername());
+        // A second call should be served from cache, not hit the api again.
+        $this->assertEquals('{some-uuid}', $g->getAuthenticatedUsername());
+    }
+
+    public function testGetAuthenticatedUsernameReturnsNullOnException(): void
+    {
+        $mock_client = $this->getMockClient();
+        $mock_client->method('currentUser')
+            ->willThrowException(new \RuntimeException('API error'));
+        $g = new Bitbucket($mock_client);
+        $this->assertNull($g->getAuthenticatedUsername());
     }
 
     public function testDefaultBaseTimestamp(): void

@@ -1,0 +1,39 @@
+{
+    "name": "company/wordpress-project",
+    "description": "Example WordPress project using wpackagist for plugin management",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://wpackagist.org"
+        }
+    ],
+    "require": {
+        "wpackagist-plugin/akismet": "^5.3",
+        "wpackagist-plugin/wordfence": "^7.11"
+    },
+    "extra": {
+        "violinist": {
+            "rules": [
+                {
+                    "name": "Bundle WordPress Plugins",
+                    "slug": "bundle-wordpress-plugins",
+                    "matchRules": [
+                        {
+                            "type": "names",
+                            "values": [
+                                "wpackagist-plugin/*"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "installer-paths": {
+            "wp-content/plugins/{$name}/": [
+                "type:wordpress-plugin"
+            ]
+        }
+    }
+}

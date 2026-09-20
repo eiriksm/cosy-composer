@@ -1,0 +1,27 @@
+{
+  "name": "company/project",
+  "require": {
+    "drupal/core": "^11.0",
+    "drupal/core-recommended": "^11.0",
+    "drupal/coffee": "^2.0"
+  },
+  "extra": {
+    "violinist": {
+      "rules": [
+        {
+          "name": "Drupal Contrib Only",
+          "slug": "drupal-contrib-only",
+          "matchRules": [
+            {
+              "type": "names",
+              "values": [
+                "drupal/*",
+                "!drupal/core*"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

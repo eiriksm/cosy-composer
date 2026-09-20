@@ -6,7 +6,10 @@ class WordpressPluginBundledPatternTest extends ComposerUpdateIntegrationBase
 {
     protected ?string $composerAssetFiles = 'composer-wordpress-plugin-pattern';
 
-    protected string $updateJson = '{
+    /**
+     * @var string
+     */
+    protected $updateJson = '{
     "installed": [
         {
             "name": "wpackagist-plugin/akismet",

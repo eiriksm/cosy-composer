@@ -226,7 +226,7 @@ class IndividualUpdater extends BaseUpdater
             $comparer = new LockDataComparer($lockdata, $new_lock_data);
             $package_lock_data = ComposerLockData::createFromString(json_encode($lockdata));
             $update_list = $comparer->getUpdateList();
-            $update_array = array_map(function (UpdateListItem $update) use ($lockdata, $new_lock_data, $package_lock_data, $post_update_lock) {
+            $update_array = array_map(function (UpdateListItem $update) use ($lockdata, $new_lock_data, $package_lock_data, $post_update_lock, $item_config) {
                 $update_obj = new ViolinistUpdate();
                 $update_obj->setName($update->getPackageName());
                 $update_obj->setCurrentVersion($update->getOldVersion());
@@ -247,11 +247,18 @@ class IndividualUpdater extends BaseUpdater
                 }
                 $version_from = $update->getOldVersion();
                 $version_to = $update->getNewVersion();
+                [$changelog_package_name, $changelog_pre_data, $changelog_post_data] = $this->resolveChangelogAlias($package_name, $lockdata, $new_lock_data, $pre_update_data, $post_update_data, $item_config);
+                $changelog_version_from = $version_from;
+                $changelog_version_to = $version_to;
+                if (!empty($changelog_pre_data->source->reference) && !empty($changelog_post_data->source->reference)) {
+                    $changelog_version_from = $changelog_pre_data->source->reference;
+                    $changelog_version_to = $changelog_post_data->source->reference;
+                }
                 $this->log('Trying to retrieve changelog for ' . $package_name);
                 $changelog = null;
                 $changed_files = [];
                 try {
-                    $changelog = $this->retrieveChangeLog($package_name, $lockdata, $version_from, $version_to);
+                    $changelog = $this->retrieveChangeLog($changelog_package_name, $lockdata, $changelog_version_from, $changelog_version_to);
                     $update_obj->setChangelog($changelog->getAsMarkdown());
                     $this->log('Changelog retrieved');
                 } catch (\Throwable $e) {
@@ -262,7 +269,7 @@ class IndividualUpdater extends BaseUpdater
                     $repo_url = null;
                     foreach ([$lockdata, $new_lock_data] as $repo_url_lock) {
                         try {
-                            $repo_url = $this->getRepoUrl($package_name, $repo_url_lock);
+                            $repo_url = $this->getRepoUrl($changelog_package_name, $repo_url_lock);
                             if ($repo_url) {
                                 break;
                             }
@@ -274,7 +281,7 @@ class IndividualUpdater extends BaseUpdater
                     }
                 }
                 try {
-                    $changed_files = $this->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
+                    $changed_files = $this->retrieveChangedFiles($changelog_package_name, $lockdata, $changelog_version_from, $changelog_version_to);
                     $update_obj->setChangedFiles($changed_files);
                     $this->log('Changed files retrieved');
                 } catch (\Throwable $e) {
@@ -284,7 +291,7 @@ class IndividualUpdater extends BaseUpdater
                 // Let's try to find all of the tags between those commit shas.
                 $release_links = null;
                 try {
-                    $release_links = $this->getReleaseLinks($lockdata, $package_name, $pre_update_data, $post_update_data);
+                    $release_links = $this->getReleaseLinks($lockdata, $changelog_package_name, $changelog_pre_data, $changelog_post_data);
                     $update_obj->setPackageReleaseNotes($release_links);
                 } catch (\Throwable $e) {
                     $this->log('Retrieving links to releases failed');
@@ -673,19 +680,26 @@ class IndividualUpdater extends BaseUpdater
             $this->log('Successfully ran command composer update for package ' . $package_name);
             $new_lock_data = json_decode(file_get_contents($this->composerJsonDir . '/composer.lock'));
             $list_item = new UpdateListItem($package_name, $post_update_data->version, $item->version);
+            [$changelog_package_name, $changelog_pre_data, $changelog_post_data] = $this->resolveChangelogAlias($package_name, $lockdata, $new_lock_data, $pre_update_data, $post_update_data, $config);
+            $changelog_version_from = $version_from;
+            $changelog_version_to = $version_to;
+            if (!empty($changelog_pre_data->source->reference) && !empty($changelog_post_data->source->reference)) {
+                $changelog_version_from = $changelog_pre_data->source->reference;
+                $changelog_version_to = $changelog_post_data->source->reference;
+            }
             $this->log('Trying to retrieve changelog for ' . $package_name);
             $changelog = null;
             $changed_files = [];
             try {
-                $changelog = $this->retrieveChangeLog($package_name, $lockdata, $version_from, $version_to);
+                $changelog = $this->retrieveChangeLog($changelog_package_name, $lockdata, $changelog_version_from, $changelog_version_to);
                 $this->log('Changelog retrieved');
             } catch (\Throwable $e) {
                 // If the changelog can not be retrieved, we can live with that.
                 $this->log('Exception for changelog: ' . $e->getMessage());
             }
-            $repo_url = $this->getRepoUrl($package_name, $lockdata);
+            $repo_url = $this->getRepoUrl($changelog_package_name, $lockdata);
             try {
-                $changed_files = $this->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
+                $changed_files = $this->retrieveChangedFiles($changelog_package_name, $lockdata, $changelog_version_from, $changelog_version_to);
                 $this->log('Changed files retrieved');
             } catch (\Throwable $e) {
                 // If the changed files can not be retrieved, we can live with that.
@@ -694,7 +708,7 @@ class IndividualUpdater extends BaseUpdater
             // Let's try to find all of the tags between those commit shas.
             $release_links = null;
             try {
-                $release_links = $this->getReleaseLinks($lockdata, $package_name, $pre_update_data, $post_update_data);
+                $release_links = $this->getReleaseLinks($lockdata, $changelog_package_name, $changelog_pre_data, $changelog_post_data);
             } catch (\Throwable $e) {
                 $this->log('Retrieving links to releases failed');
             }

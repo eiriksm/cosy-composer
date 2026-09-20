@@ -164,6 +164,28 @@ class Helpers
         throw new \Exception('Could not find ' . $name . ' in composer.json.');
     }
 
+    /**
+     * Reads the "changelog_package_aliases" violinist config option from composer.json.
+     *
+     * This is a map of package name to the package name that should be used instead, when fetching
+     * changelogs and changed files for it. For example, fetching the drupal/core changelog when the
+     * actual dependency is drupal/core-recommended.
+     *
+     * @param \stdClass $cdata
+     * @return array
+     */
+    public static function getChangelogPackageAliases(\stdClass $cdata) : array
+    {
+        if (empty($cdata->extra->violinist->changelog_package_aliases)) {
+            return [];
+        }
+        $aliases = $cdata->extra->violinist->changelog_package_aliases;
+        if (!is_object($aliases) && !is_array($aliases)) {
+            return [];
+        }
+        return (array) $aliases;
+    }
+
     public static function shouldUpdatePr($branch_name, $pr_params, NamedPrs $prs_named_obj)
     {
         $prs_named = $prs_named_obj->getAllPrsNamed();

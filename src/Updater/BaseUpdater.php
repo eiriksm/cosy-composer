@@ -84,9 +84,11 @@ abstract class BaseUpdater implements UpdaterInterface
      * This allows fetching the changelog for a different (but related) package, for example
      * fetching the drupal/core changelog when the actual dependency is drupal/core-recommended.
      *
+     * Configurable per project via the "changelog_package_aliases" violinist config option.
+     *
      * @var array
      */
-    protected $changelogPackageMap = [
+    protected $changelogPackageAliases = [
         'drupal/core-recommended' => 'drupal/core',
     ];
 
@@ -201,31 +203,31 @@ abstract class BaseUpdater implements UpdaterInterface
     /**
      * @return array
      */
-    public function getChangelogPackageMap()
+    public function getChangelogPackageAliases()
     {
-        return $this->changelogPackageMap;
+        return $this->changelogPackageAliases;
     }
 
     /**
      * Set the map of package name to the package name to use for changelog/changed files lookups.
      *
-     * @param array $changelogPackageMap
+     * @param array $changelogPackageAliases
      */
-    public function setChangelogPackageMap(array $changelogPackageMap)
+    public function setChangelogPackageAliases(array $changelogPackageAliases)
     {
-        $this->changelogPackageMap = $changelogPackageMap;
+        $this->changelogPackageAliases = $changelogPackageAliases;
     }
 
     /**
-     * Resolve the package name to use for changelog/changed files lookups, based on the configured map.
+     * Resolve the package name to use for changelog/changed files lookups, based on the configured aliases.
      *
      * @param string $package_name
      * @return string
      */
     protected function getChangelogPackageName($package_name)
     {
-        if (isset($this->changelogPackageMap[$package_name])) {
-            return $this->changelogPackageMap[$package_name];
+        if (isset($this->changelogPackageAliases[$package_name])) {
+            return $this->changelogPackageAliases[$package_name];
         }
         return $package_name;
     }

@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\unit;
 
+use eiriksm\CosyComposer\Helpers;
 use eiriksm\CosyComposer\Updater\IndividualUpdater;
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
@@ -377,7 +378,7 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals(true, $called);
     }
 
-    public function testChangeLogPackageMapDefault() : void
+    public function testChangeLogPackageAliasesDefault() : void
     {
         $c = $this->getMockCosy();
         $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
@@ -403,7 +404,7 @@ class CosyComposerChangelogTest extends TestCase
         ]])), 1, 2);
     }
 
-    public function testChangeLogPackageMapConfigurable() : void
+    public function testChangeLogPackageAliasesConfigurable() : void
     {
         $c = $this->getMockCosy();
         $called = false;
@@ -423,7 +424,7 @@ class CosyComposerChangelogTest extends TestCase
         $updater->setExecuter($mock_executer);
         $updater->setSlug($c->getSlug());
         $updater->setAuthentication($c->getUntouchedUserToken());
-        $updater->setChangelogPackageMap([
+        $updater->setChangelogPackageAliases([
             'vendor/package-metapackage' => 'vendor/package',
         ]);
         $log = $updater->retrieveChangeLog('vendor/package-metapackage', json_decode(json_encode(['packages' => [
@@ -440,6 +441,32 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals(true, $called);
         $this->assertEquals([
             'vendor/package-metapackage' => 'vendor/package',
-        ], $updater->getChangelogPackageMap());
+        ], $updater->getChangelogPackageAliases());
+    }
+
+    public function testGetChangelogPackageAliasesFromComposerJsonConfig() : void
+    {
+        $cdata = json_decode(json_encode([
+            'extra' => [
+                'violinist' => [
+                    'changelog_package_aliases' => [
+                        'vendor/package-metapackage' => 'vendor/package',
+                    ],
+                ],
+            ],
+        ]));
+        $this->assertEquals([
+            'vendor/package-metapackage' => 'vendor/package',
+        ], Helpers::getChangelogPackageAliases($cdata));
+    }
+
+    public function testGetChangelogPackageAliasesFromComposerJsonConfigEmpty() : void
+    {
+        $cdata = json_decode(json_encode([
+            'extra' => [
+                'violinist' => [],
+            ],
+        ]));
+        $this->assertEquals([], Helpers::getChangelogPackageAliases($cdata));
     }
 }

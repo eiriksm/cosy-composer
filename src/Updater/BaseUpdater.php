@@ -216,6 +216,48 @@ abstract class BaseUpdater implements UpdaterInterface
     }
 
     /**
+     * Resolves the package name, and its pre/post lock data, to use for changelog related
+     * lookups (changelog, changed files, release links), based on any configured
+     * changelog_package_aliases option.
+     *
+     * The package that actually got updated is not always the one we want a changelog
+     * for (for example drupal/core-recommended aliased to drupal/core). The aliased
+     * package is a different git repository, so its own "before" and "after" lock data
+     * (references, tags, etc) has to be looked up instead of reusing the updated
+     * package's own SHAs, which would not resolve in that other repository.
+     *
+     * @param string $package_name
+     * @param object $lockdata
+     * @param object $new_lockdata
+     * @param object|null $pre_update_data
+     * @param object|null $post_update_data
+     * @return array{0: string, 1: object|null, 2: object|null}
+     */
+    protected function resolveChangelogAlias($package_name, $lockdata, $new_lockdata, $pre_update_data, $post_update_data, ?Config $config) : array
+    {
+        if (!$config) {
+            return [$package_name, $pre_update_data, $post_update_data];
+        }
+        $aliased_name = $config->getChangelogAliasForPackage($package_name);
+        if ($aliased_name === $package_name) {
+            return [$package_name, $pre_update_data, $post_update_data];
+        }
+        try {
+            $pre_lock = new ComposerLockData();
+            $pre_lock->setData($lockdata);
+            $aliased_pre_data = $pre_lock->getPackageData($aliased_name);
+            $post_lock = new ComposerLockData();
+            $post_lock->setData($new_lockdata);
+            $aliased_post_data = $post_lock->getPackageData($aliased_name);
+        } catch (\Throwable $e) {
+            // The aliased package could not be found in one of the two lock files. Fall
+            // back to the original package rather than mixing mismatched data.
+            return [$package_name, $pre_update_data, $post_update_data];
+        }
+        return [$aliased_name, $aliased_pre_data, $aliased_post_data];
+    }
+
+    /**
      * Helper to retrieve changelog.
      */
     public function retrieveChangeLog($package_name, $lockdata, $version_from, $version_to)

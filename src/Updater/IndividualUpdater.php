@@ -226,7 +226,7 @@ class IndividualUpdater extends BaseUpdater
             $comparer = new LockDataComparer($lockdata, $new_lock_data);
             $package_lock_data = ComposerLockData::createFromString(json_encode($lockdata));
             $update_list = $comparer->getUpdateList();
-            $update_array = array_map(function (UpdateListItem $update) use ($lockdata, $new_lock_data, $package_lock_data, $post_update_lock) {
+            $update_array = array_map(function (UpdateListItem $update) use ($lockdata, $new_lock_data, $package_lock_data, $post_update_lock, $item_config) {
                 $update_obj = new ViolinistUpdate();
                 $update_obj->setName($update->getPackageName());
                 $update_obj->setCurrentVersion($update->getOldVersion());
@@ -251,7 +251,7 @@ class IndividualUpdater extends BaseUpdater
                 $changelog = null;
                 $changed_files = [];
                 try {
-                    $changelog = $this->retrieveChangeLog($package_name, $lockdata, $version_from, $version_to);
+                    $changelog = $this->retrieveChangeLog($package_name, $lockdata, $version_from, $version_to, $item_config);
                     $update_obj->setChangelog($changelog->getAsMarkdown());
                     $this->log('Changelog retrieved');
                 } catch (\Throwable $e) {
@@ -274,7 +274,7 @@ class IndividualUpdater extends BaseUpdater
                     }
                 }
                 try {
-                    $changed_files = $this->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
+                    $changed_files = $this->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to, $item_config);
                     $update_obj->setChangedFiles($changed_files);
                     $this->log('Changed files retrieved');
                 } catch (\Throwable $e) {
@@ -677,7 +677,7 @@ class IndividualUpdater extends BaseUpdater
             $changelog = null;
             $changed_files = [];
             try {
-                $changelog = $this->retrieveChangeLog($package_name, $lockdata, $version_from, $version_to);
+                $changelog = $this->retrieveChangeLog($package_name, $lockdata, $version_from, $version_to, $config);
                 $this->log('Changelog retrieved');
             } catch (\Throwable $e) {
                 // If the changelog can not be retrieved, we can live with that.
@@ -685,7 +685,7 @@ class IndividualUpdater extends BaseUpdater
             }
             $repo_url = $this->getRepoUrl($package_name, $lockdata);
             try {
-                $changed_files = $this->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
+                $changed_files = $this->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to, $config);
                 $this->log('Changed files retrieved');
             } catch (\Throwable $e) {
                 // If the changed files can not be retrieved, we can live with that.

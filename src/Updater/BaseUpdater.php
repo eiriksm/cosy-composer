@@ -79,20 +79,6 @@ abstract class BaseUpdater implements UpdaterInterface
     protected $fetcher;
 
     /**
-     * A map of package name to the package name to use when fetching changelogs/changed files for it.
-     *
-     * This allows fetching the changelog for a different (but related) package, for example
-     * fetching the drupal/core changelog when the actual dependency is drupal/core-recommended.
-     *
-     * Configurable per project via the "changelog_package_aliases" violinist config option.
-     *
-     * @var array
-     */
-    protected $changelogPackageAliases = [
-        'drupal/core-recommended' => 'drupal/core',
-    ];
-
-    /**
      * @var string
      */
     protected $forkUser;
@@ -201,38 +187,6 @@ abstract class BaseUpdater implements UpdaterInterface
     }
 
     /**
-     * @return array
-     */
-    public function getChangelogPackageAliases()
-    {
-        return $this->changelogPackageAliases;
-    }
-
-    /**
-     * Set the map of package name to the package name to use for changelog/changed files lookups.
-     *
-     * @param array $changelogPackageAliases
-     */
-    public function setChangelogPackageAliases(array $changelogPackageAliases)
-    {
-        $this->changelogPackageAliases = $changelogPackageAliases;
-    }
-
-    /**
-     * Resolve the package name to use for changelog/changed files lookups, based on the configured aliases.
-     *
-     * @param string $package_name
-     * @return string
-     */
-    protected function getChangelogPackageName($package_name)
-    {
-        if (isset($this->changelogPackageAliases[$package_name])) {
-            return $this->changelogPackageAliases[$package_name];
-        }
-        return $package_name;
-    }
-
-    /**
      * Resolves a clean URL for a package's repository from lock data.
      */
     public function getRepoUrl(string $package_name, object $lockdata) : ?string
@@ -264,9 +218,11 @@ abstract class BaseUpdater implements UpdaterInterface
     /**
      * Helper to retrieve changelog.
      */
-    public function retrieveChangeLog($package_name, $lockdata, $version_from, $version_to)
+    public function retrieveChangeLog($package_name, $lockdata, $version_from, $version_to, Config $config = null)
     {
-        $package_name = $this->getChangelogPackageName($package_name);
+        if ($config) {
+            $package_name = $config->getChangelogAliasForPackage($package_name);
+        }
         $lock_data_obj = new ComposerLockData();
         $lock_data_obj->setData($lockdata);
         $data = $lock_data_obj->getPackageData($package_name);
@@ -299,9 +255,11 @@ abstract class BaseUpdater implements UpdaterInterface
         return $log;
     }
 
-    protected function retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to)
+    protected function retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to, Config $config = null)
     {
-        $package_name = $this->getChangelogPackageName($package_name);
+        if ($config) {
+            $package_name = $config->getChangelogAliasForPackage($package_name);
+        }
         $lock_data_obj = new ComposerLockData();
         $lock_data_obj->setData($lockdata);
         $data = $lock_data_obj->getPackageData($package_name);

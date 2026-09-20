@@ -1045,10 +1045,6 @@ class CosyComposer
                 if ($this->project) {
                     $updater->setProjectData($this->project);
                 }
-                $changelog_package_aliases = Helpers::getChangelogPackageAliases($composer_json_data);
-                if ($changelog_package_aliases) {
-                    $updater->setChangelogPackageAliases(array_merge($updater->getChangelogPackageAliases(), $changelog_package_aliases));
-                }
                 $updater->handleUpdate($data, $composer_lock_after_installing, $composer_json_data, $one_pr_per_dependency, $initial_composer_lock_data, $prs_named, $default_base, $hostname, $default_branch, $security_alerts, $is_allowed_out_of_date_pr, $config);
                 break;
 

@@ -2,11 +2,11 @@
 
 namespace eiriksm\CosyComposerTest\unit;
 
-use eiriksm\CosyComposer\Helpers;
 use eiriksm\CosyComposer\Updater\IndividualUpdater;
 use eiriksm\CosyComposerTest\GetCosyTrait;
 use eiriksm\CosyComposerTest\GetExecuterTrait;
 use PHPUnit\Framework\TestCase;
+use Violinist\Config\Config;
 
 class CosyComposerChangelogTest extends TestCase
 {
@@ -378,7 +378,7 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals(true, $called);
     }
 
-    public function testChangeLogPackageAliasesDefault() : void
+    public function testChangeLogPackageAliasesWithoutConfig() : void
     {
         $c = $this->getMockCosy();
         $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) {
@@ -389,12 +389,9 @@ class CosyComposerChangelogTest extends TestCase
         $updater->setSlug($c->getSlug());
         $updater->setAuthentication($c->getUntouchedUserToken());
         $this->expectException(\Exception::class);
-        // The package name in the exception is the mapped/resolved one (drupal/core), since that is
-        // the package actually looked up in the lockfile and fetched from.
-        $this->expectExceptionMessage('The changelog string was empty for package drupal/core');
-        // The lockfile only has drupal/core, not drupal/core-recommended. This only resolves
-        // (and gets far enough to hit the empty-changelog exception) because the default
-        // changelog package map maps drupal/core-recommended to drupal/core.
+        // Without a config being passed, no aliasing happens, so we fail to find
+        // drupal/core-recommended in a lockfile that only has drupal/core.
+        $this->expectExceptionMessage('Did not find the requested package (drupal/core-recommended) in the lockfile. This is probably an error');
         $updater->retrieveChangeLog('drupal/core-recommended', json_decode(json_encode(['packages' => [
             [
                 'name' => 'drupal/core',
@@ -403,10 +400,10 @@ class CosyComposerChangelogTest extends TestCase
                     'url' => 'https://github.com/drupal/core',
                 ],
             ],
-        ]])), 1, 2);
+        ], 'packages-dev' => []])), 1, 2);
     }
 
-    public function testChangeLogPackageAliasesConfigurable() : void
+    public function testChangeLogPackageAliasesFromConfig() : void
     {
         $c = $this->getMockCosy();
         $called = false;
@@ -426,9 +423,15 @@ class CosyComposerChangelogTest extends TestCase
         $updater->setExecuter($mock_executer);
         $updater->setSlug($c->getSlug());
         $updater->setAuthentication($c->getUntouchedUserToken());
-        $updater->setChangelogPackageAliases([
-            'vendor/package-metapackage' => 'vendor/package',
-        ]);
+        $config = Config::createFromComposerData(json_decode(json_encode([
+            'extra' => [
+                'violinist' => [
+                    'changelog_package_aliases' => [
+                        'vendor/package-metapackage' => 'vendor/package',
+                    ],
+                ],
+            ],
+        ])));
         $log = $updater->retrieveChangeLog('vendor/package-metapackage', json_decode(json_encode(['packages' => [
             [
                 'name' => 'vendor/package',
@@ -437,38 +440,9 @@ class CosyComposerChangelogTest extends TestCase
                     'url' => 'https://github.com/vendor/package',
                 ],
             ],
-        ]])), 1, 2);
+        ]])), 1, 2, $config);
         $this->assertEquals('- [112233](https://github.com/vendor/package/commit/112233) `This is the first line`
 ', $log->getAsMarkdown());
         $this->assertEquals(true, $called);
-        $this->assertEquals([
-            'vendor/package-metapackage' => 'vendor/package',
-        ], $updater->getChangelogPackageAliases());
-    }
-
-    public function testGetChangelogPackageAliasesFromComposerJsonConfig() : void
-    {
-        $cdata = json_decode(json_encode([
-            'extra' => [
-                'violinist' => [
-                    'changelog_package_aliases' => [
-                        'vendor/package-metapackage' => 'vendor/package',
-                    ],
-                ],
-            ],
-        ]));
-        $this->assertEquals([
-            'vendor/package-metapackage' => 'vendor/package',
-        ], Helpers::getChangelogPackageAliases($cdata));
-    }
-
-    public function testGetChangelogPackageAliasesFromComposerJsonConfigEmpty() : void
-    {
-        $cdata = json_decode(json_encode([
-            'extra' => [
-                'violinist' => [],
-            ],
-        ]));
-        $this->assertEquals([], Helpers::getChangelogPackageAliases($cdata));
     }
 }

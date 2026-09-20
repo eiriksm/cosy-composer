@@ -1,0 +1,14 @@
+{
+    "require": {
+        "composer/installers": "^2.0",
+        "drupal/core-composer-scaffold": "^10.2.1",
+        "drupal/core-recommended": "^10.2.1"
+    },
+    "extra": {
+        "violinist": {
+            "changelog_package_aliases": {
+                "drupal/core-recommended": "drupal/core"
+            }
+        }
+    }
+}

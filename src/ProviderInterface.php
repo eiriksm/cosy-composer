@@ -27,6 +27,11 @@ interface ProviderInterface
 
     public function getPrsNamed(Slug $slug) : NamedPrs;
 
+    /**
+     * The username/identifier of the currently authenticated user, if it can be determined.
+     */
+    public function getAuthenticatedUsername() : ?string;
+
     public function getDefaultBase(Slug $slug, $default_branch);
 
     public function getDefaultBaseTimestamp(Slug $slug, string $default_branch) : ?string;

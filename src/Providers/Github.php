@@ -151,6 +151,19 @@ class Github implements ProviderInterface
         return $prs_named;
     }
 
+    public function getAuthenticatedUsername() : ?string
+    {
+        if (!isset($this->cache['authenticated_username'])) {
+            try {
+                $user = $this->client->api('current_user')->show();
+                $this->cache['authenticated_username'] = $user['login'] ?? null;
+            } catch (\Throwable $e) {
+                return null;
+            }
+        }
+        return $this->cache['authenticated_username'];
+    }
+
     public function getDefaultBase(Slug $slug, $default_branch)
     {
         $user = $slug->getUserName();

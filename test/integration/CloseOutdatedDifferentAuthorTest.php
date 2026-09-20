@@ -9,12 +9,10 @@ use eiriksm\CosyComposer\Providers\NamedPrs;
  * closed just because its branch name happens to match the naming
  * convention violinist uses for updates.
  *
- * BaseUpdater::closeOutdatedPrsForPackage() currently matches PRs to close
- * purely by branch name (a plain strpos() substring check) and base ref.
- * It never inspects the PR author/user, so this test currently FAILS
- * (PR 124 gets closed even though it belongs to a regular human user),
- * demonstrating the bug. It should start passing once the closing logic
- * is made to also check the PR author.
+ * BaseUpdater::closeOutdatedPrsForPackage() matches PRs to close by branch
+ * name (a plain strpos() substring check) and base ref, but now also skips
+ * a match whose author differs from the currently authenticated user, so
+ * PR 124 (opened by a human, not the bot) is left alone.
  */
 class CloseOutdatedDifferentAuthorTest extends CloseOutdatedBase
 {
@@ -27,6 +25,8 @@ class CloseOutdatedDifferentAuthorTest extends CloseOutdatedBase
     {
         parent::setUp();
         $this->checkPrUrl = true;
+        $this->getMockProvider()->method('getAuthenticatedUsername')
+            ->willReturn('violinist-bot');
         // PR 124 belongs to a different, human, user and must be left
         // alone. Only 125 (same naming convention, opened by the bot)
         // should be closed.
@@ -76,9 +76,14 @@ class CloseOutdatedDifferentAuthorTest extends CloseOutdatedBase
                     'ref' => 'psrlog100112',
                 ],
             ],
+            // Same naming convention, but this one really was opened by
+            // the bot, so it should still be closed.
             'psrlog100111' => [
                 'number' => 125,
                 'title' => 'Test update',
+                'user' => [
+                    'login' => 'violinist-bot',
+                ],
                 'base' => [
                     'ref' => 'master',
                     'sha' => 123,

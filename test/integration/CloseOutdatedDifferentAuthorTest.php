@@ -20,8 +20,13 @@ class CloseOutdatedDifferentAuthorTest extends CloseOutdatedBase
     protected ?string $packageVersionForFromUpdateOutput = '1.0.0';
     protected ?string $packageVersionForToUpdateOutput = '1.1.4';
     protected ?string $composerAssetFiles = 'composer.close.outdated';
-    protected $checkPrUrl = true;
-    protected $expectedClosedPrs = [124, 125];
+
+    public function setUp() : void
+    {
+        parent::setUp();
+        $this->checkPrUrl = true;
+        $this->expectedClosedPrs = [124, 125];
+    }
 
     protected function getPrsNamed() : NamedPrs
     {

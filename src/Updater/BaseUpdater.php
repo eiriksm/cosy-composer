@@ -218,7 +218,7 @@ abstract class BaseUpdater implements UpdaterInterface
     /**
      * Helper to retrieve changelog.
      */
-    public function retrieveChangeLog($package_name, $lockdata, $version_from, $version_to, Config $config = null)
+    public function retrieveChangeLog($package_name, $lockdata, $version_from, $version_to, ?Config $config = null)
     {
         if ($config) {
             $package_name = $config->getChangelogAliasForPackage($package_name);
@@ -255,7 +255,7 @@ abstract class BaseUpdater implements UpdaterInterface
         return $log;
     }
 
-    protected function retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to, Config $config = null)
+    protected function retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to, ?Config $config = null)
     {
         if ($config) {
             $package_name = $config->getChangelogAliasForPackage($package_name);

@@ -203,11 +203,55 @@ class CosyComposer
     private $tokens = [];
 
     /**
+     * A map of package name to the package name to use when fetching changelogs/changed files for it.
+     *
+     * This allows fetching the changelog for a different (but related) package, for example
+     * fetching the drupal/core changelog when the actual dependency is drupal/core-recommended.
+     *
+     * @var array
+     */
+    private $changelogPackageMap = [
+        'drupal/core-recommended' => 'drupal/core',
+    ];
+
+    /**
      * @param array $tokens
      */
     public function setTokens(array $tokens)
     {
         $this->tokens = $tokens;
+    }
+
+    /**
+     * @return array
+     */
+    public function getChangelogPackageMap()
+    {
+        return $this->changelogPackageMap;
+    }
+
+    /**
+     * Set the map of package name to the package name to use for changelog/changed files lookups.
+     *
+     * @param array $changelogPackageMap
+     */
+    public function setChangelogPackageMap(array $changelogPackageMap)
+    {
+        $this->changelogPackageMap = $changelogPackageMap;
+    }
+
+    /**
+     * Resolve the package name to use for changelog/changed files lookups, based on the configured map.
+     *
+     * @param string $package_name
+     * @return string
+     */
+    protected function getChangelogPackageName($package_name)
+    {
+        if (isset($this->changelogPackageMap[$package_name])) {
+            return $this->changelogPackageMap[$package_name];
+        }
+        return $package_name;
     }
 
     /**
@@ -2114,9 +2158,7 @@ class CosyComposer
 
     protected function retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to)
     {
-        if ($package_name === 'drupal/core-recommended') {
-            $package_name = 'drupal/core';
-        }
+        $package_name = $this->getChangelogPackageName($package_name);
         return $this->getFetcher()
             ->retrieveChangedFiles($package_name, $lockdata, $version_from, $version_to);
     }
@@ -2139,9 +2181,7 @@ class CosyComposer
     public function retrieveChangeLog($package_name, $lockdata, $version_from, $version_to)
     {
         $fetcher = $this->getFetcher();
-        if ($package_name === 'drupal/core-recommended') {
-            $package_name = 'drupal/core';
-        }
+        $package_name = $this->getChangelogPackageName($package_name);
         $log_obj = $fetcher->retrieveChangelog($package_name, $lockdata, $version_from, $version_to);
         $changelog_string = '';
         $json = json_decode($log_obj->getAsJson());

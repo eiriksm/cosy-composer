@@ -121,4 +121,66 @@ class CosyComposerChangelogTest extends TestCase
         $this->assertEquals(file_get_contents(__DIR__ . '/../fixtures/git-log-one-line-super-long-markdown.txt'), $log->getAsMarkdown());
         $this->assertEquals(true, $called);
     }
+
+    public function testChangeLogPackageMapDefault()
+    {
+        $c = $this->getMockCosy();
+        $requested_package = null;
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) use (&$requested_package) {
+            $command = implode(' ', $command_array);
+            if (strpos($command, 'git clone') === 0) {
+                $requested_package = $command_array[2];
+            }
+            return 0;
+        });
+        $c->setExecuter($mock_executer);
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('The changelog string was empty for package drupal/core-recommended');
+        $c->retrieveChangeLog('drupal/core-recommended', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'drupal/core',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'https://github.com/drupal/core',
+                ],
+            ],
+        ]])), 1, 2);
+    }
+
+    public function testChangeLogPackageMapConfigurable()
+    {
+        $c = $this->getMockCosy();
+        $c->setChangelogPackageMap([
+            'vendor/package-metapackage' => 'vendor/package',
+        ]);
+        $called = false;
+        $mock_executer = $this->getMockExecuterWithReturnCallback(function ($command_array) use (&$called) {
+            $command = implode(' ', $command_array);
+            if (strpos($command, 'log 1..2 --oneline') > 0) {
+                $called = true;
+            }
+            return 0;
+        });
+        $mock_executer->expects($this->once())
+            ->method('getLastOutput')
+            ->willReturn([
+                'stdout' => "112233 This is the first line",
+                ]);
+        $c->setExecuter($mock_executer);
+        $log = $c->retrieveChangeLog('vendor/package-metapackage', json_decode(json_encode(['packages' => [
+            [
+                'name' => 'vendor/package',
+                'source' => [
+                    'type' => 'git',
+                    'url' => 'https://github.com/vendor/package',
+                ],
+            ],
+        ]])), 1, 2);
+        $this->assertEquals('- [112233](https://github.com/vendor/package/commit/112233) `This is the first line`
+', $log->getAsMarkdown());
+        $this->assertEquals(true, $called);
+        $this->assertEquals([
+            'vendor/package-metapackage' => 'vendor/package',
+        ], $c->getChangelogPackageMap());
+    }
 }

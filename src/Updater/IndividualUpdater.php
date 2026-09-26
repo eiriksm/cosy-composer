@@ -98,18 +98,23 @@ class IndividualUpdater extends BaseUpdater
                 if ($security_update && $config->shouldAllowSecurityUpdatesOnConcurrentLimit()) {
                     $this->log(sprintf('The concurrent limit (%d) is reached, but the update of %s is a security update, so we will try to update it anyway.', $max_number_of_prs, $package_name_in_composer_json));
                 } elseif (!in_array($item_name, $is_allowed_out_of_date_pr)) {
-                    $this->log(
-                        sprintf(
-                            'Skipping %s because the number of max concurrent PRs (%d) seems to have been reached',
-                            $item_name,
-                            $max_number_of_prs
-                        ),
-                        Message::CONCURRENT_THROTTLED,
-                        [
-                            'package' => $item_name,
-                        ]
-                    );
-                    continue;
+                    $bypass_package = $this->getConcurrentLimitBypassPackage($item, $package_name_in_composer_json, $config);
+                    if ($bypass_package !== null) {
+                        $this->log(sprintf('The concurrent limit (%d) is reached, but %s is configured to bypass the concurrent limit, so we will try to update it anyway.', $max_number_of_prs, $bypass_package));
+                    } else {
+                        $this->log(
+                            sprintf(
+                                'Skipping %s because the number of max concurrent PRs (%d) seems to have been reached',
+                                $item_name,
+                                $max_number_of_prs
+                            ),
+                            Message::CONCURRENT_THROTTLED,
+                            [
+                                'package' => $item_name,
+                            ]
+                        );
+                        continue;
+                    }
                 }
             }
             $this->handleUpdateItem(
@@ -127,6 +132,27 @@ class IndividualUpdater extends BaseUpdater
                 $can_update_beyond
             );
         }
+    }
+
+    private function getConcurrentLimitBypassPackage(UpdateItemInterface $item, string $package_name_in_composer_json, Config $config): ?string
+    {
+        if ($item instanceof GroupUpdateItem) {
+            foreach ($item->getData() as $data) {
+                if (empty($data->name) || !is_string($data->name)) {
+                    continue;
+                }
+                if ($config->shouldBypassConcurrentLimitForPackage($data->name)) {
+                    return $data->name;
+                }
+            }
+            return null;
+        }
+
+        if ($config->shouldBypassConcurrentLimitForPackage($package_name_in_composer_json)) {
+            return $package_name_in_composer_json;
+        }
+
+        return null;
     }
 
     protected function handleGroup(GroupUpdateItem $item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, NamedPrs $prs_named_object, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)

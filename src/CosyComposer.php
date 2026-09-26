@@ -863,12 +863,16 @@ class CosyComposer
         $branch_slug->setUserRepo($user_repo);
         $branches_flattened = [];
         $prs_named = NamedPrs::createFromArray([]);
+        $expiration_policy = $this->getUpdateRequestExpirationPolicy($config);
         $default_base = null;
         try {
             if ($default_base_upstream = $this->privateClient->getDefaultBase($this->slug, $default_branch)) {
                 $default_base = $default_base_upstream;
             }
-            $prs_named = $this->privateClient->getPrsNamed($this->slug);
+            $prs_named = $this->privateClient->getPrsNamed($this->slug, $expiration_policy !== null);
+            if ($expiration_policy) {
+                $this->expireOldUpdateRequests($prs_named, $expiration_policy, $config);
+            }
             // These can fail if we have not yet created a fork, and the repo is public. That is why we have them at the
             // end of this try/catch, so we can still know the default base for the original repo, and its pull
             // requests.
@@ -904,6 +908,22 @@ class CosyComposer
         $this->log($updates_string, Message::UPDATE, [
             'packages' => $data,
         ]);
+        if ($expiration_policy) {
+            foreach ($data as $delta => $item) {
+                if (!$this->packageIsInUpdateRequestCooldown($item->name, $prs_named, $expiration_policy)) {
+                    continue;
+                }
+                $this->log(sprintf('Skipping %s because an expired update request is still in cooldown', $item->name), Message::CONCURRENT_THROTTLED, [
+                    'package' => $item->name,
+                ]);
+                unset($data[$delta]);
+            }
+            if (empty($data)) {
+                $this->log('No updates are eligible after applying the expired update request cooldown.');
+                $this->cleanUp($config);
+                return;
+            }
+        }
         if ($default_base && $default_branch) {
             $this->log(sprintf('Current commit SHA for %s is %s', $default_branch, $default_base));
             $default_base_timestamp = null;
@@ -1054,6 +1074,54 @@ class CosyComposer
         }
         // Clean up.
         $this->cleanUp($config);
+    }
+
+    private function getUpdateRequestExpirationPolicy(Config $config) : ?UpdateRequestExpirationPolicy
+    {
+        if (!$config->getNumberOfAllowedPrs()) {
+            return null;
+        }
+        if (!method_exists($config, 'getMaximumUpdateRequestAge') || !method_exists($config, 'getExpiredUpdateRequestCooldown')) {
+            return null;
+        }
+        $maximum_age = $config->getMaximumUpdateRequestAge();
+        $cooldown = $config->getExpiredUpdateRequestCooldown();
+        if (!$maximum_age || !$cooldown) {
+            return null;
+        }
+        return new UpdateRequestExpirationPolicy($maximum_age, $cooldown);
+    }
+
+    private function expireOldUpdateRequests(NamedPrs $prs_named, UpdateRequestExpirationPolicy $policy, Config $config) : void
+    {
+        foreach ($prs_named->getOpenPrsWithPackages() as $request) {
+            $pr = $request['pr'];
+            if (!$policy->isExpired($pr) || empty($pr['number'])) {
+                continue;
+            }
+            $comment = sprintf(
+                'Closing this update request because it is older than the configured maximum_update_request_age (%s). The affected dependencies will be eligible again after the configured cooldown.',
+                $config->getMaximumUpdateRequestAge()
+            );
+            $this->getPrClient()->closePullRequestWithComment($this->slug, $pr['number'], $comment);
+            $closed_at = (new \DateTimeImmutable('now'))->format(\DateTimeInterface::ATOM);
+            $prs_named->markPrClosed($pr['number'], $closed_at);
+            $this->log(sprintf(
+                'Closed expired update request #%s for %s',
+                $pr['number'],
+                implode(', ', $request['packages'])
+            ));
+        }
+    }
+
+    private function packageIsInUpdateRequestCooldown(string $package_name, NamedPrs $prs_named, UpdateRequestExpirationPolicy $policy) : bool
+    {
+        foreach ($prs_named->getClosedPrsFromPackage($package_name) as $pr) {
+            if ($policy->isInCooldown($pr)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected function getPrParamsCreator()

@@ -91,6 +91,21 @@ class GroupsPrExistsConcurrentTest extends ComposerUpdateIntegrationBase
         );
     }
 
+    public function testGroupBypassesConcurrentLimitWhenPackageMatches(): void
+    {
+        $this->setConcurrentUpdatesBypassPackages(['drupal/core-*']);
+        $this->runtestExpectedOutput();
+
+        self::assertFalse($this->findMessage(
+            'Skipping Minor and Patch Core because the number of max concurrent PRs (1) seems to have been reached',
+            $this->cosy
+        ));
+        $this->assertOutputContainsMessage(
+            'Running composer update for package drupal/core-composer-scaffold',
+            $this->cosy
+        );
+    }
+
     /**
      * @param array<mixed> $cmd
      * @param mixed $return
@@ -134,5 +149,16 @@ class GroupsPrExistsConcurrentTest extends ComposerUpdateIntegrationBase
                 ],
             ],
         ]);
+    }
+
+    private function setConcurrentUpdatesBypassPackages(array $packages): void
+    {
+        $composer_file = sprintf('%s/composer.json', $this->dir);
+        $composer_data = json_decode(file_get_contents($composer_file));
+        $composer_data->extra->violinist->concurrent_updates_bypass_packages = $packages;
+        file_put_contents(
+            $composer_file,
+            json_encode($composer_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+        );
     }
 }

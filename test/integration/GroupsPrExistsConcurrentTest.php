@@ -101,6 +101,10 @@ class GroupsPrExistsConcurrentTest extends ComposerUpdateIntegrationBase
             $this->cosy
         ));
         $this->assertOutputContainsMessage(
+            'The concurrent limit (1) is reached, but drupal/core-composer-scaffold is configured to bypass the concurrent limit, so we will try to update it anyway.',
+            $this->cosy
+        );
+        $this->assertOutputContainsMessage(
             'Running composer update for package drupal/core-composer-scaffold',
             $this->cosy
         );
@@ -151,6 +155,9 @@ class GroupsPrExistsConcurrentTest extends ComposerUpdateIntegrationBase
         ]);
     }
 
+    /**
+     * @param array<int, string> $packages
+     */
     private function setConcurrentUpdatesBypassPackages(array $packages): void
     {
         $composer_file = sprintf('%s/composer.json', $this->dir);

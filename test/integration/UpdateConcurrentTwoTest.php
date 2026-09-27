@@ -86,6 +86,20 @@ class UpdateConcurrentTwoTest extends ComposerUpdateIntegrationBase
         );
     }
 
+    public function testBypassConfigIsNoOpWhenConcurrentLimitIsUnset(): void
+    {
+        // With no concurrent limit set, the throttling block (and therefore
+        // the bypass check) is skipped entirely, so configuring a bypass
+        // package should have no effect on the output.
+        $this->setConcurrentUpdatesBypassPackagesWithoutLimit(['psr/*']);
+        $this->runtestExpectedOutput();
+
+        self::assertFalse($this->findMessage('is configured to bypass the concurrent limit', $this->cosy));
+        self::assertFalse($this->findMessage('seems to have been reached', $this->cosy));
+        $this->assertOutputContainsMessage('Skipping psr/cache because a pull request already exists', $this->cosy);
+        $this->assertOutputContainsMessage('Running composer update for package psr/log', $this->cosy);
+    }
+
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
         $packages = [
@@ -123,11 +137,29 @@ class UpdateConcurrentTwoTest extends ComposerUpdateIntegrationBase
         ];
     }
 
-    private function setConcurrentUpdatesBypassPackages(array $packages): void
+    /**
+     * @param array<int, string> $packages
+     */
+    protected function setConcurrentUpdatesBypassPackages(array $packages): void
     {
         $composer_file = sprintf('%s/composer.json', $this->dir);
         $composer_data = json_decode(file_get_contents($composer_file));
         $composer_data->extra->violinist->number_of_concurrent_updates = 1;
+        $composer_data->extra->violinist->concurrent_updates_bypass_packages = $packages;
+        file_put_contents(
+            $composer_file,
+            json_encode($composer_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+        );
+    }
+
+    /**
+     * @param array<int, string> $packages
+     */
+    protected function setConcurrentUpdatesBypassPackagesWithoutLimit(array $packages): void
+    {
+        $composer_file = sprintf('%s/composer.json', $this->dir);
+        $composer_data = json_decode(file_get_contents($composer_file));
+        $composer_data->extra->violinist->number_of_concurrent_updates = 0;
         $composer_data->extra->violinist->concurrent_updates_bypass_packages = $packages;
         file_put_contents(
             $composer_file,

@@ -1005,7 +1005,18 @@ class CosyComposer
         }
 
         // Unshallow the repo, for syncing it.
+        $lock_file_before_pull = @file_get_contents($lock_file);
         $this->execCommand(['git', 'pull', '--unshallow'], false, 600);
+        // If the pull brought in a new lock file, the default branch has
+        // changed since we installed and checked for updates. The installed
+        // packages no longer match the lock file, so updates would be compared
+        // against the wrong versions. Better to stop, and let the next run
+        // start from the new state.
+        if ($lock_file_before_pull !== @file_get_contents($lock_file)) {
+            $this->log('The lock file changed when syncing the default branch, meaning it has been updated since the update check started. Stopping here, the next run will use the updated default branch.');
+            $this->cleanUp($config);
+            return;
+        }
         // If the repo is private, we need to push directly to the repo.
         if (!$this->isPrivate) {
             $this->preparePrClient();

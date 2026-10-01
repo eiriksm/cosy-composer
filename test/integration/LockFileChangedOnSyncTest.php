@@ -17,9 +17,9 @@ class LockFileChangedOnSyncTest extends ComposerUpdateIntegrationBase
     protected ?string $packageVersionForToUpdateOutput = '1.0.2';
     protected ?string $packageForUpdateOutput = 'psr/log';
 
-    protected $updateCommandRan = false;
+    protected bool $updateCommandRan = false;
 
-    public function testStopsWhenLockFileChangesOnSync()
+    public function testStopsWhenLockFileChangesOnSync() : void
     {
         $this->runtestExpectedOutput();
         $this->assertOutputContainsMessage('The lock file changed when syncing the default branch', $this->cosy);
@@ -28,7 +28,7 @@ class LockFileChangedOnSyncTest extends ComposerUpdateIntegrationBase
         self::assertFalse($this->findMessage('was not updated', $this->cosy));
     }
 
-    protected function handleExecutorReturnCallback(array $cmd, &$return)
+    protected function handleExecutorReturnCallback(array $cmd, &$return) : void
     {
         if ($cmd == ['git', 'pull', '--unshallow']) {
             // Simulate the default branch having received the update since the

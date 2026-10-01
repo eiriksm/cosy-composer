@@ -385,7 +385,7 @@ class CosyComposer
         }
     }
 
-    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, NamedPrs $prs_named_obj, $default_branch)
+    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, NamedPrs $prs_named_obj, $default_branch, Slug $branch_slug, ?string $active_branch_name = null)
     {
         $prs_for_package = $prs_named_obj->getPrsFromPackage($package_name);
         foreach ($prs_for_package as $pr) {
@@ -399,12 +399,32 @@ class CosyComposer
             if ((string) $pr['number'] === (string) $pr_id) {
                 continue;
             }
+            $branch_name = $pr['head']['ref'] ?? '';
+            $pr_author = $pr['user']['login'] ?? null;
+            $authenticated_username = $this->getPrClient()->getAuthenticatedUsername();
+            $is_owned = null;
+            if ($pr_author !== null && $authenticated_username !== null) {
+                $is_owned = $pr_author === $authenticated_username;
+            }
+            if ($is_owned === false) {
+                $this->getLogger()->log('info', new Message("Not closing PR number {$pr['number']}, since it was not opened by us (opened by $pr_author)"));
+                continue;
+            }
             $comment = $this->messageFactory->getPullRequestClosedMessage($pr_id);
             $pr_number = $pr['number'];
             $this->getLogger()->log('info', new Message("Trying to close PR number $pr_number since it has been superseded by $pr_id"));
             try {
                 $this->getPrClient()->closePullRequestWithComment($this->slug, $pr_number, $comment);
                 $this->getLogger()->log('info', new Message("Successfully closed PR $pr_number"));
+                if ($is_owned === true && $branch_name !== '' && $branch_name !== $default_branch && $branch_name !== $active_branch_name) {
+                    try {
+                        $this->getPrClient()->deleteBranch($branch_slug, $branch_name);
+                        $this->getLogger()->log('info', new Message("Successfully deleted branch $branch_name after closing PR $pr_number"));
+                    } catch (\Throwable $e) {
+                        $msg = $e->getMessage();
+                        $this->getLogger()->log('error', new Message("Caught an exception trying to delete branch $branch_name after closing PR $pr_number. The message was '$msg'"));
+                    }
+                }
             } catch (\Throwable $e) {
                 $msg = $e->getMessage();
                 $this->getLogger()->log('error', new Message("Caught an exception trying to close pr $pr_number. The message was '$msg'"));
@@ -412,7 +432,7 @@ class CosyComposer
         }
     }
 
-    protected function closePrsForNoLongerRelevantPackages(NamedPrs $prs_named, array $all_outdated_package_names, $composer_lock_data, $default_branch)
+    protected function closePrsForNoLongerRelevantPackages(NamedPrs $prs_named, array $all_outdated_package_names, $composer_lock_data, $default_branch, Slug $branch_slug)
     {
         $lock_package_names = [];
         foreach (['packages', 'packages-dev'] as $key) {
@@ -433,6 +453,17 @@ class CosyComposer
                     continue;
                 }
                 $pr_number = $pr['number'];
+                $branch_name = $pr['head']['ref'] ?? '';
+                $pr_author = $pr['user']['login'] ?? null;
+                $authenticated_username = $this->getPrClient()->getAuthenticatedUsername();
+                $is_owned = null;
+                if ($pr_author !== null && $authenticated_username !== null) {
+                    $is_owned = $pr_author === $authenticated_username;
+                }
+                if ($is_owned === false) {
+                    $this->getLogger()->log('info', new Message("Not closing PR number $pr_number, since it was not opened by us (opened by $pr_author)"));
+                    continue;
+                }
                 if ($is_removed) {
                     $comment = "Closing this pull request because the package $package_name has been removed from the project dependencies.";
                 } else {
@@ -442,6 +473,15 @@ class CosyComposer
                 try {
                     $this->getPrClient()->closePullRequestWithComment($this->slug, $pr_number, $comment);
                     $this->getLogger()->log('info', new Message("Successfully closed PR $pr_number"));
+                    if ($is_owned === true && $branch_name !== '' && $branch_name !== $default_branch) {
+                        try {
+                            $this->getPrClient()->deleteBranch($branch_slug, $branch_name);
+                            $this->getLogger()->log('info', new Message("Successfully deleted branch $branch_name after closing PR $pr_number"));
+                        } catch (\Throwable $e) {
+                            $msg = $e->getMessage();
+                            $this->getLogger()->log('error', new Message("Caught an exception trying to delete branch $branch_name after closing PR $pr_number. The message was '$msg'"));
+                        }
+                    }
                 } catch (\Throwable $e) {
                     $msg = $e->getMessage();
                     $this->getLogger()->log('error', new Message("Caught an exception trying to close pr $pr_number. The message was '$msg'"));
@@ -885,7 +925,7 @@ class CosyComposer
             // First attempt at cleaning up. If there are no updates, but we do
             // actually have open violinist PRs, then we should for sure close
             // them all.
-            $this->closePrsForNoLongerRelevantPackages($prs_named, $all_outdated_package_names, $composer_lock_after_installing, $default_branch);
+            $this->closePrsForNoLongerRelevantPackages($prs_named, $all_outdated_package_names, $composer_lock_after_installing, $default_branch, $branch_slug);
             $this->cleanUp($config);
             return;
         }
@@ -930,7 +970,7 @@ class CosyComposer
             $all_outdated_package_names = array_unique($all_outdated_package_names);
         }
         // Now we are closing the ones that are no longer relevant.
-        $this->closePrsForNoLongerRelevantPackages($prs_named, $all_outdated_package_names, $composer_lock_after_installing, $default_branch);
+        $this->closePrsForNoLongerRelevantPackages($prs_named, $all_outdated_package_names, $composer_lock_after_installing, $default_branch, $branch_slug);
         $is_allowed_out_of_date_pr = [];
         $one_pr_per_dependency = $config->shouldUseOnePullRequestPerPackage();
         foreach ($data as $delta => $item) {
@@ -945,7 +985,7 @@ class CosyComposer
                             'package' => $item->name,
                         ]);
                         unset($data[$delta]);
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch, $branch_slug, $branch_name);
                     }
                     // Is the pr up to date?
                     if ($prs_named_array[$branch_name]['base']['sha'] == $default_base) {
@@ -985,7 +1025,7 @@ class CosyComposer
                             $context['url'] = $prs_named_array[$branch_name]['html_url'];
                         }
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, $context);
-                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);
+                        $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch, $branch_slug, $branch_name);
                         unset($data[$delta]);
                     } else {
                         $is_allowed_out_of_date_pr[] = $item->name;

@@ -163,6 +163,18 @@ class Gitlab implements ProviderInterface
         ]);
     }
 
+    public function deleteBranch(Slug $slug, string $branch_name) : void
+    {
+        try {
+            $this->client->repositories()->deleteBranch(self::getProjectId($slug->getUrl()), $branch_name);
+        } catch (\Throwable $e) {
+            if ((int) $e->getCode() !== 404) {
+                throw $e;
+            }
+        }
+        unset($this->cache['branches']);
+    }
+
     public function createPullRequest(Slug $slug, $params)
     {
         /** @var \Gitlab\Api\MergeRequests $mr */

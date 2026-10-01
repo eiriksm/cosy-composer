@@ -71,20 +71,27 @@ class Gitlab implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed(Slug $slug) : NamedPrs
+    public function getPrsNamed(Slug $slug, bool $include_closed = false) : NamedPrs
     {
         $pager = new ResultPager($this->client);
         $api = $this->client->mergeRequests();
         $method = 'all';
-        $prs = $pager->fetchAll($api, $method, [self::getProjectId($slug->getUrl()), [
-            'state' => 'opened',
-        ]]);
+        $states = ['opened'];
+        if ($include_closed) {
+            $states[] = 'closed';
+        }
+        $prs = [];
+        foreach ($states as $state) {
+            $prs = array_merge($prs, $pager->fetchAll($api, $method, [self::getProjectId($slug->getUrl()), [
+                'state' => $state,
+            ]]));
+        }
         $prs_named = new NamedPrs();
         foreach ($prs as $pr) {
-            if ($pr['state'] !== 'opened') {
+            $is_open = $pr['state'] === 'opened';
+            if (!$is_open && !$include_closed) {
                 continue;
             }
-            // Now get the last commits for this branch.
             $commits = $this->client->repositories()->commits(self::getProjectId($slug->getUrl()), [
                 'ref_name' => $pr['source_branch'],
             ]);
@@ -93,6 +100,9 @@ class Gitlab implements ProviderInterface
                 'body' => !empty($pr['description']) ? $pr['description'] : '',
                 'html_url' => !empty($pr['web_url']) ? $pr['web_url'] : '',
                 'number' => $pr["iid"],
+                'state' => $pr['state'],
+                'created_at' => $pr['created_at'] ?? null,
+                'closed_at' => $pr['closed_at'] ?? null,
                 'base' => [
                     'sha' => !empty($commits[1]["id"]) ? $commits[1]["id"] : $pr['sha'],
                     'ref' => $pr["target_branch"],
@@ -104,9 +114,11 @@ class Gitlab implements ProviderInterface
                     'ref' => $pr['source_branch'],
                 ],
             ];
-            $prs_named->addFromPrData($data);
+            if ($is_open) {
+                $prs_named->addFromPrData($data);
+            }
             if (!empty($commits[0]["id"]) && !empty($commits[0]["message"])) {
-                $prs_named->addFromCommit($commits[0]["message"], $data);
+                $prs_named->addFromCommit($commits[0]["message"], $data, $is_open);
             }
         }
         return $prs_named;

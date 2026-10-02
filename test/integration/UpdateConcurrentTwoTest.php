@@ -56,10 +56,12 @@ class UpdateConcurrentTwoTest extends ComposerUpdateIntegrationBase
         $this->setConcurrentUpdatesBypassPackages(['psr/*']);
         $this->runtestExpectedOutput();
 
-        $this->assertOutputContainsMessage(
-            'The concurrent limit (1) is reached, but psr/log is configured to bypass the concurrent limit, so we will try to update it anyway.',
-            $this->cosy
-        );
+        // psr/cache also matches the wildcard, so its existing PR does not
+        // eat into the budget either. The limit is therefore never actually
+        // reached, so psr/log is processed without needing to log a bypass
+        // message for it.
+        self::assertFalse($this->findMessage('seems to have been reached', $this->cosy));
+        self::assertFalse($this->findMessage('is configured to bypass the concurrent limit', $this->cosy));
         $this->assertOutputContainsMessage('Running composer update for package psr/log', $this->cosy);
     }
 
@@ -80,10 +82,32 @@ class UpdateConcurrentTwoTest extends ComposerUpdateIntegrationBase
         $this->runtestExpectedOutput();
 
         $this->assertOutputContainsMessage('Skipping psr/cache because a pull request already exists', $this->cosy);
-        $this->assertOutputContainsMessage(
-            'Skipping psr/log because the number of max concurrent PRs (1) seems to have been reached',
+        // psr/cache is a bypass package, so its existing PR does not eat into the
+        // concurrent limit budget. psr/log should therefore be processed instead
+        // of throttled.
+        self::assertFalse($this->findMessage(
+            'Skipping psr/log because the number of max concurrent PRs',
             $this->cosy
-        );
+        ));
+        $this->assertOutputContainsMessage('Running composer update for package psr/log', $this->cosy);
+    }
+
+    public function testBypassedPackageDoesNotConsumeConcurrentLimitBudget(): void
+    {
+        $this->sha = 456;
+        $this->setConcurrentUpdatesBypassPackages(['psr/cache']);
+        $this->runtestExpectedOutput();
+
+        // psr/cache's PR is outdated, so it gets recreated, which would normally
+        // count towards the concurrent limit budget.
+        $this->assertOutputContainsMessage('Creating pull request from psrcache100101', $this->cosy);
+        // Since psr/cache is a bypass package, that PR creation should not count
+        // towards the limit of 1, leaving the slot free for psr/log.
+        self::assertFalse($this->findMessage(
+            'Skipping psr/log because the number of max concurrent PRs',
+            $this->cosy
+        ));
+        $this->assertOutputContainsMessage('Running composer update for package psr/log', $this->cosy);
     }
 
     public function testBypassConfigIsNoOpWhenConcurrentLimitIsUnset(): void

@@ -94,26 +94,35 @@ class IndividualUpdater extends BaseUpdater
             if ($max_number_of_prs) {
                 $this->log(sprintf('Current count of PRs is %d', $this->getPrCount()));
             }
-            if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
-                if ($security_update && $config->shouldAllowSecurityUpdatesOnConcurrentLimit()) {
-                    $this->log(sprintf('The concurrent limit (%d) is reached, but the update of %s is a security update, so we will try to update it anyway.', $max_number_of_prs, $package_name_in_composer_json));
-                } elseif (!in_array($item_name, $is_allowed_out_of_date_pr)) {
-                    $bypass_package = $this->getConcurrentLimitBypassPackage($item, $package_name_in_composer_json, $config);
-                    if ($bypass_package !== null) {
-                        $this->log(sprintf('The concurrent limit (%d) is reached, but %s is configured to bypass the concurrent limit, so we will try to update it anyway.', $max_number_of_prs, $bypass_package));
-                    } else {
-                        $this->log(
-                            sprintf(
-                                'Skipping %s because the number of max concurrent PRs (%d) seems to have been reached',
-                                $item_name,
-                                $max_number_of_prs
-                            ),
-                            Message::CONCURRENT_THROTTLED,
-                            [
-                                'package' => $item_name,
-                            ]
-                        );
-                        continue;
+            // Security updates allowed through a reached limit, and packages configured to
+            // bypass the limit, should never eat into the shared concurrent limit budget
+            // themselves. Otherwise they could still end up blocking a package that is not
+            // exempt from the limit, which would defeat the purpose of the exemption.
+            $counts_towards_concurrent_limit = true;
+            if ($max_number_of_prs) {
+                $security_bypasses_limit = $security_update && $config->shouldAllowSecurityUpdatesOnConcurrentLimit();
+                $bypass_package = $security_bypasses_limit ? null : $this->getConcurrentLimitBypassPackage($item, $package_name_in_composer_json, $config);
+                $counts_towards_concurrent_limit = !$security_bypasses_limit && $bypass_package === null;
+                if ($this->getPrCount() >= $max_number_of_prs) {
+                    if ($security_bypasses_limit) {
+                        $this->log(sprintf('The concurrent limit (%d) is reached, but the update of %s is a security update, so we will try to update it anyway.', $max_number_of_prs, $package_name_in_composer_json));
+                    } elseif (!in_array($item_name, $is_allowed_out_of_date_pr)) {
+                        if ($bypass_package !== null) {
+                            $this->log(sprintf('The concurrent limit (%d) is reached, but %s is configured to bypass the concurrent limit, so we will try to update it anyway.', $max_number_of_prs, $bypass_package));
+                        } else {
+                            $this->log(
+                                sprintf(
+                                    'Skipping %s because the number of max concurrent PRs (%d) seems to have been reached',
+                                    $item_name,
+                                    $max_number_of_prs
+                                ),
+                                Message::CONCURRENT_THROTTLED,
+                                [
+                                    'package' => $item_name,
+                                ]
+                            );
+                            continue;
+                        }
                     }
                 }
             }
@@ -129,7 +138,8 @@ class IndividualUpdater extends BaseUpdater
                 $default_branch,
                 $security_update,
                 $config,
-                $can_update_beyond
+                $can_update_beyond,
+                $counts_towards_concurrent_limit
             );
         }
     }
@@ -155,7 +165,7 @@ class IndividualUpdater extends BaseUpdater
         return null;
     }
 
-    protected function handleGroup(GroupUpdateItem $item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, NamedPrs $prs_named_object, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
+    protected function handleGroup(GroupUpdateItem $item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, NamedPrs $prs_named_object, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond, bool $counts_towards_concurrent_limit = true)
     {
         $prs_named = $prs_named_object->getAllPrsNamed();
         // @todo: This should rather take the config from the rule.
@@ -342,7 +352,9 @@ class IndividualUpdater extends BaseUpdater
                     // @todo: Handle outdated here.
                 }
             }
-            $this->countPR($item->getPackageName());
+            if ($counts_towards_concurrent_limit) {
+                $this->countPR($item->getPackageName());
+            }
         } catch (NotUpdatedException $e) {
             // Not updated because of the composer command, not the
             // restriction itself.
@@ -378,12 +390,16 @@ class IndividualUpdater extends BaseUpdater
             // If it failed validation because it already exists, we also want to make sure all outdated PRs are
             // closed.
             if (!empty($prs_named[$branch_name]['number'])) {
-                $this->countPR($item->getPackageName());
+                if ($counts_towards_concurrent_limit) {
+                    $this->countPR($item->getPackageName());
+                }
             }
         } catch (\Gitlab\Exception\RuntimeException $e) {
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named_object, $item_config, $security_update);
             if (!empty($prs_named[$branch_name]['number'])) {
-                $this->countPR($item->getPackageName());
+                if ($counts_towards_concurrent_limit) {
+                    $this->countPR($item->getPackageName());
+                }
             }
         } catch (ComposerUpdateProcessFailedException $e) {
             $this->log('Caught an exception: ' . $e->getMessage(), 'error');
@@ -544,10 +560,10 @@ class IndividualUpdater extends BaseUpdater
         }
     }
 
-    protected function handleUpdateItem(UpdateItemInterface $item_object, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, NamedPrs $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond)
+    protected function handleUpdateItem(UpdateItemInterface $item_object, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, NamedPrs $prs_named, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond, bool $counts_towards_concurrent_limit = true)
     {
         if ($item_object instanceof GroupUpdateItem) {
-            return $this->handleGroup($item_object, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $security_update, $global_config, $can_update_beyond);
+            return $this->handleGroup($item_object, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, $prs_named, $default_base, $hostname, $default_branch, $security_update, $global_config, $can_update_beyond, $counts_towards_concurrent_limit);
         }
         if (!$item_object instanceof IndividualUpdateItem) {
             throw new \RuntimeException('The item object is not an instance of IndividualUpdateItem');
@@ -755,7 +771,9 @@ class IndividualUpdater extends BaseUpdater
                     $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
                         'package' => $item->name,
                     ]);
-                    $this->countPR($item->name);
+                    if ($counts_towards_concurrent_limit) {
+                        $this->countPR($item->name);
+                    }
                     $pr_id = $prs_named_array[$branch_name]['number'];
                     $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pr_id, $prs_named, $default_branch);
                     return;
@@ -765,7 +783,9 @@ class IndividualUpdater extends BaseUpdater
                     $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
                         'package' => $item->name,
                     ]);
-                    $this->countPR($item->name);
+                    if ($counts_towards_concurrent_limit) {
+                        $this->countPR($item->name);
+                    }
                     $pr_id = $prs_named_array[$branch_name]['number'];
                     $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pr_id, $prs_named, $default_branch);
                     return;
@@ -786,7 +806,9 @@ class IndividualUpdater extends BaseUpdater
                     $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named, $default_branch);
                 }
             }
-            $this->countPR($item->name);
+            if ($counts_towards_concurrent_limit) {
+                $this->countPR($item->name);
+            }
         } catch (NotUpdatedException $e) {
             // Not updated because of the composer command, not the
             // restriction itself.
@@ -837,14 +859,18 @@ class IndividualUpdater extends BaseUpdater
             // closed.
             $prs_named_array = $prs_named->getAllPrsNamed();
             if (!empty($prs_named_array[$branch_name]['number'])) {
-                $this->countPR($item->name);
+                if ($counts_towards_concurrent_limit) {
+                    $this->countPR($item->name);
+                }
                 $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);
             }
         } catch (\Gitlab\Exception\RuntimeException $e) {
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
             $prs_named_array = $prs_named->getAllPrsNamed();
             if (!empty($prs_named_array[$branch_name]['number'])) {
-                $this->countPR($item->name);
+                if ($counts_towards_concurrent_limit) {
+                    $this->countPR($item->name);
+                }
                 $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);
             }
         } catch (ComposerUpdateProcessFailedException $e) {

@@ -24,6 +24,7 @@ use Violinist\ComposerLockData\ComposerLockData;
 use Violinist\Config\Config;
 use Violinist\GitLogFormat\ChangeLogData;
 use Violinist\ProjectData\ProjectData;
+use Violinist\Slug\Slug;
 use Wa72\SimpleLogger\ArrayLogger;
 use function peterpostmann\uri\parse_uri;
 
@@ -118,6 +119,28 @@ abstract class BaseUpdater implements UpdaterInterface
             }
         }
         return $this->authenticatedUsername;
+    }
+
+    protected function getBranchSlug() : Slug
+    {
+        if ($this->isPrivate || empty($this->forkUser)) {
+            return $this->slug;
+        }
+        $branch_slug = new Slug();
+        $branch_slug->setProvider($this->slug->getProvider());
+        $branch_slug->setUserName($this->forkUser);
+        $branch_slug->setUserRepo($this->slug->getUserRepo());
+        return $branch_slug;
+    }
+
+    protected function isPullRequestOwnedByAuthenticatedUser(array $pr) : ?bool
+    {
+        $pr_author = $pr['user']['login'] ?? null;
+        $authenticated_username = $this->getAuthenticatedUsername();
+        if ($pr_author === null || $authenticated_username === null) {
+            return null;
+        }
+        return $pr_author === $authenticated_username;
     }
 
     public function setClient(ProviderInterface $client)
@@ -377,7 +400,7 @@ abstract class BaseUpdater implements UpdaterInterface
         return $this->fetcher;
     }
 
-    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, NamedPrs $prs_named, $default_branch)
+    protected function closeOutdatedPrsForPackage($package_name, $current_version, Config $config, $pr_id, NamedPrs $prs_named, $default_branch, ?string $active_branch_name = null)
     {
         $fake_item = (object) [
             'name' => $package_name,
@@ -412,8 +435,8 @@ abstract class BaseUpdater implements UpdaterInterface
                 continue;
             }
             $pr_author = $pr['user']['login'] ?? null;
-            $authenticated_username = $this->getAuthenticatedUsername();
-            if ($pr_author !== null && $authenticated_username !== null && $pr_author !== $authenticated_username) {
+            $is_owned = $this->isPullRequestOwnedByAuthenticatedUser($pr);
+            if ($is_owned === false) {
                 // The branch name matches, but this pull request was not opened by us. Someone else's pull
                 // request just happening to use the same branch naming convention is not "ours" to close.
                 $this->getLogger()->log('info', new Message("Not closing PR number {$pr['number']}, since it was not opened by us (opened by $pr_author)"));
@@ -425,6 +448,15 @@ abstract class BaseUpdater implements UpdaterInterface
             try {
                 $this->getPrClient()->closePullRequestWithComment($this->slug, $pr_number, $comment);
                 $this->getLogger()->log('info', new Message("Successfully closed PR $pr_number"));
+                if ($is_owned === true && $branch_name !== '' && $branch_name !== $default_branch && $branch_name !== $active_branch_name) {
+                    try {
+                        $this->getPrClient()->deleteBranch($this->getBranchSlug(), $branch_name);
+                        $this->getLogger()->log('info', new Message("Successfully deleted branch $branch_name after closing PR $pr_number"));
+                    } catch (\Throwable $e) {
+                        $msg = $e->getMessage();
+                        $this->getLogger()->log('error', new Message("Caught an exception trying to delete branch $branch_name after closing PR $pr_number. The message was '$msg'"));
+                    }
+                }
             } catch (\Throwable $e) {
                 $msg = $e->getMessage();
                 $this->getLogger()->log('error', new Message("Caught an exception trying to close pr $pr_number. The message was '$msg'"));

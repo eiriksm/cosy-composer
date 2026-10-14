@@ -6,6 +6,10 @@ class UpdateConcurrentTwoInConfigBranchTest extends UpdateConcurrentTwoTest
 {
     private $configBranchCloneDir;
     private $hasCheckedOutFirst = false;
+    private int $concurrentUpdatesLimit = 1;
+    /** @var array<int, string> */
+    private $bypassPackages = [];
+    private bool $allowSecurityUpdatesOnConcurrentLimit = false;
 
     public function setUp() : void
     {
@@ -41,6 +45,36 @@ class UpdateConcurrentTwoInConfigBranchTest extends UpdateConcurrentTwoTest
         self::assertNotFalse($msg);
     }
 
+    /**
+     * @param array<int, string> $packages
+     */
+    protected function setConcurrentUpdatesBypassPackages(array $packages): void
+    {
+        // The effective config for this test comes from the config branch
+        // clone (see handleExecutorReturnCallback below), not from
+        // $this->dir/composer.json, so the bypass configuration has to be
+        // written there instead.
+        $this->concurrentUpdatesLimit = 1;
+        $this->bypassPackages = $packages;
+    }
+
+    /**
+     * @param array<int, string> $packages
+     */
+    protected function setConcurrentUpdatesBypassPackagesWithoutLimit(array $packages): void
+    {
+        $this->concurrentUpdatesLimit = 0;
+        $this->bypassPackages = $packages;
+    }
+
+    protected function setConcurrentLimitWithSecurityBypass(): void
+    {
+        // Same reasoning as setConcurrentUpdatesBypassPackages above: the
+        // effective config comes from the config branch clone's other.json.
+        $this->concurrentUpdatesLimit = 1;
+        $this->allowSecurityUpdatesOnConcurrentLimit = true;
+    }
+
     protected function handleExecutorReturnCallback($cmd, &$return)
     {
         $packages = [
@@ -74,7 +108,9 @@ class UpdateConcurrentTwoInConfigBranchTest extends UpdateConcurrentTwoTest
             file_put_contents($composer_file, $composer_data);
             // Also create the other.json file.
             $other_json = [
-                'number_of_concurrent_updates' => 1,
+                'number_of_concurrent_updates' => $this->concurrentUpdatesLimit,
+                'concurrent_updates_bypass_packages' => $this->bypassPackages,
+                'allow_security_updates_on_concurrent_limit' => $this->allowSecurityUpdatesOnConcurrentLimit,
             ];
             $other_json = json_encode($other_json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
             $other_json_file = sprintf('%s/other.json', $this->configBranchCloneDir);

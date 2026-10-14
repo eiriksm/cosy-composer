@@ -125,24 +125,36 @@ class Github implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed(Slug $slug) : NamedPrs
+    public function getPrsNamed(Slug $slug, bool $include_closed = false) : NamedPrs
     {
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
         $pager = new ResultPager($this->client);
         $api = $this->client->api('pr');
         $method = 'all';
-        $prs = $pager->fetchAll($api, $method, [$user, $repo]);
+        $args = [$user, $repo];
+        if ($include_closed) {
+            $args[] = ['state' => 'all'];
+        }
+        $prs = $pager->fetchAll($api, $method, $args);
         $prs_named = new NamedPrs();
         foreach ($prs as $pr) {
-            $prs_named->addFromPrData($pr);
+            $is_open = empty($pr['state']) || $pr['state'] === 'open';
+            if (!$is_open && !$include_closed) {
+                continue;
+            }
+            if ($is_open) {
+                $prs_named->addFromPrData($pr);
+            } elseif (!empty($pr['merged_at'])) {
+                continue;
+            }
             // Attempt to retrieve the actual commit.
             try {
                 /** @var \Github\Api\Repository\Commits $commits */
                 $commits = $this->client->api('repo')->commits();
                 $commit = $commits->show($user, $repo, $pr['head']['sha']);
                 if (!empty($commit["commit"]["message"])) {
-                    $prs_named->addFromCommit($commit["commit"]["message"], $pr);
+                    $prs_named->addFromCommit($commit["commit"]["message"], $pr, $is_open);
                 }
             } catch (\Exception $e) {
                 // If the commit is not found, we just skip it.

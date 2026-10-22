@@ -158,6 +158,7 @@ class IndividualUpdater extends BaseUpdater
             throw new \RuntimeException('No packages found in composer.json that matches the group rule');
         }
         $branch_name = '';
+        $lock_file_changes = [];
         $pr_params = [];
         try {
             // Create a branch. This should be specified in the rule config, yeah?
@@ -196,6 +197,7 @@ class IndividualUpdater extends BaseUpdater
                     $require_beyond = [];
                 }
             }
+            $lock_file_changes = $this->getLockFileChangesSinceUpdateCheck($package_matches, $lockdata);
             if (!$lock_file_contents) {
                 throw new \Exception('The group update can not be run without a lock file');
             } elseif (!empty($require_beyond)) {
@@ -319,8 +321,14 @@ class IndividualUpdater extends BaseUpdater
             $this->countPR($item->getPackageName());
         } catch (NotUpdatedException $e) {
             // Not updated because of the composer command, not the
-            // restriction itself.
+            // restriction itself. Unless the lock file is out of sync with
+            // the data we based the update on, in which case there is nothing
+            // to report.
             $item_data_items = $item->getData();
+            if (!empty($lock_file_changes)) {
+                $this->logLockFileOutOfSync($rule->name ?? $package_name, $lock_file_changes);
+                $item_data_items = [];
+            }
             foreach ($item_data_items as $update_item) {
                 $why_not_name = $update_item->name;
                 $why_not_version = trim($update_item->latest);
@@ -530,6 +538,7 @@ class IndividualUpdater extends BaseUpdater
         // Default to global config.
         $config = $global_config;
         $should_indicate_can_not_update_if_unupdated = false;
+        $lock_file_changes = [];
         $package_name = $item->name;
         $branch_name = '';
         $pr_params = [];
@@ -626,6 +635,13 @@ class IndividualUpdater extends BaseUpdater
                     $updater->setPackagesToCheckHasUpdated($item->children_with_update);
                 }
             }
+            $packages_to_check = [$package_name];
+            if (!empty($item->children_with_update) && is_array($item->children_with_update)) {
+                $packages_to_check = $item->children_with_update;
+            } elseif (!empty($item->child_with_update)) {
+                $packages_to_check = [$item->child_with_update];
+            }
+            $lock_file_changes = $this->getLockFileChangesSinceUpdateCheck($packages_to_check, $lockdata);
             if (!$lock_file_contents || ($should_update_beyond && $can_update_beyond)) {
                 $updater->executeRequire($version_to);
             } else {
@@ -763,8 +779,11 @@ class IndividualUpdater extends BaseUpdater
             $this->countPR($item->name);
         } catch (NotUpdatedException $e) {
             // Not updated because of the composer command, not the
-            // restriction itself.
-            if ($should_indicate_can_not_update_if_unupdated && isset($package_name) && isset($req_item) && isset($version_to)) {
+            // restriction itself. Unless the lock file did not match the data
+            // we based the update on, in which case it is not a failed update.
+            if (!empty($lock_file_changes)) {
+                $this->logLockFileOutOfSync($package_name, $lock_file_changes);
+            } elseif ($should_indicate_can_not_update_if_unupdated && isset($package_name) && isset($req_item) && isset($version_to)) {
                 $message = sprintf('Package %s with the constraint %s can not be updated to %s.', $package_name, $req_item, $version_to);
                 $this->log($message, Message::UNUPDATEABLE, [
                     'package' => $package_name,
@@ -834,6 +853,61 @@ class IndividualUpdater extends BaseUpdater
             ]);
         }
         $this->executePostUpdateStep($default_branch, $lock_file_contents, $config);
+    }
+
+    /**
+     * Finds packages where the lock file has moved on from our update data.
+     *
+     * The update data (composer outdated, security advisories and so on) is
+     * based on the lock data we installed from. If the lock file on disk has
+     * another version of a package than that, it was changed by something else
+     * than this update. For example the default branch already having the
+     * update. If composer then reports that nothing was updated, it is not
+     * really a failed update.
+     *
+     * @param string[] $packages
+     * @param mixed $lockdata
+     *
+     * @return string[]
+     *   A description of each package that does not match.
+     */
+    protected function getLockFileChangesSinceUpdateCheck(array $packages, $lockdata) : array
+    {
+        $current_lock_contents = @file_get_contents($this->composerJsonDir . '/composer.lock');
+        if (!$current_lock_contents || !$lockdata) {
+            return [];
+        }
+        try {
+            $current_lock = ComposerLockData::createFromString($current_lock_contents);
+            $expected_lock = ComposerLockData::createFromString(json_encode($lockdata));
+        } catch (\Throwable $e) {
+            return [];
+        }
+        $changed = [];
+        foreach ($packages as $package) {
+            try {
+                $expected = $expected_lock->getPackageData($package);
+                $current = $current_lock->getPackageData($package);
+            } catch (\Throwable $e) {
+                continue;
+            }
+            $expected_reference = $expected->source->reference ?? null;
+            $current_reference = $current->source->reference ?? null;
+            if ($expected->version !== $current->version) {
+                $changed[] = sprintf('%s (expected %s, found %s)', $package, $expected->version, $current->version);
+            } elseif ($expected_reference !== $current_reference) {
+                $changed[] = sprintf('%s (expected %s at %s, found %s at %s)', $package, $expected->version, $expected_reference, $current->version, $current_reference);
+            }
+        }
+        return $changed;
+    }
+
+    /**
+     * @param string[] $lock_file_changes
+     */
+    protected function logLockFileOutOfSync(string $update_name, array $lock_file_changes) : void
+    {
+        $this->log(sprintf('Skipping %s since the lock file did not match the data the update check was based on: %s. The default branch has probably been updated since the update check started.', $update_name, implode(', ', $lock_file_changes)));
     }
 
     protected function executePostUpdateStep($default_branch, $lock_file_contents, Config $config)

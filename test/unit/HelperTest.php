@@ -33,6 +33,67 @@ class HelperTest extends TestCase
         self::assertEquals($expected, Helpers::createBranchNameForGroup($rule, $config));
     }
 
+    /**
+     * @dataProvider countsTowardsConcurrentLimitProvider
+     *
+     * @param array<string, mixed> $violinist_config
+     * @param string[] $package_names
+     */
+    public function testCountsTowardsConcurrentLimit(array $violinist_config, array $package_names, bool $security_update, bool $expected): void
+    {
+        $config = Config::createFromComposerData((object) [
+            'extra' => (object) [
+                'violinist' => (object) $violinist_config,
+            ],
+        ]);
+        self::assertSame($expected, Helpers::countsTowardsConcurrentLimit($config, $package_names, $security_update));
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>, string[], bool, bool}>
+     */
+    public static function countsTowardsConcurrentLimitProvider(): array
+    {
+        return [
+            'no limit set' => [
+                ['concurrent_updates_bypass_packages' => ['vendor/*']],
+                ['vendor/package'],
+                false,
+                true,
+            ],
+            'not exempt' => [
+                ['number_of_concurrent_updates' => 1, 'concurrent_updates_bypass_packages' => ['other/*']],
+                ['vendor/package'],
+                false,
+                true,
+            ],
+            'bypass package' => [
+                ['number_of_concurrent_updates' => 1, 'concurrent_updates_bypass_packages' => ['vendor/*']],
+                ['vendor/package'],
+                false,
+                false,
+            ],
+            'one package of a group bypasses' => [
+                ['number_of_concurrent_updates' => 1, 'concurrent_updates_bypass_packages' => ['vendor/*']],
+                ['other/package', 'vendor/package'],
+                false,
+                false,
+            ],
+            'security update allowed through the limit' => [
+                ['number_of_concurrent_updates' => 1, 'allow_security_updates_on_concurrent_limit' => 1],
+                ['vendor/package'],
+                true,
+                false,
+            ],
+            'security update not allowed through the limit' => [
+                ['number_of_concurrent_updates' => 1],
+                ['vendor/package'],
+                true,
+                true,
+            ],
+        ];
+    }
+
     public static function branchNameProvider()
     {
         return [

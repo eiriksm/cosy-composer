@@ -775,7 +775,7 @@ class IndividualUpdater extends BaseUpdater
                         $this->countPR($item->name);
                     }
                     $pr_id = $prs_named_array[$branch_name]['number'];
-                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pr_id, $prs_named, $default_branch);
+                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pr_id, $prs_named, $default_branch, $branch_name);
                     return;
                 }
                 // Is the pr up to date?
@@ -787,7 +787,7 @@ class IndividualUpdater extends BaseUpdater
                         $this->countPR($item->name);
                     }
                     $pr_id = $prs_named_array[$branch_name]['number'];
-                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pr_id, $prs_named, $default_branch);
+                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pr_id, $prs_named, $default_branch, $branch_name);
                     return;
                 }
             }
@@ -803,7 +803,7 @@ class IndividualUpdater extends BaseUpdater
                 Helpers::handleAutoMerge($this->client, $this->logger, $this->slug, $config, $pullRequest, $security_update);
                 $this->handleLabels($config, $pullRequest, $security_update);
                 if (!empty($pullRequest['number'])) {
-                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named, $default_branch);
+                    $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $pullRequest['number'], $prs_named, $default_branch, $branch_name);
                 }
             }
             if ($counts_towards_concurrent_limit) {
@@ -862,7 +862,7 @@ class IndividualUpdater extends BaseUpdater
                 if ($counts_towards_concurrent_limit) {
                     $this->countPR($item->name);
                 }
-                $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);
+                $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch, $branch_name);
             }
         } catch (\Gitlab\Exception\RuntimeException $e) {
             $this->handlePossibleUpdatePrScenario($e, $branch_name, $pr_params, $prs_named, $config, $security_update);
@@ -871,7 +871,7 @@ class IndividualUpdater extends BaseUpdater
                 if ($counts_towards_concurrent_limit) {
                     $this->countPR($item->name);
                 }
-                $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch);
+                $this->closeOutdatedPrsForPackage($item->name, $item->version, $config, $prs_named_array[$branch_name]['number'], $prs_named, $default_branch, $branch_name);
             }
         } catch (ComposerUpdateProcessFailedException $e) {
             $this->log('Caught an exception: ' . $e->getMessage(), 'error');

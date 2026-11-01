@@ -92,7 +92,7 @@ class Bitbucket implements ProviderInterface
         return $branches_flattened;
     }
 
-    public function getPrsNamed(Slug $slug) : NamedPrs
+    public function getPrsNamed(Slug $slug, bool $include_closed = false) : NamedPrs
     {
         $user = $slug->getUserName();
         $repo = $slug->getUserRepo();
@@ -100,11 +100,14 @@ class Bitbucket implements ProviderInterface
         $prs_client = $api_repo->workspaces($user)->pullRequests($repo);
         $paginator = new ResultPager($this->client);
         $prs = [
-            'values' => $paginator->fetchAll($prs_client, 'list'),
+            'values' => $paginator->fetchAll($prs_client, 'list', $include_closed ? [[
+                'q' => 'state IN (\"OPEN\", \"DECLINED\")',
+            ]] : []),
         ];
         $prs_named = new NamedPrs();
         foreach ($prs["values"] as $pr) {
-            if ($pr["state"] !== self::MERGE_REQUEST_STATE_OPEN) {
+            $is_open = $pr["state"] === self::MERGE_REQUEST_STATE_OPEN;
+            if (!$is_open && (!$include_closed || $pr["state"] !== 'DECLINED')) {
                 continue;
             }
             $data = [
@@ -115,6 +118,9 @@ class Bitbucket implements ProviderInterface
                 'html_url' => $pr["links"]["html"]["href"],
                 'number' => $pr["id"],
                 'title' => $pr["title"],
+                'state' => $pr["state"],
+                'created_at' => $pr['created_on'] ?? null,
+                'closed_at' => $is_open ? null : ($pr['updated_on'] ?? null),
                 'user' => [
                     'login' => !empty($pr["author"]["uuid"]) ? $pr["author"]["uuid"] : null,
                 ],
@@ -122,11 +128,13 @@ class Bitbucket implements ProviderInterface
                     'ref' => $pr["source"]["branch"]["name"],
                 ],
             ];
-            $prs_named->addFromPrData($data);
+            if ($is_open) {
+                $prs_named->addFromPrData($data);
+            }
             try {
                 // See if we can retrieve the commit as well.
                 $commit = $api_repo->workspaces($user)->commit($repo)->show($pr["source"]["commit"]["hash"]);
-                $prs_named->addFromCommit($commit["message"], $data);
+                $prs_named->addFromCommit($commit["message"], $data, $is_open);
             } catch (\Throwable $e) {
                 // If the commit is not found, we just skip it.
             }

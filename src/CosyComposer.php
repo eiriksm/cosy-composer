@@ -959,7 +959,26 @@ class CosyComposer
                 // Is there a PR for this?
                 $prs_named_array = $prs_named->getAllPrsNamed();
                 if (array_key_exists($branch_name, $prs_named_array)) {
-                    $this->countPR($item->name);
+                    // Packages that are configured to bypass the concurrent limit, or that
+                    // are security updates allowed through a reached limit, should never
+                    // eat into the shared concurrent limit budget themselves. Otherwise they
+                    // could still end up blocking a package that is not exempt from the
+                    // limit, which would defeat the purpose of the exemption.
+                    $counts_towards_concurrent_limit = true;
+                    if ($config->getNumberOfAllowedPrs()) {
+                        $existing_pr_package_name_in_composer_json = $item->name;
+                        try {
+                            $existing_pr_package_name_in_composer_json = Helpers::getComposerJsonName($composer_json_data, $item->name, $this->composerJsonDir);
+                        } catch (\Exception $e) {
+                        }
+                        $existing_pr_is_security_update = isset($security_alerts[$existing_pr_package_name_in_composer_json]);
+                        $security_bypasses_limit = $existing_pr_is_security_update && $config->shouldAllowSecurityUpdatesOnConcurrentLimit();
+                        $counts_towards_concurrent_limit = !$security_bypasses_limit
+                            && !$config->shouldBypassConcurrentLimitForPackage($existing_pr_package_name_in_composer_json);
+                    }
+                    if ($counts_towards_concurrent_limit) {
+                        $this->countPR($item->name);
+                    }
                     if (!$default_base && !$one_pr_per_dependency) {
                         $this->log(sprintf('Skipping %s because a pull request already exists', $item->name), Message::PR_EXISTS, [
                             'package' => $item->name,
@@ -1025,7 +1044,18 @@ class CosyComposer
         }
 
         // Unshallow the repo, for syncing it.
+        $lock_file_before_pull = @file_get_contents($lock_file);
         $this->execCommand(['git', 'pull', '--unshallow'], false, 600);
+        // If the pull brought in a new lock file, the default branch has
+        // changed since we installed and checked for updates. The installed
+        // packages no longer match the lock file, so updates would be compared
+        // against the wrong versions. Better to stop, and let the next run
+        // start from the new state.
+        if ($lock_file_before_pull !== @file_get_contents($lock_file)) {
+            $this->log('The lock file changed when syncing the default branch, meaning it has been updated since the update check started. Stopping here, the next run will use the updated default branch.');
+            $this->cleanUp($config);
+            return;
+        }
         // If the repo is private, we need to push directly to the repo.
         if (!$this->isPrivate) {
             $this->preparePrClient();

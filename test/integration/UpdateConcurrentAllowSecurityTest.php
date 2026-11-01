@@ -30,6 +30,40 @@ class UpdateConcurrentAllowSecurityTest extends ComposerUpdateIntegrationBase
         $this->assertOutputContainsMessage('The concurrent limit (1) is reached, but the update of drupal/core-recommended is a security update, so we will try to update it anyway.', $this->cosy);
     }
 
+    public function testSecurityBypassTakesPrecedenceOverPackageBypass(): void
+    {
+        // drupal/core-recommended is both a security update (per the mocked
+        // checker in setUp) and configured to bypass the concurrent limit
+        // here. The security bypass is checked first, so its message should
+        // be logged, and the package-bypass branch should never be reached
+        // for this package.
+        $this->setConcurrentUpdatesBypassPackages(['drupal/core-recommended']);
+        $this->runtestExpectedOutput();
+
+        $this->assertOutputContainsMessage(
+            'The concurrent limit (1) is reached, but the update of drupal/core-recommended is a security update, so we will try to update it anyway.',
+            $this->cosy
+        );
+        self::assertFalse($this->findMessage(
+            'The concurrent limit (1) is reached, but drupal/core-recommended is configured to bypass the concurrent limit, so we will try to update it anyway.',
+            $this->cosy
+        ));
+    }
+
+    /**
+     * @param array<int, string> $packages
+     */
+    private function setConcurrentUpdatesBypassPackages(array $packages): void
+    {
+        $composer_file = sprintf('%s/composer.json', $this->dir);
+        $composer_data = json_decode(file_get_contents($composer_file));
+        $composer_data->extra->violinist->concurrent_updates_bypass_packages = $packages;
+        file_put_contents(
+            $composer_file,
+            json_encode($composer_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+        );
+    }
+
     protected function getPrsNamed() : NamedPrs
     {
         return NamedPrs::createFromArray([

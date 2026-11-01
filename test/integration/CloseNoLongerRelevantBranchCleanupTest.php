@@ -10,7 +10,8 @@ use Violinist\Slug\Slug;
  */
 class CloseNoLongerRelevantBranchCleanupTest extends ClosePrsNotTrulyOutdatedPackageTest
 {
-    private $deletedBranches = [];
+    /** @var string[] */
+    private array $deletedBranches = [];
 
     public function setUp() : void
     {
@@ -23,7 +24,7 @@ class CloseNoLongerRelevantBranchCleanupTest extends ClosePrsNotTrulyOutdatedPac
             });
     }
 
-    public function testOutdatedClosed()
+    public function testOutdatedClosed() : void
     {
         parent::testOutdatedClosed();
         self::assertEquals(['psrcache100101'], $this->deletedBranches);

@@ -15,7 +15,8 @@ class CloseOutdatedBranchCleanupTest extends CloseOutdatedBase
     protected ?string $packageVersionForToUpdateOutput = '1.1.4';
     protected ?string $composerAssetFiles = 'composer.close.outdated';
 
-    private $deletedBranches = [];
+    /** @var string[] */
+    private array $deletedBranches = [];
 
     public function setUp() : void
     {
@@ -30,7 +31,7 @@ class CloseOutdatedBranchCleanupTest extends CloseOutdatedBase
             });
     }
 
-    public function testOutdatedClosed()
+    public function testOutdatedClosed() : void
     {
         parent::testOutdatedClosed();
         self::assertEquals(['psrlog100111'], $this->deletedBranches);

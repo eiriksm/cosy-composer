@@ -133,6 +133,9 @@ abstract class BaseUpdater implements UpdaterInterface
         return $branch_slug;
     }
 
+    /**
+     * @param array<string, mixed> $pr
+     */
     protected function isPullRequestOwnedByAuthenticatedUser(array $pr) : ?bool
     {
         $pr_author = $pr['user']['login'] ?? null;

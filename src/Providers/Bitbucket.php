@@ -252,6 +252,24 @@ class Bitbucket implements ProviderInterface
         $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->decline($pr_id);
     }
 
+    public function deleteBranch(Slug $slug, string $branch_name) : bool
+    {
+        try {
+            $this->client
+                ->repositories()
+                ->workspaces($slug->getUserName())
+                ->refs($slug->getUserRepo())
+                ->branches()
+                ->remove($branch_name);
+        } catch (\Throwable $e) {
+            if ((int) $e->getCode() !== 404) {
+                return false;
+            }
+        }
+        unset($this->cache['branches']);
+        return true;
+    }
+
     public static function tokenIndicatesUserAppPassword($token)
     {
         return strlen($token) < 50 && strpos($token, ':') !== false;

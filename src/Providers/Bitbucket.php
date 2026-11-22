@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposer\Providers;
 
+use Bitbucket\Api\Repositories;
 use Bitbucket\Client;
 use Bitbucket\ResultPager;
 use eiriksm\CosyComposer\ProviderInterface;
@@ -109,7 +110,7 @@ class Bitbucket implements ProviderInterface
             }
             $data = [
                 'base' => [
-                    'sha' => $pr["destination"]["commit"]["hash"],
+                    'sha' => $this->getPrBaseSha($api_repo, $user, $repo, $pr),
                     'ref' => $pr["destination"]["branch"]["name"],
                 ],
                 'html_url' => $pr["links"]["html"]["href"],
@@ -132,6 +133,35 @@ class Bitbucket implements ProviderInterface
             }
         }
         return $prs_named;
+    }
+
+    /**
+     * Get the commit the PR branch is actually based on.
+     *
+     * On an open Bitbucket PR, destination.commit.hash follows the tip of the
+     * destination branch, so it always matches the default base. Use the merge
+     * base of the source and destination commits instead.
+     *
+     * @param array<mixed> $pr
+     */
+    protected function getPrBaseSha(Repositories $api_repo, string $user, string $repo, array $pr) : string
+    {
+        $destination = $pr["destination"]["commit"]["hash"];
+        if (empty($pr["source"]["commit"]["hash"])) {
+            return $destination;
+        }
+        try {
+            $merge_base = $api_repo->workspaces($user)
+                ->mergeBases($repo)
+                ->show(sprintf('%s..%s', $pr["source"]["commit"]["hash"], $destination));
+            if (!empty($merge_base['hash'])) {
+                // Match the 12 character hashes getDefaultBase() returns.
+                return substr($merge_base['hash'], 0, 12);
+            }
+        } catch (\Throwable $e) {
+            // Fall back to the destination commit.
+        }
+        return $destination;
     }
 
     public function getDefaultBase(Slug $slug, $default_branch)

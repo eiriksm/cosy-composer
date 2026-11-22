@@ -8,6 +8,7 @@ use Bitbucket\Api\Repositories\Workspaces;
 use Bitbucket\Client;
 use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Bitbucket;
+use eiriksm\CosyComposer\Providers\NamedPrs;
 use PHPUnit\Framework\MockObject\MockObject;
 use Violinist\Slug\Slug;
 
@@ -17,6 +18,18 @@ class BitbucketProviderTest extends ProvidersTestBase
      * The commit the pull requests in the fixture point at.
      */
     const COMMIT_HASH = 'cafebabe';
+
+    /**
+     * The destination commit of the pull requests in the fixture.
+     */
+    const DESTINATION_HASH = 'abab';
+
+    /**
+     * What the merge-base api returns, or throws.
+     *
+     * @var array<string, mixed>|\Throwable
+     */
+    private $mergeBaseResult = [];
 
     /** @var list<string|null> */
     protected $authenticateArguments = [
@@ -38,6 +51,50 @@ class BitbucketProviderTest extends ProvidersTestBase
         $mock->method('getBranches')
             ->willReturn($branches);
         return $mock;
+    }
+
+    /**
+     * The base sha of an open PR is the merge base, not the destination tip.
+     *
+     * @see https://github.com/eiriksm/cosy-composer/issues/523
+     */
+    public function testPrsNamedUsesMergeBaseAsBaseSha() : void
+    {
+        $merge_base = 'b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0';
+        $this->mergeBaseResult = ['hash' => $merge_base];
+        $prs = $this->getPrsNamedFromFixture();
+        foreach ($prs->getAllPrsNamed() as $pr) {
+            $this->assertSame(substr($merge_base, 0, 12), $pr['base']['sha']);
+        }
+    }
+
+    /**
+     * If the merge base can not be found, use the destination commit.
+     */
+    public function testPrsNamedFallsBackToDestinationWhenMergeBaseFails() : void
+    {
+        $this->mergeBaseResult = new \RuntimeException('Not found', 404);
+        $prs = $this->getPrsNamedFromFixture();
+        foreach ($prs->getAllPrsNamed() as $pr) {
+            $this->assertSame(self::DESTINATION_HASH, $pr['base']['sha']);
+        }
+    }
+
+    private function getPrsNamedFromFixture() : NamedPrs
+    {
+        $user = 'testUser';
+        $repo = 'testRepo';
+        $mock_prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $mock_prs_api->expects($this->once())
+            ->method('list')
+            ->willReturn($this->getPrsResponse($this->getPrsFixture()));
+        $mock_client = $this->getMockClient();
+        $this->configurePrsClient($mock_client, $mock_prs_api, $user, $repo);
+        $this->configureLastResponse($mock_client);
+        $provider = $this->getProvider($mock_client);
+        $prs = $provider->getPrsNamed(Slug::createFromUrl('http://bitbucket.org/testUser/testRepo'));
+        $this->assertEquals(['patch-1', 'patch-2'], array_keys($prs->getAllPrsNamed()));
+        return $prs;
     }
 
     /**
@@ -302,6 +359,15 @@ class BitbucketProviderTest extends ProvidersTestBase
             ->willReturn([
                 'message' => 'Update something',
             ]);
+        $mock_merge_bases = $this->createMock(Workspaces\MergeBases::class);
+        $merge_base_show = $mock_merge_bases->expects($this->exactly(count($this->getPrsFixture())))
+            ->method('show')
+            ->with(self::COMMIT_HASH . '..' . self::DESTINATION_HASH);
+        if ($this->mergeBaseResult instanceof \Throwable) {
+            $merge_base_show->willThrowException($this->mergeBaseResult);
+        } else {
+            $merge_base_show->willReturn($this->mergeBaseResult);
+        }
         $mock_workspaces = $this->createMock(Workspaces::class);
         $mock_workspaces->expects($this->once())
             ->method('pullRequests')
@@ -310,6 +376,9 @@ class BitbucketProviderTest extends ProvidersTestBase
         $mock_workspaces->method('commit')
             ->with($repo)
             ->willReturn($mock_commit);
+        $mock_workspaces->method('mergeBases')
+            ->with($repo)
+            ->willReturn($mock_merge_bases);
         $mock_repositories = $this->createMock(Repositories::class);
         $mock_repositories->method('workspaces')
             ->with($user)
@@ -337,7 +406,7 @@ class BitbucketProviderTest extends ProvidersTestBase
             $pr['id'] = $pr['iid'];
             $pr['destination'] = [
                 'commit' => [
-                    'hash' => 'abab',
+                    'hash' => self::DESTINATION_HASH,
                 ],
                 'branch' => [
                     'name' => 'master',

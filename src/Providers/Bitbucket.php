@@ -4,6 +4,7 @@ namespace eiriksm\CosyComposer\Providers;
 
 use Bitbucket\Api\Repositories;
 use Bitbucket\Client;
+use Bitbucket\Exception\ValidationFailedException;
 use Bitbucket\ResultPager;
 use eiriksm\CosyComposer\ProviderInterface;
 use Violinist\Slug\Slug;
@@ -231,18 +232,25 @@ class Bitbucket implements ProviderInterface
             'description' => $params['body'],
         ];
 
-        if (!empty($params['assignees'])) {
-            foreach ($params['assignees'] as $assignee) {
-                $bitbucket_params['reviewers'][] = [
-                    'username' => $assignee,
-                ];
+        // Bitbucket does not reject a pull request for a source and
+        // destination that already has an open one. It updates that pull
+        // request instead, and replaces its reviewers with the ones in the
+        // payload. So when we push to the branch of an open pull request,
+        // update it explicitly, and keep the reviewers it already has.
+        $existing = $this->getOpenPullRequest($slug, $params['head'], $params['base']);
+        if ($existing) {
+            $data = $this->updatePullRequest($slug, $existing['id'], $params);
+        } else {
+            $reviewers = self::createReviewers([], $params['assignees'] ?? []);
+            if ($reviewers) {
+                $bitbucket_params['reviewers'] = $reviewers;
             }
+            $data = $this->client
+                ->repositories()
+                ->workspaces($user_name)
+                ->pullRequests($user_repo)
+                ->create($bitbucket_params);
         }
-        $data = $this->client
-            ->repositories()
-            ->workspaces($user_name)
-            ->pullRequests($user_repo)
-            ->create($bitbucket_params);
         if (!empty($data["links"]["html"]["href"])) {
             $data['html_url'] = $data["links"]["html"]["href"];
         }
@@ -252,11 +260,114 @@ class Bitbucket implements ProviderInterface
         return $data;
     }
 
+    /**
+     * Update a pull request without removing its reviewers.
+     *
+     * Bitbucket removes all reviewers from a pull request when an update does
+     * not include them, so send the existing ones along every time.
+     */
     public function updatePullRequest(Slug $slug, $id, $params)
     {
-        $user_name = $slug->getUserName();
-        $user_repo = $slug->getUserRepo();
-        return $this->client->repositories()->workspaces($user_name)->pullRequests($user_repo)->update($id, $params);
+        $prs_api = $this->client
+            ->repositories()
+            ->workspaces($slug->getUserName())
+            ->pullRequests($slug->getUserRepo());
+        $id = (string) $id;
+        $current = $prs_api->show($id);
+        $assignees = $params['assignees'] ?? [];
+        $bitbucket_params = [
+            'title' => $params['title'] ?? $current['title'],
+            'reviewers' => self::createReviewers($current['reviewers'] ?? [], $assignees),
+        ];
+        if (isset($params['body'])) {
+            $bitbucket_params['description'] = $params['body'];
+        }
+        if (!empty($params['base'])) {
+            $bitbucket_params['destination'] = [
+                'branch' => [
+                    'name' => $params['base'],
+                ],
+            ];
+        }
+        try {
+            return $prs_api->update($id, $bitbucket_params);
+        } catch (ValidationFailedException $e) {
+            if (empty($current['reviewers'])) {
+                throw $e;
+            }
+            // Bitbucket rejects the whole update when one of the existing
+            // reviewers can no longer be added, for example because the
+            // account was deactivated or left the workspace. Updating the
+            // pull request matters more than keeping its reviewers.
+            $bitbucket_params['reviewers'] = self::createReviewers([], $assignees);
+            return $prs_api->update($id, $bitbucket_params);
+        }
+    }
+
+    /**
+     * Find the open pull request from one branch to another, if any.
+     *
+     * @return array<mixed>|null
+     */
+    protected function getOpenPullRequest(Slug $slug, string $source, string $destination) : ?array
+    {
+        $prs_api = $this->client
+            ->repositories()
+            ->workspaces($slug->getUserName())
+            ->pullRequests($slug->getUserRepo());
+        $prs = $prs_api->list([
+            'q' => sprintf(
+                'source.branch.name = "%s" AND destination.branch.name = "%s" AND state = "%s"',
+                addcslashes($source, '"\\'),
+                addcslashes($destination, '"\\'),
+                self::MERGE_REQUEST_STATE_OPEN
+            ),
+        ]);
+        foreach ($prs['values'] ?? [] as $pr) {
+            if (!empty($pr['id'])) {
+                return $pr;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Combine the reviewers a pull request has with the configured assignees.
+     *
+     * @param array<mixed> $existing
+     *   Reviewers as Bitbucket returns them on a pull request.
+     * @param array<mixed> $assignees
+     *   Usernames from the project config.
+     *
+     * @return list<array<string, string>>
+     */
+    public static function createReviewers(array $existing, array $assignees) : array
+    {
+        $reviewers = [];
+        $known = [];
+        foreach ($existing as $reviewer) {
+            if (empty($reviewer['uuid'])) {
+                continue;
+            }
+            $reviewers[] = [
+                'uuid' => $reviewer['uuid'],
+            ];
+            foreach (['uuid', 'account_id', 'nickname', 'username'] as $key) {
+                if (!empty($reviewer[$key])) {
+                    $known[] = $reviewer[$key];
+                }
+            }
+        }
+        foreach ($assignees as $assignee) {
+            if (in_array($assignee, $known, true)) {
+                continue;
+            }
+            $reviewers[] = [
+                'username' => $assignee,
+            ];
+            $known[] = $assignee;
+        }
+        return $reviewers;
     }
 
     public function addLabels(array $pr_data, Slug $slug, array $labels): bool

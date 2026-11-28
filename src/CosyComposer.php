@@ -25,6 +25,7 @@ use Github\Client;
 use Github\Exception\RuntimeException;
 use Github\Exception\ValidationFailedException;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Violinist\RepoAndTokenToCloneUrl\ToCloneUrl;
 use Violinist\Slug\Slug;
@@ -1448,7 +1449,11 @@ class CosyComposer
         if (!$this->providerFactory instanceof ProviderFactory) {
             $this->setProviderFactory(new ProviderFactory());
         }
-        return $this->providerFactory->createFromHost($slug, $this->urlArray);
+        $client = $this->providerFactory->createFromHost($slug, $this->urlArray);
+        if ($client instanceof LoggerAwareInterface) {
+            $client->setLogger($this->getLogger());
+        }
+        return $client;
     }
 
     /**

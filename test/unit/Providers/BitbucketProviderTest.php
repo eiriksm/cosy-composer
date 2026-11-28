@@ -6,6 +6,8 @@ use Bitbucket\Api\CurrentUser;
 use Bitbucket\Api\Repositories;
 use Bitbucket\Api\Repositories\Workspaces;
 use Bitbucket\Client;
+use Bitbucket\Exception\ValidationFailedException;
+use Wa72\SimpleLogger\ArrayLogger;
 use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Bitbucket;
 use eiriksm\CosyComposer\Providers\NamedPrs;
@@ -95,6 +97,316 @@ class BitbucketProviderTest extends ProvidersTestBase
         $prs = $provider->getPrsNamed(Slug::createFromUrl('http://bitbucket.org/testUser/testRepo'));
         $this->assertEquals(['patch-1', 'patch-2'], array_keys($prs->getAllPrsNamed()));
         return $prs;
+    }
+
+    /**
+     * A Bitbucket client whose pull request api is the given mock.
+     */
+    private function createBitbucketWithPrsApi(MockObject $prs_api) : Bitbucket
+    {
+        $mock_workspaces = $this->createMock(Workspaces::class);
+        $mock_workspaces->method('pullRequests')
+            ->with('testRepo')
+            ->willReturn($prs_api);
+        $mock_repositories = $this->createMock(Repositories::class);
+        $mock_repositories->method('workspaces')
+            ->with('testUser')
+            ->willReturn($mock_workspaces);
+        $mock_client = $this->createMock(Client::class);
+        $mock_client->method('repositories')
+            ->willReturn($mock_repositories);
+        return new Bitbucket($mock_client);
+    }
+
+    private function getSlug() : Slug
+    {
+        return Slug::createFromUrl('https://bitbucket.org/testUser/testRepo');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getPrParams() : array
+    {
+        return [
+            'base' => 'main',
+            'head' => 'psrlog100200',
+            'title' => 'Update psr/log from 1.0.0 to 2.0.0',
+            'body' => 'New body',
+            'assignees' => ['configured-user'],
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function getExistingPr() : array
+    {
+        return [
+            'id' => 42,
+            'title' => 'Old title',
+            'reviewers' => [
+                [
+                    'uuid' => '{11111111-1111-1111-1111-111111111111}',
+                    'account_id' => '5b10a2844c20165700ede21g',
+                    'nickname' => 'added-by-hand',
+                    'display_name' => 'Added By Hand',
+                ],
+            ],
+            'links' => [
+                'html' => [
+                    'href' => 'https://bitbucket.org/testUser/testRepo/pull-requests/42',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Updating a pull request must not remove the reviewers someone added.
+     */
+    public function testUpdatePullRequestKeepsExistingReviewers() : void
+    {
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->expects($this->once())
+            ->method('show')
+            ->with('42')
+            ->willReturn($this->getExistingPr());
+        $prs_api->expects($this->once())
+            ->method('update')
+            ->with('42', [
+                'title' => 'Update psr/log from 1.0.0 to 2.0.0',
+                'reviewers' => [
+                    ['uuid' => '{11111111-1111-1111-1111-111111111111}'],
+                    ['username' => 'configured-user'],
+                ],
+                'description' => 'New body',
+                'destination' => [
+                    'branch' => [
+                        'name' => 'main',
+                    ],
+                ],
+            ])
+            ->willReturn($this->getExistingPr());
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $provider->updatePullRequest($this->getSlug(), 42, $this->getPrParams());
+    }
+
+    /**
+     * A reviewer that can no longer be added should not block the update.
+     */
+    public function testUpdatePullRequestDropsExistingReviewersBitbucketRejects() : void
+    {
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->method('show')
+            ->willReturn($this->getExistingPr());
+        $calls = [];
+        $prs_api->expects($this->exactly(3))
+            ->method('update')
+            ->willReturnCallback(function (string $id, array $params) use (&$calls) {
+                $calls[] = $params['reviewers'];
+                if (in_array(['uuid' => '{11111111-1111-1111-1111-111111111111}'], $params['reviewers'], true)) {
+                    throw new ValidationFailedException('Malformed reviewers list', 400);
+                }
+                return $this->getExistingPr();
+            });
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $provider->updatePullRequest($this->getSlug(), 42, $this->getPrParams());
+        $this->assertEquals([
+            [
+                ['uuid' => '{11111111-1111-1111-1111-111111111111}'],
+                ['username' => 'configured-user'],
+            ],
+            [
+                ['uuid' => '{11111111-1111-1111-1111-111111111111}'],
+            ],
+            [
+                ['username' => 'configured-user'],
+            ],
+        ], $calls);
+    }
+
+    /**
+     * A configured assignee Bitbucket rejects should not block the update.
+     *
+     * For example a deactivated account, or the account that authored the
+     * pull request. Bitbucket used to ignore the assignees on updates, so a
+     * bad one in the config never stopped a pull request from being updated.
+     *
+     * @dataProvider getRejectedAssigneeScenarios
+     *
+     * @param array<mixed> $existing_reviewers
+     * @param array<mixed> $expected_reviewers
+     * @param list<string> $expected_messages
+     */
+    public function testUpdatePullRequestWithAssigneeBitbucketRejects(array $existing_reviewers, array $expected_reviewers, array $expected_messages) : void
+    {
+        $existing_pr = $this->getExistingPr();
+        $existing_pr['reviewers'] = $existing_reviewers;
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->method('show')
+            ->willReturn($existing_pr);
+        $successful_reviewers = null;
+        $prs_api->method('update')
+            ->willReturnCallback(function (string $id, array $params) use (&$successful_reviewers, $existing_pr) {
+                if (in_array(['username' => 'configured-user'], $params['reviewers'], true)) {
+                    throw new ValidationFailedException('configured-user is not a valid reviewer', 400);
+                }
+                $successful_reviewers = $params['reviewers'];
+                return $existing_pr;
+            });
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $logger = new ArrayLogger();
+        $provider->setLogger($logger);
+        $provider->updatePullRequest($this->getSlug(), 42, $this->getPrParams());
+        $this->assertEquals($expected_reviewers, $successful_reviewers);
+        $messages = array_map(function (array $entry) {
+            return (string) $entry['message'];
+        }, $logger->get());
+        $this->assertEquals($expected_messages, $messages);
+    }
+
+    /**
+     * When no set of reviewers works, the error from Bitbucket is thrown.
+     */
+    public function testUpdatePullRequestThrowsWhenEveryAttemptFails() : void
+    {
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->method('show')
+            ->willReturn($this->getExistingPr());
+        $prs_api->expects($this->exactly(4))
+            ->method('update')
+            ->willThrowException(new ValidationFailedException('Invalid title', 400));
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $logger = new ArrayLogger();
+        $provider->setLogger($logger);
+        try {
+            $provider->updatePullRequest($this->getSlug(), 42, $this->getPrParams());
+            $this->fail('Expected the update to fail');
+        } catch (ValidationFailedException $e) {
+            $this->assertEquals('Invalid title', $e->getMessage());
+        }
+        $last = $logger->get()[count($logger->get()) - 1];
+        $this->assertEquals('error', $last['level']);
+        $this->assertEquals(
+            'Could not update Bitbucket pull request 42 with any set of reviewers. The last error was: Invalid title',
+            (string) $last['message']
+        );
+    }
+
+    /**
+     * @return array<string, array<mixed>>
+     */
+    public static function getRejectedAssigneeScenarios() : array
+    {
+        return [
+            'keeps the existing reviewers' => [
+                [
+                    [
+                        'uuid' => '{11111111-1111-1111-1111-111111111111}',
+                        'nickname' => 'added-by-hand',
+                    ],
+                ],
+                [
+                    ['uuid' => '{11111111-1111-1111-1111-111111111111}'],
+                ],
+                [
+                    'Updating Bitbucket pull request 42 with 1 existing reviewer(s) and 1 configured assignee(s) as reviewer(s)',
+                    'Bitbucket rejected the update of pull request 42 (configured-user is not a valid reviewer). Retrying with 1 existing reviewer(s)',
+                    'Updated Bitbucket pull request 42 with 1 existing reviewer(s)',
+                ],
+            ],
+            'no existing reviewers' => [
+                [],
+                [],
+                [
+                    'Updating Bitbucket pull request 42 with 1 configured assignee(s) as reviewer(s)',
+                    'Bitbucket rejected the update of pull request 42 (configured-user is not a valid reviewer). Retrying with no reviewers',
+                    'Updated Bitbucket pull request 42 with no reviewers',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Pushing to the branch of an open pull request updates that pull request.
+     *
+     * Bitbucket would otherwise update it through the create endpoint, and
+     * replace its reviewers.
+     */
+    public function testCreatePullRequestUpdatesExistingPullRequest() : void
+    {
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->expects($this->once())
+            ->method('list')
+            ->with([
+                'q' => 'source.branch.name = "psrlog100200" AND destination.branch.name = "main" AND state = "OPEN"',
+            ])
+            ->willReturn([
+                'values' => [
+                    ['id' => 42],
+                ],
+            ]);
+        $prs_api->expects($this->never())
+            ->method('create');
+        $prs_api->method('show')
+            ->willReturn($this->getExistingPr());
+        $prs_api->expects($this->once())
+            ->method('update')
+            ->with('42', $this->callback(function (array $params) {
+                return $params['reviewers'] === [
+                    ['uuid' => '{11111111-1111-1111-1111-111111111111}'],
+                    ['username' => 'configured-user'],
+                ];
+            }))
+            ->willReturn($this->getExistingPr());
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $data = $provider->createPullRequest($this->getSlug(), $this->getPrParams());
+        $this->assertEquals(42, $data['number']);
+        $this->assertEquals('https://bitbucket.org/testUser/testRepo/pull-requests/42', $data['html_url']);
+    }
+
+    public function testCreatePullRequestCreatesNewPullRequest() : void
+    {
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->method('list')
+            ->willReturn(['values' => []]);
+        $prs_api->expects($this->never())
+            ->method('update');
+        $prs_api->expects($this->once())
+            ->method('create')
+            ->with([
+                'title' => 'Update psr/log from 1.0.0 to 2.0.0',
+                'source' => [
+                    'branch' => [
+                        'name' => 'psrlog100200',
+                    ],
+                ],
+                'destination' => [
+                    'branch' => [
+                        'name' => 'main',
+                    ],
+                ],
+                'description' => 'New body',
+                'reviewers' => [
+                    ['username' => 'configured-user'],
+                ],
+            ])
+            ->willReturn($this->getExistingPr());
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $data = $provider->createPullRequest($this->getSlug(), $this->getPrParams());
+        $this->assertEquals(42, $data['number']);
+    }
+
+    /**
+     * A configured assignee that is already a reviewer is not added twice.
+     */
+    public function testCreateReviewersSkipsDuplicates() : void
+    {
+        $existing = $this->getExistingPr()['reviewers'];
+        $this->assertEquals([
+            ['uuid' => '{11111111-1111-1111-1111-111111111111}'],
+        ], Bitbucket::createReviewers($existing, ['added-by-hand', '{11111111-1111-1111-1111-111111111111}']));
+        $this->assertEquals([], Bitbucket::createReviewers([], []));
     }
 
     /**

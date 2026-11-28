@@ -25,7 +25,7 @@ interface ProviderInterface
 
     public function getBranchesFlattened(Slug $slug);
 
-    public function getPrsNamed(Slug $slug) : NamedPrs;
+    public function getPrsNamed(Slug $slug, bool $include_closed = false) : NamedPrs;
 
     /**
      * The username/identifier of the currently authenticated user, if it can be determined.

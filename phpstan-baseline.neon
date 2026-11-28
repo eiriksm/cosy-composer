@@ -1146,21 +1146,6 @@ parameters:
 			path: src/Providers/Bitbucket.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:getBranches\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Providers/Bitbucket.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:getBranches\\(\\) has parameter \\$repo with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Bitbucket.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:getBranches\\(\\) has parameter \\$user with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Bitbucket.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:getBranchesFlattened\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: src/Providers/Bitbucket.php
@@ -1177,21 +1162,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:getDefaultBranch\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Providers/Bitbucket.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:getRepo\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Providers/Bitbucket.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:getRepo\\(\\) has parameter \\$repo with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Bitbucket.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:getRepo\\(\\) has parameter \\$user with no type specified\\.$#"
 			count: 1
 			path: src/Providers/Bitbucket.php
 
@@ -1222,11 +1192,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:updatePullRequest\\(\\) has parameter \\$params with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Bitbucket.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposer\\\\Providers\\\\Bitbucket\\:\\:\\$cache has no type specified\\.$#"
 			count: 1
 			path: src/Providers/Bitbucket.php
 
@@ -1286,21 +1251,6 @@ parameters:
 			path: src/Providers/Github.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:getBranches\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Providers/Github.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:getBranches\\(\\) has parameter \\$repo with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Github.php
-
-		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:getBranches\\(\\) has parameter \\$user with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Github.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:getBranchesFlattened\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: src/Providers/Github.php
@@ -1337,11 +1287,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:updatePullRequest\\(\\) has parameter \\$params with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Github.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposer\\\\Providers\\\\Github\\:\\:\\$cache has no type specified\\.$#"
 			count: 1
 			path: src/Providers/Github.php
 
@@ -1421,11 +1366,6 @@ parameters:
 			path: src/Providers/Gitlab.php
 
 		-
-			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Gitlab\\:\\:getBranches\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Providers/Gitlab.php
-
-		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Gitlab\\:\\:getBranchesFlattened\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: src/Providers/Gitlab.php
@@ -1472,11 +1412,6 @@ parameters:
 
 		-
 			message: "#^Method eiriksm\\\\CosyComposer\\\\Providers\\\\Gitlab\\:\\:updatePullRequest\\(\\) has parameter \\$params with no type specified\\.$#"
-			count: 1
-			path: src/Providers/Gitlab.php
-
-		-
-			message: "#^Property eiriksm\\\\CosyComposer\\\\Providers\\\\Gitlab\\:\\:\\$cache has no type specified\\.$#"
 			count: 1
 			path: src/Providers/Gitlab.php
 

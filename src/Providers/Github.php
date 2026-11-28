@@ -99,6 +99,9 @@ class Github extends AbstractProvider
         return $this->getRepo($slug)['default_branch'];
     }
 
+    /**
+     * @return array<mixed>
+     */
     protected function getBranches(Slug $slug) : array
     {
         return $this->wrapLookupInCache(

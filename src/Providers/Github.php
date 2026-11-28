@@ -9,12 +9,10 @@ use Github\Client;
 use Github\ResultPager;
 use Violinist\Slug\Slug;
 
-class Github implements ProviderInterface
+class Github extends AbstractProvider
 {
     const PULL_REQUEST_STATE_OPEN = 'open';
     const PULL_REQUEST_STATE_CLOSED = 'closed';
-
-    private $cache;
 
     private $client;
 
@@ -86,22 +84,19 @@ class Github implements ProviderInterface
 
     public function repoIsPrivate(Slug $slug)
     {
-        $user = $slug->getUserName();
-        $repo = $slug->getUserRepo();
-        if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->client->api('repo')->show($user, $repo);
-        }
-        return (bool) $this->cache['repo']['private'];
+        $this->getRepo($slug);
+        return (bool) $this->cache[self::REPO_CACHE_KEY]['private'];
+    }
+
+    protected function getRepo(Slug $slug) : array
+    {
+        return $this->wrapLookupInCache(self::REPO_CACHE_KEY, fn () => $this->client->api('repo')->show($slug->getUserName(), $slug->getUserRepo()));
     }
 
     public function getDefaultBranch(Slug $slug)
     {
-        $user = $slug->getUserName();
-        $repo = $slug->getUserRepo();
-        if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->client->api('repo')->show($user, $repo);
-        }
-        return $this->cache['repo']['default_branch'];
+        $this->getRepo($slug);
+        return $this->cache[self::REPO_CACHE_KEY]['default_branch'];
     }
 
     protected function getBranches($user, $repo)

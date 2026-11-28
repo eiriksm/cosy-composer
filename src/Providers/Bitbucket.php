@@ -14,15 +14,13 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Violinist\Slug\Slug;
 
-class Bitbucket implements ProviderInterface, LoggerAwareInterface
+class Bitbucket extends AbstractProvider implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     const MERGE_REQUEST_STATE_OPEN = 'OPEN';
     const MERGE_REQUEST_STATE_CLOSED = 'MERGED';
     const PULL_REQUEST_ALREADY_CLOSED_ERROR = 'This pull request is already closed.';
-
-    private $cache;
 
     /**
      * @var Client
@@ -51,30 +49,22 @@ class Bitbucket implements ProviderInterface, LoggerAwareInterface
 
     public function repoIsPrivate(Slug $slug)
     {
-        $user = $slug->getUserName();
-        $repo = $slug->getUserRepo();
-        if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->getRepo($user, $repo);
-        }
-        return (bool) $this->cache["repo"]["is_private"];
+        $this->getRepo($slug);
+        return (bool) $this->cache[self::REPO_CACHE_KEY]["is_private"];
     }
 
-    protected function getRepo($user, $repo)
+    protected function getRepo(Slug $slug)
     {
-        return $this->client->repositories()->workspaces($user)->show($repo);
+        return $this->wrapLookupInCache(self::REPO_CACHE_KEY, fn () => $this->client->repositories()->workspaces($slug->getUserName())->show($slug->getUserRepo()));
     }
 
     public function getDefaultBranch(Slug $slug)
     {
-        $user = $slug->getUserName();
-        $repo = $slug->getUserRepo();
-        if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->getRepo($user, $repo);
+        $this->getRepo($slug);
+        if (empty($this->cache[self::REPO_CACHE_KEY]["mainbranch"]["name"])) {
+            throw new \RuntimeException('No default branch found');
         }
-        if (empty($this->cache["repo"]["mainbranch"]["name"])) {
-            throw new \Exception('No default branch found');
-        }
-        return $this->cache["repo"]["mainbranch"]["name"];
+        return $this->cache[self::REPO_CACHE_KEY]["mainbranch"]["name"];
     }
 
     protected function getBranches($user, $repo)

@@ -8,13 +8,11 @@ use Gitlab\Client;
 use Gitlab\ResultPager;
 use Violinist\Slug\Slug;
 
-class Gitlab implements ProviderInterface
+class Gitlab extends AbstractProvider
 {
     const MERGE_REQUEST_STATE_OPENED = 'opened';
 
     protected $client;
-
-    private $cache;
 
     public function __construct(Client $client)
     {
@@ -42,13 +40,15 @@ class Gitlab implements ProviderInterface
         return true;
     }
 
+    public function getRepo(Slug $slug)
+    {
+        return $this->wrapLookupInCache(self::REPO_CACHE_KEY, fn () => $this->client->projects()->show(self::getProjectId($slug->getUrl())));
+    }
+
     public function getDefaultBranch(Slug $slug)
     {
-        $url = $slug->getUrl();
-        if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->client->projects()->show(self::getProjectId($url));
-        }
-        return $this->cache['repo']['default_branch'];
+        $this->getRepo($slug);
+        return $this->cache[self::REPO_CACHE_KEY]['default_branch'];
     }
 
     protected function getBranches(Slug $slug)

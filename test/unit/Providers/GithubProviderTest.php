@@ -293,6 +293,8 @@ class GithubProviderTest extends ProvidersTestBase
      * Closing it again would succeed on GitHub, so this is about the state check.
      *
      * @dataProvider notOpenPullRequestProvider
+     *
+     * @param array<string, mixed> $pr
      */
     public function testClosePullRequestWithCommentLeavesPullRequestThatIsNotOpen(array $pr) : void
     {
@@ -319,6 +321,9 @@ class GithubProviderTest extends ProvidersTestBase
         $g->closePullRequestWithComment($slug, $pr_id, 'comment');
     }
 
+    /**
+     * @return array<string, array{array<string, mixed>}>
+     */
     public static function notOpenPullRequestProvider() : array
     {
         return [

@@ -89,7 +89,7 @@ class GitlabProviderTest extends ProvidersTestBase
         $this->assertEquals('2025-01-15T10:30:00.000+00:00', $provider->getDefaultBaseTimestamp($slug, 'main'));
     }
 
-    public function testDefaultBase()
+    public function testDefaultBase() : void
     {
         $slug = Slug::createFromUrl('http://gitlab.com/testUser/testRepo');
         $my_dummy_default_sha = 'codeba5e';
@@ -187,6 +187,9 @@ class GitlabProviderTest extends ProvidersTestBase
         $provider->closePullRequestWithComment($slug, 42, 'comment');
     }
 
+    /**
+     * @return array<string, array{string}>
+     */
     public static function notOpenMergeRequestStateProvider() : array
     {
         return [

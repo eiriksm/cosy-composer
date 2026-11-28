@@ -3,18 +3,15 @@
 namespace eiriksm\CosyComposer\Providers;
 
 use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
-use eiriksm\CosyComposer\ProviderInterface;
 use Gitlab\Client;
 use Gitlab\ResultPager;
 use Violinist\Slug\Slug;
 
-class Gitlab implements ProviderInterface
+class Gitlab extends AbstractProvider
 {
     const MERGE_REQUEST_STATE_OPENED = 'opened';
 
     protected $client;
-
-    private $cache;
 
     public function __construct(Client $client)
     {
@@ -42,24 +39,36 @@ class Gitlab implements ProviderInterface
         return true;
     }
 
-    public function getDefaultBranch(Slug $slug)
+    protected function getRepoIdentifier(Slug $slug) : string
     {
-        $url = $slug->getUrl();
-        if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->client->projects()->show(self::getProjectId($url));
-        }
-        return $this->cache['repo']['default_branch'];
+        return self::getProjectId($slug->getUrl());
     }
 
-    protected function getBranches(Slug $slug)
+    protected function getRepo(Slug $slug) : array
     {
-        if (!isset($this->cache['branches'])) {
-            $pager = new ResultPager($this->client);
-            $api = $this->client->repositories();
-            $method = 'branches';
-            $this->cache['branches'] = $pager->fetchAll($api, $method, [self::getProjectId($slug->getUrl())]);
-        }
-        return $this->cache['branches'];
+        return $this->wrapLookupInCache(
+            $this->getRepoCacheKey(self::REPO_CACHE_KEY, $slug),
+            fn () => $this->client->projects()->show(self::getProjectId($slug->getUrl()))
+        );
+    }
+
+    public function getDefaultBranch(Slug $slug)
+    {
+        return $this->getRepo($slug)['default_branch'];
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function getBranches(Slug $slug) : array
+    {
+        return $this->wrapLookupInCache(
+            $this->getRepoCacheKey(self::BRANCHES_CACHE_KEY, $slug),
+            function () use ($slug) {
+                $pager = new ResultPager($this->client);
+                return $pager->fetchAll($this->client->repositories(), 'branches', [self::getProjectId($slug->getUrl())]);
+            }
+        );
     }
 
     public function getBranchesFlattened(Slug $slug)
@@ -116,15 +125,14 @@ class Gitlab implements ProviderInterface
 
     public function getAuthenticatedUsername() : ?string
     {
-        if (!isset($this->cache['authenticated_username'])) {
-            try {
+        try {
+            return $this->wrapLookupInCache(self::AUTHENTICATED_USERNAME_CACHE_KEY, function () {
                 $user = $this->client->users()->me();
-                $this->cache['authenticated_username'] = $user['username'] ?? null;
-            } catch (\Throwable $e) {
-                return null;
-            }
+                return $user['username'] ?? null;
+            });
+        } catch (\Throwable $e) {
+            return null;
         }
-        return $this->cache['authenticated_username'];
     }
 
     public function getDefaultBase(Slug $slug, $default_branch)

@@ -8,21 +8,18 @@ use Bitbucket\Exception\ValidationFailedException;
 use Bitbucket\ResultPager;
 use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
 use eiriksm\CosyComposer\Message;
-use eiriksm\CosyComposer\ProviderInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 use Violinist\Slug\Slug;
 
-class Bitbucket implements ProviderInterface, LoggerAwareInterface
+class Bitbucket extends AbstractProvider implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     const MERGE_REQUEST_STATE_OPEN = 'OPEN';
     const MERGE_REQUEST_STATE_CLOSED = 'MERGED';
     const PULL_REQUEST_ALREADY_CLOSED_ERROR = 'This pull request is already closed.';
-
-    private $cache;
 
     /**
      * @var Client
@@ -51,51 +48,48 @@ class Bitbucket implements ProviderInterface, LoggerAwareInterface
 
     public function repoIsPrivate(Slug $slug)
     {
-        $user = $slug->getUserName();
-        $repo = $slug->getUserRepo();
-        if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->getRepo($user, $repo);
-        }
-        return (bool) $this->cache["repo"]["is_private"];
+        return (bool) $this->getRepo($slug)["is_private"];
     }
 
-    protected function getRepo($user, $repo)
+    protected function getRepo(Slug $slug) : array
     {
-        return $this->client->repositories()->workspaces($user)->show($repo);
+        return $this->wrapLookupInCache(
+            $this->getRepoCacheKey(self::REPO_CACHE_KEY, $slug),
+            fn () => $this->client->repositories()->workspaces($slug->getUserName())->show($slug->getUserRepo())
+        );
     }
 
     public function getDefaultBranch(Slug $slug)
     {
-        $user = $slug->getUserName();
-        $repo = $slug->getUserRepo();
-        if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->getRepo($user, $repo);
+        $repo = $this->getRepo($slug);
+        if (empty($repo["mainbranch"]["name"])) {
+            throw new \RuntimeException('No default branch found');
         }
-        if (empty($this->cache["repo"]["mainbranch"]["name"])) {
-            throw new \Exception('No default branch found');
-        }
-        return $this->cache["repo"]["mainbranch"]["name"];
+        return $repo["mainbranch"]["name"];
     }
 
-    protected function getBranches($user, $repo)
+    /**
+     * @return array<mixed>
+     */
+    protected function getBranches(Slug $slug) : array
     {
-        if (!isset($this->cache['branches'])) {
-            $paginator = new ResultPager($this->client);
-            $repo_users = $this->client->repositories()->workspaces($user);
-            $branch_client = $repo_users->refs($repo)->branches();
-
-            $this->cache['branches'] = [
-                'values' => $paginator->fetchAll($branch_client, 'list'),
-            ];
-        }
-        return $this->cache["branches"]["values"];
+        return $this->wrapLookupInCache(
+            $this->getRepoCacheKey(self::BRANCHES_CACHE_KEY, $slug),
+            function () use ($slug) {
+                $paginator = new ResultPager($this->client);
+                $branch_client = $this->client
+                    ->repositories()
+                    ->workspaces($slug->getUserName())
+                    ->refs($slug->getUserRepo())
+                    ->branches();
+                return $paginator->fetchAll($branch_client, 'list');
+            }
+        );
     }
 
     public function getBranchesFlattened(Slug $slug)
     {
-        $user = $slug->getUserName();
-        $repo = $slug->getUserRepo();
-        $branches = $this->getBranches($user, $repo);
+        $branches = $this->getBranches($slug);
 
         $branches_flattened = [];
         foreach ($branches as $branch) {
@@ -177,9 +171,7 @@ class Bitbucket implements ProviderInterface, LoggerAwareInterface
 
     public function getDefaultBase(Slug $slug, $default_branch)
     {
-        $user = $slug->getUserName();
-        $repo = $slug->getUserRepo();
-        $branches = $this->getBranches($user, $repo);
+        $branches = $this->getBranches($slug);
         $default_base = null;
         foreach ($branches as $branch) {
             if ($branch['name'] == $default_branch) {
@@ -192,22 +184,19 @@ class Bitbucket implements ProviderInterface, LoggerAwareInterface
 
     public function getAuthenticatedUsername() : ?string
     {
-        if (!isset($this->cache['authenticated_username'])) {
-            try {
+        try {
+            return $this->wrapLookupInCache(self::AUTHENTICATED_USERNAME_CACHE_KEY, function () {
                 $user = $this->client->currentUser()->show();
-                $this->cache['authenticated_username'] = $user['uuid'] ?? null;
-            } catch (\Throwable $e) {
-                return null;
-            }
+                return $user['uuid'] ?? null;
+            });
+        } catch (\Throwable $e) {
+            return null;
         }
-        return $this->cache['authenticated_username'];
     }
 
     public function getDefaultBaseTimestamp(Slug $slug, string $default_branch) : ?string
     {
-        $user = $slug->getUserName();
-        $repo = $slug->getUserRepo();
-        $branches = $this->getBranches($user, $repo);
+        $branches = $this->getBranches($slug);
         foreach ($branches as $branch) {
             if ($branch['name'] === $default_branch) {
                 if (!empty($branch['target']['date'])) {

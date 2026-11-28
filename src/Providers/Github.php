@@ -3,18 +3,15 @@
 namespace eiriksm\CosyComposer\Providers;
 
 use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
-use eiriksm\CosyComposer\ProviderInterface;
 use Github\AuthMethod;
 use Github\Client;
 use Github\ResultPager;
 use Violinist\Slug\Slug;
 
-class Github implements ProviderInterface
+class Github extends AbstractProvider
 {
     const PULL_REQUEST_STATE_OPEN = 'open';
     const PULL_REQUEST_STATE_CLOSED = 'closed';
-
-    private $cache;
 
     private $client;
 
@@ -86,40 +83,40 @@ class Github implements ProviderInterface
 
     public function repoIsPrivate(Slug $slug)
     {
-        $user = $slug->getUserName();
-        $repo = $slug->getUserRepo();
-        if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->client->api('repo')->show($user, $repo);
-        }
-        return (bool) $this->cache['repo']['private'];
+        return (bool) $this->getRepo($slug)['private'];
+    }
+
+    protected function getRepo(Slug $slug) : array
+    {
+        return $this->wrapLookupInCache(
+            $this->getRepoCacheKey(self::REPO_CACHE_KEY, $slug),
+            fn () => $this->client->api('repo')->show($slug->getUserName(), $slug->getUserRepo())
+        );
     }
 
     public function getDefaultBranch(Slug $slug)
     {
-        $user = $slug->getUserName();
-        $repo = $slug->getUserRepo();
-        if (!isset($this->cache['repo'])) {
-            $this->cache['repo'] = $this->client->api('repo')->show($user, $repo);
-        }
-        return $this->cache['repo']['default_branch'];
+        return $this->getRepo($slug)['default_branch'];
     }
 
-    protected function getBranches($user, $repo)
+    /**
+     * @return array<mixed>
+     */
+    protected function getBranches(Slug $slug) : array
     {
-        if (!isset($this->cache['branches'])) {
-            $pager = new ResultPager($this->client);
-            $api = $this->client->api('repo');
-            $method = 'branches';
-            $this->cache['branches'] = $pager->fetchAll($api, $method, [$user, $repo]);
-        }
-        return $this->cache['branches'];
+        return $this->wrapLookupInCache(
+            $this->getRepoCacheKey(self::BRANCHES_CACHE_KEY, $slug),
+            function () use ($slug) {
+                $pager = new ResultPager($this->client);
+                $api = $this->client->api('repo');
+                return $pager->fetchAll($api, 'branches', [$slug->getUserName(), $slug->getUserRepo()]);
+            }
+        );
     }
 
     public function getBranchesFlattened(Slug $slug)
     {
-        $user = $slug->getUserName();
-        $repo = $slug->getUserRepo();
-        $branches = $this->getBranches($user, $repo);
+        $branches = $this->getBranches($slug);
 
         $branches_flattened = [];
         foreach ($branches as $branch) {
@@ -156,22 +153,19 @@ class Github implements ProviderInterface
 
     public function getAuthenticatedUsername() : ?string
     {
-        if (!isset($this->cache['authenticated_username'])) {
-            try {
+        try {
+            return $this->wrapLookupInCache(self::AUTHENTICATED_USERNAME_CACHE_KEY, function () {
                 $user = $this->client->api('current_user')->show();
-                $this->cache['authenticated_username'] = $user['login'] ?? null;
-            } catch (\Throwable $e) {
-                return null;
-            }
+                return $user['login'] ?? null;
+            });
+        } catch (\Throwable $e) {
+            return null;
         }
-        return $this->cache['authenticated_username'];
     }
 
     public function getDefaultBase(Slug $slug, $default_branch)
     {
-        $user = $slug->getUserName();
-        $repo = $slug->getUserRepo();
-        $branches = $this->getBranches($user, $repo);
+        $branches = $this->getBranches($slug);
         $default_base = null;
         foreach ($branches as $branch) {
             if ($branch['name'] == $default_branch) {

@@ -82,47 +82,33 @@ class IndividualUpdater extends BaseUpdater
         }
         foreach ($data as $item) {
             $item_name = $item->getPackageName();
-            $security_update = false;
-            $package_name_in_composer_json = $item_name;
-            try {
-                $package_name_in_composer_json = Helpers::getComposerJsonName($cdata, $item_name, $this->composerJsonDir);
-            } catch (\Exception $e) {
-            }
-            if (isset($alerts[$package_name_in_composer_json])) {
-                $security_update = true;
-            }
+            $package_name_in_composer_json = Helpers::getComposerJsonNameOrFallback($cdata, $item_name, $this->composerJsonDir);
+            $security_update = isset($alerts[$package_name_in_composer_json]);
             if ($max_number_of_prs) {
                 $this->log(sprintf('Current count of PRs is %d', $this->getPrCount()));
             }
-            // Security updates allowed through a reached limit, and packages configured to
-            // bypass the limit, should never eat into the shared concurrent limit budget
-            // themselves. Otherwise they could still end up blocking a package that is not
-            // exempt from the limit, which would defeat the purpose of the exemption.
-            $counts_towards_concurrent_limit = true;
-            if ($max_number_of_prs) {
-                $security_bypasses_limit = $security_update && $config->shouldAllowSecurityUpdatesOnConcurrentLimit();
-                $bypass_package = $security_bypasses_limit ? null : $this->getConcurrentLimitBypassPackage($item, $package_name_in_composer_json, $config);
-                $counts_towards_concurrent_limit = !$security_bypasses_limit && $bypass_package === null;
-                if ($this->getPrCount() >= $max_number_of_prs) {
-                    if ($security_bypasses_limit) {
-                        $this->log(sprintf('The concurrent limit (%d) is reached, but the update of %s is a security update, so we will try to update it anyway.', $max_number_of_prs, $package_name_in_composer_json));
-                    } elseif (!in_array($item_name, $is_allowed_out_of_date_pr)) {
-                        if ($bypass_package !== null) {
-                            $this->log(sprintf('The concurrent limit (%d) is reached, but %s is configured to bypass the concurrent limit, so we will try to update it anyway.', $max_number_of_prs, $bypass_package));
-                        } else {
-                            $this->log(
-                                sprintf(
-                                    'Skipping %s because the number of max concurrent PRs (%d) seems to have been reached',
-                                    $item_name,
-                                    $max_number_of_prs
-                                ),
-                                Message::CONCURRENT_THROTTLED,
-                                [
-                                    'package' => $item_name,
-                                ]
-                            );
-                            continue;
-                        }
+            $concurrent_limit_package_names = $this->getConcurrentLimitPackageNames($item, $package_name_in_composer_json);
+            $counts_towards_concurrent_limit = Helpers::countsTowardsConcurrentLimit($config, $concurrent_limit_package_names, $security_update);
+            if ($max_number_of_prs && $this->getPrCount() >= $max_number_of_prs) {
+                if ($security_update && $config->shouldAllowSecurityUpdatesOnConcurrentLimit()) {
+                    $this->log(sprintf('The concurrent limit (%d) is reached, but the update of %s is a security update, so we will try to update it anyway.', $max_number_of_prs, $package_name_in_composer_json));
+                } elseif (!in_array($item_name, $is_allowed_out_of_date_pr)) {
+                    $bypass_package = Helpers::getConcurrentLimitBypassPackage($config, $concurrent_limit_package_names);
+                    if ($bypass_package !== null) {
+                        $this->log(sprintf('The concurrent limit (%d) is reached, but %s is configured to bypass the concurrent limit, so we will try to update it anyway.', $max_number_of_prs, $bypass_package));
+                    } else {
+                        $this->log(
+                            sprintf(
+                                'Skipping %s because the number of max concurrent PRs (%d) seems to have been reached',
+                                $item_name,
+                                $max_number_of_prs
+                            ),
+                            Message::CONCURRENT_THROTTLED,
+                            [
+                                'package' => $item_name,
+                            ]
+                        );
+                        continue;
                     }
                 }
             }
@@ -144,25 +130,23 @@ class IndividualUpdater extends BaseUpdater
         }
     }
 
-    private function getConcurrentLimitBypassPackage(UpdateItemInterface $item, string $package_name_in_composer_json, Config $config): ?string
+    /**
+     * @return string[]
+     */
+    private function getConcurrentLimitPackageNames(UpdateItemInterface $item, string $package_name_in_composer_json): array
     {
-        if ($item instanceof GroupUpdateItem) {
-            foreach ($item->getData() as $data) {
-                if (empty($data->name) || !is_string($data->name)) {
-                    continue;
-                }
-                if ($config->shouldBypassConcurrentLimitForPackage($data->name)) {
-                    return $data->name;
-                }
+        if (!$item instanceof GroupUpdateItem) {
+            return [$package_name_in_composer_json];
+        }
+
+        $package_names = [];
+        foreach ($item->getData() as $data) {
+            if (empty($data->name) || !is_string($data->name)) {
+                continue;
             }
-            return null;
+            $package_names[] = $data->name;
         }
-
-        if ($config->shouldBypassConcurrentLimitForPackage($package_name_in_composer_json)) {
-            return $package_name_in_composer_json;
-        }
-
-        return null;
+        return $package_names;
     }
 
     protected function handleGroup(GroupUpdateItem $item, $lockdata, $cdata, $one_pr_per_dependency, $lock_file_contents, NamedPrs $prs_named_object, $default_base, $hostname, $default_branch, bool $security_update, Config $global_config, $can_update_beyond, bool $counts_towards_concurrent_limit = true)

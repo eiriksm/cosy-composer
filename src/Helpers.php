@@ -164,6 +164,52 @@ class Helpers
         throw new \Exception('Could not find ' . $name . ' in composer.json.');
     }
 
+    /**
+     * @param \stdClass $cdata
+     * @param string|null $tmp_dir
+     */
+    public static function getComposerJsonNameOrFallback($cdata, string $name, $tmp_dir) : string
+    {
+        try {
+            return self::getComposerJsonName($cdata, $name, $tmp_dir);
+        } catch (\Exception $e) {
+            return $name;
+        }
+    }
+
+    /**
+     * Security updates allowed through a reached limit, and packages configured
+     * to bypass the limit, should never eat into the shared concurrent limit
+     * budget themselves. Otherwise they could still end up blocking a package
+     * that is not exempt from the limit, which would defeat the purpose of the
+     * exemption.
+     *
+     * @param string[] $package_names
+     */
+    public static function countsTowardsConcurrentLimit(Config $config, array $package_names, bool $security_update) : bool
+    {
+        if (!$config->getNumberOfAllowedPrs()) {
+            return true;
+        }
+        if ($security_update && $config->shouldAllowSecurityUpdatesOnConcurrentLimit()) {
+            return false;
+        }
+        return self::getConcurrentLimitBypassPackage($config, $package_names) === null;
+    }
+
+    /**
+     * @param string[] $package_names
+     */
+    public static function getConcurrentLimitBypassPackage(Config $config, array $package_names) : ?string
+    {
+        foreach ($package_names as $package_name) {
+            if ($config->shouldBypassConcurrentLimitForPackage($package_name)) {
+                return $package_name;
+            }
+        }
+        return null;
+    }
+
     public static function shouldUpdatePr($branch_name, $pr_params, NamedPrs $prs_named_obj)
     {
         $prs_named = $prs_named_obj->getAllPrsNamed();

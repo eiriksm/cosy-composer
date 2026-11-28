@@ -41,6 +41,14 @@ interface ProviderInterface
     public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void;
 
     /**
+     * Delete a branch. A branch that is already absent should be treated as successfully deleted.
+     *
+     * @return bool
+     *   TRUE if the branch is gone, FALSE if it could not be deleted. Implementations should not throw.
+     */
+    public function deleteBranch(Slug $slug, string $branch_name) : bool;
+
+    /**
      * @param Slug $slug
      * @param array $params
      *   An array that consists of the following:

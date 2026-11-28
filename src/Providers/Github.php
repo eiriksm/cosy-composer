@@ -239,4 +239,19 @@ class Github implements ProviderInterface
             'state' => 'closed',
         ]);
     }
+
+    public function deleteBranch(Slug $slug, string $branch_name) : bool
+    {
+        try {
+            /** @var \Github\Api\GitData $git */
+            $git = $this->client->api('git');
+            $git->references()->remove($slug->getUserName(), $slug->getUserRepo(), sprintf('heads/%s', $branch_name));
+        } catch (\Throwable $e) {
+            if ((int) $e->getCode() !== 404) {
+                return false;
+            }
+        }
+        unset($this->cache['branches']);
+        return true;
+    }
 }

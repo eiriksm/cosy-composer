@@ -157,13 +157,16 @@ class BitbucketProviderTest extends ProvidersTestBase
     }
 
     /**
-     * A pull request that was merged in the meantime gets no comment.
+     * A pull request that was merged or declined in the meantime gets no comment.
+     *
+     * Bitbucket refuses to decline a pull request that is not open, with this
+     * exact error for both merged and declined pull requests.
      */
     public function testClosePullRequestWithCommentDoesNotCommentOnMergedPullRequest() : void
     {
         $prs_api = $this->createMock(Workspaces\PullRequests::class);
         $prs_api->method('decline')
-            ->willThrowException(new ValidationFailedException('You can\'t decline a merged pull request', 400));
+            ->willThrowException(new ValidationFailedException('newstatus: This pull request is already closed.', 400));
         $prs_api->expects($this->never())
             ->method('comments');
         $provider = $this->createBitbucketWithPrsApi($prs_api);
@@ -427,14 +430,16 @@ class BitbucketProviderTest extends ProvidersTestBase
     protected function configurePrsClient(MockObject $client, MockObject $prs_api, string $user, string $repo) : void
     {
         $mock_commit = $this->createMock(Workspaces\Commit::class);
-        $mock_commit->expects($this->exactly(count($this->getPrsFixture())))
+        // One of the PR fixtures is a closed one, so we expect show to be called same amount of PRs minus that one.
+        $number_of_pr_show_calls = count($this->getPrsFixture()) - 1;
+        $mock_commit->expects($this->exactly($number_of_pr_show_calls))
             ->method('show')
             ->with(self::COMMIT_HASH)
             ->willReturn([
                 'message' => 'Update something',
             ]);
         $mock_merge_bases = $this->createMock(Workspaces\MergeBases::class);
-        $merge_base_show = $mock_merge_bases->expects($this->exactly(count($this->getPrsFixture())))
+        $merge_base_show = $mock_merge_bases->expects($this->exactly($number_of_pr_show_calls))
             ->method('show')
             ->with(self::COMMIT_HASH . '..' . self::DESTINATION_HASH);
         if ($this->mergeBaseResult instanceof \Throwable) {

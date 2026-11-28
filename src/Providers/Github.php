@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposer\Providers;
 
+use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
 use eiriksm\CosyComposer\ProviderInterface;
 use Github\AuthMethod;
 use Github\Client;
@@ -10,6 +11,8 @@ use Violinist\Slug\Slug;
 
 class Github implements ProviderInterface
 {
+    const PULL_REQUEST_STATE_OPEN = 'open';
+    const PULL_REQUEST_STATE_CLOSED = 'closed';
 
     private $cache;
 
@@ -232,10 +235,17 @@ class Github implements ProviderInterface
 
     public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void
     {
-        // Close first. If the pull request was merged in the meantime, we do
-        // not want a comment saying it was superseded when closing fails.
+        // The pull request might have been merged or closed since we listed it.
+        // Closing it again does not fail on GitHub, so we check the state
+        // first. We do not want a comment saying it was superseded on a pull
+        // request that is not open.
+        $pr = $this->client->api('pull_request')->show($slug->getUserName(), $slug->getUserRepo(), $pr_id);
+        $state = $pr['state'] ?? null;
+        if ($state !== self::PULL_REQUEST_STATE_OPEN) {
+            throw new PullRequestNotOpenException(sprintf('Pull request %s is not open (state: %s)', $pr_id, $state ?? 'unknown'));
+        }
         $this->client->api('pull_request')->update($slug->getUserName(), $slug->getUserRepo(), $pr_id, [
-            'state' => 'closed',
+            'state' => self::PULL_REQUEST_STATE_CLOSED,
         ]);
         $this->client->api('issue')->comments()->create($slug->getUserName(), $slug->getUserRepo(), $pr_id, [
             'body' => $comment,

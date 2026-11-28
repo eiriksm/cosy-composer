@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposer\Providers;
 
+use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
 use eiriksm\CosyComposer\ProviderInterface;
 use Gitlab\Client;
 use Gitlab\ResultPager;
@@ -9,6 +10,7 @@ use Violinist\Slug\Slug;
 
 class Gitlab implements ProviderInterface
 {
+    const MERGE_REQUEST_STATE_OPENED = 'opened';
 
     protected $client;
 
@@ -81,7 +83,7 @@ class Gitlab implements ProviderInterface
         ]]);
         $prs_named = new NamedPrs();
         foreach ($prs as $pr) {
-            if ($pr['state'] !== 'opened') {
+            if ($pr['state'] !== self::MERGE_REQUEST_STATE_OPENED) {
                 continue;
             }
             // Now get the last commits for this branch.
@@ -157,12 +159,20 @@ class Gitlab implements ProviderInterface
 
     public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void
     {
-        // Close first. If the merge request was merged in the meantime, we do
-        // not want a comment saying it was superseded when closing fails.
-        $this->client->mergeRequests()->update(self::getProjectId($slug->getUrl()), $pr_id, [
+        $project_id = self::getProjectId($slug->getUrl());
+        // The merge request might have been merged or closed since we listed
+        // it. GitLab silently ignores closing a merge request that is not open,
+        // so we check the state first. We do not want a comment saying it was
+        // superseded on a merge request that is not open.
+        $mr = $this->client->mergeRequests()->show($project_id, $pr_id);
+        $state = $mr['state'] ?? null;
+        if ($state !== self::MERGE_REQUEST_STATE_OPENED) {
+            throw new PullRequestNotOpenException(sprintf('Merge request %s is not open (state: %s)', $pr_id, $state ?? 'unknown'));
+        }
+        $this->client->mergeRequests()->update($project_id, $pr_id, [
             'state_event' => 'close',
         ]);
-        $this->client->mergeRequests()->addNote(self::getProjectId($slug->getUrl()), $pr_id, $comment);
+        $this->client->mergeRequests()->addNote($project_id, $pr_id, $comment);
     }
 
     public function createPullRequest(Slug $slug, $params)

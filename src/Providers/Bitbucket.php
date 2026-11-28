@@ -11,6 +11,7 @@ use Violinist\Slug\Slug;
 class Bitbucket implements ProviderInterface
 {
     const MERGE_REQUEST_STATE_OPEN = 'OPEN';
+    const MERGE_REQUEST_STATE_CLOSED = 'CLOSED';
 
     private $cache;
 

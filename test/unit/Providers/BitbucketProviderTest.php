@@ -6,6 +6,7 @@ use Bitbucket\Api\CurrentUser;
 use Bitbucket\Api\Repositories;
 use Bitbucket\Api\Repositories\Workspaces;
 use Bitbucket\Client;
+use Bitbucket\Exception\ValidationFailedException;
 use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Bitbucket;
 use eiriksm\CosyComposer\Providers\NamedPrs;
@@ -95,6 +96,79 @@ class BitbucketProviderTest extends ProvidersTestBase
         $prs = $provider->getPrsNamed(Slug::createFromUrl('http://bitbucket.org/testUser/testRepo'));
         $this->assertEquals(['patch-1', 'patch-2'], array_keys($prs->getAllPrsNamed()));
         return $prs;
+    }
+
+    /**
+     * A Bitbucket client whose pull request api is the given mock.
+     */
+    private function createBitbucketWithPrsApi(MockObject $prs_api) : Bitbucket
+    {
+        $mock_workspaces = $this->createMock(Workspaces::class);
+        $mock_workspaces->method('pullRequests')
+            ->with('testRepo')
+            ->willReturn($prs_api);
+        $mock_repositories = $this->createMock(Repositories::class);
+        $mock_repositories->method('workspaces')
+            ->with('testUser')
+            ->willReturn($mock_workspaces);
+        $mock_client = $this->createMock(Client::class);
+        $mock_client->method('repositories')
+            ->willReturn($mock_repositories);
+        return new Bitbucket($mock_client);
+    }
+
+    private function getSlug() : Slug
+    {
+        return Slug::createFromUrl('https://bitbucket.org/testUser/testRepo');
+    }
+
+    /**
+     * The pull request is declined before the comment is posted.
+     */
+    public function testClosePullRequestWithCommentDeclinesFirst() : void
+    {
+        $calls = [];
+        $comments_api = $this->createMock(Workspaces\PullRequests\Comments::class);
+        $comments_api->expects($this->once())
+            ->method('create')
+            ->with([
+                'content' => [
+                    'raw' => 'comment',
+                ],
+            ])
+            ->willReturnCallback(function () use (&$calls) {
+                $calls[] = 'comment';
+                return [];
+            });
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->expects($this->once())
+            ->method('decline')
+            ->with('42')
+            ->willReturnCallback(function () use (&$calls) {
+                $calls[] = 'decline';
+                return [];
+            });
+        $prs_api->method('comments')
+            ->with('42')
+            ->willReturn($comments_api);
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $provider->closePullRequestWithComment($this->getSlug(), 42, 'comment');
+        $this->assertEquals(['decline', 'comment'], $calls);
+    }
+
+    /**
+     * A pull request that was merged in the meantime gets no comment.
+     */
+    public function testClosePullRequestWithCommentDoesNotCommentOnMergedPullRequest() : void
+    {
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->method('decline')
+            ->willThrowException(new ValidationFailedException('You can\'t decline a merged pull request', 400));
+        $prs_api->expects($this->never())
+            ->method('comments');
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $this->expectException(ValidationFailedException::class);
+        $provider->closePullRequestWithComment($this->getSlug(), 42, 'comment');
     }
 
     /**

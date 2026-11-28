@@ -157,10 +157,12 @@ class Gitlab implements ProviderInterface
 
     public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void
     {
-        $this->client->mergeRequests()->addNote(self::getProjectId($slug->getUrl()), $pr_id, $comment);
+        // Close first. If the merge request was merged in the meantime, we do
+        // not want a comment saying it was superseded when closing fails.
         $this->client->mergeRequests()->update(self::getProjectId($slug->getUrl()), $pr_id, [
             'state_event' => 'close',
         ]);
+        $this->client->mergeRequests()->addNote(self::getProjectId($slug->getUrl()), $pr_id, $comment);
     }
 
     public function createPullRequest(Slug $slug, $params)

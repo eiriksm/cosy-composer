@@ -274,12 +274,18 @@ class Bitbucket implements ProviderInterface
 
     public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void
     {
-        $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->comments($pr_id)->create([
+        $prs_api = $this->client
+            ->repositories()
+            ->workspaces($slug->getUserName())
+            ->pullRequests($slug->getUserRepo());
+        // Decline first. If the pull request was merged in the meantime, this
+        // fails, and we do not want a comment saying it was superseded.
+        $prs_api->decline((string) $pr_id);
+        $prs_api->comments((string) $pr_id)->create([
             'content' => [
                 'raw' => $comment,
             ],
         ]);
-        $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->decline($pr_id);
     }
 
     public static function tokenIndicatesUserAppPassword($token)

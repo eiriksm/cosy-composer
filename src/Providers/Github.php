@@ -232,11 +232,13 @@ class Github implements ProviderInterface
 
     public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void
     {
-        $this->client->api('issue')->comments()->create($slug->getUserName(), $slug->getUserRepo(), $pr_id, [
-            'body' => $comment,
-        ]);
+        // Close first. If the pull request was merged in the meantime, we do
+        // not want a comment saying it was superseded when closing fails.
         $this->client->api('pull_request')->update($slug->getUserName(), $slug->getUserRepo(), $pr_id, [
             'state' => 'closed',
+        ]);
+        $this->client->api('issue')->comments()->create($slug->getUserName(), $slug->getUserRepo(), $pr_id, [
+            'body' => $comment,
         ]);
     }
 }

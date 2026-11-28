@@ -54,6 +54,8 @@ abstract class ProvidersTestBase extends TestCase implements TestProviderInterfa
         $this->configureShowClient($mock_client, $mock_show_api, $user, $repo);
         $provider = $this->getProvider($mock_client);
         $this->assertEquals('master', $provider->getDefaultBranch($slug));
+        // A second call should be served from cache, not hit the api again.
+        $this->assertEquals('master', $provider->getDefaultBranch($slug));
     }
 
     public function testBranches()

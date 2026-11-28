@@ -39,26 +39,36 @@ class Gitlab extends AbstractProvider
         return true;
     }
 
-    public function getRepo(Slug $slug)
+    protected function getRepoIdentifier(Slug $slug) : string
     {
-        return $this->wrapLookupInCache(self::REPO_CACHE_KEY, fn () => $this->client->projects()->show(self::getProjectId($slug->getUrl())));
+        return self::getProjectId($slug->getUrl());
+    }
+
+    protected function getRepo(Slug $slug) : array
+    {
+        return $this->wrapLookupInCache(
+            $this->getRepoCacheKey(self::REPO_CACHE_KEY, $slug),
+            fn () => $this->client->projects()->show(self::getProjectId($slug->getUrl()))
+        );
     }
 
     public function getDefaultBranch(Slug $slug)
     {
-        $this->getRepo($slug);
-        return $this->cache[self::REPO_CACHE_KEY]['default_branch'];
+        return $this->getRepo($slug)['default_branch'];
     }
 
-    protected function getBranches(Slug $slug)
+    /**
+     * @return array<mixed>
+     */
+    protected function getBranches(Slug $slug) : array
     {
-        if (!isset($this->cache['branches'])) {
-            $pager = new ResultPager($this->client);
-            $api = $this->client->repositories();
-            $method = 'branches';
-            $this->cache['branches'] = $pager->fetchAll($api, $method, [self::getProjectId($slug->getUrl())]);
-        }
-        return $this->cache['branches'];
+        return $this->wrapLookupInCache(
+            $this->getRepoCacheKey(self::BRANCHES_CACHE_KEY, $slug),
+            function () use ($slug) {
+                $pager = new ResultPager($this->client);
+                return $pager->fetchAll($this->client->repositories(), 'branches', [self::getProjectId($slug->getUrl())]);
+            }
+        );
     }
 
     public function getBranchesFlattened(Slug $slug)
@@ -115,15 +125,14 @@ class Gitlab extends AbstractProvider
 
     public function getAuthenticatedUsername() : ?string
     {
-        if (!isset($this->cache['authenticated_username'])) {
-            try {
+        try {
+            return $this->wrapLookupInCache(self::AUTHENTICATED_USERNAME_CACHE_KEY, function () {
                 $user = $this->client->users()->me();
-                $this->cache['authenticated_username'] = $user['username'] ?? null;
-            } catch (\Throwable $e) {
-                return null;
-            }
+                return $user['username'] ?? null;
+            });
+        } catch (\Throwable $e) {
+            return null;
         }
-        return $this->cache['authenticated_username'];
     }
 
     public function getDefaultBase(Slug $slug, $default_branch)

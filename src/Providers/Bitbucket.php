@@ -8,7 +8,6 @@ use Bitbucket\Exception\ValidationFailedException;
 use Bitbucket\ResultPager;
 use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
 use eiriksm\CosyComposer\Message;
-use eiriksm\CosyComposer\ProviderInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;

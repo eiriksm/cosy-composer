@@ -3,7 +3,6 @@
 namespace eiriksm\CosyComposer\Providers;
 
 use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
-use eiriksm\CosyComposer\ProviderInterface;
 use Github\AuthMethod;
 use Github\Client;
 use Github\ResultPager;

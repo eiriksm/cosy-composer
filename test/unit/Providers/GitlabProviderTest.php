@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
+use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
 use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Gitlab;
 use Gitlab\Api\MergeRequests;
@@ -86,6 +87,116 @@ class GitlabProviderTest extends ProvidersTestBase
             ->willReturn([]);
         $provider = new Gitlab($mock_client);
         $this->assertEquals('2025-01-15T10:30:00.000+00:00', $provider->getDefaultBaseTimestamp($slug, 'main'));
+    }
+
+    public function testDefaultBase() : void
+    {
+        $slug = Slug::createFromUrl('http://gitlab.com/testUser/testRepo');
+        $my_dummy_default_sha = 'codeba5e';
+        $mock_repo_api = $this->createMock(Repositories::class);
+        $mock_repo_api->expects($this->once())
+            ->method('branches')
+            ->with('testUser/testRepo')
+            ->willReturn([
+                [
+                    'name' => 'main',
+                    'commit' => [
+                        'id' => $my_dummy_default_sha,
+                        'committed_date' => '2025-01-15T10:30:00.000+00:00',
+                    ],
+                ],
+            ]);
+        $mock_client = $this->getMockClient();
+        $mock_client->expects($this->once())
+            ->method('repositories')
+            ->willReturn($mock_repo_api);
+        $mock_response = $this->createMock(\Psr\Http\Message\ResponseInterface::class);
+        $mock_response->method('getHeader')
+            ->willReturn([]);
+        $provider = new Gitlab($mock_client);
+        $this->assertEquals($my_dummy_default_sha, $provider->getDefaultBase($slug, 'main'));
+    }
+
+    /**
+     * The state is checked, then the merge request is closed, then commented on.
+     */
+    public function testClosePullRequestWithComment() : void
+    {
+        $slug = Slug::createFromUrl('http://gitlab.com/testUser/testRepo');
+        $calls = [];
+        $mock_mrs = $this->createMock(MergeRequests::class);
+        $mock_mrs->expects($this->once())
+            ->method('show')
+            ->with('testUser/testRepo', 42)
+            ->willReturnCallback(function () use (&$calls) {
+                $calls[] = 'show';
+                return [
+                    'state' => Gitlab::MERGE_REQUEST_STATE_OPENED,
+                ];
+            });
+        $mock_mrs->expects($this->once())
+            ->method('update')
+            ->with('testUser/testRepo', 42, [
+                'state_event' => 'close',
+            ])
+            ->willReturnCallback(function () use (&$calls) {
+                $calls[] = 'close';
+                return [];
+            });
+        $mock_mrs->expects($this->once())
+            ->method('addNote')
+            ->with('testUser/testRepo', 42, 'comment')
+            ->willReturnCallback(function () use (&$calls) {
+                $calls[] = 'comment';
+                return [];
+            });
+        $mock_client = $this->getMockClient();
+        $mock_client->method('mergeRequests')
+            ->willReturn($mock_mrs);
+        $provider = new Gitlab($mock_client);
+        $provider->closePullRequestWithComment($slug, 42, 'comment');
+        $this->assertEquals(['show', 'close', 'comment'], $calls);
+    }
+
+    /**
+     * A merge request that is no longer open is neither closed nor commented on.
+     *
+     * GitLab silently ignores closing it again, so this is about the state check.
+     *
+     * @dataProvider notOpenMergeRequestStateProvider
+     */
+    public function testClosePullRequestWithCommentLeavesMergeRequestThatIsNotOpen(string $state) : void
+    {
+        $slug = Slug::createFromUrl('http://gitlab.com/testUser/testRepo');
+        $mock_mrs = $this->createMock(MergeRequests::class);
+        $mock_mrs->expects($this->once())
+            ->method('show')
+            ->with('testUser/testRepo', 42)
+            ->willReturn([
+                'state' => $state,
+            ]);
+        $mock_mrs->expects($this->never())
+            ->method('update');
+        $mock_mrs->expects($this->never())
+            ->method('addNote');
+        $mock_client = $this->getMockClient();
+        $mock_client->method('mergeRequests')
+            ->willReturn($mock_mrs);
+        $provider = new Gitlab($mock_client);
+        $this->expectException(PullRequestNotOpenException::class);
+        $provider->closePullRequestWithComment($slug, 42, 'comment');
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function notOpenMergeRequestStateProvider() : array
+    {
+        return [
+            'merged' => ['merged'],
+            'closed' => ['closed'],
+            'locked' => ['locked'],
+        ];
     }
 
     public function testDefaultBaseTimestampReturnsNullForMissingBranch(): void

@@ -4,6 +4,7 @@ namespace eiriksm\CosyComposer\Updater;
 
 use eiriksm\CosyComposer\AssigneesAllowedTrait;
 use eiriksm\CosyComposer\ComposerInstallTrait;
+use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
 use eiriksm\CosyComposer\GitCommandsTrait;
 use eiriksm\CosyComposer\Helpers;
 use eiriksm\CosyComposer\Message;
@@ -425,6 +426,8 @@ abstract class BaseUpdater implements UpdaterInterface
             try {
                 $this->getPrClient()->closePullRequestWithComment($this->slug, $pr_number, $comment);
                 $this->getLogger()->log('info', new Message("Successfully closed PR $pr_number"));
+            } catch (PullRequestNotOpenException $e) {
+                $this->getLogger()->log('info', new Message("Not closing PR $pr_number, since it is no longer open"));
             } catch (\Throwable $e) {
                 $msg = $e->getMessage();
                 $this->getLogger()->log('error', new Message("Caught an exception trying to close pr $pr_number. The message was '$msg'"));

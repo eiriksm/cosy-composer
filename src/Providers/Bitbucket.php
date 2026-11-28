@@ -2,14 +2,25 @@
 
 namespace eiriksm\CosyComposer\Providers;
 
+use Bitbucket\Api\Repositories;
 use Bitbucket\Client;
+use Bitbucket\Exception\ValidationFailedException;
 use Bitbucket\ResultPager;
+use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
+use eiriksm\CosyComposer\Message;
 use eiriksm\CosyComposer\ProviderInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 use Violinist\Slug\Slug;
 
-class Bitbucket implements ProviderInterface
+class Bitbucket implements ProviderInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     const MERGE_REQUEST_STATE_OPEN = 'OPEN';
+    const MERGE_REQUEST_STATE_CLOSED = 'MERGED';
+    const PULL_REQUEST_ALREADY_CLOSED_ERROR = 'This pull request is already closed.';
 
     private $cache;
 
@@ -21,6 +32,7 @@ class Bitbucket implements ProviderInterface
     public function __construct(Client $client)
     {
         $this->client = $client;
+        $this->logger = new NullLogger();
     }
 
     public function authenticate(string $user, ?string $token) : void
@@ -109,7 +121,7 @@ class Bitbucket implements ProviderInterface
             }
             $data = [
                 'base' => [
-                    'sha' => $pr["destination"]["commit"]["hash"],
+                    'sha' => $this->getPrBaseSha($api_repo, $user, $repo, $pr),
                     'ref' => $pr["destination"]["branch"]["name"],
                 ],
                 'html_url' => $pr["links"]["html"]["href"],
@@ -132,6 +144,35 @@ class Bitbucket implements ProviderInterface
             }
         }
         return $prs_named;
+    }
+
+    /**
+     * Get the commit the PR branch is actually based on.
+     *
+     * On an open Bitbucket PR, destination.commit.hash follows the tip of the
+     * destination branch, so it always matches the default base. Use the merge
+     * base of the source and destination commits instead.
+     *
+     * @param array<mixed> $pr
+     */
+    protected function getPrBaseSha(Repositories $api_repo, string $user, string $repo, array $pr) : string
+    {
+        $destination = $pr["destination"]["commit"]["hash"];
+        if (empty($pr["source"]["commit"]["hash"])) {
+            return $destination;
+        }
+        try {
+            $merge_base = $api_repo->workspaces($user)
+                ->mergeBases($repo)
+                ->show(sprintf('%s..%s', $pr["source"]["commit"]["hash"], $destination));
+            if (!empty($merge_base['hash'])) {
+                // Match the 12 character hashes getDefaultBase() returns.
+                return substr($merge_base['hash'], 0, 12);
+            }
+        } catch (\Throwable $e) {
+            // Fall back to the destination commit.
+        }
+        return $destination;
     }
 
     public function getDefaultBase(Slug $slug, $default_branch)
@@ -201,18 +242,31 @@ class Bitbucket implements ProviderInterface
             'description' => $params['body'],
         ];
 
-        if (!empty($params['assignees'])) {
-            foreach ($params['assignees'] as $assignee) {
-                $bitbucket_params['reviewers'][] = [
-                    'username' => $assignee,
-                ];
+        // Bitbucket does not reject a pull request for a source and
+        // destination that already has an open one. It updates that pull
+        // request instead, and replaces its reviewers with the ones in the
+        // payload. So when we push to the branch of an open pull request,
+        // update it explicitly, and keep the reviewers it already has.
+        $existing = $this->getOpenPullRequest($slug, $params['head'], $params['base']);
+        if ($existing) {
+            $this->logger->log('info', new Message(sprintf(
+                'Found open Bitbucket pull request %s from %s to %s. Updating it instead of creating a new one',
+                $existing['id'],
+                $params['head'],
+                $params['base']
+            )));
+            $data = $this->updatePullRequest($slug, $existing['id'], $params);
+        } else {
+            $reviewers = self::createReviewers([], $params['assignees'] ?? []);
+            if ($reviewers) {
+                $bitbucket_params['reviewers'] = $reviewers;
             }
+            $data = $this->client
+                ->repositories()
+                ->workspaces($user_name)
+                ->pullRequests($user_repo)
+                ->create($bitbucket_params);
         }
-        $data = $this->client
-            ->repositories()
-            ->workspaces($user_name)
-            ->pullRequests($user_repo)
-            ->create($bitbucket_params);
         if (!empty($data["links"]["html"]["href"])) {
             $data['html_url'] = $data["links"]["html"]["href"];
         }
@@ -222,11 +276,199 @@ class Bitbucket implements ProviderInterface
         return $data;
     }
 
+    /**
+     * Update a pull request without removing its reviewers.
+     *
+     * Bitbucket removes all reviewers from a pull request when an update does
+     * not include them, so send the existing ones along every time.
+     */
     public function updatePullRequest(Slug $slug, $id, $params)
     {
-        $user_name = $slug->getUserName();
-        $user_repo = $slug->getUserRepo();
-        return $this->client->repositories()->workspaces($user_name)->pullRequests($user_repo)->update($id, $params);
+        $prs_api = $this->client
+            ->repositories()
+            ->workspaces($slug->getUserName())
+            ->pullRequests($slug->getUserRepo());
+        $id = (string) $id;
+        $current = $prs_api->show($id);
+        $assignees = $params['assignees'] ?? [];
+        $bitbucket_params = [
+            'title' => $params['title'] ?? $current['title'],
+            'reviewers' => self::createReviewers($current['reviewers'] ?? [], $assignees),
+        ];
+        if (isset($params['body'])) {
+            $bitbucket_params['description'] = $params['body'];
+        }
+        if (!empty($params['base'])) {
+            $bitbucket_params['destination'] = [
+                'branch' => [
+                    'name' => $params['base'],
+                ],
+            ];
+        }
+        // Bitbucket rejects the whole update when one of the reviewers can not
+        // be added, for example because the account was deactivated, left the
+        // workspace, or is the author of the pull request. It does not say
+        // which one, so try with fewer reviewers until the update goes
+        // through. The reviewers someone added by hand are kept for as long
+        // as possible, since keeping them is the reason we send reviewers at
+        // all. Updating the pull request matters more than either, though.
+        $attempts = self::getReviewerAttempts($current['reviewers'] ?? [], $assignees);
+        $this->logger->log('info', new Message(sprintf(
+            'Updating Bitbucket pull request %s with %s',
+            $id,
+            array_key_first($attempts)
+        )));
+        $last_exception = null;
+        foreach ($attempts as $description => $reviewers) {
+            if ($last_exception) {
+                $this->logger->log('info', new Message(sprintf(
+                    'Bitbucket rejected the update of pull request %s (%s). Retrying with %s',
+                    $id,
+                    $last_exception->getMessage(),
+                    $description
+                )));
+            }
+            $bitbucket_params['reviewers'] = $reviewers;
+            try {
+                $data = $prs_api->update($id, $bitbucket_params);
+            } catch (ValidationFailedException $e) {
+                $last_exception = $e;
+                continue;
+            }
+            if ($last_exception) {
+                $this->logger->log('info', new Message(sprintf(
+                    'Updated Bitbucket pull request %s with %s',
+                    $id,
+                    $description
+                )));
+            }
+            return $data;
+        }
+        $this->logger->log('error', new Message(sprintf(
+            'Could not update Bitbucket pull request %s with any set of reviewers. The last error was: %s',
+            $id,
+            $last_exception->getMessage()
+        )));
+        throw $last_exception;
+    }
+
+    /**
+     * The sets of reviewers to try an update with, in order of preference.
+     *
+     * @param array<mixed> $current_reviewers
+     *   Reviewers as Bitbucket returns them on a pull request.
+     * @param array<mixed> $assignees
+     *   Usernames from the project config.
+     *
+     * @return array<string, list<array<string, string>>>
+     *   Sets of reviewers, keyed by a description for the log. A set that is
+     *   the same as an earlier one is left out.
+     */
+    protected static function getReviewerAttempts(array $current_reviewers, array $assignees) : array
+    {
+        $candidates = [
+            self::createReviewers($current_reviewers, $assignees),
+            self::createReviewers($current_reviewers, []),
+            self::createReviewers([], $assignees),
+            [],
+        ];
+        $attempts = [];
+        foreach ($candidates as $reviewers) {
+            // Existing reviewers are sent by uuid, and configured assignees by
+            // username, so the description tells the sets apart.
+            $description = self::describeReviewers($reviewers);
+            if (!isset($attempts[$description])) {
+                $attempts[$description] = $reviewers;
+            }
+        }
+        return $attempts;
+    }
+
+    /**
+     * Describe a set of reviewers for the log.
+     *
+     * @param list<array<string, string>> $reviewers
+     */
+    protected static function describeReviewers(array $reviewers) : string
+    {
+        $existing = count(array_filter($reviewers, function (array $reviewer) {
+            return isset($reviewer['uuid']);
+        }));
+        $assignees = count($reviewers) - $existing;
+        $parts = [];
+        if ($existing) {
+            $parts[] = sprintf('%d existing reviewer(s)', $existing);
+        }
+        if ($assignees) {
+            $parts[] = sprintf('%d configured assignee(s) as reviewer(s)', $assignees);
+        }
+        return $parts ? implode(' and ', $parts) : 'no reviewers';
+    }
+
+    /**
+     * Find the open pull request from one branch to another, if any.
+     *
+     * @return array<mixed>|null
+     */
+    protected function getOpenPullRequest(Slug $slug, string $source, string $destination) : ?array
+    {
+        $prs_api = $this->client
+            ->repositories()
+            ->workspaces($slug->getUserName())
+            ->pullRequests($slug->getUserRepo());
+        $prs = $prs_api->list([
+            'q' => sprintf(
+                'source.branch.name = "%s" AND destination.branch.name = "%s" AND state = "%s"',
+                addcslashes($source, '"\\'),
+                addcslashes($destination, '"\\'),
+                self::MERGE_REQUEST_STATE_OPEN
+            ),
+        ]);
+        foreach ($prs['values'] ?? [] as $pr) {
+            if (!empty($pr['id'])) {
+                return $pr;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Combine the reviewers a pull request has with the configured assignees.
+     *
+     * @param array<mixed> $existing
+     *   Reviewers as Bitbucket returns them on a pull request.
+     * @param array<mixed> $assignees
+     *   Usernames from the project config.
+     *
+     * @return list<array<string, string>>
+     */
+    public static function createReviewers(array $existing, array $assignees) : array
+    {
+        $reviewers = [];
+        $known = [];
+        foreach ($existing as $reviewer) {
+            if (empty($reviewer['uuid'])) {
+                continue;
+            }
+            $reviewers[] = [
+                'uuid' => $reviewer['uuid'],
+            ];
+            foreach (['uuid', 'account_id', 'nickname', 'username'] as $key) {
+                if (!empty($reviewer[$key])) {
+                    $known[] = $reviewer[$key];
+                }
+            }
+        }
+        foreach ($assignees as $assignee) {
+            if (in_array($assignee, $known, true)) {
+                continue;
+            }
+            $reviewers[] = [
+                'username' => $assignee,
+            ];
+            $known[] = $assignee;
+        }
+        return $reviewers;
     }
 
     public function addLabels(array $pr_data, Slug $slug, array $labels): bool
@@ -244,12 +486,27 @@ class Bitbucket implements ProviderInterface
 
     public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void
     {
-        $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->comments($pr_id)->create([
+        $prs_api = $this->client
+            ->repositories()
+            ->workspaces($slug->getUserName())
+            ->pullRequests($slug->getUserRepo());
+        // Decline first. If the pull request was merged in the meantime, this
+        // fails, and we do not want a comment saying it was superseded.
+        try {
+            $prs_api->decline((string) $pr_id);
+        } catch (ValidationFailedException $e) {
+            // Bitbucket uses this exact error for both merged and declined pull
+            // requests. Anything else is a different problem, so rethrow that.
+            if (!str_contains($e->getMessage(), self::PULL_REQUEST_ALREADY_CLOSED_ERROR)) {
+                throw $e;
+            }
+            throw new PullRequestNotOpenException(sprintf('Pull request %s is not open', $pr_id), 0, $e);
+        }
+        $prs_api->comments((string) $pr_id)->create([
             'content' => [
                 'raw' => $comment,
             ],
         ]);
-        $this->client->repositories()->workspaces($slug->getUserName())->pullRequests($slug->getUserRepo())->decline($pr_id);
     }
 
     public static function tokenIndicatesUserAppPassword($token)

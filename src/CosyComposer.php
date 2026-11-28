@@ -5,6 +5,7 @@ namespace eiriksm\CosyComposer;
 use eiriksm\CosyComposer\Exceptions\ChdirException;
 use eiriksm\CosyComposer\Exceptions\GitCloneException;
 use eiriksm\CosyComposer\Exceptions\OutsideProcessingHoursException;
+use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
 use eiriksm\CosyComposer\ListFilterer\DevDepsOnlyFilterer;
 use eiriksm\CosyComposer\ListFilterer\IndirectWithDirectFilterer;
 use eiriksm\CosyComposer\Providers\Bitbucket;
@@ -406,6 +407,8 @@ class CosyComposer
             try {
                 $this->getPrClient()->closePullRequestWithComment($this->slug, $pr_number, $comment);
                 $this->getLogger()->log('info', new Message("Successfully closed PR $pr_number"));
+            } catch (PullRequestNotOpenException $e) {
+                $this->getLogger()->log('info', new Message("Not closing PR $pr_number, since it is no longer open"));
             } catch (\Throwable $e) {
                 $msg = $e->getMessage();
                 $this->getLogger()->log('error', new Message("Caught an exception trying to close pr $pr_number. The message was '$msg'"));
@@ -443,6 +446,8 @@ class CosyComposer
                 try {
                     $this->getPrClient()->closePullRequestWithComment($this->slug, $pr_number, $comment);
                     $this->getLogger()->log('info', new Message("Successfully closed PR $pr_number"));
+                } catch (PullRequestNotOpenException $e) {
+                    $this->getLogger()->log('info', new Message("Not closing PR $pr_number, since it is no longer open"));
                 } catch (\Throwable $e) {
                     $msg = $e->getMessage();
                     $this->getLogger()->log('error', new Message("Caught an exception trying to close pr $pr_number. The message was '$msg'"));

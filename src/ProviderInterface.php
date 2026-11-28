@@ -38,6 +38,13 @@ interface ProviderInterface
 
     public function createFork($user, $repo, $fork_user);
 
+    /**
+     * Close a pull request, and then comment on it.
+     *
+     * Implementations must not comment unless the pull request was actually
+     * closed by this call. A pull request that was merged or closed in the
+     * meantime must be left alone, and this should throw instead.
+     */
     public function closePullRequestWithComment(Slug $slug, $pr_id, $comment) : void;
 
     /**

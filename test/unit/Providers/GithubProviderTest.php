@@ -2,6 +2,7 @@
 
 namespace eiriksm\CosyComposerTest\unit\Providers;
 
+use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
 use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Github;
 use Github\Api\CurrentUser;
@@ -253,6 +254,16 @@ class GithubProviderTest extends ProvidersTestBase
             ->willReturn($mock_comments_api);
         $mock_pr_api = $this->createMock(PullRequest::class);
         $mock_pr_api->expects($this->once())
+            ->method('show')
+            ->with($user, $repo, $pr_id)
+            ->willReturnCallback(function () use (&$calls) {
+                $calls[] = 'show';
+                return [
+                    'state' => 'open',
+                    'merged' => false,
+                ];
+            });
+        $mock_pr_api->expects($this->once())
             ->method('update')
             ->with($user, $repo, $pr_id, [
                 'state' => 'closed',
@@ -273,6 +284,62 @@ class GithubProviderTest extends ProvidersTestBase
             });
         $g = new Github($mock_client);
         $g->closePullRequestWithComment($slug, $pr_id, 'comment');
+        $this->assertEquals(['show', 'close', 'comment'], $calls);
+    }
+
+    /**
+     * A pull request that is no longer open is neither closed nor commented on.
+     *
+     * Closing it again would succeed on GitHub, so this is about the state check.
+     *
+     * @dataProvider notOpenPullRequestProvider
+     *
+     * @param array<string, mixed> $pr
+     */
+    public function testClosePullRequestWithCommentLeavesPullRequestThatIsNotOpen(array $pr) : void
+    {
+        list($user, $repo) = $this->getPrData();
+        $pr_id = 42;
+        $slug = Slug::createFromUrl("http://github.com/$user/$repo");
+        $mock_pr_api = $this->createMock(PullRequest::class);
+        $mock_pr_api->expects($this->once())
+            ->method('show')
+            ->with($user, $repo, $pr_id)
+            ->willReturn($pr);
+        $mock_pr_api->expects($this->never())
+            ->method('update');
+        $mock_client = $this->getMockClient();
+        $mock_client->method('api')
+            ->willReturnCallback(function ($api) use ($mock_pr_api) {
+                if ($api == 'pull_request') {
+                    return $mock_pr_api;
+                }
+                $this->fail("Unexpected api requested: $api");
+            });
+        $g = new Github($mock_client);
+        $this->expectException(PullRequestNotOpenException::class);
+        $g->closePullRequestWithComment($slug, $pr_id, 'comment');
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>}>
+     */
+    public static function notOpenPullRequestProvider() : array
+    {
+        return [
+            'merged' => [
+                [
+                    'state' => 'closed',
+                    'merged' => true,
+                ],
+            ],
+            'closed' => [
+                [
+                    'state' => 'closed',
+                    'merged' => false,
+                ],
+            ],
+        ];
     }
 
     public function testGetAuthenticatedUsername(): void

@@ -8,6 +8,7 @@ use Bitbucket\Api\Repositories\Workspaces;
 use Bitbucket\Client;
 use Bitbucket\Exception\ValidationFailedException;
 use Wa72\SimpleLogger\ArrayLogger;
+use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
 use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Bitbucket;
 use eiriksm\CosyComposer\Providers\NamedPrs;
@@ -121,6 +122,74 @@ class BitbucketProviderTest extends ProvidersTestBase
     private function getSlug() : Slug
     {
         return Slug::createFromUrl('https://bitbucket.org/testUser/testRepo');
+    }
+
+    /**
+     * The pull request is declined before the comment is posted.
+     */
+    public function testClosePullRequestWithCommentDeclinesFirst() : void
+    {
+        $calls = [];
+        $comments_api = $this->createMock(Workspaces\PullRequests\Comments::class);
+        $comments_api->expects($this->once())
+            ->method('create')
+            ->with([
+                'content' => [
+                    'raw' => 'comment',
+                ],
+            ])
+            ->willReturnCallback(function () use (&$calls) {
+                $calls[] = 'comment';
+                return [];
+            });
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->expects($this->once())
+            ->method('decline')
+            ->with('42')
+            ->willReturnCallback(function () use (&$calls) {
+                $calls[] = 'decline';
+                return [];
+            });
+        $prs_api->method('comments')
+            ->with('42')
+            ->willReturn($comments_api);
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $provider->closePullRequestWithComment($this->getSlug(), 42, 'comment');
+        $this->assertEquals(['decline', 'comment'], $calls);
+    }
+
+    /**
+     * A pull request that was merged or declined in the meantime gets no comment.
+     *
+     * Bitbucket refuses to decline a pull request that is not open, with this
+     * exact error for both merged and declined pull requests.
+     */
+    public function testClosePullRequestWithCommentDoesNotCommentOnMergedPullRequest() : void
+    {
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->method('decline')
+            ->willThrowException(new ValidationFailedException('newstatus: This pull request is already closed.', 400));
+        $prs_api->expects($this->never())
+            ->method('comments');
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $this->expectException(PullRequestNotOpenException::class);
+        $provider->closePullRequestWithComment($this->getSlug(), 42, 'comment');
+    }
+
+    /**
+     * Other validation errors from declining are not about the state, so they are rethrown as is.
+     */
+    public function testClosePullRequestWithCommentRethrowsOtherValidationErrors() : void
+    {
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->method('decline')
+            ->willThrowException(new ValidationFailedException('something else went wrong', 400));
+        $prs_api->expects($this->never())
+            ->method('comments');
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $this->expectException(ValidationFailedException::class);
+        $this->expectExceptionMessage('something else went wrong');
+        $provider->closePullRequestWithComment($this->getSlug(), 42, 'comment');
     }
 
     /**

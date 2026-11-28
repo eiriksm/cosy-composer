@@ -7,6 +7,7 @@ use Bitbucket\Api\Repositories;
 use Bitbucket\Api\Repositories\Workspaces;
 use Bitbucket\Client;
 use Bitbucket\Exception\ValidationFailedException;
+use Wa72\SimpleLogger\ArrayLogger;
 use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Bitbucket;
 use eiriksm\CosyComposer\Providers\NamedPrs;
@@ -199,11 +200,11 @@ class BitbucketProviderTest extends ProvidersTestBase
         $prs_api->method('show')
             ->willReturn($this->getExistingPr());
         $calls = [];
-        $prs_api->expects($this->exactly(2))
+        $prs_api->expects($this->exactly(3))
             ->method('update')
             ->willReturnCallback(function (string $id, array $params) use (&$calls) {
                 $calls[] = $params['reviewers'];
-                if (count($calls) === 1) {
+                if (in_array(['uuid' => '{11111111-1111-1111-1111-111111111111}'], $params['reviewers'], true)) {
                     throw new ValidationFailedException('Malformed reviewers list', 400);
                 }
                 return $this->getExistingPr();
@@ -216,9 +217,114 @@ class BitbucketProviderTest extends ProvidersTestBase
                 ['username' => 'configured-user'],
             ],
             [
+                ['uuid' => '{11111111-1111-1111-1111-111111111111}'],
+            ],
+            [
                 ['username' => 'configured-user'],
             ],
         ], $calls);
+    }
+
+    /**
+     * A configured assignee Bitbucket rejects should not block the update.
+     *
+     * For example a deactivated account, or the account that authored the
+     * pull request. Bitbucket used to ignore the assignees on updates, so a
+     * bad one in the config never stopped a pull request from being updated.
+     *
+     * @dataProvider getRejectedAssigneeScenarios
+     *
+     * @param array<mixed> $existing_reviewers
+     * @param array<mixed> $expected_reviewers
+     * @param list<string> $expected_messages
+     */
+    public function testUpdatePullRequestWithAssigneeBitbucketRejects(array $existing_reviewers, array $expected_reviewers, array $expected_messages) : void
+    {
+        $existing_pr = $this->getExistingPr();
+        $existing_pr['reviewers'] = $existing_reviewers;
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->method('show')
+            ->willReturn($existing_pr);
+        $successful_reviewers = null;
+        $prs_api->method('update')
+            ->willReturnCallback(function (string $id, array $params) use (&$successful_reviewers, $existing_pr) {
+                if (in_array(['username' => 'configured-user'], $params['reviewers'], true)) {
+                    throw new ValidationFailedException('configured-user is not a valid reviewer', 400);
+                }
+                $successful_reviewers = $params['reviewers'];
+                return $existing_pr;
+            });
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $logger = new ArrayLogger();
+        $provider->setLogger($logger);
+        $provider->updatePullRequest($this->getSlug(), 42, $this->getPrParams());
+        $this->assertEquals($expected_reviewers, $successful_reviewers);
+        $messages = array_map(function (array $entry) {
+            return (string) $entry['message'];
+        }, $logger->get());
+        $this->assertEquals($expected_messages, $messages);
+    }
+
+    /**
+     * When no set of reviewers works, the error from Bitbucket is thrown.
+     */
+    public function testUpdatePullRequestThrowsWhenEveryAttemptFails() : void
+    {
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->method('show')
+            ->willReturn($this->getExistingPr());
+        $prs_api->expects($this->exactly(4))
+            ->method('update')
+            ->willThrowException(new ValidationFailedException('Invalid title', 400));
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $logger = new ArrayLogger();
+        $provider->setLogger($logger);
+        try {
+            $provider->updatePullRequest($this->getSlug(), 42, $this->getPrParams());
+            $this->fail('Expected the update to fail');
+        } catch (ValidationFailedException $e) {
+            $this->assertEquals('Invalid title', $e->getMessage());
+        }
+        $last = $logger->get()[count($logger->get()) - 1];
+        $this->assertEquals('error', $last['level']);
+        $this->assertEquals(
+            'Could not update Bitbucket pull request 42 with any set of reviewers. The last error was: Invalid title',
+            (string) $last['message']
+        );
+    }
+
+    /**
+     * @return array<string, array<mixed>>
+     */
+    public static function getRejectedAssigneeScenarios() : array
+    {
+        return [
+            'keeps the existing reviewers' => [
+                [
+                    [
+                        'uuid' => '{11111111-1111-1111-1111-111111111111}',
+                        'nickname' => 'added-by-hand',
+                    ],
+                ],
+                [
+                    ['uuid' => '{11111111-1111-1111-1111-111111111111}'],
+                ],
+                [
+                    'Updating Bitbucket pull request 42 with 1 existing reviewer(s) and 1 configured assignee(s) as reviewer(s)',
+                    'Bitbucket rejected the update of pull request 42 (configured-user is not a valid reviewer). Retrying with 1 existing reviewer(s)',
+                    'Updated Bitbucket pull request 42 with 1 existing reviewer(s)',
+                ],
+            ],
+            'no existing reviewers' => [
+                [],
+                [],
+                [
+                    'Updating Bitbucket pull request 42 with 1 configured assignee(s) as reviewer(s)',
+                    'Bitbucket rejected the update of pull request 42 (configured-user is not a valid reviewer). Retrying with no reviewers',
+                    'Updated Bitbucket pull request 42 with no reviewers',
+                ],
+            ],
+        ];
     }
 
     /**

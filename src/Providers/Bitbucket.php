@@ -6,11 +6,17 @@ use Bitbucket\Api\Repositories;
 use Bitbucket\Client;
 use Bitbucket\Exception\ValidationFailedException;
 use Bitbucket\ResultPager;
+use eiriksm\CosyComposer\Message;
 use eiriksm\CosyComposer\ProviderInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 use Violinist\Slug\Slug;
 
-class Bitbucket implements ProviderInterface
+class Bitbucket implements ProviderInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     const MERGE_REQUEST_STATE_OPEN = 'OPEN';
 
     private $cache;
@@ -23,6 +29,7 @@ class Bitbucket implements ProviderInterface
     public function __construct(Client $client)
     {
         $this->client = $client;
+        $this->logger = new NullLogger();
     }
 
     public function authenticate(string $user, ?string $token) : void
@@ -239,6 +246,12 @@ class Bitbucket implements ProviderInterface
         // update it explicitly, and keep the reviewers it already has.
         $existing = $this->getOpenPullRequest($slug, $params['head'], $params['base']);
         if ($existing) {
+            $this->logger->log('info', new Message(sprintf(
+                'Found open Bitbucket pull request %s from %s to %s. Updating it instead of creating a new one',
+                $existing['id'],
+                $params['head'],
+                $params['base']
+            )));
             $data = $this->updatePullRequest($slug, $existing['id'], $params);
         } else {
             $reviewers = self::createReviewers([], $params['assignees'] ?? []);
@@ -289,19 +302,104 @@ class Bitbucket implements ProviderInterface
                 ],
             ];
         }
-        try {
-            return $prs_api->update($id, $bitbucket_params);
-        } catch (ValidationFailedException $e) {
-            if (empty($current['reviewers'])) {
-                throw $e;
+        // Bitbucket rejects the whole update when one of the reviewers can not
+        // be added, for example because the account was deactivated, left the
+        // workspace, or is the author of the pull request. It does not say
+        // which one, so try with fewer reviewers until the update goes
+        // through. The reviewers someone added by hand are kept for as long
+        // as possible, since keeping them is the reason we send reviewers at
+        // all. Updating the pull request matters more than either, though.
+        $attempts = self::getReviewerAttempts($current['reviewers'] ?? [], $assignees);
+        $this->logger->log('info', new Message(sprintf(
+            'Updating Bitbucket pull request %s with %s',
+            $id,
+            array_key_first($attempts)
+        )));
+        $last_exception = null;
+        foreach ($attempts as $description => $reviewers) {
+            if ($last_exception) {
+                $this->logger->log('info', new Message(sprintf(
+                    'Bitbucket rejected the update of pull request %s (%s). Retrying with %s',
+                    $id,
+                    $last_exception->getMessage(),
+                    $description
+                )));
             }
-            // Bitbucket rejects the whole update when one of the existing
-            // reviewers can no longer be added, for example because the
-            // account was deactivated or left the workspace. Updating the
-            // pull request matters more than keeping its reviewers.
-            $bitbucket_params['reviewers'] = self::createReviewers([], $assignees);
-            return $prs_api->update($id, $bitbucket_params);
+            $bitbucket_params['reviewers'] = $reviewers;
+            try {
+                $data = $prs_api->update($id, $bitbucket_params);
+            } catch (ValidationFailedException $e) {
+                $last_exception = $e;
+                continue;
+            }
+            if ($last_exception) {
+                $this->logger->log('info', new Message(sprintf(
+                    'Updated Bitbucket pull request %s with %s',
+                    $id,
+                    $description
+                )));
+            }
+            return $data;
         }
+        $this->logger->log('error', new Message(sprintf(
+            'Could not update Bitbucket pull request %s with any set of reviewers. The last error was: %s',
+            $id,
+            $last_exception->getMessage()
+        )));
+        throw $last_exception;
+    }
+
+    /**
+     * The sets of reviewers to try an update with, in order of preference.
+     *
+     * @param array<mixed> $current_reviewers
+     *   Reviewers as Bitbucket returns them on a pull request.
+     * @param array<mixed> $assignees
+     *   Usernames from the project config.
+     *
+     * @return array<string, list<array<string, string>>>
+     *   Sets of reviewers, keyed by a description for the log. A set that is
+     *   the same as an earlier one is left out.
+     */
+    protected static function getReviewerAttempts(array $current_reviewers, array $assignees) : array
+    {
+        $candidates = [
+            self::createReviewers($current_reviewers, $assignees),
+            self::createReviewers($current_reviewers, []),
+            self::createReviewers([], $assignees),
+            [],
+        ];
+        $attempts = [];
+        foreach ($candidates as $reviewers) {
+            // Existing reviewers are sent by uuid, and configured assignees by
+            // username, so the description tells the sets apart.
+            $description = self::describeReviewers($reviewers);
+            if (!isset($attempts[$description])) {
+                $attempts[$description] = $reviewers;
+            }
+        }
+        return $attempts;
+    }
+
+    /**
+     * Describe a set of reviewers for the log.
+     *
+     * @param list<array<string, string>> $reviewers
+     */
+    protected static function describeReviewers(array $reviewers) : string
+    {
+        $existing = count(array_filter($reviewers, function (array $reviewer) {
+            return isset($reviewer['uuid']);
+        }));
+        $assignees = count($reviewers) - $existing;
+        $parts = [];
+        if ($existing) {
+            $parts[] = sprintf('%d existing reviewer(s)', $existing);
+        }
+        if ($assignees) {
+            $parts[] = sprintf('%d configured assignee(s) as reviewer(s)', $assignees);
+        }
+        return $parts ? implode(' and ', $parts) : 'no reviewers';
     }
 
     /**

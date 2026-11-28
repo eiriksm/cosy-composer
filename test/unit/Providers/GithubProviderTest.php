@@ -235,12 +235,17 @@ class GithubProviderTest extends ProvidersTestBase
         list($user, $repo) = $this->getPrData();
         $pr_id = 42;
         $slug = Slug::createFromUrl("http://github.com/$user/$repo");
+        $calls = [];
         $mock_comments_api = $this->createMock(Comments::class);
         $mock_comments_api->expects($this->once())
             ->method('create')
             ->with($user, $repo, $pr_id, [
                 'body' => 'comment',
-            ]);
+            ])
+            ->willReturnCallback(function () use (&$calls) {
+                $calls[] = 'comment';
+                return [];
+            });
         $mock_client = $this->getMockClient();
         $mock_issue_api = $this->createMock(Issue::class);
         $mock_issue_api->expects($this->once())
@@ -251,7 +256,11 @@ class GithubProviderTest extends ProvidersTestBase
             ->method('update')
             ->with($user, $repo, $pr_id, [
                 'state' => 'closed',
-            ]);
+            ])
+            ->willReturnCallback(function () use (&$calls) {
+                $calls[] = 'close';
+                return [];
+            });
         $mock_client->method('api')
             ->willReturnCallback(function ($api) use ($mock_issue_api, $mock_pr_api) {
                 if ($api == 'issue') {

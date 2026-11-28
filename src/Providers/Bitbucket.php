@@ -6,6 +6,7 @@ use Bitbucket\Api\Repositories;
 use Bitbucket\Client;
 use Bitbucket\Exception\ValidationFailedException;
 use Bitbucket\ResultPager;
+use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
 use eiriksm\CosyComposer\Message;
 use eiriksm\CosyComposer\ProviderInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -18,7 +19,8 @@ class Bitbucket implements ProviderInterface, LoggerAwareInterface
     use LoggerAwareTrait;
 
     const MERGE_REQUEST_STATE_OPEN = 'OPEN';
-    const MERGE_REQUEST_STATE_CLOSED = 'CLOSED';
+    const MERGE_REQUEST_STATE_CLOSED = 'MERGED';
+    const PULL_REQUEST_ALREADY_CLOSED_ERROR = 'This pull request is already closed.';
 
     private $cache;
 
@@ -490,7 +492,16 @@ class Bitbucket implements ProviderInterface, LoggerAwareInterface
             ->pullRequests($slug->getUserRepo());
         // Decline first. If the pull request was merged in the meantime, this
         // fails, and we do not want a comment saying it was superseded.
-        $prs_api->decline((string) $pr_id);
+        try {
+            $prs_api->decline((string) $pr_id);
+        } catch (ValidationFailedException $e) {
+            // Bitbucket uses this exact error for both merged and declined pull
+            // requests. Anything else is a different problem, so rethrow that.
+            if (!str_contains($e->getMessage(), self::PULL_REQUEST_ALREADY_CLOSED_ERROR)) {
+                throw $e;
+            }
+            throw new PullRequestNotOpenException(sprintf('Pull request %s is not open', $pr_id), 0, $e);
+        }
         $prs_api->comments((string) $pr_id)->create([
             'content' => [
                 'raw' => $comment,

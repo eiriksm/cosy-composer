@@ -8,6 +8,7 @@ use Bitbucket\Api\Repositories\Workspaces;
 use Bitbucket\Client;
 use Bitbucket\Exception\ValidationFailedException;
 use Wa72\SimpleLogger\ArrayLogger;
+use eiriksm\CosyComposer\Exceptions\PullRequestNotOpenException;
 use eiriksm\CosyComposer\ProviderInterface;
 use eiriksm\CosyComposer\Providers\Bitbucket;
 use eiriksm\CosyComposer\Providers\NamedPrs;
@@ -171,7 +172,23 @@ class BitbucketProviderTest extends ProvidersTestBase
         $prs_api->expects($this->never())
             ->method('comments');
         $provider = $this->createBitbucketWithPrsApi($prs_api);
+        $this->expectException(PullRequestNotOpenException::class);
+        $provider->closePullRequestWithComment($this->getSlug(), 42, 'comment');
+    }
+
+    /**
+     * Other validation errors from declining are not about the state, so they are rethrown as is.
+     */
+    public function testClosePullRequestWithCommentRethrowsOtherValidationErrors() : void
+    {
+        $prs_api = $this->createMock(Workspaces\PullRequests::class);
+        $prs_api->method('decline')
+            ->willThrowException(new ValidationFailedException('something else went wrong', 400));
+        $prs_api->expects($this->never())
+            ->method('comments');
+        $provider = $this->createBitbucketWithPrsApi($prs_api);
         $this->expectException(ValidationFailedException::class);
+        $this->expectExceptionMessage('something else went wrong');
         $provider->closePullRequestWithComment($this->getSlug(), 42, 'comment');
     }
 
